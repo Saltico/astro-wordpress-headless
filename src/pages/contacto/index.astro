@@ -1,0 +1,30 @@
+---
+// src/pages/contacto/index.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import { contactPageSchema } from '@/lib/seo';
+
+const title = 'Contacto | IP Proyectos Industriales';
+const description =
+  'Contacta a IP Proyectos Industriales. Solicita cotización de arriendo de maquinaria o servicios industriales para tu faena.';
+
+const breadcrumbs = [
+  { label: 'Inicio', url: '/' },
+  { label: 'Contacto' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumbs={breadcrumbs}
+  jsonLd={contactPageSchema()}
+>
+  <SectionLayout spacing="lg">
+    <Container>
+      <h1>Contacto</h1>
+      <p>Formulario de contacto y canales de comunicación.</p>
+    </Container>
+  </SectionLayout>
+</BaseLayout>

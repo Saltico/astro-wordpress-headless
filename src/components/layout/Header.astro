@@ -2,14 +2,16 @@
 // src/components/layout/Header.astro
 export interface Props {
   compact?: boolean;
+  variant?: 'default' | 'brand';
 }
 
-const { compact = true } = Astro.props;
+const { compact = true, variant = 'default' } = Astro.props;
+const headerClassList = ['header', variant === 'brand' && 'header--brand'];
 ---
 
 {compact && <div class="header__sentinel" aria-hidden="true"></div>}
 
-<header class="header" role="banner">
+<header class:list={headerClassList} role="banner">
   <div class="header__inner">
     <div class="header__logo">
       <slot name="logo">
@@ -76,6 +78,17 @@ const { compact = true } = Astro.props;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   }
 
+  .header--brand {
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .header--brand.is-compact {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
   .header__inner {
     display: flex;
     align-items: center;
@@ -117,14 +130,8 @@ const { compact = true } = Astro.props;
   }
 
   .header__cta {
-    display: none;
+    display: block;
     flex-shrink: 0;
-  }
-
-  @media (min-width: 1024px) {
-    .header__cta {
-      display: block;
-    }
   }
 
   .header__cta-button {

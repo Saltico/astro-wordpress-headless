@@ -1,0 +1,23 @@
+---
+// src/pages/privacidad.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+
+const title = 'Política de Privacidad | IP Proyectos Industriales';
+const description = 'Política de privacidad de IP Proyectos Industriales.';
+
+const breadcrumbs = [
+  { label: 'Inicio', url: '/' },
+  { label: 'Política de Privacidad' },
+];
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumbs} noindex>
+  <SectionLayout spacing="lg">
+    <Container>
+      <h1>Política de Privacidad</h1>
+      <p>Contenido de la política de privacidad.</p>
+    </Container>
+  </SectionLayout>
+</BaseLayout>

@@ -1,0 +1,50 @@
+---
+// src/pages/proyectos/[slug].astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import { projectSchema } from '@/lib/seo';
+
+export function getStaticPaths() {
+  return [
+    {
+      params: { slug: 'izaje-estructuras-la-serena' },
+      props: {
+        title: 'Izaje de Estructuras — La Serena | IP Proyectos Industriales',
+        description:
+          'Proyecto de izaje de estructuras en La Serena para la industria minera.',
+        location: 'La Serena',
+      },
+    },
+  ];
+}
+
+const { slug } = Astro.params;
+const { title, description, location } = Astro.props;
+const projectName = (slug as string).replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+
+const breadcrumbs = [
+  { label: 'Inicio', url: '/' },
+  { label: 'Proyectos', url: '/proyectos' },
+  { label: projectName },
+];
+
+const jsonLd = projectSchema(projectName, description, Astro.url.pathname, location);
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumbs} jsonLd={jsonLd}>
+  <SectionLayout spacing="lg">
+    <Container>
+      <h1>{projectName}</h1>
+      <p class="location">Ubicación: {location}</p>
+      <p>{description}</p>
+    </Container>
+  </SectionLayout>
+</BaseLayout>
+
+<style>
+  .location {
+    color: var(--color-ink-500);
+    margin-bottom: var(--space-4);
+  }
+</style>

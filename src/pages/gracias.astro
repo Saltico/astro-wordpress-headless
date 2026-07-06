@@ -1,0 +1,34 @@
+---
+// src/pages/gracias.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+
+const title = 'Gracias | IP Proyectos Industriales';
+const description = 'Gracias por contactar a IP Proyectos Industriales.';
+---
+
+<BaseLayout title={title} description={description} noindex showHeader={false} showFooter={false}>
+  <SectionLayout spacing="lg">
+    <Container>
+      <h1>¡Gracias por contactarnos!</h1>
+      <p>Hemos recibido tu mensaje. Te responderemos a la brevedad.</p>
+      <a href="/" class="button">Volver al inicio</a>
+    </Container>
+  </SectionLayout>
+</BaseLayout>
+
+<style>
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.625rem 1.25rem;
+    margin-top: var(--space-6);
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+  }
+</style>

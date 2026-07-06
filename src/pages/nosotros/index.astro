@@ -1,0 +1,30 @@
+---
+// src/pages/nosotros/index.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import { aboutPageSchema } from '@/lib/seo';
+
+const title = 'Nosotros | IP Proyectos Industriales';
+const description =
+  'Conoce a IP Proyectos Industriales: historia, equipo y valores de una empresa líder en proyectos de ingeniería para la gran minería.';
+
+const breadcrumbs = [
+  { label: 'Inicio', url: '/' },
+  { label: 'Nosotros' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumbs={breadcrumbs}
+  jsonLd={aboutPageSchema()}
+>
+  <SectionLayout spacing="lg">
+    <Container>
+      <h1>Nosotros</h1>
+      <p>Historia, equipo y valores de IP Proyectos Industriales.</p>
+    </Container>
+  </SectionLayout>
+</BaseLayout>

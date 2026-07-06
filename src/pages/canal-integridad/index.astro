@@ -1,0 +1,24 @@
+---
+// src/pages/canal-integridad/index.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+
+const title = 'Canal de Integridad | IP Proyectos Industriales';
+const description =
+  'Canal de denuncias e integridad de IP Proyectos Industriales.';
+
+const breadcrumbs = [
+  { label: 'Inicio', url: '/' },
+  { label: 'Canal de Integridad' },
+];
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumbs}>
+  <SectionLayout spacing="lg">
+    <Container>
+      <h1>Canal de Integridad</h1>
+      <p>Espacio seguro para realizar denuncias relacionadas con integridad.</p>
+    </Container>
+  </SectionLayout>
+</BaseLayout>

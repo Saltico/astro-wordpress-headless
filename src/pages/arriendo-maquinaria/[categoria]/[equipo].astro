@@ -1,0 +1,104 @@
+---
+// src/pages/arriendo-maquinaria/[categoria]/[equipo].astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import { productSchema } from '@/lib/seo';
+
+export function getStaticPaths() {
+  return [
+    {
+      params: { categoria: 'gruas-alto-tonelaje', equipo: 'gruas-grove-gmk' },
+      props: {
+        title: 'Grúas Grove GMK en arriendo — Grúas Alto Tonelaje | IP Proyectos Industriales',
+        description:
+          'Arriendo de Grúas Grove GMK con capacidad de 120 toneladas y altura máxima de 72 metros. Disponibilidad en zona norte.',
+        capacity: '120 t',
+        height: '72 m',
+        operator: 'Certificado',
+      },
+    },
+  ];
+}
+
+const { categoria, equipo } = Astro.params;
+const { title, description, capacity, height, operator } = Astro.props;
+const equipoName = (equipo as string).replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+
+const breadcrumbs = [
+  { label: 'Inicio', url: '/' },
+  { label: 'Arriendo Maquinaria', url: '/arriendo-maquinaria' },
+  { label: categoria as string, url: `/arriendo-maquinaria/${categoria}` },
+  { label: equipoName },
+];
+
+const jsonLd = productSchema(equipoName, description, Astro.url.pathname);
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumbs} jsonLd={jsonLd}>
+  <SectionLayout spacing="lg">
+    <Container>
+      <article>
+        <p class="eyebrow">Disponibilidad en zona norte</p>
+        <h1>{equipoName}</h1>
+
+        <dl class="metrics">
+          <div class="metric">
+            <dt>Capacidad</dt>
+            <dd>{capacity}</dd>
+          </div>
+          <div class="metric">
+            <dt>Altura máxima</dt>
+            <dd>{height}</dd>
+          </div>
+          <div class="metric">
+            <dt>Operador</dt>
+            <dd>{operator}</dd>
+          </div>
+        </dl>
+
+        <p>{description}</p>
+      </article>
+    </Container>
+  </SectionLayout>
+</BaseLayout>
+
+<style>
+  .eyebrow {
+    font-size: var(--text-small);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-brand);
+    margin-bottom: var(--space-2);
+  }
+
+  h1 {
+    margin-bottom: var(--space-6);
+  }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+
+  .metric {
+    padding: var(--space-4);
+    background-color: var(--color-surface-alt);
+    border-radius: var(--radius-md);
+  }
+
+  .metric dt {
+    font-size: var(--text-small);
+    color: var(--color-ink-500);
+    margin-bottom: var(--space-1);
+  }
+
+  .metric dd {
+    font-size: var(--text-h4);
+    font-weight: 700;
+    color: var(--color-ink);
+  }
+</style>

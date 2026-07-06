@@ -1,0 +1,23 @@
+---
+// src/pages/aviso-legal.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+
+const title = 'Aviso Legal | IP Proyectos Industriales';
+const description = 'Aviso legal del sitio web de IP Proyectos Industriales.';
+
+const breadcrumbs = [
+  { label: 'Inicio', url: '/' },
+  { label: 'Aviso Legal' },
+];
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumbs} noindex>
+  <SectionLayout spacing="lg">
+    <Container>
+      <h1>Aviso Legal</h1>
+      <p>Contenido del aviso legal.</p>
+    </Container>
+  </SectionLayout>
+</BaseLayout>

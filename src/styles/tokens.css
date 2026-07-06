@@ -1,0 +1,171 @@
+/* src/styles/tokens.css */
+/* Sistema de diseno para IP Proyectos Industriales */
+/* Tailwind v4: @theme expone tokens como utilidades CSS-first */
+
+/* Importamos SOLO theme + utilities. Omitimos 'base' (Preflight) para
+   evitar el reset agresivo que pisa los estilos de los componentes.
+   El reset propio vive en src/styles/base.css. */
+@import 'tailwindcss/theme';
+
+/* ========================================
+   THEME TOKENS (Tailwind v4)
+   ======================================== */
+
+@theme {
+  /* Colores de marca */
+  --color-brand: #348f41;
+  --color-brand-600: #2c7c37;
+  --color-brand-700: #236a2e;
+  --color-brand-050: #ebf5ed;
+
+  /* Colores de contenido */
+  --color-ink: #242627;
+  --color-ink-700: #3a3d3e;
+  --color-ink-500: #6b7072;
+
+  /* Superficies */
+  --color-surface: #ffffff;
+  --color-surface-alt: #f6f7f8;
+  --color-line: #e2e4e5;
+  --color-on-brand: #ffffff;
+
+  /* Estados */
+  --color-danger: #c0392b;
+  --color-warning: #b7791f;
+  --color-success: #348f41;
+
+  /* Tipografia */
+  --font-heading: 'Plateia', 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Bliss Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+  /* Escala tipografica fluida */
+  --text-h1: clamp(2rem, 5vw, 3rem);
+  --text-h2: clamp(1.75rem, 3vw, 2.25rem);
+  --text-h3: clamp(1.375rem, 2.2vw, 1.75rem);
+  --text-h4: clamp(1.125rem, 1.8vw, 1.375rem);
+  --text-h5: clamp(1rem, 1.4vw, 1.125rem);
+  --text-h6: 1rem;
+  --text-body: clamp(1rem, 0.4vw + 0.95rem, 1.125rem);
+  --text-small: 0.875rem;
+  --text-lead: clamp(1.125rem, 1.8vw, 1.375rem);
+
+  /* Espaciado */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-30: 7.5rem;
+
+  /* Radios */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+  --radius-pill: 999px;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgba(36, 38, 39, 0.06);
+  --shadow-md: 0 4px 12px rgba(36, 38, 39, 0.08);
+  --shadow-lg: 0 8px 24px rgba(36, 38, 39, 0.12);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* Breakpoints */
+  --breakpoint-sm: 40rem;   /* 640px */
+  --breakpoint-md: 48rem;   /* 768px */
+  --breakpoint-lg: 64rem;   /* 1024px */
+  --breakpoint-xl: 80rem;   /* 1280px */
+  --breakpoint-2xl: 96rem;  /* 1536px */
+}
+
+/* ========================================
+   CUSTOM PROPERTIES LEGACY
+   (para uso directo en componentes no Tailwind)
+   ======================================== */
+
+:root {
+  /* Layout */
+  --container-max-width: 1200px;
+  --container-full-width: 1440px;
+  --container-padding: 1rem;
+  --header-height: 5rem;
+  --header-compact-height: 3.5rem;
+  --topbar-height: 2.5rem;
+
+  /* Motion */
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-slow: 300ms;
+
+  /* Breakpoints en px para media queries custom */
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --bp-2xl: 1536px;
+
+  /* Alias semánticos */
+  --color-border: var(--color-line);
+  --color-muted: var(--color-ink-500);
+
+  /* Alias de espaciado (los componentes usan --space-*) */
+  --space-1: var(--spacing-1);
+  --space-2: var(--spacing-2);
+  --space-3: var(--spacing-3);
+  --space-4: var(--spacing-4);
+  --space-5: var(--spacing-5);
+  --space-6: var(--spacing-6);
+  --space-8: var(--spacing-8);
+  --space-10: var(--spacing-10);
+  --space-12: var(--spacing-12);
+  --space-16: var(--spacing-16);
+  --space-20: var(--spacing-20);
+  --space-24: var(--spacing-24);
+  --space-30: var(--spacing-30);
+}
+
+/* ========================================
+   FONT FACE
+   Placeholders: colocar archivos reales en public/fonts/
+   ======================================== */
+
+@font-face {
+  font-family: 'Plateia';
+  src: url('/fonts/plateia-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bliss Pro';
+  src: url('/fonts/blisspro-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bliss Pro';
+  src: url('/fonts/blisspro-semibold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bliss Pro';
+  src: url('/fonts/blisspro-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

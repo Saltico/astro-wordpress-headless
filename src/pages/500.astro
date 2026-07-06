@@ -1,0 +1,37 @@
+---
+// src/pages/500.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+
+// TODO: cuando se configure el adapter SSR (Fase 3), cambiar a prerender = false
+// export const prerender = false;
+
+const title = 'Error del servidor | IP Proyectos Industriales';
+const description = 'Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo más tarde.';
+---
+
+<BaseLayout title={title} description={description} noindex>
+  <SectionLayout spacing="lg">
+    <Container>
+      <h1>500 — Error del servidor</h1>
+      <p>Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo más tarde.</p>
+      <a href="/" class="button">Volver al inicio</a>
+    </Container>
+  </SectionLayout>
+</BaseLayout>
+
+<style>
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.625rem 1.25rem;
+    margin-top: var(--space-6);
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+  }
+</style>

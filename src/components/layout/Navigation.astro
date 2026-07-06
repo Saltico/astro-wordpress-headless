@@ -2,9 +2,17 @@
 // src/components/layout/Navigation.astro
 import type { NavItem, NavigationProps } from '@/types/navigation';
 
-export interface Props extends NavigationProps {}
+export interface Props extends NavigationProps {
+  variant?: 'default' | 'brand';
+}
 
-const { items, activePath = Astro.url.pathname, ariaLabel = 'Navegación principal' } = Astro.props;
+const {
+  items,
+  activePath = Astro.url.pathname,
+  ariaLabel = 'Navegación principal',
+  variant = 'default',
+} = Astro.props;
+const navClassList = ['nav', variant === 'brand' && 'nav--brand'];
 
 function isActive(item: NavItem): boolean {
   if (item.url === activePath) return true;
@@ -13,7 +21,7 @@ function isActive(item: NavItem): boolean {
 }
 ---
 
-<nav class="nav" aria-label={ariaLabel}>
+<nav class:list={navClassList} aria-label={ariaLabel}>
   <button
     type="button"
     class="nav__toggle"
@@ -322,6 +330,34 @@ function isActive(item: NavItem): boolean {
 
   .nav__mobile-sublink[aria-current='page'] {
     color: var(--color-brand);
+  }
+
+  /* Variant: brand (header verde) */
+  .nav--brand .nav__toggle {
+    color: var(--color-on-brand);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .nav--brand .nav__toggle:hover,
+  .nav--brand .nav__toggle:focus {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .nav--brand .nav__link {
+    color: rgba(255, 255, 255, 0.92);
+    border-bottom-color: transparent;
+  }
+
+  .nav--brand .nav__link:hover,
+  .nav--brand .nav__link:focus,
+  .nav--brand .nav__item.is-active > .nav__link {
+    color: #ffffff;
+    border-bottom-color: #ffffff;
+  }
+
+  .nav--brand .nav__item--has-children > .nav__link::after {
+    color: rgba(255, 255, 255, 0.7);
   }
 
   .sr-only {

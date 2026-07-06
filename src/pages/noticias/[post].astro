@@ -1,0 +1,58 @@
+---
+// src/pages/noticias/[post].astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import { newsArticleSchema } from '@/lib/seo';
+
+export function getStaticPaths() {
+  return [
+    {
+      params: { post: 'nuevo-proyecto-minera' },
+      props: {
+        title: 'Nuevo proyecto en minería | IP Proyectos Industriales',
+        description:
+          'IP Proyectos Industriales inicia nuevo proyecto de izaje y montaje en faena minera.',
+        datePublished: '2026-07-01T08:00:00-04:00',
+      },
+    },
+  ];
+}
+
+const { post } = Astro.params;
+const { title, description, datePublished } = Astro.props;
+const postName = (post as string).replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+
+const breadcrumbs = [
+  { label: 'Inicio', url: '/' },
+  { label: 'Noticias', url: '/noticias' },
+  { label: postName },
+];
+
+const jsonLd = newsArticleSchema(title.replace(' | IP Proyectos Industriales', ''), description, Astro.url.pathname, datePublished);
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumbs} jsonLd={jsonLd}>
+  <SectionLayout spacing="lg">
+    <Container>
+      <article>
+        <time datetime={datePublished}>{new Date(datePublished).toLocaleDateString('es-CL')}</time>
+        <h1>{title.replace(' | IP Proyectos Industriales', '')}</h1>
+        <p>{description}</p>
+      </article>
+    </Container>
+  </SectionLayout>
+</BaseLayout>
+
+<style>
+  time {
+    display: block;
+    font-size: var(--text-small);
+    color: var(--color-ink-500);
+    margin-bottom: var(--space-2);
+  }
+
+  h1 {
+    margin-bottom: var(--space-6);
+  }
+</style>

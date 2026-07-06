@@ -1,0 +1,53 @@
+---
+// src/pages/arriendo-maquinaria/index.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import { serviceSchema } from '@/lib/seo';
+
+const title = 'Arriendo de Maquinaria para Minería | IP Proyectos Industriales';
+const description =
+  'Arriendo de maquinaria industrial y equipos de alto tonelaje para la gran minería: grúas, equipos de izaje y más.';
+
+const breadcrumbs = [
+  { label: 'Inicio', url: '/' },
+  { label: 'Arriendo Maquinaria' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumbs={breadcrumbs}
+  jsonLd={serviceSchema('Arriendo de Maquinaria', description, Astro.url.pathname)}
+>
+  <SectionLayout spacing="lg">
+    <Container>
+      <h1>Arriendo de Maquinaria</h1>
+      <p>Hub de arriendo de equipos para minería e industria.</p>
+      <ul>
+        <li><a href="/arriendo-maquinaria/gruas-alto-tonelaje">Grúas Alto Tonelaje</a></li>
+        <li><a href="/arriendo-maquinaria/equipos-de-izaje">Equipos de Izaje</a></li>
+      </ul>
+    </Container>
+  </SectionLayout>
+</BaseLayout>
+
+<style>
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+
+  a {
+    color: var(--color-brand);
+    font-weight: 500;
+  }
+
+  a:hover,
+  a:focus {
+    text-decoration: underline;
+  }
+</style>

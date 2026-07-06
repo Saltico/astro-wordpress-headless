@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Paginas legales y de confirmacion: indexables pero no prioritarias
+# Se controlan con meta robots noindex desde cada pagina
+
+Sitemap: https://ipproyectosindustriales.cl/sitemap-index.xml

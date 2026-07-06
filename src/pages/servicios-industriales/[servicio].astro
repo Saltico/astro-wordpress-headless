@@ -1,0 +1,49 @@
+---
+// src/pages/servicios-industriales/[servicio].astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import { serviceSchema } from '@/lib/seo';
+
+export function getStaticPaths() {
+  return [
+    {
+      params: { servicio: 'montaje-industrial' },
+      props: {
+        title: 'Montaje Industrial | IP Proyectos Industriales',
+        description:
+          'Servicios de montaje industrial para la gran minería. Ejecución con altos estándares de seguridad y calidad.',
+      },
+    },
+    {
+      params: { servicio: 'obras-civiles' },
+      props: {
+        title: 'Obras Civiles | IP Proyectos Industriales',
+        description:
+          'Construcción y ejecución de obras civiles para faenas mineras e industriales.',
+      },
+    },
+  ];
+}
+
+const { servicio } = Astro.params;
+const { title, description } = Astro.props;
+const serviceName = (servicio as string).replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+
+const breadcrumbs = [
+  { label: 'Inicio', url: '/' },
+  { label: 'Servicios Industriales', url: '/servicios-industriales' },
+  { label: serviceName },
+];
+
+const jsonLd = serviceSchema(serviceName, description, Astro.url.pathname);
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumbs} jsonLd={jsonLd}>
+  <SectionLayout spacing="lg">
+    <Container>
+      <h1>{serviceName}</h1>
+      <p>{description}</p>
+    </Container>
+  </SectionLayout>
+</BaseLayout>

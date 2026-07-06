@@ -1,0 +1,53 @@
+---
+// src/pages/proyectos/index.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import { collectionPageSchema } from '@/lib/seo';
+import { getSiteUrl } from '@/lib/seo';
+
+const title = 'Proyectos de Izaje y Obras | IP Proyectos Industriales';
+const description =
+  'Conoce nuestros proyectos de izaje, montaje industrial y obras civiles en la Región de Coquimbo y zona norte de Chile.';
+
+const breadcrumbs = [
+  { label: 'Inicio', url: '/' },
+  { label: 'Proyectos' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumbs={breadcrumbs}
+  jsonLd={collectionPageSchema('Proyectos', getSiteUrl('/proyectos'))}
+>
+  <SectionLayout spacing="lg">
+    <Container>
+      <h1>Proyectos</h1>
+      <p>Hub de proyectos ejecutados por IP Proyectos Industriales.</p>
+      <ul>
+        <li><a href="/proyectos/izaje-estructuras-la-serena">Izaje de Estructuras — La Serena</a></li>
+      </ul>
+    </Container>
+  </SectionLayout>
+</BaseLayout>
+
+<style>
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+  }
+
+  a {
+    color: var(--color-brand);
+    font-weight: 500;
+  }
+
+  a:hover,
+  a:focus {
+    text-decoration: underline;
+  }
+</style>

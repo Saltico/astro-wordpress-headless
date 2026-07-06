@@ -1,5 +1,7 @@
 ---
 // src/components/layout/TopBar.astro
+import Icon from '@/components/ui/Icon.astro';
+
 export interface Props {
   phone?: string;
   email?: string;
@@ -20,13 +22,13 @@ const {
     <ul class="topbar__list topbar__list--contact">
       <li>
         <a href={`tel:${phone.replace(/\s/g, '')}`} class="topbar__link">
-          <span aria-hidden="true" class="topbar__icon">📞</span>
+          <Icon name="phone" size={16} class="topbar__icon" />
           <span>{phone}</span>
         </a>
       </li>
       <li>
         <a href={`mailto:${email}`} class="topbar__link">
-          <span aria-hidden="true" class="topbar__icon">✉️</span>
+          <Icon name="email" size={16} class="topbar__icon" />
           <span>{email}</span>
         </a>
       </li>
@@ -92,8 +94,9 @@ const {
   }
 
   .topbar__icon {
-    display: inline-block;
-    width: 1rem;
-    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-brand);
   }
 </style>
