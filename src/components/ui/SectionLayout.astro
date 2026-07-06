@@ -1,0 +1,46 @@
+---
+// src/components/ui/SectionLayout.astro
+export interface Props {
+  class?: string;
+  as?: 'section' | 'div';
+  alt?: boolean;
+  spacing?: 'sm' | 'md' | 'lg';
+}
+
+const {
+  as: Tag = 'section',
+  class: className,
+  alt = false,
+  spacing = 'lg',
+} = Astro.props;
+
+const spacingClass = `section--${spacing}`;
+---
+
+<Tag
+  class:list={['section', spacingClass, alt && 'section--alt', className]}
+>
+  <slot />
+</Tag>
+
+<style>
+  .section {
+    width: 100%;
+  }
+
+  .section--sm {
+    padding-block: var(--space-8);
+  }
+
+  .section--md {
+    padding-block: var(--space-12);
+  }
+
+  .section--lg {
+    padding-block: var(--space-16);
+  }
+
+  .section--alt {
+    background-color: var(--color-surface-alt);
+  }
+</style>

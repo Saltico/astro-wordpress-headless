@@ -1,0 +1,338 @@
+---
+// src/components/layout/Navigation.astro
+import type { NavItem, NavigationProps } from '@/types/navigation';
+
+export interface Props extends NavigationProps {}
+
+const { items, activePath = Astro.url.pathname, ariaLabel = 'Navegación principal' } = Astro.props;
+
+function isActive(item: NavItem): boolean {
+  if (item.url === activePath) return true;
+  if (item.children?.some((child) => child.url === activePath)) return true;
+  return false;
+}
+---
+
+<nav class="nav" aria-label={ariaLabel}>
+  <button
+    type="button"
+    class="nav__toggle"
+    aria-expanded="false"
+    aria-controls="nav-dialog"
+    aria-label="Abrir menú"
+  >
+    <span class="nav__hamburger" aria-hidden="true"></span>
+    <span class="sr-only">Menú</span>
+  </button>
+
+  <ul class="nav__list nav__list--desktop">
+    {
+      items.map((item) => (
+        <li class:list={['nav__item', item.children && 'nav__item--has-children', isActive(item) && 'is-active']}>
+          <a href={item.url} class="nav__link" aria-current={isActive(item) ? 'page' : undefined}>
+            {item.label}
+          </a>
+          {item.children && (
+            <ul class="nav__submenu">
+              {item.children.map((child) => (
+                <li class="nav__subitem">
+                  <a href={child.url} class="nav__sublink" aria-current={child.url === activePath ? 'page' : undefined}>
+                    {child.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))
+    }
+  </ul>
+
+  <dialog id="nav-dialog" class="nav__dialog" aria-label={ariaLabel}>
+    <div class="nav__dialog-header">
+      <span class="nav__dialog-title">Menú</span>
+      <button type="button" class="nav__close" aria-label="Cerrar menú">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+
+    <ul class="nav__list nav__list--mobile">
+      {
+        items.map((item) => (
+          <li class="nav__mobile-item">
+            <a href={item.url} class="nav__mobile-link" aria-current={isActive(item) ? 'page' : undefined}>
+              {item.label}
+            </a>
+            {item.children && (
+              <ul class="nav__mobile-submenu">
+                {item.children.map((child) => (
+                  <li>
+                    <a href={child.url} class="nav__mobile-sublink" aria-current={child.url === activePath ? 'page' : undefined}>
+                      {child.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </dialog>
+</nav>
+
+<script>
+  (function () {
+    const toggle = document.querySelector('.nav__toggle');
+    const dialog = document.getElementById('nav-dialog') as HTMLDialogElement | null;
+    const closeBtn = document.querySelector('.nav__close');
+
+    if (!toggle || !dialog) return;
+
+    const openMenu = () => {
+      dialog.showModal();
+      toggle.setAttribute('aria-expanded', 'true');
+    };
+
+    const closeMenu = () => {
+      dialog.close();
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.focus();
+    };
+
+    toggle.addEventListener('click', openMenu);
+    closeBtn?.addEventListener('click', closeMenu);
+
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) {
+        closeMenu();
+      }
+    });
+
+    dialog.addEventListener('close', () => {
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+  })();
+</script>
+
+<style>
+  .nav {
+    display: flex;
+    align-items: center;
+  }
+
+  .nav__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    color: var(--color-ink);
+  }
+
+  @media (min-width: 1024px) {
+    .nav__toggle {
+      display: none;
+    }
+  }
+
+  .nav__hamburger {
+    position: relative;
+    display: block;
+    width: 1.25rem;
+    height: 2px;
+    background-color: currentColor;
+  }
+
+  .nav__hamburger::before,
+  .nav__hamburger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: currentColor;
+  }
+
+  .nav__hamburger::before {
+    top: -6px;
+  }
+
+  .nav__hamburger::after {
+    top: 6px;
+  }
+
+  .nav__list--desktop {
+    display: none;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  @media (min-width: 1024px) {
+    .nav__list--desktop {
+      display: flex;
+    }
+  }
+
+  .nav__item {
+    position: relative;
+  }
+
+  .nav__link {
+    display: block;
+    padding: var(--space-3) var(--space-2);
+    font-weight: 500;
+    color: var(--color-ink-700);
+    transition: color var(--motion-base) var(--ease-out);
+    border-bottom: 2px solid transparent;
+  }
+
+  .nav__link:hover,
+  .nav__link:focus,
+  .nav__item.is-active > .nav__link {
+    color: var(--color-brand);
+    border-bottom-color: var(--color-brand);
+  }
+
+  .nav__item--has-children > .nav__link::after {
+    content: '▼';
+    display: inline-block;
+    margin-left: var(--space-2);
+    font-size: 0.6em;
+    vertical-align: middle;
+  }
+
+  .nav__submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    padding: var(--space-3);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity var(--motion-base) var(--ease-out),
+      visibility var(--motion-base) var(--ease-out),
+      transform var(--motion-base) var(--ease-out);
+    z-index: 100;
+  }
+
+  .nav__item--has-children:hover > .nav__submenu,
+  .nav__item--has-children:focus-within > .nav__submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .nav__sublink {
+    display: block;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    transition: background-color var(--motion-base) var(--ease-out),
+      color var(--motion-base) var(--ease-out);
+  }
+
+  .nav__sublink:hover,
+  .nav__sublink:focus,
+  .nav__sublink[aria-current='page'] {
+    background-color: var(--color-surface-alt);
+    color: var(--color-brand);
+  }
+
+  .nav__dialog {
+    width: min(85vw, 320px);
+    height: 100vh;
+    max-height: 100vh;
+    margin: 0;
+    margin-left: auto;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background-color: var(--color-surface);
+  }
+
+  .nav__dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .nav__dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .nav__dialog-title {
+    font-weight: 700;
+    font-size: 1.125rem;
+  }
+
+  .nav__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-sm);
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--color-ink);
+  }
+
+  .nav__list--mobile {
+    padding: var(--space-4);
+  }
+
+  .nav__mobile-item {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .nav__mobile-link {
+    display: block;
+    padding: var(--space-4) 0;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .nav__mobile-link[aria-current='page'] {
+    color: var(--color-brand);
+  }
+
+  .nav__mobile-submenu {
+    padding-left: var(--space-4);
+    padding-bottom: var(--space-4);
+  }
+
+  .nav__mobile-sublink {
+    display: block;
+    padding: var(--space-2) 0;
+    color: var(--color-ink-700);
+  }
+
+  .nav__mobile-sublink[aria-current='page'] {
+    color: var(--color-brand);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

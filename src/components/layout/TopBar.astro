@@ -1,0 +1,99 @@
+---
+// src/components/layout/TopBar.astro
+export interface Props {
+  phone?: string;
+  email?: string;
+  integrityUrl?: string;
+  newsUrl?: string;
+}
+
+const {
+  phone = '+56 9 0000 0000',
+  email = 'contacto@ipproyectosindustriales.cl',
+  integrityUrl = '/canal-integridad',
+  newsUrl = '/noticias',
+} = Astro.props;
+---
+
+<div class="topbar" role="banner">
+  <div class="topbar__inner">
+    <ul class="topbar__list topbar__list--contact">
+      <li>
+        <a href={`tel:${phone.replace(/\s/g, '')}`} class="topbar__link">
+          <span aria-hidden="true" class="topbar__icon">📞</span>
+          <span>{phone}</span>
+        </a>
+      </li>
+      <li>
+        <a href={`mailto:${email}`} class="topbar__link">
+          <span aria-hidden="true" class="topbar__icon">✉️</span>
+          <span>{email}</span>
+        </a>
+      </li>
+    </ul>
+
+    <ul class="topbar__list topbar__list--actions">
+      <li>
+        <a href={integrityUrl} class="topbar__link">Canal de Integridad</a>
+      </li>
+      <li>
+        <a href={newsUrl} class="topbar__link topbar__link--highlight">Noticias</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<style>
+  .topbar {
+    display: none;
+    background-color: var(--color-surface-alt);
+    border-bottom: 1px solid var(--color-line);
+    font-size: 0.875rem;
+    color: var(--color-ink-700);
+  }
+
+  @media (min-width: 768px) {
+    .topbar {
+      display: block;
+    }
+  }
+
+  .topbar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: var(--container-max-width);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
+    height: var(--topbar-height);
+  }
+
+  .topbar__list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  .topbar__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    transition: color var(--motion-base) var(--ease-out);
+  }
+
+  .topbar__link:hover,
+  .topbar__link:focus {
+    color: var(--color-brand);
+  }
+
+  .topbar__link--highlight {
+    font-weight: 600;
+    color: var(--color-brand);
+  }
+
+  .topbar__icon {
+    display: inline-block;
+    width: 1rem;
+    text-align: center;
+  }
+</style>

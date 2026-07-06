@@ -1,11 +1,99 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+// src/pages/index.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const title = 'IP Proyectos Industriales · Ingeniería e Izaje para la Gran Minería';
+const description =
+  'Especialistas en obras civiles, montaje industrial y arriendo de maquinaria de alto tonelaje para la gran minería en la Región de Coquimbo.';
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<BaseLayout title={title} description={description}>
+  <SectionLayout alt spacing="lg">
+    <Container>
+      <h1>Soluciones de Ingeniería e Izaje para la Gran Minería</h1>
+      <p>
+        Empresa chilena especializada en obras civiles, montaje industrial y
+        arriendo de maquinaria de alto tonelaje para la gran minería.
+      </p>
+      <div class="hero-actions">
+        <a href="/servicios-industriales" class="button button--primary">Ver Servicios Industriales</a>
+        <a href="/arriendo-maquinaria" class="button button--secondary">Arriendo de Maquinaria</a>
+      </div>
+    </Container>
+  </SectionLayout>
+
+  <SectionLayout spacing="md">
+    <Container>
+      <h2>Base de componentes implementada</h2>
+      <p>
+        Este es un placeholder de la homepage. En specs posteriores se integrarán
+        el Trust Band, el módulo HSEQ, cards de servicios y proyectos, y el
+        formulario de captación de leads.
+      </p>
+    </Container>
+  </SectionLayout>
+</BaseLayout>
+
+<style>
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    margin-bottom: 1rem;
+  }
+
+  p {
+    max-width: 65ch;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.625rem 1.25rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    transition: background-color var(--motion-base) var(--ease-out),
+      transform var(--motion-base) var(--ease-out);
+  }
+
+  .button:hover,
+  .button:focus {
+    transform: scale(1.02);
+  }
+
+  .button--primary {
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+
+  .button--primary:hover,
+  .button--primary:focus {
+    background-color: var(--color-brand-600);
+  }
+
+  .button--secondary {
+    background-color: transparent;
+    color: var(--color-brand);
+    border: 1px solid currentColor;
+  }
+
+  .button--secondary:hover,
+  .button--secondary:focus {
+    background-color: var(--color-brand-050);
+  }
+</style>
