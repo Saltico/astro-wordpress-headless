@@ -20,6 +20,16 @@ export const ICON_NAMES = [
   'certificate',
   'check',
   'warning',
+  'linkedin',
+  'instagram',
+  'facebook',
+  'location',
+  'clock',
+  'user',
+  'file-text',
+  'map-pin',
+  'cart',
+  'search',
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];

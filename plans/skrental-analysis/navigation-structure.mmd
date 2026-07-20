@@ -1,0 +1,124 @@
+graph TB
+    subgraph "🏠 Header Principal"
+        LOGO["🏢 SK Rental Logo"]
+        MENU["📂 Menú Principal"]
+        SEARCH["🔍 Buscador"]
+        CART["🛒 Cotizador"]
+        USER["👤 Mi Cuenta"]
+        COUNTRY["🌍 País: CL"]
+    end
+    
+    subgraph "📂 Menú Principal"
+        ARRIENDO["🔧 ARRIENDO"]
+        PROMOCIONES["⭐ PROMOCIONES"]
+        DISPONIBILIDAD["⚡ DISP. INMEDIATA"]
+        RENTING["💼 RENTING"]
+        SOLUCIONES["💡 SOLUCIONES"]
+        BLOG["📝 BLOG"]
+    end
+    
+    subgraph "🔧 Submenú ARRIENDO"
+        MOV_TIERRA["🚜 Mov. Tierra"]
+        CAMIONES["🚛 Camiones"]
+        GRUAS["🏗️ Grúas"]
+        ALZAHOMBRES["⬆️ Alzahombres"]
+        EQUIPOS_APOYO["🔧 Equipos Apoyo"]
+        COMPACTACION["🔩 Compactación"]
+        MARTILLOS["🔨 Martillos"]
+        SUSTENTABLES["🌱 Sustentables"]
+        MINERIA["⛏️ Minería"]
+    end
+    
+    subgraph "⭐ Submenú PROMOCIONES"
+        PROMO_CAT1["Camión Articulado"]
+        PROMO_CAT2["Camiones Grúa"]
+        PROMO_CAT3["Cargador"]
+        PROMO_CAT4["Excavadora"]
+        PROMO_CAT5["Grúas Horquilla"]
+        PROMO_CAT6["Manipulador"]
+        PROMO_CAT7["Motoniveladora"]
+        PROMO_CAT8["Retroexcavadora"]
+        PROMO_CAT9["Rodillo"]
+    end
+    
+    subgraph "⚡ Submenú DISPONIBILIDAD"
+        DISP_MOV["Mov. Tierra"]
+        DISP_IND["Industrial"]
+        DISP_CAM["Camiones"]
+    end
+    
+    subgraph "📄 Páginas Estáticas"
+        SOBRE_NOSOTROS["🏢 Somos SKR"]
+        PROYECTOS["📁 Proyectos"]
+        TESTIMONIOS["💬 Testimonios"]
+        SUCURSALES["📍 Sucursales"]
+        FAQ["❓ Preg. Frecuentes"]
+        TERMINOS["📜 Términos"]
+        PRIVACIDAD["🔒 Privacidad"]
+        WEBPAY["💳 Webpay"]
+    end
+    
+    subgraph "🛒 Cotizador"
+        COT_LIST["📋 Lista Productos"]
+        COT_TOTAL["💰 Total"]
+        COT_ENVIAR["📤 Enviar"]
+        COT_LOGIN["🔐 Login Requerido"]
+    end
+    
+    subgraph "👤 Mi Cuenta"
+        LOGIN["🔐 Login"]
+        REGISTRO["📝 Registro"]
+        DASHBOARD["📊 Dashboard"]
+        PEDIDOS["📦 Mis Pedidos"]
+        PERFIL["👤 Perfil"]
+    end
+    
+    LOGO --> MENU
+    MENU --> ARRIENDO
+    MENU --> PROMOCIONES
+    MENU --> DISPONIBILIDAD
+    MENU --> RENTING
+    MENU --> SOLUCIONES
+    MENU --> BLOG
+    
+    ARRIENDO --> MOV_TIERRA
+    ARRIENDO --> CAMIONES
+    ARRIENDO --> GRUAS
+    ARRIENDO --> ALZAHOMBRES
+    ARRIENDO --> EQUIPOS_APOYO
+    ARRIENDO --> COMPACTACION
+    ARRIENDO --> MARTILLOS
+    ARRIENDO --> SUSTENTABLES
+    ARRIENDO --> MINERIA
+    
+    PROMOCIONES --> PROMO_CAT1
+    PROMOCIONES --> PROMO_CAT2
+    PROMOCIONES --> PROMO_CAT3
+    PROMOCIONES --> PROMO_CAT4
+    PROMOCIONES --> PROMO_CAT5
+    PROMOCIONES --> PROMO_CAT6
+    PROMOCIONES --> PROMO_CAT7
+    PROMOCIONES --> PROMO_CAT8
+    PROMOCIONES --> PROMO_CAT9
+    
+    DISPONIBILIDAD --> DISP_MOV
+    DISPONIBILIDAD --> DISP_IND
+    DISPONIBILIDAD --> DISP_CAM
+    
+    USER --> LOGIN
+    USER --> REGISTRO
+    USER --> DASHBOARD
+    DASHBOARD --> PEDIDOS
+    DASHBOARD --> PERFIL
+    
+    CART --> COT_LIST
+    COT_LIST --> COT_TOTAL
+    COT_TOTAL --> COT_ENVIAR
+    COT_ENVIAR --> COT_LOGIN
+    
+    style LOGO fill:#FF6B00,color:white
+    style MENU fill:#2196F3,color:white
+    style SEARCH fill:#4CAF50,color:white
+    style CART fill:#9C27B0,color:white
+    style USER fill:#F44336,color:white
+    style COUNTRY fill:#00BCD4,color:white

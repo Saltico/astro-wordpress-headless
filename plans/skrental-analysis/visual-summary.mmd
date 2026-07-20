@@ -1,0 +1,102 @@
+graph TB
+    subgraph "📊 Análisis SK Rental Chile"
+        ANALYSIS["🔍 Análisis Completo"]
+    end
+    
+    subgraph "📄 Documentos Principales"
+        README["📝 README.md<br/>Índice General"]
+        OVERVIEW["📋 project-overview.md<br/>Resumen Proyecto"]
+        PAGES["📚 indexed-pages-structure.md<br/>130+ Páginas"]
+        COMPONENTS["🧩 components-architecture.md<br/>Componentes UI"]
+        SUMMARY["📊 executive-summary.md<br/>Resumen Ejecutivo"]
+    end
+    
+    subgraph "🔧 Documentos Soporte"
+        SEO["🔍 seo-quick-audit.md<br/>Auditoría SEO"]
+        CONCLUSIONS["🎯 conclusions.md<br/>Conclusiones"]
+        CHECKLIST["✅ implementation-checklist.md<br/>Lista Verificación"]
+    end
+    
+    subgraph "📈 Diagramas Mermaid"
+        ARCH["🏗️ architecture-diagram.mmd<br/>Arquitectura"]
+        USER["👤 user-flow-diagram.mmd<br/>Flujos Usuario"]
+        NAV["🧭 navigation-structure.mmd<br/>Navegación"]
+        CONTENT["📝 content-structure.mmd<br/>Estructura Contenido"]
+    end
+    
+    subgraph "🎯 Hallazgos Clave"
+        PAGES_COUNT["📄 130+ Páginas<br/>Indexadas"]
+        CATEGORIES["📂 11 Categorías<br/>Principales"]
+        PRODUCTS["📋 80+ Productos<br/>Individuales"]
+        COUNTRIES["🌍 4 Países<br/>Activos"]
+    end
+    
+    subgraph "✅ Fortalezas"
+        SEO_STRONG["🔍 SEO Técnico<br/>Sólido"]
+        UX_STRONG["👆 Experiencia<br/>Usuario"]
+        CONTENT_STRONG["📝 Contenido<br/>Rico"]
+        MULTI["🌐 Multi-Mercado<br/>4 Países"]
+    end
+    
+    subgraph "⚠️ Mejoras"
+        BLOG["📝 Blog<br/>Separado"]
+        SCHEMA["🏷️ Schema<br/>No Implementado"]
+        HREFLANG["🌍 Hreflang<br/>Requiere Verificación"]
+        SPEED["⚡ Velocidad<br/>Requiere Auditoría"]
+    end
+    
+    ANALYSIS --> README
+    ANALYSIS --> OVERVIEW
+    ANALYSIS --> PAGES
+    ANALYSIS --> COMPONENTS
+    ANALYSIS --> SUMMARY
+    
+    ANALYSIS --> SEO
+    ANALYSIS --> CONCLUSIONS
+    ANALYSIS --> CHECKLIST
+    
+    ANALYSIS --> ARCH
+    ANALYSIS --> USER
+    ANALYSIS --> NAV
+    ANALYSIS --> CONTENT
+    
+    PAGES --> PAGES_COUNT
+    PAGES --> CATEGORIES
+    PAGES --> PRODUCTS
+    PAGES --> COUNTRIES
+    
+    OVERVIEW --> SEO_STRONG
+    OVERVIEW --> UX_STRONG
+    OVERVIEW --> CONTENT_STRONG
+    OVERVIEW --> MULTI
+    
+    SEO --> BLOG
+    SEO --> SCHEMA
+    SEO --> HREFLANG
+    SEO --> SPEED
+    
+    style ANALYSIS fill:#4CAF50,color:white
+    style README fill:#2196F3,color:white
+    style OVERVIEW fill:#2196F3,color:white
+    style PAGES fill:#2196F3,color:white
+    style COMPONENTS fill:#2196F3,color:white
+    style SUMMARY fill:#2196F3,color:white
+    style SEO fill:#FF9800,color:white
+    style CONCLUSIONS fill:#FF9800,color:white
+    style CHECKLIST fill:#FF9800,color:white
+    style ARCH fill:#9C27B0,color:white
+    style USER fill:#9C27B0,color:white
+    style NAV fill:#9C27B0,color:white
+    style CONTENT fill:#9C27B0,color:white
+    style PAGES_COUNT fill:#4CAF50,color:white
+    style CATEGORIES fill:#4CAF50,color:white
+    style PRODUCTS fill:#4CAF50,color:white
+    style COUNTRIES fill:#4CAF50,color:white
+    style SEO_STRONG fill:#4CAF50,color:white
+    style UX_STRONG fill:#4CAF50,color:white
+    style CONTENT_STRONG fill:#4CAF50,color:white
+    style MULTI fill:#4CAF50,color:white
+    style BLOG fill:#F44336,color:white
+    style SCHEMA fill:#F44336,color:white
+    style HREFLANG fill:#F44336,color:white
+    style SPEED fill:#F44336,color:white

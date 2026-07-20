@@ -1,0 +1,274 @@
+---
+// src/components/ui/ClientsGrid.astro
+// Grid de logos de clientes
+// Altamente configurable para reutilización en plantillas
+
+export interface ClientLogo {
+  src: string;
+  alt: string;
+  url?: string;
+  width?: number;
+  height?: number;
+}
+
+export interface Props {
+  logos: ClientLogo[];
+  title?: string;
+  subtitle?: string;
+  eyebrow?: string;
+  columns?: 2 | 3 | 4 | 5 | 6;
+  variant?: 'light' | 'dark';
+  cellBackground?: string;
+  cellHeight?: string;
+  cellRadius?: string;
+  showOnScroll?: boolean;
+  className?: string;
+}
+
+const {
+  logos,
+  title,
+  subtitle,
+  eyebrow,
+  columns = 6,
+  variant = 'dark',
+  cellBackground = '#fff',
+  cellHeight = '76px',
+  cellRadius = '10px',
+  showOnScroll = true,
+  className = '',
+} = Astro.props;
+
+const columnsClass = `clients-grid--cols-${columns}`;
+const variantClass = `clients-grid--${variant}`;
+---
+
+<section class={`clients-grid ${variantClass} ${columnsClass} ${className}`.trim()}>
+  <div class="clients-grid__container">
+    {(eyebrow || title || subtitle) && (
+      <div class="clients-grid__header">
+        {eyebrow && <p class="clients-grid__eyebrow">{eyebrow}</p>}
+        {title && <h2 class="clients-grid__title">{title}</h2>}
+        {subtitle && <p class="clients-grid__subtitle">{subtitle}</p>}
+      </div>
+    )}
+
+    <div class="clients-grid__logos" class:list={[showOnScroll && 'reveal']}>
+      {logos.map((logo) => (
+        <div
+          class="clients-grid__cell"
+          style={`background: ${cellBackground}; height: ${cellHeight}; border-radius: ${cellRadius};`}
+        >
+          {logo.url ? (
+            <a href={logo.url} target="_blank" rel="noopener noreferrer">
+              <img
+                src={logo.src}
+                alt={logo.alt}
+                width={logo.width}
+                height={logo.height}
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+          ) : (
+            <img
+              src={logo.src}
+              alt={logo.alt}
+              width={logo.width}
+              height={logo.height}
+              loading="lazy"
+              decoding="async"
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .clients-grid {
+    padding-block: clamp(48px, 7vw, 90px);
+  }
+
+  .clients-grid--light {
+    background-color: var(--color-surface, #fff);
+  }
+
+  .clients-grid--dark {
+    background-color: var(--color-surface-alt, #1a1a1a);
+  }
+
+  .clients-grid__container {
+    max-width: 1360px;
+    margin-inline: auto;
+    padding-inline: var(--container-padding, 20px);
+    text-align: center;
+  }
+
+  .clients-grid__header {
+    margin-bottom: 32px;
+  }
+
+  .clients-grid__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+
+  .clients-grid--light .clients-grid__eyebrow {
+    color: var(--color-brand, #1a9c4a);
+  }
+
+  .clients-grid--dark .clients-grid__eyebrow {
+    color: var(--color-brand-300, #4ade80);
+  }
+
+  .clients-grid__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .clients-grid__title {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 800;
+    font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+  }
+
+  .clients-grid--light .clients-grid__title {
+    color: var(--color-ink, #1a1a1a);
+  }
+
+  .clients-grid--dark .clients-grid__title {
+    color: #fff;
+  }
+
+  .clients-grid__subtitle {
+    font-size: 1rem;
+    max-width: 60ch;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  .clients-grid--light .clients-grid__subtitle {
+    color: var(--color-ink-500, #6b7280);
+  }
+
+  .clients-grid--dark .clients-grid__subtitle {
+    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+  }
+
+  /* Grid de logos */
+  .clients-grid__logos {
+    display: grid;
+    gap: 14px;
+  }
+
+  .clients-grid--cols-2 .clients-grid__logos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .clients-grid--cols-3 .clients-grid__logos {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .clients-grid--cols-4 .clients-grid__logos {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .clients-grid--cols-5 .clients-grid__logos {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .clients-grid--cols-6 .clients-grid__logos {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  @media (max-width: 860px) {
+    .clients-grid--cols-5 .clients-grid__logos,
+    .clients-grid--cols-6 .clients-grid__logos {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .clients-grid--cols-3 .clients-grid__logos,
+    .clients-grid--cols-4 .clients-grid__logos,
+    .clients-grid--cols-5 .clients-grid__logos,
+    .clients-grid--cols-6 .clients-grid__logos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Celda de logo */
+  .clients-grid__cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .clients-grid__cell:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .clients-grid__cell img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  .clients-grid__cell a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Animación reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  // Intersection Observer para animación reveal
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll('.reveal').forEach((el) => {
+      observer.observe(el);
+    });
+  }
+</script>

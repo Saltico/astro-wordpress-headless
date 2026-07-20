@@ -1,1083 +1,349 @@
 ---
 // src/pages/index.astro
-// Homepage B2B para IP Proyectos Industriales.
-// Enfasis en conversion: hero con valor claro, carrusel de clientes,
-// servicios escaneables, HSEQ, proyectos y CTA de contacto.
+// Home replicando estructura exacta del diseño final
+// https://cute-banoffee-cf39a5.netlify.app/
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
-import SectionLayout from '@/components/ui/SectionLayout.astro';
-import TrustBand from '@/components/ui/TrustBand.astro';
+import StatsCounter from '@/components/ui/StatsCounter.astro';
+import LogoCarousel from '@/components/ui/LogoCarousel.astro';
+import SplitSection from '@/components/ui/SplitSection.astro';
+import ServicesGrid from '@/components/ui/ServicesGrid.astro';
+import CTABand from '@/components/ui/CTABand.astro';
+import NewsGrid from '@/components/ui/NewsGrid.astro';
 import Icon from '@/components/ui/Icon.astro';
-import type { IconName } from '@/lib/icons';
+import type { StatItem } from '@/components/ui/StatsCounter.astro';
+import type { ServiceItem } from '@/components/ui/ServicesGrid.astro';
+import { getLatestNews } from '@/lib/news';
 
 import heroImg from '@/assets/imgs/hero.jpg';
-import logoCap from '@/assets/logos/logo-cap.svg';
-import logoKomatsu from '@/assets/logos/logo-komatsu.svg';
-import logoMutual from '@/assets/logos/logo-mutual.svg';
-import logoCodelco from '@/assets/logos/logo-codelco.svg';
-import logoAdv from '@/assets/logos/logo-adv.png';
-import logoMecamin from '@/assets/logos/logo_mecamin.png';
 
-const title = 'IP Proyectos Industriales · Ingeniería e Izaje para la Gran Minería';
-const description =
-  'Especialistas en obras civiles, montaje industrial y arriendo de maquinaria de alto tonelaje para la gran minería en la Región de Coquimbo. Solicita tu cotización.';
+const title = 'IP Proyectos Industriales | Ingeniería, montajes y grúas de alto tonelaje para la minería';
+const description = 'IP Proyectos Industriales: ingeniería, construcción, montajes e izajes de alto tonelaje (hasta 400 t) para la gran minería en Atacama y Coquimbo. Cotiza fácil.';
 
+// Stats configurables como en el diseño final
+const stats: StatItem[] = [
+  { 
+    value: 25, 
+    label: 'Años de experiencia',
+    prefix: '+',
+    prefixPosition: 'before'
+  },
+  { 
+    value: 100, 
+    label: 'Equipos propios',
+    prefix: '+',
+    prefixPosition: 'before'
+  },
+  { 
+    value: 400, 
+    label: 'Capacidad de izaje',
+    suffix: 'Tons',
+    suffixPosition: 'after'
+  },
+  { 
+    value: 5, 
+    label: 'Líneas de servicio'
+  },
+];
+
+// Servicios en layout bento
+const services: ServiceItem[] = [
+  {
+    category: 'Ingeniería',
+    title: 'Con foco en constructibilidad',
+    subtitle: '',
+    description: 'Diseño e ingeniería de detalle y gestión integral de proyectos, compras y contratos.',
+    image: heroImg.src,
+    link: '/servicios/ingenieria',
+    linkLabel: 'Conocer',
+  },
+  {
+    category: 'Construcción',
+    title: 'Obras civiles e industriales',
+    subtitle: '',
+    description: 'Control de calidad en cada etapa: contratos EPC, prefabricados y pinturas especiales.',
+    image: heroImg.src,
+    link: '/servicios/construccion',
+    linkLabel: 'Conocer',
+  },
+  {
+    category: 'Montajes',
+    title: 'Mineros e industriales',
+    subtitle: '',
+    description: 'Montaje electromecánico y estructural en faena, con foco en seguridad.',
+    image: heroImg.src,
+    link: '/servicios/montajes',
+    linkLabel: 'Conocer',
+  },
+  {
+    category: 'Infraestructura portuaria',
+    title: 'Puertos y terminales',
+    subtitle: '',
+    description: 'Obras marítimas: muelles, defensas e impermeabilización de piscinas y tranques.',
+    image: heroImg.src,
+    link: '/servicios/infraestructura-portuaria',
+    linkLabel: 'Conocer',
+  },
+  {
+    category: 'Rental de equipos',
+    title: 'Grúas de alto tonelaje',
+    subtitle: '',
+    description: 'Hasta 400 toneladas. Grúas AT/RT, alza-hombre, camión pluma y manipuladores, con operadores certificados. Más movimiento de tierra, transporte y equipos especiales.',
+    image: heroImg.src,
+    link: '/arriendo',
+    linkLabel: 'Ver flota',
+    featured: true,
+  },
+];
+
+// Clientes
 const clientLogos = [
-  { src: logoCap.src, alt: 'CAP Minería', width: 140, height: 42 },
-  { src: logoKomatsu.src, alt: 'Komatsu', width: 160, height: 42 },
-  { src: logoMutual.src, alt: 'Mutual de Seguridad', width: 160, height: 42 },
-  { src: logoCodelco.src, alt: 'Codelco', width: 160, height: 42 },
-  { src: logoAdv.src, alt: 'ADV', width: 120, height: 42 },
-  { src: logoMecamin.src, alt: 'Mecamin', width: 140, height: 42 },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/barrick.jpg', alt: 'Barrick' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/cmpchile_logo.jpeg', alt: 'CMP' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/aura.png', alt: 'Aura Minerals' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/minerals.png', alt: 'Minerals' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/aguasvalle.jpg', alt: 'Aguas del Valle' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/cummnins.jpg', alt: 'Cummins' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/famesa.jpg', alt: 'Famesa' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/23.jpg', alt: 'Cliente' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/22.jpg', alt: 'Cliente' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/21.jpg', alt: 'Cliente' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/20.jpg', alt: 'Cliente' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/19.jpg', alt: 'Cliente' },
 ];
 
-const services = [
-  {
-    icon: 'crane',
-    title: 'Montaje Industrial',
-    description:
-      'Desmontaje, traslado y montaje de equipos críticos para plantas concentradoras, faenas mineras y parques eólicos.',
-    link: '/servicios-industriales/montaje-industrial',
-  },
-  {
-    icon: 'shield',
-    title: 'Obras Civiles',
-    description:
-      'Ejecución de obras civiles industriales con altos estándares HSEQ, plazos garantizados y control de costos.',
-    link: '/servicios-industriales/obras-civiles',
-  },
-  {
-    icon: 'weight',
-    title: 'Arriendo e Izaje',
-    description:
-      'Grúas de alto tonelaje, manipuladores telescópicos y equipos especializados con operadores certificados.',
-    link: '/arriendo-maquinaria',
-  },
-];
-
-const hseqItems = [
-  {
-    icon: 'certificate',
-    title: 'Certificaciones',
-    description: 'Sistemas de gestión validados que respaldan cada proceso de obra.',
-  },
-  {
-    icon: 'shield',
-    title: 'Cultura HSEQ',
-    description: 'Liderazgo visible, capacitación continua y reporte proactivo de riesgos.',
-  },
-  {
-    icon: 'check',
-    title: 'Cumplimiento Legal',
-    description: 'Alineación total con normativa minera, seguridad y medioambiente.',
-  },
-];
-
-const projects = [
-  {
-    client: 'Minera del Valle',
-    location: 'Región de Coquimbo',
-    result: 'Montaje de estructura metálica > 200 t',
-    link: '/proyectos',
-  },
-  {
-    client: 'Parque Eólico Norte',
-    location: 'Región de Coquimbo',
-    result: 'Izaje de 8 aerogeneradores',
-    link: '/proyectos',
-  },
-  {
-    client: 'Planta Concentradora',
-    location: 'Región de Atacama',
-    result: 'Desmontaje y traslado de molino',
-    link: '/proyectos',
-  },
-];
+// Noticias (3 más recientes del data store)
+const newsItems = await getLatestNews(3);
 ---
 
-<BaseLayout title={title} description={description}>
-  <!-- Hero -->
-  <section class="hero hero--media">
-    <div class="hero__media" aria-hidden="true">
-      <img
-        class="hero__img"
-        src={heroImg.src}
-        alt="Equipo de IP Proyectos Industriales ejecutando izaje en faena minera"
-        width={heroImg.width}
-        height={heroImg.height}
-        loading="eager"
-        fetchpriority="high"
-      />
-      <div class="hero__overlay"></div>
-    </div>
-    <div class="hero__inner">
-      <Container>
-        <div class="hero__grid">
-        <div class="hero__content">
-          <p class="hero__eyebrow">Especialistas en minería e industria</p>
-          <h1 style={{color: 'white'}}>Ingeniería, montaje y arriendo de equipos para la gran minería</h1>
-          <p class="hero__lead">
-            Empresa chilena con base en la Región de Coquimbo. Ejecutamos obras civiles,
-            montaje industrial y arriendo de maquinaria de alto tonelaje con estándares
-            HSEQ que la gran minería exige.
-          </p>
-          <div class="hero__actions">
-            <a href="/contacto" class="button button--primary">
-              Solicitar cotización
-              <Icon name="arrow-right" size={18} />
-            </a>
-            <a href="/servicios-industriales" class="button button--secondary">Ver servicios</a>
-          </div>
-          <div class="hero__stats">
-            <div class="stat">
-              <span class="stat__value">+15</span>
-              <span class="stat__label">años de experiencia</span>
-            </div>
-            <div class="stat">
-              <span class="stat__value">+200</span>
-              <span class="stat__label">proyectos ejecutados</span>
-            </div>
-
-          </div>
-        </div>
-        <div class="hero__visual" aria-hidden="true">
-          <div class="hero__shape hero__shape--1"></div>
-          <div class="hero__shape hero__shape--2"></div>
-          <div class="hero__shape hero__shape--3"></div>
-        </div>
+<BaseLayout
+  title={title}
+  description={description}
+>
+  <!-- 1. HERO con video/imagen de fondo -->
+  <section class="d-hero">
+    <img
+      src={heroImg.src}
+      alt="Izaje en tándem con grúas de alto tonelaje en faena minera"
+      class="d-hero__bg"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div class="d-hero__overlay"></div>
+    <div class="d-hero__container">
+      <div class="d-hero__content">
+        <p class="d-hero__eyebrow">Desde el año 2000 junto a la Gran Minería</p>
+        <h1 class="d-hero__title">La pasión y el valor por un <span>trabajo bien hecho</span></h1>
+        <p class="d-hero__subtitle">Ingeniería, construcción, montajes y Rental de equipos. Todo de principio a fin, con una sola empresa.</p>
       </div>
-    </Container>
+    </div>
+    <div class="d-hero__scroll">
+      <span></span>
+      Scroll
     </div>
   </section>
 
-  <!-- Trust band -->
-  <TrustBand title="Empresas que confían en nuestro trabajo" logos={clientLogos} />
+  <!-- 2. STATS COUNTER -->
+  <StatsCounter
+    stats={stats}
+    variant="dark"
+    layout="horizontal"
+    columns={4}
+    animated={true}
+    duration={1500}
+  />
 
-  <!-- Servicios -->
-  <SectionLayout spacing="lg">
-    <Container>
-      <div class="section-header">
-        <p class="section-header__eyebrow">Nuestros servicios</p>
-        <h2>Soluciones integrales para faenas mineras e industriales</h2>
-        <p class="section-header__lead">
-          Unimos ingeniería, equipamiento y gestión HSEQ para entregar resultados
-          confiables en cada etapa del proyecto.
-        </p>
-      </div>
+  <!-- 3. QUIÉNES SOMOS -->
+  <SplitSection
+    eyebrow="Quiénes somos"
+    title="En el corazón de los proyectos industriales más desafiantes"
+    description="IP Proyectos Industriales se posiciona como referente en izajes seguros y eficientes, combinando tecnología de vanguardia con un equipo humano de alto nivel. Más de 25 años apoyando a la gran minería de Chile."
+    image={heroImg.src}
+    imageAlt="Izaje en tándem con grúas de alto tonelaje en faena minera"
+    cta={{ label: 'Conocer la empresa', href: '/nosotros' }}
+    variant="default"
+    background="dark"
+  />
 
-      <div class="service-grid">
-        {
-          services.map((service) => (
-            <article class="service-card">
-              <div class="service-card__icon">
-                <Icon name={service.icon as IconName} size={32} />
-              </div>
-              <h3 class="service-card__title">
-                <a href={service.link}>{service.title}</a>
-              </h3>
-              <p class="service-card__description">{service.description}</p>
-              <a href={service.link} class="service-card__link">
-                Conocer más <Icon name="arrow-right" size={16} />
-              </a>
-            </article>
-          ))
-        }
-      </div>
-    </Container>
-  </SectionLayout>
+  <!-- 4. CARRUSEL DE LOGOS -->
+  <LogoCarousel
+    logos={clientLogos}
+    title="Confían en nosotros"
+    subtitle="Empresas líderes de la gran minería y la industria que han confiado en nuestro trabajo."
+    speed="normal"
+    backgroundVariant="white"
+    pauseOnHover={true}
+  />
 
-  <!-- Arriendo destacado -->
-  <SectionLayout alt spacing="lg">
-    <Container>
-      <div class="rental-grid">
-        <div class="rental__content">
-          <p class="section-header__eyebrow">Arriendo de maquinaria</p>
-          <h2>Equipos de alto tonelaje con operadores certificados</h2>
-          <p class="rental__lead">
-            Disponemos de grúas todo terreno, grúas sobre orugas, manipuladores telescópicos
-            y equipos de izaje para operaciones críticas en minería e industria.
-          </p>
-          <ul class="checklist">
-            <li>
-              <Icon name="check" size={20} /> Mantención preventiva certificada
-            </li>
-            <li>
-              <Icon name="check" size={20} /> Operadores con licencia vigente
-            </li>
-            <li>
-              <Icon name="check" size={20} /> Disponibilidad en terreno 24/7
-            </li>
-            <li>
-              <Icon name="check" size={20} /> Planes de izaje y permisos de trabajo
-            </li>
-          </ul>
-          <div class="rental__actions">
-            <a href="/arriendo-maquinaria" class="button button--primary">
-              Ver equipos disponibles
-              <Icon name="arrow-right" size={18} />
-            </a>
-            <a href="/contacto" class="button button--secondary">Cotizar arriendo</a>
-          </div>
-        </div>
-        <div class="rental__visual" aria-hidden="true">
-          <div class="rental__card">
-            <Icon name="crane" size={64} />
-            <span class="rental__card-label">Grúas hasta 500 t</span>
-          </div>
-          <div class="rental__card rental__card--alt">
-            <Icon name="weight" size={64} />
-            <span class="rental__card-label">Izajes certificados</span>
-          </div>
-        </div>
-      </div>
-    </Container>
-  </SectionLayout>
+  <!-- 5. SERVICIOS -->
+  <ServicesGrid
+    eyebrow="Lo que hacemos"
+    title="Una sola empresa para todo el ciclo de tu proyecto"
+    services={services}
+    layout="bento"
+    variant="dark"
+  />
 
-  <!-- HSEQ -->
-  <SectionLayout spacing="lg">
-    <Container>
-      <div class="section-header section-header--centered">
-        <p class="section-header__eyebrow">HSEQ & Compliance</p>
-        <h2>Seguridad, calidad y medioambiente en cada operación</h2>
-        <p class="section-header__lead">
-          Nuestro compromiso es operar sin incidentes, cumpliendo la normativa y generando
-          confianza a nuestros clientes y colaboradores.
-        </p>
-      </div>
+  <!-- 6. HSEC / SEGURIDAD -->
+  <SplitSection
+    eyebrow="Seguridad, salud y medio ambiente"
+    title="El cuidado de las personas es nuestro primer estándar"
+    description="Contamos con un Departamento de Prevención de Riesgos y Medio Ambiente propio, y un Sistema de Gestión HSEC que respalda cada faena."
+    image={heroImg.src}
+    imageAlt="Trabajo seguro en faena con EPP"
+    variant="reversed"
+    background="dark"
+    miniStats={[
+      { value: '460.000', label: 'Horas hombre trabajadas' },
+      { value: '0,93%', label: 'Tasa de cotización (R12)' },
+      { value: 'Bajo', label: 'Riesgo psicosocial' },
+    ]}
+    cta={{ label: 'Conocer Seguridad', href: '/compliance/hseq' }}
+  />
 
-      <div class="hseq-grid">
-        {
-          hseqItems.map((item) => (
-            <article class="hseq-card">
-              <div class="hseq-card__icon">
-                <Icon name={item.icon as IconName} size={32} />
-              </div>
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
-            </article>
-          ))
-        }
-      </div>
+  <!-- 7. CTA BAND -->
+  <CTABand
+    eyebrow="Cotización rápida"
+    title="Tu próximo proyecto empieza con una conversación"
+    backgroundImage={heroImg.src}
+    backgroundAlt="Edificio corporativo IP"
+    buttons={[
+      { label: 'Cotizar ahora', href: '/contacto', variant: 'primary' },
+      { label: 'WhatsApp', href: 'https://wa.me/56965593202', variant: 'outline', external: true },
+    ]}
+    contentAlign="center"
+    minHeight="md"
+  />
 
-      <div class="hseq-banner">
-        <div class="hseq-banner__stat">
-          <span class="hseq-banner__value">0</span>
-          <span class="hseq-banner__label">fatalidades</span>
-        </div>
-        <div class="hseq-banner__divider" aria-hidden="true"></div>
-        <div class="hseq-banner__stat">
-          <span class="hseq-banner__value">100%</span>
-          <span class="hseq-banner__label">personal capacitado</span>
-        </div>
-        <div class="hseq-banner__divider" aria-hidden="true"></div>
-        <div class="hseq-banner__stat">
-          <span class="hseq-banner__value">ISO</span>
-          <span class="hseq-banner__label">gestión integrada</span>
-        </div>
-      </div>
-    </Container>
-  </SectionLayout>
-
-  <!-- Proyectos destacados -->
-  <SectionLayout alt spacing="lg">
-    <Container>
-      <div class="section-header">
-        <p class="section-header__eyebrow">Proyectos destacados</p>
-        <h2>Resultados concretos para la industria</h2>
-      </div>
-
-      <div class="project-grid">
-        {
-          projects.map((project) => (
-            <article class="project-card">
-              <div class="project-card__body">
-                <p class="project-card__meta">
-                  {project.client} · {project.location}
-                </p>
-                <h3 class="project-card__title">
-                  <a href={project.link}>{project.result}</a>
-                </h3>
-              </div>
-              <a href={project.link} class="project-card__link" aria-label={`Ver proyecto ${project.result}`}>
-                <Icon name="arrow-right" size={20} />
-              </a>
-            </article>
-          ))
-        }
-      </div>
-
-      <div class="project-cta">
-        <a href="/proyectos" class="button button--secondary button--large">Ver todos los proyectos</a>
-      </div>
-    </Container>
-  </SectionLayout>
-
-  <!-- CTA contacto -->
-  <SectionLayout class="cta-section" spacing="lg">
-    <Container>
-      <div class="cta-box">
-        <div class="cta-box__content">
-          <h2>Hablemos de tu próximo proyecto</h2>
-          <p class="cta-box__lead">
-            Cuéntanos los requerimientos de tu faena. Nuestro equipo técnico responderá
-            en menos de 24 horas hábiles con una propuesta ajustada.
-          </p>
-        </div>
-        <div class="cta-box__actions">
-          <a href="/contacto" class="button button--primary button--large">
-            Solicitar cotización ahora
-            <Icon name="arrow-right" size={18} />
-          </a>
-          <div class="cta-box__contact">
-            <a href="tel:+56900000000" class="cta-box__channel">
-              <Icon name="phone" size={18} />
-              <span>+56 9 0000 0000</span>
-            </a>
-            <a href="mailto:contacto@ipproyectosindustriales.cl" class="cta-box__channel">
-              <Icon name="email" size={18} />
-              <span>contacto@ipproyectosindustriales.cl</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </Container>
-  </SectionLayout>
-
-  <script>
-    (function () {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-      const counters = document.querySelectorAll<HTMLElement>('.stat__value');
-      if (!counters.length) return;
-
-      const DURATION = 2000;
-      const EASE_OUT_QUART = (t: number) => 1 - Math.pow(1 - t, 4);
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            const el = entry.target as HTMLElement;
-            const originalText = el.textContent || '';
-            const match = originalText.match(/[\d.,]+/);
-            if (!match) {
-              observer.unobserve(el);
-              return;
-            }
-
-            const targetValue = parseFloat(match[0].replace(',', '.'));
-            const prefix = originalText.substring(0, match.index ?? 0);
-            const suffix = originalText.substring((match.index ?? 0) + match[0].length);
-            const isInteger = Number.isInteger(targetValue);
-            const startTime = performance.now();
-
-            const update = (currentTime: number) => {
-              const elapsed = currentTime - startTime;
-              const progress = Math.min(elapsed / DURATION, 1);
-              const current = targetValue * EASE_OUT_QUART(progress);
-              const displayValue = isInteger ? Math.floor(current).toString() : current.toFixed(1);
-              el.textContent = prefix + displayValue + suffix;
-
-              if (progress < 1) {
-                requestAnimationFrame(update);
-              } else {
-                el.textContent = originalText;
-              }
-            };
-
-            requestAnimationFrame(update);
-            observer.unobserve(el);
-          });
-        },
-        { threshold: 0.5 }
-      );
-
-      counters.forEach((counter) => observer.observe(counter));
-    })();
-  </script>
+  <!-- 9. NOTICIAS -->
+  <NewsGrid
+    title="Novedades"
+    subtitle="Operaciones, seguridad y crecimiento de nuestra flota. Síguenos para conocer nuestros proyectos más recientes."
+    items={newsItems}
+    columns={3}
+    variant="dark"
+  />
 </BaseLayout>
 
 <style>
-  /* Hero */
-  .hero {
+  /* ===== HERO ===== */
+  .d-hero {
     position: relative;
-    overflow: hidden;
-    background: linear-gradient(135deg, var(--color-surface-alt) 0%, #ffffff 100%);
-  }
-
-  .hero--media {
+    min-height: calc(65svh + var(--topbar-height, 40px) + var(--header-height, 80px));
+    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: clamp(42rem, 80vh, 52rem);
-    padding-top: calc(var(--header-height) + var(--space-10));
-    padding-bottom: var(--space-12);
-    color: var(--color-on-brand);
+    align-items: flex-end;
+    overflow: hidden;
   }
 
-  .hero__media {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
+  @media (max-width: 1180px) {
+    .d-hero {
+      min-height: calc(100svh + var(--topbar-height, 40px) + var(--header-height, 72px));
+    }
   }
 
-  .hero__img {
+  .d-hero__bg {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
+    z-index: 0;
   }
 
-  .hero__overlay {
+  .d-hero__overlay {
     position: absolute;
     inset: 0;
     z-index: 1;
     background: linear-gradient(
       180deg,
-      rgba(10, 22, 13, 0.7) 0%,
-      rgba(10, 22, 13, 0.55) 50%,
-      rgba(10, 22, 13, 0.78) 100%
+      rgba(13, 22, 17, 0.5) 0%,
+      rgba(13, 22, 17, 0.12) 30%,
+      rgba(13, 22, 17, 0.5) 60%,
+      rgba(13, 22, 17, 0.96) 100%
     );
   }
 
-  @media (min-width: 768px) {
-    .hero__overlay {
-      background: linear-gradient(
-        95deg,
-        rgba(10, 22, 13, 0.82) 0%,
-        rgba(10, 22, 13, 0.55) 45%,
-        rgba(10, 22, 13, 0.3) 100%
-      );
-    }
-  }
-
-  .hero__inner {
+  .d-hero__container {
     position: relative;
     z-index: 2;
-  }
-
-  .hero__grid {
-    display: grid;
-    gap: var(--space-8);
-    align-items: center;
-  }
-
-  @media (min-width: 1024px) {
-    .hero__grid {
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: var(--space-12);
-    }
-  }
-
-  .hero__eyebrow {
-    display: inline-block;
-    margin: 0 0 var(--space-3);
-    font-size: var(--text-small);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #a8d6ae;
-  }
-
-  .hero h1 {
-    margin: 0 0 var(--space-5);
-    max-width: 20ch;
-    color: var(--color-on-brand);
-  }
-
-  .hero--media .hero__lead {
-    font-size: var(--text-lead);
-    color: rgba(255, 255, 255, 0.88);
-    max-width: 60ch;
-    margin: 0 0 var(--space-8);
-    line-height: 1.55;
-  }
-
-  .hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-4);
-    margin-bottom: var(--space-10);
-  }
-
-  .hero__stats {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-    max-width: 36rem;
-  }
-
-  @media (min-width: 480px) {
-    .hero__stats {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .stat {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-  }
-
-  .stat__value {
-    font-family: var(--font-heading);
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1;
-  }
-
-  .stat__label {
-    font-size: var(--text-small);
-    color: rgba(255, 255, 255, 0.8);
-  }
-
-  .hero__visual {
-    display: none;
-  }
-
-  @media (min-width: 1024px) {
-    .hero__visual {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 22rem;
-    }
-  }
-
-  .hero__shape {
-    position: absolute;
-    border-radius: var(--radius-lg);
-    opacity: 0.12;
-  }
-
-  .hero__shape--1 {
-    width: 20rem;
-    height: 20rem;
-    background: var(--color-brand);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(15deg);
-  }
-
-  .hero__shape--2 {
-    width: 14rem;
-    height: 14rem;
-    background: var(--color-ink-700);
-    top: 35%;
-    left: 60%;
-    transform: translate(-50%, -50%) rotate(-10deg);
-  }
-
-  .hero__shape--3 {
-    width: 8rem;
-    height: 8rem;
-    background: var(--color-brand-600);
-    bottom: 15%;
-    left: 25%;
-  }
-
-  .hero__crane {
-    position: relative;
-    z-index: 1;
-    color: rgba(255, 255, 255, 0.85);
-    opacity: 0.9;
-  }
-
-  /* Buttons */
-  .button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-2);
-    min-height: 2.75rem;
-    padding: 0.625rem 1.25rem;
-    font-weight: 600;
-    border-radius: var(--radius-sm);
-    transition:
-      background-color var(--motion-base) var(--ease-out),
-      transform var(--motion-base) var(--ease-out),
-      box-shadow var(--motion-base) var(--ease-out);
-  }
-
-  .button--large {
-    min-height: 3.25rem;
-    padding: 0.875rem 1.75rem;
-    font-size: var(--text-body);
-  }
-
-  .button:hover,
-  .button:focus {
-    transform: translateY(-2px);
-  }
-
-  .button--primary {
-    background-color: var(--color-brand);
-    color: var(--color-on-brand);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .button--primary:hover,
-  .button--primary:focus {
-    background-color: var(--color-brand-600);
-    box-shadow: var(--shadow-md);
-  }
-
-  .button--secondary {
-    background-color: transparent;
-    color: var(--color-brand);
-    border: 1.5px solid currentColor;
-  }
-
-  .button--secondary:hover,
-  .button--secondary:focus {
-    background-color: var(--color-brand-050);
-  }
-
-  /* Section headers */
-  .section-header {
-    max-width: 60ch;
-    margin-bottom: var(--space-10);
-  }
-
-  .section-header--centered {
+    max-width: 1360px;
+    width: 100%;
     margin-inline: auto;
-    text-align: center;
+    padding: 60px var(--container-padding, 20px) clamp(40px, 7vh, 90px);
   }
 
-  .section-header__eyebrow {
-    margin: 0 0 var(--space-3);
-    font-size: var(--text-small);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-brand);
-  }
-
-  .section-header h2 {
-    margin: 0 0 var(--space-4);
-  }
-
-  .section-header__lead {
-    font-size: var(--text-lead);
-    color: var(--color-ink-500);
-    margin: 0;
-    line-height: 1.55;
-  }
-
-  /* Service grid */
-  .service-grid {
-    display: grid;
-    gap: var(--space-6);
-  }
-
-  @media (min-width: 768px) {
-    .service-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .service-card {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-    padding: var(--space-6);
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    transition:
-      border-color var(--motion-base) var(--ease-out),
-      box-shadow var(--motion-base) var(--ease-out),
-      transform var(--motion-base) var(--ease-out);
-  }
-
-  .service-card:hover {
-    border-color: var(--color-brand-050);
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-4px);
-  }
-
-  .service-card__icon {
+  .d-hero__eyebrow {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 3.5rem;
-    height: 3.5rem;
-    color: var(--color-brand);
-    background-color: var(--color-brand-050);
-    border-radius: var(--radius-md);
-  }
-
-  .service-card__title {
-    margin: 0;
-    font-size: var(--text-h4);
-  }
-
-  .service-card__title a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .service-card__title a::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-  }
-
-  .service-card__description {
-    color: var(--color-ink-500);
-    margin: 0;
-    line-height: 1.6;
-  }
-
-  .service-card__link {
-    position: relative;
-    z-index: 1;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin-top: auto;
-    font-weight: 600;
-    color: var(--color-brand);
-    text-decoration: none;
-  }
-
-  .service-card {
-    position: relative;
-  }
-
-  /* Rental */
-  .rental-grid {
-    display: grid;
-    gap: var(--space-10);
-    align-items: center;
-  }
-
-  @media (min-width: 1024px) {
-    .rental-grid {
-      grid-template-columns: 1.1fr 0.9fr;
-    }
-  }
-
-  .rental__content h2 {
-    margin: 0 0 var(--space-4);
-  }
-
-  .rental__lead {
-    font-size: var(--text-lead);
-    color: var(--color-ink-500);
-    margin: 0 0 var(--space-6);
-    line-height: 1.55;
-  }
-
-  .checklist {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    margin: 0 0 var(--space-8);
-    padding: 0;
-    list-style: none;
-  }
-
-  .checklist li {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    color: var(--color-ink-700);
-  }
-
-  .checklist li :global(svg) {
-    flex-shrink: 0;
-    color: var(--color-brand);
-  }
-
-  .rental__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-4);
-  }
-
-  .rental__visual {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-4);
-  }
-
-  .rental__card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-4);
-    padding: var(--space-8) var(--space-6);
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    color: var(--color-brand);
-    box-shadow: var(--shadow-md);
-  }
-
-  .rental__card--alt {
-    background-color: var(--color-brand);
-    color: var(--color-on-brand);
-    border-color: var(--color-brand);
-  }
-
-  .rental__card-label {
-    font-weight: 600;
-    text-align: center;
-    color: var(--color-ink);
-  }
-
-  .rental__card--alt .rental__card-label {
-    color: var(--color-on-brand);
-  }
-
-  /* HSEQ */
-  .hseq-grid {
-    display: grid;
-    gap: var(--space-6);
-    margin-bottom: var(--space-12);
-  }
-
-  @media (min-width: 768px) {
-    .hseq-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .hseq-card {
-    text-align: center;
-    padding: var(--space-6);
-  }
-
-  .hseq-card__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 4rem;
-    height: 4rem;
-    margin-bottom: var(--space-4);
-    color: var(--color-brand);
-    background-color: var(--color-brand-050);
-    border-radius: var(--radius-pill);
-  }
-
-  .hseq-card h3 {
-    margin: 0 0 var(--space-3);
-    font-size: var(--text-h4);
-  }
-
-  .hseq-card p {
-    color: var(--color-ink-500);
-    margin: 0;
-    line-height: 1.6;
-  }
-
-  .hseq-banner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-6);
-    padding: var(--space-8);
-    background-color: var(--color-surface-alt);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-  }
-
-  @media (min-width: 768px) {
-    .hseq-banner {
-      flex-direction: row;
-      gap: var(--space-10);
-    }
-  }
-
-  .hseq-banner__stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-2);
-  }
-
-  .hseq-banner__value {
-    font-family: var(--font-heading);
-    font-size: 2.5rem;
+    gap: 12px;
+    color: var(--color-brand-300, #4ade80);
+    font-family: var(--font-heading, 'Archivo', sans-serif);
     font-weight: 700;
-    color: var(--color-brand);
-    line-height: 1;
-  }
-
-  .hseq-banner__label {
-    font-size: var(--text-small);
-    color: var(--color-ink-500);
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    margin-bottom: 20px;
   }
 
-  .hseq-banner__divider {
-    display: none;
-    width: 1px;
-    height: 3rem;
-    background-color: var(--color-border);
+  .d-hero__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: var(--color-brand, #1a9c4a);
   }
 
-  @media (min-width: 768px) {
-    .hseq-banner__divider {
-      display: block;
-    }
-  }
-
-  /* Projects */
-  .project-grid {
-    display: grid;
-    gap: var(--space-6);
-    margin-bottom: var(--space-10);
-  }
-
-  @media (min-width: 768px) {
-    .project-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .project-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
-    padding: var(--space-6);
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    transition:
-      border-color var(--motion-base) var(--ease-out),
-      box-shadow var(--motion-base) var(--ease-out);
-  }
-
-  .project-card:hover {
-    border-color: var(--color-brand);
-    box-shadow: var(--shadow-md);
-  }
-
-  .project-card__body {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .project-card__meta {
-    font-size: var(--text-small);
-    color: var(--color-brand);
-    font-weight: 600;
+  .d-hero__title {
+    color: #fff;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    font-size: clamp(2.4rem, 6vw, 5.4rem);
+    max-width: 16ch;
+    text-wrap: balance;
     margin: 0;
   }
 
-  .project-card__title {
-    margin: 0;
-    font-size: var(--text-h5);
+  .d-hero__title span {
+    color: var(--color-brand-300, #4ade80);
+    font-weight: 900;
   }
 
-  .project-card__title a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .project-card__link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    flex-shrink: 0;
-    color: var(--color-brand);
-    background-color: var(--color-brand-050);
-    border-radius: var(--radius-pill);
-    transition:
-      background-color var(--motion-base) var(--ease-out),
-      color var(--motion-base) var(--ease-out);
-  }
-
-  .project-card__link:hover,
-  .project-card__link:focus {
-    background-color: var(--color-brand);
-    color: var(--color-on-brand);
-  }
-
-  .project-cta {
-    display: flex;
-    justify-content: center;
-  }
-
-  /* CTA section */
-  .cta-section {
-    background-color: var(--color-brand);
-    color: var(--color-on-brand);
-  }
-
-  .cta-box {
-    display: grid;
-    gap: var(--space-8);
-    align-items: center;
-  }
-
-  @media (min-width: 1024px) {
-    .cta-box {
-      grid-template-columns: 1fr auto;
-    }
-  }
-
-  .cta-box h2 {
-    color: var(--color-on-brand);
-    margin: 0 0 var(--space-4);
-  }
-
-  .cta-box__lead {
-    font-size: var(--text-lead);
-    color: rgba(255, 255, 255, 0.92);
-    margin: 0;
-    max-width: 55ch;
+  .d-hero__subtitle {
+    color: rgba(255, 255, 255, 0.86);
+    font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+    max-width: 54ch;
+    margin: 24px 0 0;
     line-height: 1.55;
   }
 
-  .cta-box__actions {
+  .d-hero__scroll {
+    position: absolute;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    z-index: 3;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
     display: flex;
     flex-direction: column;
-    gap: var(--space-6);
-  }
-
-  .cta-box__actions .button--primary {
-    background-color: var(--color-on-brand);
-    color: var(--color-brand);
-  }
-
-  .cta-box__actions .button--primary:hover,
-  .cta-box__actions .button--primary:focus {
-    background-color: var(--color-brand-050);
-  }
-
-  .cta-box__contact {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  .cta-box__channel {
-    display: inline-flex;
     align-items: center;
-    gap: var(--space-3);
-    color: rgba(255, 255, 255, 0.92);
-    font-weight: 500;
-    text-decoration: none;
-    transition: color var(--motion-base) var(--ease-out);
+    gap: 8px;
   }
 
-  .cta-box__channel:hover,
-  .cta-box__channel:focus {
-    color: #ffffff;
+  .d-hero__scroll span {
+    width: 1px;
+    height: 30px;
+    background: linear-gradient(rgba(255, 255, 255, 0.55), transparent);
+  }
+
+  @media (max-width: 768px) {
+    .d-hero__scroll {
+      display: none;
+    }
   }
 </style>

@@ -1,0 +1,102 @@
+---
+// src/components/quote/QuoteCartFloatingButton.astro
+// Botón flotante solo visible en mobile (< 768px). Fixed bottom-right;
+// muestra el conteo de items. Se sincroniza con subscribe().
+
+import Icon from '@/components/ui/Icon.astro';
+---
+
+<a
+  href="/cotizador"
+  class="quote-fab"
+  data-quote-fab
+  aria-label="Ver cotizador"
+  hidden
+>
+  <span class="quote-fab__icon" aria-hidden="true">
+    <Icon name="cart" size={22} />
+  </span>
+  <span class="quote-fab__count" data-quote-fab-count aria-live="polite" aria-atomic="true">0</span>
+</a>
+
+<script>
+  import { getItemCount, subscribe } from '@/lib/quoteCart';
+
+  function paint(): void {
+    const fab = document.querySelector<HTMLElement>('[data-quote-fab]');
+    const counter = document.querySelector<HTMLElement>('[data-quote-fab-count]');
+    if (!fab || !counter) return;
+    const count = getItemCount();
+    if (count === 0) {
+      fab.hidden = true;
+      counter.textContent = '0';
+    } else {
+      fab.hidden = false;
+      counter.textContent = String(count);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    paint();
+    subscribe(paint);
+  });
+</script>
+
+<style>
+  .quote-fab {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 90;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--color-brand, #348f41);
+    color: var(--color-on-brand, #fff);
+    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border-radius: 999px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    transition: transform 0.15s var(--ease-out, ease), background-color 0.15s var(--ease-out, ease);
+  }
+
+  .quote-fab:hover,
+  .quote-fab:focus-visible {
+    background-color: var(--color-brand-600, #2c7c37);
+    transform: translateY(-2px);
+  }
+
+  .quote-fab:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  .quote-fab__icon {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .quote-fab__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0 0.4rem;
+    background-color: var(--color-on-brand, #fff);
+    color: var(--color-brand, #348f41);
+    font-size: 0.8rem;
+    font-weight: 800;
+    border-radius: 999px;
+    line-height: 1;
+  }
+
+  @media (min-width: 769px) {
+    .quote-fab {
+      display: none !important;
+    }
+  }
+</style>

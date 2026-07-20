@@ -1,30 +1,414 @@
 ---
 // src/pages/contacto/index.astro
+// Página de contacto B2B.
+// Estructura: hero compacto + 2 columnas (form | info de contacto).
+// El form es el QuoteFormAdvanced; el bloque derecho lista canales.
+
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
-import SectionLayout from '@/components/ui/SectionLayout.astro';
-import { contactPageSchema } from '@/lib/seo';
+import QuoteFormAdvanced from '@/components/ui/QuoteFormAdvanced.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import Icon from '@/components/ui/Icon.astro';
+import heroImg from '@/assets/imgs/hero.jpg';
+import { siteContact, siteBrand } from '@/data/site';
+import { localBusinessSchema, contactPageSchema, breadcrumbSchema, combineSchemas } from '@/lib/seo';
+import { getSiteUrl } from '@/lib/seo';
 
-const title = 'Contacto | IP Proyectos Industriales';
+const title = 'Contacto y cotizaciones | IP Proyectos Industriales';
 const description =
-  'Contacta a IP Proyectos Industriales. Solicita cotización de arriendo de maquinaria o servicios industriales para tu faena.';
+  'Cotiza arriendo de maquinaria pesada y servicios industriales para faenas mineras en Atacama, Coquimbo y Antofagasta. Respuesta en menos de 48 horas. WhatsApp +56 9 5659 4144.';
 
 const breadcrumbs = [
   { label: 'Inicio', url: '/' },
   { label: 'Contacto' },
 ];
+
+const jsonLd = combineSchemas(
+  contactPageSchema(),
+  localBusinessSchema({
+    name: siteBrand.legalName,
+    description: siteBrand.description,
+    telephone: siteContact.phoneMobile,
+    email: siteContact.email,
+    address: {
+      streetAddress: 'Parcela 110 Lote A-3, Vegas Norte',
+      addressLocality: 'La Serena',
+      addressRegion: 'Coquimbo',
+      addressCountry: 'CL',
+    },
+    areaServed: ['Antofagasta', 'Atacama', 'Coquimbo', 'Valparaíso', 'Metropolitana'],
+    openingHours: ['Mo-Fr 08:00-18:00'],
+  }),
+  breadcrumbSchema(breadcrumbs)
+);
+
+const whatsappLink = `https://wa.me/${siteContact.whatsappNumber}?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20solicitar%20una%20cotizaci%C3%B3n.`;
 ---
 
 <BaseLayout
   title={title}
   description={description}
   breadcrumbs={breadcrumbs}
-  jsonLd={contactPageSchema()}
+  jsonLd={jsonLd}
+  ogType="website"
 >
-  <SectionLayout spacing="lg">
+  <!-- Hero compacto -->
+  <PageHero
+    image={heroImg.src}
+    imageAlt="Contacto IP Proyectos Industriales"
+    eyebrow="Contacto"
+    title="Hablemos de tu proyecto"
+    subtitle="Cuéntanos sobre tu faena y te respondemos a la brevedad. Elige el canal que prefieras: WhatsApp, teléfono o el formulario de cotización."
+    minHeight="sm"
+  />
+
+  <!-- Bloque principal: form + info -->
+  <section class="contact-main">
     <Container>
-      <h1>Contacto</h1>
-      <p>Formulario de contacto y canales de comunicación.</p>
+      <div class="contact-grid">
+        <!-- Form -->
+        <div class="contact-grid__form" id="cotizar">
+          <header class="contact-form__header">
+            <h2 class="contact-form__title">Solicita tu cotización</h2>
+            <p class="contact-form__subtitle">
+              Completa lo que aplique a tu faena. Al enviar, te contactamos a la brevedad.
+            </p>
+          </header>
+          <QuoteFormAdvanced preselectedServices={[]} />
+        </div>
+
+        <!-- Sidebar info -->
+        <aside class="contact-grid__sidebar" aria-label="Canales de contacto">
+          <div class="contact-card contact-card--featured">
+            <div class="contact-card__icon" aria-hidden="true">
+              <Icon name="whatsapp" size={24} />
+            </div>
+            <h3 class="contact-card__title">WhatsApp</h3>
+            <p class="contact-card__text">Respuesta rápida, sin formularios.</p>
+            <a
+              href={whatsappLink}
+              class="contact-card__link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {siteContact.phoneMobile}
+              <Icon name="arrow-right" size={16} />
+            </a>
+          </div>
+
+          <div class="contact-card">
+            <div class="contact-card__icon" aria-hidden="true">
+              <Icon name="phone" size={24} />
+            </div>
+            <h3 class="contact-card__title">Teléfono</h3>
+            <p class="contact-card__text">Lunes a viernes, 08:00 – 18:00.</p>
+            <a href={siteContact.phoneMobileHref} class="contact-card__link">
+              {siteContact.phoneMobile}
+            </a>
+            <a href={siteContact.phoneLandlineHref} class="contact-card__sublink">
+              {siteContact.phoneLandline}
+            </a>
+          </div>
+
+          <div class="contact-card">
+            <div class="contact-card__icon" aria-hidden="true">
+              <Icon name="email" size={24} />
+            </div>
+            <h3 class="contact-card__title">Correo</h3>
+            <p class="contact-card__text">Respuesta en menos de 24 h hábiles.</p>
+            <a href={`mailto:${siteContact.email}`} class="contact-card__link">
+              {siteContact.email}
+            </a>
+          </div>
+
+          <div class="contact-card contact-card--address">
+            <div class="contact-card__icon" aria-hidden="true">
+              <Icon name="map-pin" size={24} />
+            </div>
+            <h3 class="contact-card__title">Oficina</h3>
+            <address class="contact-card__address">
+              {siteContact.address}<br>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(siteContact.address)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="contact-card__sublink"
+              >
+                Ver en Google Maps
+                <Icon name="arrow-right" size={14} />
+              </a>
+            </address>
+          </div>
+
+          <!-- CTA Catálogo -->
+          <a
+            href={siteContact.catalogUrl}
+            class="contact-catalog"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon name="download" size={20} />
+            <div>
+              <strong>Descargar catálogo 2025</strong>
+              <span>PDF · Nuestra flota completa</span>
+            </div>
+          </a>
+        </aside>
+      </div>
     </Container>
-  </SectionLayout>
+  </section>
+
+  <!-- Confianza inferior: zonas de cobertura -->
+  <section class="contact-coverage">
+    <Container>
+      <h2 class="contact-coverage__title">Cobertura</h2>
+      <p class="contact-coverage__subtitle">
+        Operamos en las principales regiones mineras e industriales de Chile.
+      </p>
+      <ul class="contact-coverage__list" role="list">
+        <li><Icon name="map-pin" size={18} /><span>Antofagasta</span></li>
+        <li><Icon name="map-pin" size={18} /><span>Atacama</span></li>
+        <li><Icon name="map-pin" size={18} /><span>Coquimbo</span></li>
+        <li><Icon name="map-pin" size={18} /><span>Valparaíso</span></li>
+        <li><Icon name="map-pin" size={18} /><span>Metropolitana</span></li>
+      </ul>
+    </Container>
+  </section>
 </BaseLayout>
+
+<style>
+  /* (El hero ahora usa el componente <PageHero />) */
+
+  /* Main grid */
+  .contact-main {
+    background-color: var(--color-surface-alt, #f7f9f7);
+    padding-block: clamp(60px, 8vw, 100px);
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  @media (min-width: 1024px) {
+    .contact-grid {
+      grid-template-columns: 1.5fr 1fr;
+      gap: 56px;
+    }
+  }
+
+  /* Form column */
+  .contact-grid__form {
+    background: var(--color-graphite, #0d1611);
+    border-radius: 18px;
+    padding: clamp(24px, 4vw, 40px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .contact-form__header {
+    margin-bottom: 28px;
+  }
+
+  .contact-form__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin: 0 0 8px;
+  }
+
+  .contact-form__subtitle {
+    margin: 0;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+  }
+
+  /* Sidebar */
+  .contact-grid__sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .contact-card {
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-line, #e5e7eb);
+    border-radius: 14px;
+    padding: 20px 22px;
+  }
+
+  .contact-card--featured {
+    background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+    color: #fff;
+    border: 0;
+  }
+
+  .contact-card--featured .contact-card__icon,
+  .contact-card--featured .contact-card__link {
+    color: #fff;
+  }
+
+  .contact-card--featured .contact-card__text {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .contact-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--color-brand-050, rgba(26, 156, 74, 0.1));
+    color: var(--color-brand, #1a9c4a);
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+
+  .contact-card--featured .contact-card__icon {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+  }
+
+  .contact-card__title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--color-ink, #1a1a1a);
+    margin: 0 0 4px;
+  }
+
+  .contact-card--featured .contact-card__title {
+    color: #fff;
+  }
+
+  .contact-card__text {
+    margin: 0 0 12px;
+    font-size: 0.85rem;
+    color: var(--color-ink-500, #6b7280);
+  }
+
+  .contact-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--color-brand, #1a9c4a);
+    text-decoration: none;
+  }
+
+  .contact-card--featured .contact-card__link {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .contact-card__sublink {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    margin-right: 14px;
+    font-size: 0.88rem;
+    color: var(--color-ink-500, #6b7280);
+    text-decoration: none;
+  }
+
+  .contact-card__sublink:hover {
+    color: var(--color-brand, #1a9c4a);
+  }
+
+  .contact-card__address {
+    font-style: normal;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--color-ink-700, #374151);
+    margin: 0;
+  }
+
+  /* Catálogo CTA */
+  .contact-catalog {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 22px;
+    background: var(--color-brand, #1a9c4a);
+    color: #fff;
+    border-radius: 14px;
+    text-decoration: none;
+    transition: background 0.15s var(--ease-out, ease),
+      transform 0.15s var(--ease-out, ease);
+  }
+
+  .contact-catalog:hover {
+    background: var(--color-brand-700, #15803d);
+    transform: translateY(-2px);
+  }
+
+  .contact-catalog strong {
+    display: block;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .contact-catalog span {
+    display: block;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin-top: 2px;
+  }
+
+  /* Cobertura */
+  .contact-coverage {
+    background-color: var(--color-graphite, #0d1611);
+    color: #fff;
+    padding-block: clamp(48px, 6vw, 80px);
+  }
+
+  .contact-coverage__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.4rem, 2.6vw, 2rem);
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin: 0 0 8px;
+    text-align: center;
+  }
+
+  .contact-coverage__subtitle {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0 0 32px;
+  }
+
+  .contact-coverage__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 24px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .contact-coverage__list li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    color: #fff;
+  }
+
+  .contact-coverage__list li :global(svg) {
+    color: var(--color-brand-300, #4ade80);
+  }
+</style>

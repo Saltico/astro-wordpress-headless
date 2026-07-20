@@ -9,7 +9,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "node deploy-hostinger.mjs"
   },
   "dependencies": {
     "astro": "^7.0.6"
@@ -17,6 +18,7 @@
   "devDependencies": {
     "@astrojs/sitemap": "^3.7.3",
     "@tailwindcss/vite": "^4.3.2",
+    "archiver": "^8.0.0",
     "tailwindcss": "^4.3.2"
   }
 }

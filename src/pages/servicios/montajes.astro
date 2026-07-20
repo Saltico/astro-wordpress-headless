@@ -1,0 +1,26 @@
+---
+// src/pages/servicios/montajes.astro
+import ServiceLayout from '@/layouts/ServiceLayout.astro';
+import heroImg from '@/assets/imgs/hero.jpg';
+---
+
+<ServiceLayout
+  title="Montajes mineros e industriales"
+  subtitle="Montaje electromecánico y estructural en faena, con foco en seguridad."
+  description="Montaje preciso, seguro y a tiempo"
+  heroImage={heroImg.src}
+  heroImageAlt="Montajes mineros e industriales"
+  category="Servicios · Montajes"
+  includes={[
+    'Montaje electromecánico y de equipos mineros.',
+    'Pipelines industriales y termofusión en HDPE.',
+    'Cortinas y pantallas eólicas.',
+    'Montaje de estructuras metálicas.',
+  ]}
+  breadcrumbs={[
+    { label: 'Empresa', url: '/' },
+    { label: 'Servicios', url: '/servicios' },
+    { label: 'Montajes', url: '/servicios/montajes' },
+  ]}
+  whatsappMessage="Hola IP, quisiera cotizar montajes."
+/>

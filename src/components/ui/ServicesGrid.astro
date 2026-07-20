@@ -1,0 +1,369 @@
+---
+// src/components/ui/ServicesGrid.astro
+// Grid de servicios con layout bento
+// Altamente configurable para reutilización en plantillas
+
+export interface ServiceItem {
+  title: string;
+  subtitle: string;
+  description: string;
+  image: string;
+  link?: string;
+  linkLabel?: string;
+  category?: string;
+  featured?: boolean;
+}
+
+export interface Props {
+  services: ServiceItem[];
+  title?: string;
+  subtitle?: string;
+  eyebrow?: string;
+  variant?: 'light' | 'dark';
+  layout?: 'grid' | 'bento';
+  columns?: 2 | 3 | 4;
+  className?: string;
+}
+
+const {
+  services,
+  title,
+  subtitle,
+  eyebrow,
+  variant = 'dark',
+  layout = 'bento',
+  columns = 3,
+  className = '',
+} = Astro.props;
+
+const variantClass = `services-grid--${variant}`;
+const layoutClass = `services-grid--${layout}`;
+---
+
+<section class={`services-grid ${variantClass} ${layoutClass} ${className}`.trim()}>
+  <div class="services-grid__container">
+    {(eyebrow || title) && (
+      <div class="services-grid__header">
+        {eyebrow && <p class="services-grid__eyebrow">{eyebrow}</p>}
+        {title && <h2 class="services-grid__title">{title}</h2>}
+        {subtitle && <p class="services-grid__subtitle">{subtitle}</p>}
+      </div>
+    )}
+
+    <div class="services-grid__items">
+      {services.map((service) => (
+        <article
+          class={`service-card ${service.featured ? 'service-card--featured' : ''} reveal`}
+          style={service.image ? `background-image: url('${service.image}');` : ''}
+        >
+          <div class="service-card__content">
+            {service.category && (
+              <span class="service-card__category">{service.category}</span>
+            )}
+            <h3 class="service-card__title">{service.title}</h3>
+            {service.subtitle && (
+              <h4 class="service-card__subtitle">{service.subtitle}</h4>
+            )}
+            <p class="service-card__description">{service.description}</p>
+            {service.link && (
+              <a href={service.link} class="service-card__link">
+                {service.linkLabel || 'Conocer'}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14M13 6l6 6-6 6"/>
+                </svg>
+              </a>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .services-grid {
+    padding-block: clamp(56px, 8vw, 100px);
+  }
+
+  .services-grid--light {
+    background-color: var(--color-surface, #fff);
+  }
+
+  .services-grid--dark {
+    background-color: var(--color-surface-alt, #1a1a1a);
+    border-block: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+  }
+
+  .services-grid__container {
+    max-width: 1360px;
+    margin-inline: auto;
+    padding-inline: var(--container-padding, 20px);
+  }
+
+  /* Header */
+  .services-grid__header {
+    margin-bottom: 32px;
+  }
+
+  .services-grid__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .services-grid--light .services-grid__eyebrow {
+    color: var(--color-brand, #1a9c4a);
+  }
+
+  .services-grid--dark .services-grid__eyebrow {
+    color: var(--color-brand-300, #4ade80);
+  }
+
+  .services-grid__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .services-grid__title {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+    letter-spacing: -0.02em;
+    margin: 0 0 22px;
+  }
+
+  .services-grid--light .services-grid__title {
+    color: var(--color-ink, #1a1a1a);
+  }
+
+  .services-grid--dark .services-grid__title {
+    color: #fff;
+  }
+
+  .services-grid__subtitle {
+    font-size: 1.05rem;
+    line-height: 1.5;
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  .services-grid--light .services-grid__subtitle {
+    color: var(--color-ink-500, #6b7280);
+  }
+
+  .services-grid--dark .services-grid__subtitle {
+    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+  }
+
+  /* Grid layout */
+  .services-grid--grid .services-grid__items {
+    display: grid;
+    gap: 20px;
+  }
+
+  .services-grid--grid.services-grid--cols-2 .services-grid__items {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .services-grid--grid.services-grid--cols-3 .services-grid__items {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .services-grid--grid.services-grid--cols-4 .services-grid__items {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (max-width: 900px) {
+    .services-grid--grid.services-grid--cols-3 .services-grid__items,
+    .services-grid--grid.services-grid--cols-4 .services-grid__items {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .services-grid--grid .services-grid__items {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Bento layout */
+  .services-grid--bento .services-grid__items {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.12fr;
+    gap: 16px;
+  }
+
+  .services-grid--bento .service-card--featured {
+    grid-column: 3;
+    grid-row: 1 / 3;
+  }
+
+  @media (max-width: 860px) {
+    .services-grid--bento .services-grid__items {
+      grid-template-columns: 1fr 1fr;
+    }
+    .services-grid--bento .service-card--featured {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .services-grid--bento .services-grid__items {
+      grid-template-columns: 1fr;
+    }
+    .services-grid--bento .service-card--featured {
+      grid-column: auto;
+    }
+  }
+
+  /* Service card */
+  .service-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 280px;
+    padding: 28px;
+    border-radius: var(--radius-lg, 12px);
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.3s ease;
+  }
+
+  .service-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
+    z-index: 1;
+  }
+
+  .service-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .service-card--featured {
+    min-height: 580px;
+  }
+
+  @media (max-width: 860px) {
+    .service-card--featured {
+      min-height: 320px;
+    }
+  }
+
+  .service-card__content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .service-card__category {
+    display: inline-block;
+    padding: 4px 12px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 999px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .service-card__title {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: #fff;
+    margin: 0 0 8px;
+    line-height: 1.2;
+  }
+
+  .service-card--featured .service-card__title {
+    font-size: 1.8rem;
+  }
+
+  .service-card__subtitle {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--color-brand-300, #4ade80);
+    margin: 0 0 8px;
+  }
+
+  .service-card__description {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.5;
+    margin: 0 0 16px;
+  }
+
+  .service-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #fff;
+    text-decoration: none;
+    transition: gap 0.2s ease;
+  }
+
+  .service-card__link:hover {
+    gap: 12px;
+  }
+
+  .service-card__link svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Animación reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  // Intersection Observer para animación reveal
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll('.service-card.reveal').forEach((el) => {
+      observer.observe(el);
+    });
+  }
+</script>

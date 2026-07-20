@@ -1,102 +1,236 @@
 ---
 // src/components/layout/TopBar.astro
+// Utility bar: teléfono, email, redes sociales, links secundarios.
+// Comportamiento: sticky con scroll-hide (IntersectionObserver sobre sentinel).
+// Respeta prefers-reduced-motion.
+
 import Icon from '@/components/ui/Icon.astro';
+import type { SocialLink } from '@/types/layout';
+import type { IconName } from '@/lib/icons';
 
 export interface Props {
   phone?: string;
   email?: string;
-  integrityUrl?: string;
-  newsUrl?: string;
+  social?: SocialLink[];
+  links?: Array<{ label: string; url: string; highlight?: boolean }>;
 }
 
 const {
   phone = '+56 9 0000 0000',
   email = 'contacto@ipproyectosindustriales.cl',
-  integrityUrl = '/canal-integridad',
-  newsUrl = '/noticias',
+  social = [],
+  links = [],
 } = Astro.props;
+
+const socialIconMap: Record<SocialLink['platform'], IconName> = {
+  linkedin: 'linkedin',
+  instagram: 'instagram',
+  facebook: 'facebook',
+  whatsapp: 'whatsapp',
+};
 ---
 
-<div class="topbar" role="banner">
+<div class="topbar" data-topbar role="banner" aria-label="Información de contacto">
   <div class="topbar__inner">
     <ul class="topbar__list topbar__list--contact">
-      <li>
-        <a href={`tel:${phone.replace(/\s/g, '')}`} class="topbar__link">
-          <Icon name="phone" size={16} class="topbar__icon" />
-          <span>{phone}</span>
-        </a>
-      </li>
-      <li>
-        <a href={`mailto:${email}`} class="topbar__link">
-          <Icon name="email" size={16} class="topbar__icon" />
-          <span>{email}</span>
-        </a>
-      </li>
+      {phone && (
+        <li>
+          <a href={`tel:${phone.replace(/\s/g, '')}`} class="topbar__link">
+            <Icon name="phone" size={14} class="topbar__icon" />
+            <span>{phone}</span>
+          </a>
+        </li>
+      )}
+      {email && (
+        <li>
+          <a href={`mailto:${email}`} class="topbar__link">
+            <Icon name="email" size={14} class="topbar__icon" />
+            <span>{email}</span>
+          </a>
+        </li>
+      )}
     </ul>
 
-    <ul class="topbar__list topbar__list--actions">
-      <li>
-        <a href={integrityUrl} class="topbar__link">Canal de Integridad</a>
-      </li>
-      <li>
-        <a href={newsUrl} class="topbar__link topbar__link--highlight">Noticias</a>
-      </li>
-    </ul>
+    <div class="topbar__right">
+      {social.length > 0 && (
+        <ul class="topbar__social" aria-label="Redes sociales">
+          {social.map((link) => (
+            <li>
+              <a
+                href={link.url}
+                class="topbar__social-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={link.label || `Ir a ${link.platform}`}
+              >
+                <Icon name={socialIconMap[link.platform]} size={14} />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {links.length > 0 && (
+        <ul class="topbar__list topbar__list--actions">
+          {links.map((link) => (
+            <li>
+              <a
+                href={link.url}
+                class:list={['topbar__link', link.highlight && 'topbar__link--highlight']}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   </div>
 </div>
 
-<style>
+<script>
+  (function () {
+    if (typeof window === 'undefined') return;
+    const topbar = document.querySelector<HTMLElement>('[data-topbar]');
+    if (!topbar) return;
+
+    // Sentinel: 1px elemento en el tope del header.
+    const sentinel = document.createElement('div');
+    sentinel.setAttribute('aria-hidden', 'true');
+    sentinel.style.cssText =
+      'position:absolute;top:0;left:0;width:1px;height:1px;pointer-events:none;';
+    topbar.parentElement?.insertBefore(sentinel, topbar);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Cuando el sentinel está visible (top de la página), topbar visible.
+        // Cuando el sentinel sale (scroll down), topbar se oculta.
+        const hidden = !entry.isIntersecting;
+        topbar.classList.toggle('is-hidden', hidden);
+        // Sincroniza con el header (que usa top: var(--topbar-height))
+        // para que al ocultarse el topbar, el header suba a top: 0.
+        document.body.classList.toggle('topbar-hidden', hidden);
+      },
+      { threshold: 0 }
+    );
+    observer.observe(sentinel);
+  })();
+</script>
+
+  <style>
   .topbar {
-    display: none;
-    background-color: var(--color-surface-alt);
-    border-bottom: 1px solid var(--color-line);
-    font-size: 0.875rem;
-    color: var(--color-ink-700);
+    position: sticky;
+    top: 0;
+    background-color: var(--color-brand, #348f41);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    color: #ffffff;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    transition: transform 0.3s var(--ease-out, ease);
+    will-change: transform;
+    z-index: 101; /* sobre el header sticky */
   }
 
-  @media (min-width: 768px) {
-    .topbar {
-      display: block;
-    }
+  .topbar.is-hidden {
+    transform: translateY(-100%);
   }
 
   .topbar__inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    max-width: var(--container-max-width);
+    max-width: var(--container-max-width, 1360px);
     margin-inline: auto;
-    padding-inline: var(--container-padding);
-    height: var(--topbar-height);
+    padding: 0 var(--container-padding, 20px);
+    height: var(--topbar-height, 40px);
+    gap: 16px;
   }
 
-  .topbar__list {
+  .topbar__list,
+  .topbar__social {
     display: flex;
     align-items: center;
-    gap: var(--space-6);
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .topbar__right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
   }
 
   .topbar__link {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-2);
-    transition: color var(--motion-base) var(--ease-out);
+    gap: 6px;
+    color: rgba(255, 255, 255, 0.92);
+    text-decoration: none;
+    transition: color 0.15s var(--ease-out, ease);
   }
 
   .topbar__link:hover,
-  .topbar__link:focus {
-    color: var(--color-brand);
+  .topbar__link:focus-visible {
+    color: #ffffff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   .topbar__link--highlight {
+    color: #ffffff;
     font-weight: 600;
-    color: var(--color-brand);
   }
 
   .topbar__icon {
+    color: #ffffff;
+    flex-shrink: 0;
+  }
+
+  .topbar__social {
+    align-items: center;
+  }
+
+  .topbar__social li {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .topbar__social-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-brand);
+    width: 28px;
+    height: 28px;
+    color: #ffffff;
+    border-radius: 50%;
+    transition: background-color 0.15s var(--ease-out, ease),
+      transform 0.15s var(--ease-out, ease);
+  }
+
+  .topbar__social-link :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+
+  .topbar__social-link:hover,
+  .topbar__social-link:focus-visible {
+    background-color: rgba(255, 255, 255, 0.18);
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 767px) {
+    /* En mobile ocultamos la lista de contacto y mostramos solo redes + links */
+    .topbar__list--contact {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .topbar {
+      transition: none;
+    }
   }
 </style>

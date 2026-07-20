@@ -1,8 +1,11 @@
 ---
 // src/layouts/BaseLayout.astro
+// Layout canónico de toda la web. Toda la data compartida se importa de
+// @/data/site.ts y se reparte a los componentes por props.
+
 import '@/styles/base.css';
 import type { NavItem } from '@/types/navigation';
-import type { FooterColumn, FooterLink } from '@/types/layout';
+import type { FooterColumn, FooterLink, SocialLink } from '@/types/layout';
 import type { BaseLayoutProps } from '@/types/layout';
 import type { BreadcrumbItem } from '@/types/seo';
 import SkipLink from '@/components/layout/SkipLink.astro';
@@ -13,7 +16,10 @@ import Footer from '@/components/layout/Footer.astro';
 import MetaTags from '@/components/seo/MetaTags.astro';
 import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import JsonLd from '@/components/seo/JsonLd.astro';
+import QuoteCartBadge from '@/components/quote/QuoteCartBadge.astro';
+import QuoteCartFloatingButton from '@/components/quote/QuoteCartFloatingButton.astro';
 import { organizationSchema, websiteSchema, getSiteUrl } from '@/lib/seo';
+import { siteBrand, siteContact, topbarData, navigationData, footerData } from '@/data/site';
 import logoImg from '@/assets/logos/logo_ipproyectosindustriales.png';
 import Icon from '@/components/ui/Icon.astro';
 
@@ -22,11 +28,11 @@ export interface Props extends BaseLayoutProps {
   noindex?: boolean;
   breadcrumbs?: BreadcrumbItem[];
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
-  topBar?: {
+  topbar?: {
     phone?: string;
     email?: string;
-    integrityUrl?: string;
-    newsUrl?: string;
+    social?: SocialLink[];
+    links?: Array<{ label: string; url: string }>;
   };
   navigation?: {
     items: NavItem[];
@@ -39,6 +45,14 @@ export interface Props extends BaseLayoutProps {
     description?: string;
     phone?: string;
     email?: string;
+    address?: string;
+    schedule?: string;
+    social?: SocialLink[];
+    logoUrl?: string;
+    logoAlt?: string;
+    catalogUrl?: string;
+    catalogLabel?: string;
+    siteUrl?: string;
   };
   headerVariant?: 'default' | 'brand';
 }
@@ -54,83 +68,38 @@ const {
   showTopBar = true,
   showHeader = true,
   showFooter = true,
-  topBar,
+  topbar = topbarData,
   navigation,
   footer,
-  headerVariant = 'brand',
+  headerVariant = 'default',
 } = Astro.props;
 
 const canonical = canonicalProp ?? getSiteUrl(Astro.url.pathname);
 const pageUrl = getSiteUrl(Astro.url.pathname);
 
-const defaultNavItems: NavItem[] = [
-  { label: 'Nosotros', url: '/nosotros' },
-  {
-    label: 'Servicios Industriales',
-    url: '/servicios-industriales',
-    children: [
-      { label: 'Montaje Industrial', url: '/servicios-industriales/montaje-industrial' },
-      { label: 'Obras Civiles', url: '/servicios-industriales/obras-civiles' },
-    ],
-  },
-  {
-    label: 'Arriendo e Izaje',
-    url: '/arriendo-maquinaria',
-    children: [
-      { label: 'Grúas Alto Tonelaje', url: '/arriendo-maquinaria/gruas-alto-tonelaje' },
-      { label: 'Equipos de Izaje', url: '/arriendo-maquinaria/equipos-de-izaje' },
-    ],
-  },
-  { label: 'Proyectos', url: '/proyectos' },
-];
+// Footer canónico derivado de site.ts; el override (si existe) gana.
+const effectiveFooter = {
+  columns: footer?.columns ?? footerData.columns,
+  legal: footer?.legal ?? footerData.legal,
+  brand: footer?.brand ?? siteBrand.name,
+  description: footer?.description ?? siteBrand.description,
+  phone: footer?.phone ?? siteContact.phoneMobile,
+  email: footer?.email ?? siteContact.email,
+  address: footer?.address ?? siteContact.address,
+  schedule: footer?.schedule ?? siteContact.schedule,
+  social: footer?.social ?? topbarData.social,
+  logoUrl: footer?.logoUrl ?? siteBrand.logoUrl,
+  logoAlt: footer?.logoAlt ?? siteBrand.name,
+  catalogUrl: footer?.catalogUrl ?? footerData.catalogUrl,
+  catalogLabel: footer?.catalogLabel ?? footerData.catalogLabel,
+  siteUrl: footer?.siteUrl ?? siteBrand.siteUrl,
+};
 
-const defaultFooterColumns: FooterColumn[] = [
-  {
-    title: 'Servicios Industriales',
-    links: [
-      { label: 'Montaje Industrial', url: '/servicios-industriales/montaje-industrial' },
-      { label: 'Obras Civiles', url: '/servicios-industriales/obras-civiles' },
-    ],
-  },
-  {
-    title: 'Arriendo e Izaje',
-    links: [
-      { label: 'Grúas Alto Tonelaje', url: '/arriendo-maquinaria/gruas-alto-tonelaje' },
-      { label: 'Equipos de Izaje', url: '/arriendo-maquinaria/equipos-de-izaje' },
-    ],
-  },
-  {
-    title: 'Compliance',
-    links: [
-      { label: 'HSEQ', url: '/compliance/hseq' },
-      { label: 'Certificaciones', url: '/compliance/certificaciones' },
-    ],
-  },
-  {
-    title: 'Empresa',
-    links: [
-      { label: 'Nosotros', url: '/nosotros' },
-      { label: 'Noticias', url: '/noticias' },
-      { label: 'Contacto', url: '/contacto' },
-    ],
-  },
-];
+const navItems = navigation?.items ?? navigationData;
 
-const defaultLegalLinks: FooterLink[] = [
-  { label: 'Aviso Legal', url: '/aviso-legal' },
-  { label: 'Política de Privacidad', url: '/privacidad' },
-  { label: 'Cookies', url: '/cookies' },
-];
-
-const navItems = navigation?.items ?? defaultNavItems;
-const footerColumns = footer?.columns ?? defaultFooterColumns;
-const footerLegal = footer?.legal ?? defaultLegalLinks;
-const footerBrand = footer?.brand ?? 'IP Proyectos Industriales';
-const footerDescription =
-  footer?.description ??
-  'Especialistas en obras civiles, montaje industrial y arriendo de maquinaria de alto tonelaje para la gran minería.';
-const footerPhone = footer?.phone ?? topBar?.phone ?? '+56 9 0000 0000';
-const footerEmail = footer?.email ?? topBar?.email ?? 'contacto@ipproyectosindustriales.cl';
+// Si el topbar no se renderiza, marcamos el body para que el header
+// no quede con un gap arriba (Header.astro escucha body.topbar-hidden).
+const bodyClass = !showTopBar ? 'topbar-hidden' : undefined;
 
 // Schemas base inyectados en todas las paginas
 const baseSchemas = [organizationSchema(), websiteSchema()];
@@ -161,10 +130,10 @@ const allSchemas = [...baseSchemas, ...pageSchemas];
 
     <JsonLd data={allSchemas} />
   </head>
-  <body>
+  <body class={bodyClass}>
     <SkipLink targetId="main-content" />
 
-    {showTopBar && <TopBar {...topBar} />}
+    {showTopBar && <TopBar phone={topbar.phone} email={topbar.email} social={topbar.social} links={topbar.links} />}
 
     {
       showHeader && (
@@ -180,37 +149,79 @@ const allSchemas = [...baseSchemas, ...pageSchemas];
               decoding="async"
             />
           </a>
-          <Navigation slot="navigation" items={navItems} aria-label={navigation?.ariaLabel} variant={headerVariant} />
-          <a slot="cta" href="/contacto" class:list={['header-cta', headerVariant === 'brand' && 'header-cta--on-brand']}>
-            <span class="header-cta__text">Solicitar cotización</span>
-            <span class="header-cta__text-short">Cotizar</span>
-            <Icon name="arrow-right" size={13} class="header-cta__icon" />
-          </a>
+          <Navigation slot="navigation" items={navItems} aria-label={navigation?.ariaLabel} variant="brand" />
+          <Fragment slot="cta">
+            <QuoteCartBadge />
+            <a href="/contacto" class="header-cta">
+              <span class="header-cta__text">Solicitar cotización</span>
+              <span class="header-cta__text-short">Cotizar</span>
+              <Icon name="arrow-right" size={13} class="header-cta__icon" />
+            </a>
+          </Fragment>
         </Header>
       )
     }
 
     <main id="main-content" tabindex="-1">
-      {breadcrumbs && breadcrumbs.length > 0 && (
-        <div class="wrapper">
-          <Breadcrumbs items={breadcrumbs} />
-        </div>
-      )}
       <slot />
     </main>
 
     {
       showFooter && (
         <Footer
-          columns={footerColumns}
-          legal={footerLegal}
-          brand={footerBrand}
-          description={footerDescription}
-          phone={footerPhone}
-          email={footerEmail}
+          columns={effectiveFooter.columns}
+          legal={effectiveFooter.legal}
+          brand={effectiveFooter.brand}
+          description={effectiveFooter.description}
+          phone={effectiveFooter.phone}
+          email={effectiveFooter.email}
+          address={effectiveFooter.address}
+          schedule={effectiveFooter.schedule}
+          social={effectiveFooter.social}
+          logoUrl={effectiveFooter.logoUrl}
+          logoAlt={effectiveFooter.logoAlt}
+          catalogUrl={effectiveFooter.catalogUrl}
+          catalogLabel={effectiveFooter.catalogLabel}
+          siteUrl={effectiveFooter.siteUrl}
         />
       )
     }
+
+    <QuoteCartFloatingButton />
+
+    <script>
+      // Toast layer (notificaciones efímeras del cotizador)
+      (function () {
+        if (typeof window === 'undefined' || typeof document === 'undefined') return;
+        const layer = document.createElement('div');
+        layer.setAttribute('data-toast-layer', '');
+        layer.style.cssText =
+          'position:fixed;bottom:5.5rem;right:1rem;z-index:95;display:flex;flex-direction:column;gap:0.5rem;pointer-events:none;';
+        document.body.appendChild(layer);
+
+        window.addEventListener('quote-cart:toast', (event) => {
+          const e = event as CustomEvent<{ kind: 'info' | 'warning' | 'error'; message: string }>;
+          const toast = document.createElement('div');
+          toast.textContent = e.detail.message;
+          toast.setAttribute('role', 'status');
+          const bg =
+            e.detail.kind === 'warning'
+              ? '#f59e0b'
+              : e.detail.kind === 'error'
+                ? '#c0392b'
+                : 'var(--color-brand, #348f41)';
+          toast.style.cssText = `padding:0.75rem 1rem;background-color:${bg};color:#fff;font-weight:700;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.2);opacity:0;transition:opacity 0.2s ease;pointer-events:auto;max-width:320px;font-size:0.9rem;`;
+          layer.appendChild(toast);
+          requestAnimationFrame(() => {
+            toast.style.opacity = '1';
+          });
+          window.setTimeout(() => {
+            toast.style.opacity = '0';
+            window.setTimeout(() => toast.remove(), 250);
+          }, 2500);
+        });
+      })();
+    </script>
   </body>
 </html>
 
@@ -227,6 +238,7 @@ const allSchemas = [...baseSchemas, ...pageSchemas];
     height: 2.25rem;
     max-width: 100%;
     object-fit: contain;
+    filter: brightness(0) invert(1);
   }
 
   @media (min-width: 768px) {
@@ -235,25 +247,13 @@ const allSchemas = [...baseSchemas, ...pageSchemas];
     }
   }
 
-  /* ── Header CTA button ── */
+  /* ── Header CTA: verde empresarial. Tipografía la aporta Header.astro ── */
   .header-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    min-height: 2.5rem;
-    padding: 0.5rem 0.875rem;
-    font-size: 0.8125rem;
-    font-weight: 700;
-    letter-spacing: 0.015em;
-    background-color: var(--color-brand);
-    color: var(--color-on-brand);
-    border-radius: var(--radius-pill);
-    border: 1.5px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition:
-      background-color var(--motion-base) var(--ease-out),
-      box-shadow var(--motion-base) var(--ease-out),
-      transform var(--motion-base) var(--ease-out);
+    background-color: var(--color-brand, #348f41);
+    color: var(--color-on-brand, #ffffff);
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+    font-weight: 800;
   }
 
   .header-cta__text {
@@ -270,12 +270,6 @@ const allSchemas = [...baseSchemas, ...pageSchemas];
   }
 
   @media (min-width: 640px) {
-    .header-cta {
-      min-height: 2.75rem;
-      padding: 0.5625rem 1.125rem;
-      font-size: 0.9375rem;
-    }
-
     .header-cta__text {
       display: inline;
     }
@@ -287,8 +281,9 @@ const allSchemas = [...baseSchemas, ...pageSchemas];
 
   .header-cta:hover,
   .header-cta:focus {
-    background-color: var(--color-brand-600);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+    background-color: var(--color-brand-600, #2c7c37);
+    border-color: rgba(255, 255, 255, 0.55);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
     transform: translateY(-1px);
   }
 
@@ -297,28 +292,8 @@ const allSchemas = [...baseSchemas, ...pageSchemas];
     transform: translateX(3px);
   }
 
-  /* On a brand-coloured (green) header */
-  .header-cta--on-brand {
-    background-color: #ffffff;
-    color: var(--color-brand-700);
-    border-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(255, 255, 255, 0.35);
-  }
-
-  .header-cta--on-brand:hover,
-  .header-cta--on-brand:focus {
-    background-color: #f0faf2;
-    color: var(--color-brand-700);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
-  }
-
   .header-cta:focus-visible {
-    outline: 2px solid var(--color-brand-700);
-    outline-offset: 3px;
-  }
-
-  .header-cta--on-brand:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.9);
+    outline: 2px solid #ffffff;
     outline-offset: 3px;
   }
 </style>

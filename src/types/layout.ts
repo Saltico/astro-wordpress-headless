@@ -10,6 +10,12 @@ export interface FooterColumn {
   links: FooterLink[];
 }
 
+export interface SocialLink {
+  platform: 'linkedin' | 'instagram' | 'facebook' | 'whatsapp';
+  url: string;
+  label?: string;
+}
+
 export interface FooterProps {
   columns: FooterColumn[];
   legal: FooterLink[];
@@ -17,6 +23,14 @@ export interface FooterProps {
   description?: string;
   phone?: string;
   email?: string;
+  address?: string;
+  schedule?: string;
+  social?: SocialLink[];
+  logoUrl?: string;
+  logoAlt?: string;
+  catalogUrl?: string;
+  catalogLabel?: string;
+  siteUrl?: string;
 }
 
 export interface BaseLayoutProps {

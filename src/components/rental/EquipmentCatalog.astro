@@ -1,0 +1,128 @@
+---
+// src/components/rental/EquipmentCatalog.astro
+// Grilla de cards de maquinarias. Componente central del catálogo.
+
+import EquipmentCard from './EquipmentCard.astro';
+import Container from '@/components/ui/Container.astro';
+import type { Equipment } from '@/data/rental';
+import { itemListSchema } from '@/lib/seo';
+
+export interface Props {
+  items: Equipment[];
+  columns?: 2 | 3 | 4;
+  background?: 'light' | 'dark';
+  title?: string;
+  subtitle?: string;
+}
+
+const {
+  items,
+  columns = 3,
+  background = 'light',
+  title,
+  subtitle,
+} = Astro.props;
+
+// Schema ItemList
+const itemListJsonLd = itemListSchema({
+  name: title ?? 'Catálogo de equipos',
+  url: Astro.url.pathname,
+  items: items.map((item) => ({
+    name: item.name,
+    url: `${Astro.url.pathname}#${item.slug}`,
+  })),
+});
+---
+
+<section class:list={['equipment-catalog', `equipment-catalog--${background}`]}>
+  <Container>
+    {(title || subtitle) && (
+      <header class="equipment-catalog__header">
+        {title && <h2 class="equipment-catalog__title">{title}</h2>}
+        {subtitle && <p class="equipment-catalog__subtitle">{subtitle}</p>}
+      </header>
+    )}
+    <div class:list={['equipment-catalog__grid', `equipment-catalog__grid--cols-${columns}`]}>
+      {items.map((item) => <EquipmentCard item={item} />)}
+    </div>
+  </Container>
+</section>
+
+<script type="application/ld+json" set:html={JSON.stringify(itemListJsonLd)} />
+
+<style>
+  .equipment-catalog {
+    padding-block: clamp(48px, 6vw, 80px);
+  }
+
+  .equipment-catalog--light {
+    background-color: var(--color-surface, #fff);
+  }
+
+  .equipment-catalog--dark {
+    background-color: var(--color-graphite, #0d1611);
+    color: #fff;
+  }
+
+  .equipment-catalog__header {
+    text-align: center;
+    margin-bottom: clamp(28px, 4vw, 48px);
+  }
+
+  .equipment-catalog__title {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+    line-height: 1.15;
+    color: var(--color-ink, #1a1a1a);
+  }
+
+  .equipment-catalog--dark .equipment-catalog__title {
+    color: #fff;
+  }
+
+  .equipment-catalog__subtitle {
+    margin: 0;
+    color: var(--color-ink-700, #374151);
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+
+  .equipment-catalog--dark .equipment-catalog__subtitle {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .equipment-catalog__grid {
+    display: grid;
+    gap: clamp(20px, 2.5vw, 28px);
+  }
+
+  .equipment-catalog__grid--cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .equipment-catalog__grid--cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .equipment-catalog__grid--cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  @media (max-width: 1023px) {
+    .equipment-catalog__grid--cols-3,
+    .equipment-catalog__grid--cols-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 639px) {
+    .equipment-catalog__grid--cols-2,
+    .equipment-catalog__grid--cols-3,
+    .equipment-catalog__grid--cols-4 {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

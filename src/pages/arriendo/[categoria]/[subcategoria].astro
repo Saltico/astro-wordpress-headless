@@ -1,0 +1,129 @@
+---
+// src/pages/arriendo/[categoria]/[subcategoria].astro
+// Sub-ruta catálogo: cada tipo de equipo con su grilla de modelos.
+
+import RentalLayout from '@/layouts/RentalLayout.astro';
+import EquipmentCatalog from '@/components/rental/EquipmentCatalog.astro';
+import StatsCounter from '@/components/ui/StatsCounter.astro';
+import RelatedEquipment from '@/components/rental/RelatedEquipment.astro';
+import FAQSection from '@/components/rental/FAQSection.astro';
+import Container from '@/components/ui/Container.astro';
+import { RENTAL_CATEGORIES } from '@/data/rental';
+import { productSchemaExtended, breadcrumbSchema, combineSchemas } from '@/lib/seo';
+
+export function getStaticPaths() {
+  return RENTAL_CATEGORIES.flatMap((category) =>
+    category.subcategories.map((subcategory) => ({
+      params: {
+        categoria: category.slug,
+        subcategoria: subcategory.slug,
+      },
+      props: { category, subcategory },
+    }))
+  );
+}
+
+const { category, subcategory } = Astro.props;
+
+const breadcrumbs = [
+  { label: 'Empresa', url: '/' },
+  { label: 'Arriendo de Equipos', url: '/arriendo' },
+  { label: category.name, url: `/arriendo/${category.slug}` },
+  { label: subcategory.name, url: Astro.url.pathname },
+];
+
+const jsonLd = combineSchemas(
+  productSchemaExtended({
+    name: subcategory.name,
+    description: subcategory.seoDescription,
+    url: Astro.url.pathname,
+    image: subcategory.heroImage,
+    offers: {
+      availability: 'InStock',
+      priceCurrency: 'CLP',
+      priceRange: 'Consultar',
+    },
+  }),
+  breadcrumbSchema(breadcrumbs)
+);
+
+const catalogColumns = subcategory.catalog.length >= 4 ? 3 : 2;
+
+// Equipos relacionados: hasta 4 sub-rutas hermanas
+const relatedItems = category.subcategories
+  .filter((s) => s.slug !== subcategory.slug)
+  .slice(0, 4)
+  .map((s) => ({
+    name: s.name,
+    shortDesc: s.shortDesc,
+    href: `/arriendo/${category.slug}/${s.slug}`,
+    badge: s.catalog[0]?.capacity,
+  }));
+
+// FAQs por defecto basadas en la sub-ruta
+const faqItems = [
+  {
+    question: `¿Cuánto cuesta arrendar ${subcategory.name.toLowerCase()} en Chile?`,
+    answer: `El precio del arriendo de ${subcategory.name.toLowerCase()} depende de la duración, ubicación y modelo específico. Solicita una cotización personalizada y recibirás respuesta en menos de 48 horas.`,
+  },
+  {
+    question: '¿El operador está incluido en el arriendo?',
+    answer: 'Sí, todos nuestros equipos se entregan con operador certificado y planes de trabajo según el requerimiento de la faena.',
+  },
+  {
+    question: '¿Cuál es la disponibilidad geográfica?',
+    answer: 'Tenemos cobertura en zona norte (Atacama, Coquimbo) y centro de Chile. Para otras regiones, consultar disponibilidad.',
+  },
+  {
+    question: '¿Qué documentos se requieren para arrendar?',
+    answer: 'Orden de compra, contrato de arriendo firmado y, según el caso, permiso de trabajo o plan de izaje aprobado.',
+  },
+  {
+    question: '¿Cuál es el tiempo mínimo de arriendo?',
+    answer: 'El arriendo mínimo es de 1 turno (8 horas) para equipos menores y 1 día (24 horas) para grúas de alto tonelaje.',
+  },
+];
+---
+
+<RentalLayout
+  title={subcategory.seoTitle}
+  description={subcategory.seoDescription}
+  heroImage={subcategory.heroImage}
+  heroImageAlt={subcategory.name}
+  category={`Arriendo · ${category.name}`}
+  features={subcategory.features}
+  description={subcategory.shortDesc}
+  breadcrumbs={breadcrumbs}
+  whatsappMessage={subcategory.whatsappMessage}
+  jsonLd={jsonLd}
+>
+  <EquipmentCatalog
+    slot="catalog"
+    items={subcategory.catalog}
+    columns={catalogColumns}
+    background="light"
+    title={`Modelos disponibles de ${subcategory.name.toLowerCase()}`}
+    subtitle={`${subcategory.catalog.length} ${subcategory.catalog.length === 1 ? 'equipo' : 'equipos'} en arriendo con operador certificado y mantenimiento incluido.`}
+  />
+
+  <StatsCounter
+    slot="stats"
+    stats={subcategory.specs.map((s) => ({
+      value: s.value,
+      label: s.label,
+    }))}
+    variant="dark"
+    layout="horizontal"
+    columns={4}
+    animated={false}
+    showDividers={true}
+  />
+
+  <Fragment slot="related">
+    <RelatedEquipment items={relatedItems} background="dark" />
+  </Fragment>
+
+  <Fragment slot="faq">
+    <FAQSection items={faqItems} background="light" />
+  </Fragment>
+</RentalLayout>

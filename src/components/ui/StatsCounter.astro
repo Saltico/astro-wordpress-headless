@@ -1,0 +1,318 @@
+---
+// src/components/ui/StatsCounter.astro
+// Contador horizontal de 2-4 items.
+// value acepta number | string. Los strings se renderizan tal cual (sin animar).
+
+export interface StatItem {
+  value: number | string;
+  label: string;
+  prefix?: string;
+  suffix?: string;
+  prefixPosition?: 'before' | 'after';
+  suffixPosition?: 'before' | 'after';
+  formatNumber?: boolean;
+}
+
+export interface Props {
+  stats: StatItem[];
+  variant?: 'light' | 'dark' | 'brand' | 'minimal';
+  layout?: 'horizontal' | 'vertical' | 'grid';
+  columns?: 2 | 3 | 4 | 5;
+  animated?: boolean;
+  duration?: number;
+  className?: string;
+  showDividers?: boolean;
+}
+
+const {
+  stats,
+  variant = 'dark',
+  layout = 'horizontal',
+  columns = 4,
+  animated = true,
+  duration = 1500,
+  className = '',
+  showDividers = false,
+} = Astro.props;
+
+// Truncar a 4 items (regla del producto: max 4 contadores).
+const safeStats = stats.slice(0, 4);
+
+const variantClasses = {
+  light: 'stats--light',
+  dark: 'stats--dark',
+  brand: 'stats--brand',
+  minimal: 'stats--minimal',
+};
+
+const layoutClasses = {
+  horizontal: 'stats--horizontal',
+  vertical: 'stats--vertical',
+  grid: 'stats--grid',
+};
+
+const columnsClass = `stats--cols-${columns}`;
+---
+
+<div
+  class={`stats ${variantClasses[variant]} ${layoutClasses[layout]} ${columnsClass} ${showDividers ? 'stats--dividers' : ''} ${className}`.trim()}
+  role="list"
+  aria-label="Estadísticas clave"
+>
+  <div class="stats__inner">
+    {safeStats.map((stat) => {
+      const prefix = stat.prefix || '';
+      const suffix = stat.suffix || '';
+      const prefixPos = stat.prefixPosition || 'before';
+      const suffixPos = stat.suffixPosition || 'after';
+      const shouldFormat = stat.formatNumber !== false;
+      const isNumeric = typeof stat.value === 'number';
+      const displayValue = isNumeric
+        ? animated
+          ? '0'
+          : shouldFormat
+            ? (stat.value as number).toLocaleString('es-CL')
+            : (stat.value as number).toString()
+        : (stat.value as string);
+
+      return (
+        <div class="stats__item" role="listitem" data-animate={animated && isNumeric ? 'true' : 'false'}>
+          <div class="stats__number-wrapper">
+            {prefix && prefixPos === 'before' && (
+              <span class="stats__prefix">{prefix}</span>
+            )}
+
+            <span
+              class="stats__number"
+              data-count={isNumeric ? (stat.value as number) : ''}
+              data-format={isNumeric ? (shouldFormat ? 'true' : 'false') : 'false'}
+              data-duration={duration}
+            >
+              {displayValue}
+            </span>
+
+            {suffix && suffixPos === 'after' && (
+              <span class="stats__suffix">{suffix}</span>
+            )}
+            {suffix && suffixPos === 'before' && (
+              <span class="stats__suffix stats__suffix--before">{suffix}</span>
+            )}
+            {prefix && prefixPos === 'after' && (
+              <span class="stats__prefix stats__prefix--after">{prefix}</span>
+            )}
+          </div>
+          <div class="stats__label">{stat.label}</div>
+        </div>
+      );
+    })}
+  </div>
+</div>
+
+{animated && (
+  <script define:vars={{ duration }}>
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('.stats__number[data-count]').forEach((el) => {
+          const target = parseInt(el.dataset.count || '0', 10);
+          const shouldFormat = el.dataset.format === 'true';
+          el.textContent = shouldFormat ? target.toLocaleString('es-CL') : target.toString();
+        });
+        return;
+      }
+
+      function countUp(el) {
+        const target = parseInt(el.dataset.count || '0', 10);
+        const shouldFormat = el.dataset.format === 'true';
+        const dur = parseInt(el.dataset.duration || duration, 10);
+        const start = performance.now();
+
+        function tick(now) {
+          const progress = Math.min((now - start) / dur, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = Math.floor(eased * target);
+          el.textContent = shouldFormat ? current.toLocaleString('es-CL') : current.toString();
+          if (progress < 1) {
+            requestAnimationFrame(tick);
+          } else {
+            el.textContent = shouldFormat ? target.toLocaleString('es-CL') : target.toString();
+          }
+        }
+        requestAnimationFrame(tick);
+      }
+
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                countUp(entry.target);
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.5 }
+        );
+        document.querySelectorAll('.stats__number[data-count]').forEach((el) => {
+          if (el.dataset.count) observer.observe(el);
+        });
+      } else {
+        document.querySelectorAll('.stats__number[data-count]').forEach((el) => {
+          const target = parseInt(el.dataset.count || '0', 10);
+          const shouldFormat = el.dataset.format === 'true';
+          el.textContent = shouldFormat ? target.toLocaleString('es-CL') : target.toString();
+        });
+      }
+    })();
+  </script>
+)}
+
+<style>
+  .stats {
+    padding: 0;
+  }
+
+  .stats__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    max-width: var(--container-max-width, 1200px);
+    margin-inline: auto;
+    padding-inline: var(--container-padding, 1rem);
+  }
+
+  .stats--horizontal .stats__inner {
+    flex-direction: row;
+  }
+
+  .stats--vertical .stats__inner {
+    flex-direction: column;
+  }
+
+  .stats--grid .stats__inner {
+    display: grid;
+    grid-template-columns: repeat(var(--columns, 4), 1fr);
+    gap: 1px;
+  }
+
+  /* Items: 4 columnas por defecto (regla del producto). */
+  .stats--horizontal .stats__item,
+  .stats--cols-4 .stats__item {
+    flex: 1 1 25%;
+    min-width: 0;
+  }
+
+  .stats--cols-2 .stats__item {
+    flex: 1 1 50%;
+    min-width: 0;
+  }
+
+  .stats--cols-3 .stats__item {
+    flex: 1 1 33.333%;
+    min-width: 0;
+  }
+
+  @media (max-width: 740px) {
+    .stats--horizontal .stats__item,
+    .stats--cols-3 .stats__item,
+    .stats--cols-4 .stats__item {
+      flex: 1 1 50%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .stats--horizontal .stats__item,
+    .stats--cols-2 .stats__item,
+    .stats--cols-3 .stats__item,
+    .stats--cols-4 .stats__item {
+      flex: 1 1 100%;
+    }
+  }
+
+  .stats--light {
+    background-color: var(--color-surface, #fff);
+  }
+  .stats--light .stats__number {
+    color: var(--color-ink, #1a1a1a);
+  }
+  .stats--light .stats__label {
+    color: var(--color-ink-500, #6b7280);
+  }
+
+  .stats--dark {
+    background-color: var(--color-surface-alt, #1a1a1a);
+    border-top: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+  }
+  .stats--dark .stats__number {
+    color: #fff;
+  }
+  .stats--dark .stats__label {
+    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+  }
+
+  .stats--brand {
+    background-color: var(--color-brand, #348f41);
+  }
+  .stats--brand .stats__number,
+  .stats--brand .stats__label {
+    color: #fff;
+  }
+
+  .stats--minimal {
+    background: transparent;
+  }
+
+  .stats__item {
+    padding: clamp(28px, 4vw, 48px) clamp(16px, 2.5vw, 32px);
+    background-color: inherit;
+    text-align: center;
+  }
+
+  .stats--dividers .stats__item {
+    border-right: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+  }
+
+  .stats--dividers .stats__item:last-child {
+    border-right: none;
+  }
+
+  .stats__number-wrapper {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .stats__number {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 900;
+    font-size: clamp(2.2rem, 4.4vw, 3.6rem);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .stats__prefix,
+  .stats__suffix {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 900;
+    font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+    color: var(--color-brand-300, #4ade80);
+    letter-spacing: -0.02em;
+  }
+
+  .stats--brand .stats__prefix,
+  .stats--brand .stats__suffix {
+    color: #ffffff;
+  }
+
+  .stats__suffix--before,
+  .stats__prefix--after {
+    margin-left: 6px;
+  }
+
+  .stats__label {
+    font-size: 0.9rem;
+    margin-top: 10px;
+    line-height: 1.4;
+  }
+</style>

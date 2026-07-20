@@ -1,0 +1,230 @@
+---
+// src/components/ui/QuoteForm.astro
+// Formulario de cotización inline para secciones CTA
+
+import Icon from './Icon.astro';
+
+export interface FormField {
+  name: string;
+  type: 'text' | 'email' | 'tel' | 'select' | 'textarea';
+  label: string;
+  placeholder?: string;
+  required?: boolean;
+  options?: string[];
+}
+
+export interface Props {
+  action?: string;
+  fields?: FormField[];
+  submitLabel?: string;
+  variant?: 'light' | 'dark';
+  className?: string;
+}
+
+const {
+  action = '/api/contact',
+  fields,
+  submitLabel = 'Enviar solicitud',
+  variant = 'dark',
+  className = '',
+} = Astro.props;
+
+const defaultFields: FormField[] = [
+  { name: 'nombre', type: 'text', label: 'Nombre', placeholder: 'Tu nombre', required: true },
+  { name: 'empresa', type: 'text', label: 'Empresa', placeholder: 'Tu empresa' },
+  { name: 'email', type: 'email', label: 'Email', placeholder: 'correo@empresa.cl', required: true },
+  { name: 'telefono', type: 'tel', label: 'Teléfono', placeholder: '+56 9 0000 0000' },
+  { name: 'mensaje', type: 'textarea', label: 'Mensaje', placeholder: 'Cuéntanos sobre tu proyecto...', required: true },
+];
+
+const formFields = fields || defaultFields;
+const variantClass = variant === 'dark' ? 'quote-form--dark' : 'quote-form--light';
+---
+
+<form class={`quote-form ${variantClass} ${className}`.trim()} action={action} method="POST">
+  <div class="quote-form__grid">
+    {formFields.map((field) => (
+      <div class={`quote-form__field ${field.type === 'textarea' ? 'quote-form__field--full' : ''}`}>
+        <label for={field.name} class="quote-form__label">
+          {field.label}
+          {field.required && <span class="quote-form__required">*</span>}
+        </label>
+        
+        {field.type === 'textarea' ? (
+          <textarea
+            id={field.name}
+            name={field.name}
+            class="quote-form__input quote-form__textarea"
+            placeholder={field.placeholder}
+            required={field.required}
+            rows={3}
+          ></textarea>
+        ) : field.type === 'select' ? (
+          <select
+            id={field.name}
+            name={field.name}
+            class="quote-form__input quote-form__select"
+            required={field.required}
+          >
+            <option value="">Seleccionar...</option>
+            {field.options?.map((opt) => (
+              <option value={opt}>{opt}</option>
+            ))}
+          </select>
+        ) : (
+          <input
+            type={field.type}
+            id={field.name}
+            name={field.name}
+            class="quote-form__input"
+            placeholder={field.placeholder}
+            required={field.required}
+          />
+        )}
+      </div>
+    ))}
+  </div>
+  
+  <button type="submit" class="quote-form__submit">
+    {submitLabel}
+    <Icon name="arrow-right" size={18} />
+  </button>
+</form>
+
+<style>
+  .quote-form {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .quote-form__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  @media (min-width: 640px) {
+    .quote-form__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .quote-form__field--full {
+    grid-column: 1 / -1;
+  }
+
+  .quote-form__label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .quote-form--dark .quote-form__label {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .quote-form--light .quote-form__label {
+    color: var(--color-ink-700, #374151);
+  }
+
+  .quote-form__required {
+    color: var(--color-brand-300, #4ade80);
+    margin-left: 2px;
+  }
+
+  .quote-form--light .quote-form__required {
+    color: var(--color-brand, #1a9c4a);
+  }
+
+  .quote-form__input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .quote-form--dark .quote-form__input {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+
+  .quote-form--dark .quote-form__input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .quote-form--dark .quote-form__input:focus {
+    outline: none;
+    border-color: var(--color-brand-300, #4ade80);
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .quote-form--light .quote-form__input {
+    background: var(--color-surface, #fff);
+    border-color: var(--color-border, #e5e7eb);
+    color: var(--color-ink, #1a1a1a);
+  }
+
+  .quote-form--light .quote-form__input::placeholder {
+    color: var(--color-ink-400, #9ca3af);
+  }
+
+  .quote-form--light .quote-form__input:focus {
+    outline: none;
+    border-color: var(--color-brand, #1a9c4a);
+  }
+
+  .quote-form__textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+  }
+
+  .quote-form__select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+  }
+
+  .quote-form--light .quote-form__select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  }
+
+  .quote-form__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 14px 28px;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 1rem;
+    background: var(--color-brand, #1a9c4a);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .quote-form__submit:hover {
+    background: var(--color-brand-700, #15803d);
+    transform: translateY(-2px);
+  }
+
+  @media (min-width: 640px) {
+    .quote-form__submit {
+      width: auto;
+    }
+  }
+</style>

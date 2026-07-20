@@ -1,0 +1,269 @@
+---
+// src/pages/arriendo/index.astro
+// Hub principal del catálogo de arriendo.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
+import StatsCounter from '@/components/ui/StatsCounter.astro';
+import CTABand from '@/components/ui/CTABand.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import Icon from '@/components/ui/Icon.astro';
+import type { StatItem } from '@/components/ui/StatsCounter.astro';
+import heroImg from '@/assets/imgs/hero.jpg';
+import { RENTAL_CATEGORIES } from '@/data/rental';
+import { collectionPageSchema, breadcrumbSchema, combineSchemas } from '@/lib/seo';
+
+const title = 'Arriendo de Maquinaria y Equipos para Minería | IP Proyectos Industriales';
+const description = 'Arriendo de grúas, izaje, movimiento de tierra, transporte y equipos especiales para minería e industria en Chile. Cotiza online.';
+
+const breadcrumbs = [
+  { label: 'Empresa', url: '/' },
+  { label: 'Arriendo de Equipos', url: '/arriendo' },
+];
+
+const jsonLd = combineSchemas(
+  collectionPageSchema('Arriendo de Equipos', '/arriendo'),
+  breadcrumbSchema(breadcrumbs)
+);
+
+const stats: StatItem[] = [
+  { value: 400, label: 'Toneladas capacidad', suffix: 'Tons', suffixPosition: 'after' },
+  { value: 100, prefix: '+', label: 'Equipos propios', prefixPosition: 'before' },
+  { value: 24, label: 'Disponibilidad', suffix: '/7', suffixPosition: 'after' },
+  { value: 15, prefix: '+', label: 'Años de experiencia', prefixPosition: 'before' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <PageHero
+    image={heroImg.src}
+    imageAlt="Arriendo de maquinaria pesada IP"
+    eyebrow="Rental de equipos"
+    title="Arriendo de maquinaria pesada para minería e industria"
+    subtitle="Grúas, izaje, movimiento de tierra, transporte y equipos especiales con operadores certificados. Disponibilidad 24/7 en zona norte de Chile."
+    minHeight="sm"
+  >
+    <Breadcrumbs slot="breadcrumbs" items={breadcrumbs} variant="hero" />
+    <Fragment slot="actions">
+      <a href="#cotizar" class="arriendo-hero__btn arriendo-hero__btn--primary">
+        Cotizar
+        <Icon name="arrow-right" size={16} />
+      </a>
+      <a href="/catalogo.pdf" class="arriendo-hero__btn arriendo-hero__btn--outline" download>
+        <Icon name="download" size={16} />
+        Descargar catálogo
+      </a>
+    </Fragment>
+  </PageHero>
+
+  <StatsCounter
+    stats={stats}
+    variant="dark"
+    layout="horizontal"
+    columns={4}
+    animated={true}
+  />
+
+  <section class="cat-grid">
+    <Container>
+      <div class="cat-grid__items">
+        {RENTAL_CATEGORIES.map((category, index) => (
+          <article class="cat-card">
+            <div class="cat-card__number">0{index + 1} — {category.name}</div>
+            <div class="cat-card__content">
+              <h2 class="cat-card__title">{category.name}</h2>
+              <p class="cat-card__desc">{category.shortDesc}</p>
+              <ul class="cat-card__sublist">
+                {category.subcategories.map((sub) => (
+                  <li>
+                    <a href={`/arriendo/${category.slug}/${sub.slug}`}>{sub.name}</a>
+                  </li>
+                ))}
+              </ul>
+              <a href={`/arriendo/${category.slug}`} class="cat-card__link">
+                Conocer categoría
+                <Icon name="arrow-right" size={18} />
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <div id="cotizar">
+    <CTABand
+      eyebrow="¿Necesitas equipos para tu faena?"
+      title="Arrienda con nosotros"
+      subtitle="Contamos con operadores certificados y disponibilidad 24/7 para tu proyecto."
+      showForm={true}
+      backgroundImage={heroImg.src}
+      contentAlign="center"
+      minHeight="sm"
+    />
+  </div>
+</BaseLayout>
+
+<style>
+  .arriendo-hero__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    padding: 14px 28px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .arriendo-hero__btn--primary {
+    background: var(--color-brand, #1a9c4a);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .arriendo-hero__btn--primary:hover,
+  .arriendo-hero__btn--primary:focus {
+    background: var(--color-brand-700, #15803d);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .arriendo-hero__btn--outline {
+    background: transparent;
+    color: #fff;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .arriendo-hero__btn--outline:hover,
+  .arriendo-hero__btn--outline:focus {
+    border-color: #fff;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 480px) {
+    .page-hero__actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .arriendo-hero__btn {
+      justify-content: center;
+    }
+  }
+
+  .cat-grid {
+    background-color: var(--color-graphite, #0d1611);
+    padding-block: clamp(40px, 6vw, 80px);
+  }
+
+  .cat-grid__items {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .cat-card {
+    display: grid;
+    gap: 20px;
+    padding-block: clamp(30px, 4vw, 50px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .cat-card:last-child {
+    border-bottom: none;
+  }
+
+  @media (min-width: 768px) {
+    .cat-card {
+      grid-template-columns: 240px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+  }
+
+  .cat-card__number {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brand-300, #4ade80);
+  }
+
+  .cat-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .cat-card__title {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 800;
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .cat-card__desc {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 60ch;
+  }
+
+  .cat-card__sublist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+
+  .cat-card__sublist a {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .cat-card__sublist a:hover,
+  .cat-card__sublist a:focus {
+    background: var(--color-brand, #1a9c4a);
+    border-color: var(--color-brand, #1a9c4a);
+    color: #fff;
+  }
+
+  .cat-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-brand-300, #4ade80);
+    text-decoration: none;
+    margin-top: 4px;
+    transition: gap 0.2s ease;
+  }
+
+  .cat-card__link:hover {
+    gap: 12px;
+  }
+</style>

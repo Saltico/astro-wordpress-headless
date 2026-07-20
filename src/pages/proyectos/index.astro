@@ -1,53 +1,170 @@
 ---
 // src/pages/proyectos/index.astro
+// Página Proyectos replicando estructura de Tecnisud
+// Secciones: Hero → Filtros → Grid de proyectos → CTA contacto
+
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import Container from '@/components/ui/Container.astro';
-import SectionLayout from '@/components/ui/SectionLayout.astro';
-import { collectionPageSchema } from '@/lib/seo';
-import { getSiteUrl } from '@/lib/seo';
+import HeroSection from '@/components/ui/HeroSection.astro';
+import ProjectGrid from '@/components/ui/ProjectGrid.astro';
+import ContactSection from '@/components/ui/ContactSection.astro';
+import type { ProjectData } from '@/components/ui/ProjectCard.astro';
 
-const title = 'Proyectos de Izaje y Obras | IP Proyectos Industriales';
-const description =
-  'Conoce nuestros proyectos de izaje, montaje industrial y obras civiles en la Región de Coquimbo y zona norte de Chile.';
+import heroImg from '@/assets/imgs/hero.jpg';
 
-const breadcrumbs = [
-  { label: 'Inicio', url: '/' },
-  { label: 'Proyectos' },
+const title = 'Proyectos · IP Proyectos Industriales';
+const description = 'Conoce nuestros proyectos de ingeniería industrial, montaje y arriendo de maquinaria para la gran minería.';
+
+const categories = [
+  'Montaje Industrial',
+  'Obras Civiles',
+  'Izaje Especializado',
+  'Arriendo de Maquinaria',
+  'Energía',
+  'Infraestructura',
+];
+
+const allProjects: ProjectData[] = [
+  {
+    slug: 'montaje-estructura-metalica',
+    title: 'Montaje de Estructura Metálica > 200t',
+    client: 'Minera del Valle',
+    location: 'Región de Coquimbo',
+    category: 'Montaje Industrial',
+    image: heroImg.src,
+  },
+  {
+    slug: 'izaje-aerogeneradores',
+    title: 'Izaje de 8 Aerogeneradores',
+    client: 'Parque Eólico Norte',
+    location: 'Región de Coquimbo',
+    category: 'Izaje Especializado',
+    image: heroImg.src,
+  },
+  {
+    slug: 'desmontaje-molino',
+    title: 'Desmontaje y Traslado de Molino',
+    client: 'Planta Concentradora',
+    location: 'Región de Atacama',
+    category: 'Montaje Industrial',
+    image: heroImg.src,
+  },
+  {
+    slug: 'montaje-planta-proceso',
+    title: 'Montaje de Planta de Proceso',
+    client: 'Minera Los Pelambres',
+    location: 'Región de Coquimbo',
+    category: 'Montaje Industrial',
+    image: heroImg.src,
+  },
+  {
+    slug: 'izaje-transformadores',
+    title: 'Izaje de Transformadores 150t',
+    client: 'Subestación Eléctrica',
+    location: 'Región de Atacama',
+    category: 'Izaje Especializado',
+    image: heroImg.src,
+  },
+  {
+    slug: 'obras-civiles-faena',
+    title: 'Obras Civiles en Faena Minera',
+    client: 'Minera Carmen de Andacollo',
+    location: 'Región de Coquimbo',
+    category: 'Obras Civiles',
+    image: heroImg.src,
+  },
+  {
+    slug: 'arriendo-grua-500t',
+    title: 'Arriendo Grúa Todo Terreno 500t',
+    client: 'Constructora ABC',
+    location: 'Región de Coquimbo',
+    category: 'Arriendo de Maquinaria',
+    image: heroImg.src,
+  },
+  {
+    slug: 'montaje-correa-transportadora',
+    title: 'Montaje de Correa Transportadora',
+    client: 'Minera El Romero',
+    location: 'Región de Atacama',
+    category: 'Montaje Industrial',
+    image: heroImg.src,
+  },
+  {
+    slug: 'obras-civiles-subestacion',
+    title: 'Obras Civiles Subestación Eléctrica',
+    client: 'Enel Green Power',
+    location: 'Región de Coquimbo',
+    category: 'Infraestructura',
+    image: heroImg.src,
+  },
+  {
+    slug: 'izaje-modulos-mineros',
+    title: 'Izaje de Módulos Mineros',
+    client: 'Mantención Minera SpA',
+    location: 'Región de Coquimbo',
+    category: 'Izaje Especializado',
+    image: heroImg.src,
+  },
+  {
+    slug: 'arriendo-manipulador-telescopico',
+    title: 'Arriendo Manipulador Telescópico',
+    client: 'Obras Portuarias',
+    location: 'Región de Valparaíso',
+    category: 'Arriendo de Maquinaria',
+    image: heroImg.src,
+  },
+  {
+    slug: 'montaje-parque-eolico',
+    title: 'Montaje de Parque Eólico Fase II',
+    client: 'Energía Renovable SpA',
+    location: 'Región de Coquimbo',
+    category: 'Energía',
+    image: heroImg.src,
+  },
 ];
 ---
 
 <BaseLayout
   title={title}
   description={description}
-  breadcrumbs={breadcrumbs}
-  jsonLd={collectionPageSchema('Proyectos', getSiteUrl('/proyectos'))}
+  breadcrumbs={[
+    { label: 'Inicio', url: '/' },
+    { label: 'Proyectos', url: '/proyectos' },
+  ]}
 >
-  <SectionLayout spacing="lg">
-    <Container>
-      <h1>Proyectos</h1>
-      <p>Hub de proyectos ejecutados por IP Proyectos Industriales.</p>
-      <ul>
-        <li><a href="/proyectos/izaje-estructuras-la-serena">Izaje de Estructuras — La Serena</a></li>
-      </ul>
-    </Container>
-  </SectionLayout>
+  <!-- Hero -->
+  <HeroSection
+    title="Construyendo el futuro, un proyecto a la vez"
+    subtitle="Descubrí nuestras obras más emblemáticas y cómo transformamos ideas en realidades con ingeniería de excelencia."
+    backgroundImage={heroImg.src}
+    eyebrow="Nuestros proyectos"
+    variant="left"
+    minHeight="md"
+  />
+
+  <!-- Projects Grid con filtros -->
+  <ProjectGrid
+    projects={allProjects}
+    categories={categories}
+    title="Conocé nuestros proyectos"
+    subtitle="Explorá nuestras obras organizadas por categoría."
+    showFilters={true}
+    showLoadMore={true}
+    initialCount={9}
+    loadMoreLabel="Ver más proyectos"
+    columns={3}
+  />
+
+  <!-- CTA Contacto -->
+  <ContactSection
+    title="¿Tenés un proyecto en mente?"
+    subtitle="Contanos los requerimientos de tu faena. Nuestro equipo técnico responderá en menos de 24 horas hábiles con una propuesta ajustada."
+    contactInfo={{
+      address: 'Región de Coquimbo, Chile',
+      phone: '+56 9 0000 0000',
+      email: 'contacto@ipproyectosindustriales.cl',
+      schedule: 'Lunes a Viernes, 08:00 - 18:00',
+    }}
+    submitLabel="Solicitar cotización"
+    background="alt"
+  />
 </BaseLayout>
-
-<style>
-  ul {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    margin-top: var(--space-6);
-  }
-
-  a {
-    color: var(--color-brand);
-    font-weight: 500;
-  }
-
-  a:hover,
-  a:focus {
-    text-decoration: underline;
-  }
-</style>

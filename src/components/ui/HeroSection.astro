@@ -1,0 +1,246 @@
+---
+// src/components/ui/HeroSection.astro
+// Hero section reutilizable con imagen de fondo, título, subtítulo y stats opcionales
+// Inspirado en el hero de Tecnisud
+
+import Container from './Container.astro';
+import StatsCounter from './StatsCounter.astro';
+import type { StatItem } from './StatsCounter.astro';
+
+export interface Props {
+  title: string;
+  subtitle?: string;
+  backgroundImage?: string;
+  backgroundAlt?: string;
+  stats?: StatItem[];
+  ctaPrimary?: {
+    label: string;
+    href: string;
+  };
+  ctaSecondary?: {
+    label: string;
+    href: string;
+  };
+  eyebrow?: string;
+  variant?: 'default' | 'centered' | 'left';
+  minHeight?: 'sm' | 'md' | 'lg' | 'full';
+}
+
+const {
+  title,
+  subtitle,
+  backgroundImage,
+  backgroundAlt = '',
+  stats,
+  ctaPrimary,
+  ctaSecondary,
+  eyebrow,
+  variant = 'left',
+  minHeight = 'lg',
+} = Astro.props;
+
+const minHeightClasses = {
+  sm: 'hero-section--sm',
+  md: 'hero-section--md',
+  lg: 'hero-section--lg',
+  full: 'hero-section--full',
+};
+
+const variantClasses = {
+  default: 'hero-section--left',
+  left: 'hero-section--left',
+  centered: 'hero-section--centered',
+};
+---
+
+<section class={`hero-section ${minHeightClasses[minHeight]} ${variantClasses[variant]}`}>
+  {backgroundImage && (
+    <div class="hero-section__background" aria-hidden="true">
+      <img
+        src={backgroundImage}
+        alt={backgroundAlt}
+        class="hero-section__image"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <div class="hero-section__overlay"></div>
+    </div>
+  )}
+
+  <Container class="hero-section__container">
+    <div class="hero-section__content">
+      {eyebrow && <p class="hero-section__eyebrow">{eyebrow}</p>}
+      
+      <h1 class="hero-section__title">{title}</h1>
+      
+      {subtitle && <p class="hero-section__subtitle">{subtitle}</p>}
+
+      {(ctaPrimary || ctaSecondary) && (
+        <div class="hero-section__ctas">
+          {ctaPrimary && (
+            <a href={ctaPrimary.href} class="button button--primary button--large">
+              {ctaPrimary.label}
+            </a>
+          )}
+          {ctaSecondary && (
+            <a href={ctaSecondary.href} class="button button--secondary button--large">
+              {ctaSecondary.label}
+            </a>
+          )}
+        </div>
+      )}
+
+      {stats && stats.length > 0 && (
+        <div class="hero-section__stats">
+          <StatsCounter stats={stats} variant="dark" layout="horizontal" />
+        </div>
+      )}
+    </div>
+  </Container>
+</section>
+
+<style>
+  .hero-section {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    color: var(--color-on-brand);
+    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
+  }
+
+  .hero-section--sm {
+    min-height: calc(40vh + var(--topbar-height, 40px) + var(--header-height, 80px));
+    padding-top: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + var(--space-8));
+    padding-bottom: var(--space-8);
+  }
+
+  .hero-section--md {
+    min-height: calc(60vh + var(--topbar-height, 40px) + var(--header-height, 80px));
+    padding-top: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + var(--space-10));
+    padding-bottom: var(--space-10);
+  }
+
+  .hero-section--lg {
+    min-height: calc(80vh + var(--topbar-height, 40px) + var(--header-height, 80px));
+    padding-top: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + var(--space-12));
+    padding-bottom: var(--space-12);
+  }
+
+  .hero-section--full {
+    min-height: calc(100vh + var(--topbar-height, 40px) + var(--header-height, 80px));
+    padding-top: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + var(--space-12));
+    padding-bottom: var(--space-12);
+  }
+
+  .hero-section__background {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .hero-section__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .hero-section__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(10, 22, 13, 0.7) 0%,
+      rgba(10, 22, 13, 0.55) 50%,
+      rgba(10, 22, 13, 0.78) 100%
+    );
+  }
+
+  @media (min-width: 768px) {
+    .hero-section__overlay {
+      background: linear-gradient(
+        95deg,
+        rgba(10, 22, 13, 0.82) 0%,
+        rgba(10, 22, 13, 0.55) 45%,
+        rgba(10, 22, 13, 0.3) 100%
+      );
+    }
+  }
+
+  .hero-section__container {
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-section__content {
+    max-width: 60rem;
+  }
+
+  .hero-section--centered .hero-section__content {
+    max-width: 50rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .hero-section--centered .hero-section__ctas {
+    justify-content: center;
+  }
+
+  .hero-section--centered .hero-section__stats {
+    justify-content: center;
+  }
+
+  .hero-section__eyebrow {
+    display: inline-block;
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-small);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #a8d6ae;
+  }
+
+  .hero-section__title {
+    margin: 0 0 var(--space-5);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--color-on-brand);
+  }
+
+  .hero-section__subtitle {
+    font-size: var(--text-lead);
+    color: rgba(255, 255, 255, 0.88);
+    max-width: 60ch;
+    margin: 0 0 var(--space-8);
+    line-height: 1.55;
+  }
+
+  .hero-section--centered .hero-section__subtitle {
+    margin-inline: auto;
+  }
+
+  .hero-section__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-bottom: var(--space-10);
+  }
+
+  .hero-section__stats {
+    margin-top: var(--space-8);
+  }
+
+  .hero-section__stats :global(.stats) {
+    padding: 0;
+    background: transparent;
+  }
+
+  .hero-section__stats :global(.stats__inner) {
+    padding-inline: 0;
+  }
+</style>

@@ -1,0 +1,280 @@
+---
+// src/layouts/ServiceLayout.astro
+// Layout reutilizable para páginas de servicios individuales
+// Replica la estructura del sitio de referencia
+
+import BaseLayout from './BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
+import Icon from '@/components/ui/Icon.astro';
+import CTABand from '@/components/ui/CTABand.astro';
+import heroImg from '@/assets/imgs/hero.jpg';
+
+export interface Props {
+  title: string;
+  subtitle: string;
+  description: string;
+  heroImage: string;
+  heroImageAlt: string;
+  category: string;
+  includes: string[];
+  breadcrumbs: Array<{ label: string; url: string }>;
+  whatsappMessage: string;
+}
+
+const {
+  title,
+  subtitle,
+  description,
+  heroImage,
+  heroImageAlt,
+  category,
+  includes,
+  breadcrumbs,
+  whatsappMessage,
+} = Astro.props;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumbs={breadcrumbs}
+>
+  <!-- Hero con imagen y breadcrumbs integrados -->
+  <section class="service-hero">
+    <img
+      src={heroImage}
+      alt={heroImageAlt}
+      class="service-hero__bg"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div class="service-hero__overlay"></div>
+    <div class="service-hero__container">
+      <Breadcrumbs items={breadcrumbs} variant="hero" />
+      <p class="service-hero__category">{category}</p>
+      <h1 class="service-hero__title">{title}</h1>
+      <p class="service-hero__subtitle">{subtitle}</p>
+    </div>
+  </section>
+
+  <!-- Contenido principal -->
+  <section class="service-content">
+    <Container>
+      <div class="service-content__grid">
+        <!-- Imagen destacada -->
+        <div class="service-content__image-wrapper">
+          <img
+            src={heroImage}
+            alt={heroImageAlt}
+            class="service-content__image"
+            loading="lazy"
+          />
+        </div>
+
+        <!-- Contenido -->
+        <div class="service-content__main">
+          <p class="service-content__eyebrow">Qué incluye</p>
+          <h2 class="service-content__title">{description}</h2>
+          
+          <ul class="service-content__list">
+            {includes.map((item) => (
+              <li class="service-content__list-item">
+                <Icon name="check" size={20} />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- CTA de cotización -->
+  <CTABand
+    eyebrow="¿Tienes un proyecto o faena?"
+    title="Pide tu cotización hoy mismo"
+    subtitle="Cuéntanos el alcance y te respondemos a la brevedad con una propuesta a tu medida."
+    showForm={true}
+    backgroundImage={heroImage}
+    contentAlign="center"
+    minHeight="sm"
+  />
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .service-hero {
+    position: relative;
+    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
+    min-height: calc(320px + var(--topbar-height, 40px) + var(--header-height, 80px));
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .service-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .service-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(13, 22, 17, 0.3) 0%,
+      rgba(13, 22, 17, 0.7) 60%,
+      rgba(13, 22, 17, 0.95) 100%
+    );
+  }
+
+  .service-hero__container {
+    position: relative;
+    z-index: 2;
+    max-width: 1360px;
+    width: 100%;
+    margin-inline: auto;
+    padding: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 60px)
+      var(--container-padding, 20px) 56px;
+  }
+
+  .service-hero__category {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-brand-300, #4ade80);
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .service-hero__category::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: var(--color-brand, #1a9c4a);
+  }
+
+  .service-hero__title {
+    color: #fff;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    max-width: 18ch;
+    margin: 0 0 16px;
+  }
+
+  .service-hero__subtitle {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    max-width: 60ch;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* Content */
+  .service-content {
+    padding-block: clamp(60px, 8vw, 100px);
+    background-color: var(--color-surface, #fff);
+  }
+
+  .service-content__grid {
+    display: grid;
+    gap: clamp(30px, 5vw, 60px);
+    align-items: start;
+  }
+
+  @media (min-width: 860px) {
+    .service-content__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .service-content__image-wrapper {
+    position: sticky;
+    top: 120px;
+  }
+
+  .service-content__image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+
+  @media (max-width: 859px) {
+    .service-content__image-wrapper {
+      position: static;
+    }
+  }
+
+  .service-content__main {
+    max-width: 540px;
+  }
+
+  .service-content__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-brand, #1a9c4a);
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .service-content__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .service-content__title {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--color-ink, #1a1a1a);
+    margin: 0 0 24px;
+  }
+
+  .service-content__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .service-content__list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: var(--color-ink-700, #374151);
+  }
+
+  .service-content__list-item :global(svg) {
+    flex-shrink: 0;
+    color: var(--color-brand, #1a9c4a);
+    margin-top: 2px;
+  }
+</style>

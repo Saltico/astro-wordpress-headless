@@ -1,0 +1,109 @@
+---
+// src/components/quote/QuoteCartBadge.astro
+// Badge con el conteo de items en el header. Se sincroniza con
+// el CustomEvent 'ip-quote-cart-change'.
+
+import Icon from '@/components/ui/Icon.astro';
+---
+
+<a
+  href="/cotizador"
+  class="quote-badge"
+  data-quote-badge
+  aria-label="Abrir cotizador"
+  hidden
+>
+  <span class="quote-badge__icon" aria-hidden="true">
+    <Icon name="cart" size={20} />
+  </span>
+  <span class="quote-badge__label">Cotizador</span>
+  <span class="quote-badge__count" data-quote-badge-count aria-live="polite" aria-atomic="true">0</span>
+</a>
+
+<script>
+  import { getItemCount, subscribe } from '@/lib/quoteCart';
+
+  function paint(): void {
+    const link = document.querySelector<HTMLElement>('[data-quote-badge]');
+    const counter = document.querySelector<HTMLElement>('[data-quote-badge-count]');
+    if (!link || !counter) return;
+    const count = getItemCount();
+    if (count === 0) {
+      link.hidden = true;
+      counter.textContent = '0';
+    } else {
+      link.hidden = false;
+      counter.textContent = String(count);
+      link.setAttribute('aria-label', `Abrir cotizador con ${count} ${count === 1 ? 'equipo' : 'equipos'}`);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    paint();
+    subscribe(paint);
+  });
+</script>
+
+<style>
+  .quote-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.5rem;
+    padding: 0.5rem 0.75rem;
+    color: var(--color-on-brand, #fff);
+    text-decoration: none;
+    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
+    font-weight: 700;
+    font-size: 0.8125rem;
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    transition: background-color 0.15s var(--ease-out, ease),
+      transform 0.15s var(--ease-out, ease);
+  }
+
+  .quote-badge:hover,
+  .quote-badge:focus-visible {
+    background-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+  }
+
+  .quote-badge:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  .quote-badge__icon {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .quote-badge__label {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .quote-badge__label {
+      display: inline;
+    }
+    .quote-badge {
+      padding: 0.5rem 0.875rem;
+      font-size: 0.875rem;
+    }
+  }
+
+  .quote-badge__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0 0.4rem;
+    background-color: var(--color-on-brand, #fff);
+    color: var(--color-brand, #348f41);
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 999px;
+    line-height: 1;
+  }
+</style>

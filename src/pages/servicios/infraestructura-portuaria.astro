@@ -1,0 +1,26 @@
+---
+// src/pages/servicios/infraestructura-portuaria.astro
+import ServiceLayout from '@/layouts/ServiceLayout.astro';
+import heroImg from '@/assets/imgs/hero.jpg';
+---
+
+<ServiceLayout
+  title="Infraestructura para puertos y terminales"
+  subtitle="Obras marítimas que integran ingeniería, construcción y montaje."
+  description="Obras marítimas integrales"
+  heroImage={heroImg.src}
+  heroImageAlt="Infraestructura para puertos y terminales"
+  category="Servicios · Infraestructura portuaria"
+  includes={[
+    'Mantención y reparación de obras marítimas.',
+    'Construcción de muelles y defensas marítimas.',
+    'Impermeabilización de piscinas y tranques.',
+    'Estructuras costeras.',
+  ]}
+  breadcrumbs={[
+    { label: 'Empresa', url: '/' },
+    { label: 'Servicios', url: '/servicios' },
+    { label: 'Infraestructura portuaria', url: '/servicios/infraestructura-portuaria' },
+  ]}
+  whatsappMessage="Hola IP, quisiera cotizar infraestructura portuaria."
+/>

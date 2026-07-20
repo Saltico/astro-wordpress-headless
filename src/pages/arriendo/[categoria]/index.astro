@@ -1,0 +1,199 @@
+---
+// src/pages/arriendo/[categoria]/index.astro
+// Hub de cada categoría (izaje, movimiento-de-tierra, transporte, equipos-especiales)
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
+import Icon from '@/components/ui/Icon.astro';
+import CTABand from '@/components/ui/CTABand.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import heroImg from '@/assets/imgs/hero.jpg';
+import { RENTAL_CATEGORIES } from '@/data/rental';
+import { serviceSchema, breadcrumbSchema, combineSchemas } from '@/lib/seo';
+
+export function getStaticPaths() {
+  return RENTAL_CATEGORIES.map((category) => ({
+    params: { categoria: category.slug },
+    props: { category },
+  }));
+}
+
+const { category } = Astro.props;
+
+const breadcrumbs = [
+  { label: 'Empresa', url: '/' },
+  { label: 'Arriendo de Equipos', url: '/arriendo' },
+  { label: category.name, url: `/arriendo/${category.slug}` },
+];
+
+const jsonLd = combineSchemas(
+  serviceSchema(category.name, category.description, Astro.url.pathname, undefined, {
+    serviceType: 'Arriendo de equipos',
+    areaServed: ['CL-II', 'CL-III', 'CL-IV'],
+  }),
+  breadcrumbSchema(breadcrumbs)
+);
+---
+
+<BaseLayout
+  title={category.seoTitle}
+  description={category.seoDescription}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <PageHero
+    image={heroImg.src}
+    imageAlt={`Arriendo de ${category.name}`}
+    eyebrow={`Arriendo · ${category.name}`}
+    title={category.name}
+    subtitle={category.description}
+    minHeight="sm"
+  >
+    <Breadcrumbs slot="breadcrumbs" items={breadcrumbs} variant="hero" />
+  </PageHero>
+
+  <section class="cat-list">
+    <Container>
+      <div class="cat-list__items">
+        {category.subcategories.map((sub, index) => (
+          <article class="cat-list__item">
+            <div class="cat-list__number">0{index + 1}</div>
+            <div class="cat-list__content">
+              <h2 class="cat-list__title">{sub.name}</h2>
+              <p class="cat-list__desc">{sub.shortDesc}</p>
+              <div class="cat-list__meta">
+                {sub.specs.slice(0, 2).map((s) => (
+                  <span class="cat-list__spec"><strong>{s.label}:</strong> {s.value}</span>
+                ))}
+                <span class="cat-list__count">{sub.catalog.length} modelos disponibles</span>
+              </div>
+              <a href={`/arriendo/${category.slug}/${sub.slug}`} class="cat-list__link">
+                Ver {sub.name.toLowerCase()}
+                <Icon name="arrow-right" size={18} />
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <CTABand
+    eyebrow={`¿Necesitas ${category.name.toLowerCase()} para tu faena?`}
+    title={`Cotiza tu ${category.name.toLowerCase()}`}
+    subtitle="Respuesta operativa en menos de 48 horas."
+    showForm={true}
+    contentAlign="center"
+    minHeight="sm"
+  />
+</BaseLayout>
+
+<style>
+  .cat-list {
+    background-color: var(--color-graphite, #0d1611);
+    padding-block: clamp(40px, 6vw, 80px);
+  }
+
+  .cat-list__items {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .cat-list__item {
+    display: grid;
+    gap: 20px;
+    padding-block: clamp(30px, 4vw, 50px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .cat-list__item:last-child {
+    border-bottom: none;
+  }
+
+  @media (min-width: 768px) {
+    .cat-list__item {
+      grid-template-columns: 200px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+  }
+
+  .cat-list__number {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brand-300, #4ade80);
+  }
+
+  .cat-list__content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .cat-list__title {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 800;
+    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .cat-list__desc {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 65ch;
+  }
+
+  .cat-list__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    align-items: center;
+    margin-top: 4px;
+  }
+
+  .cat-list__spec {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.85);
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+  }
+
+  .cat-list__spec strong {
+    color: var(--color-brand-300, #4ade80);
+    font-weight: 700;
+  }
+
+  .cat-list__count {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+  }
+
+  .cat-list__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-brand-300, #4ade80);
+    text-decoration: none;
+    margin-top: 8px;
+    transition: gap 0.2s ease;
+  }
+
+  .cat-list__link:hover {
+    gap: 12px;
+  }
+</style>

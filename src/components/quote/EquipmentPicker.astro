@@ -1,0 +1,862 @@
+---
+// src/components/quote/EquipmentPicker.astro
+// Selector embebido de equipos. Permite buscar, filtrar por categoría
+// y agregar al cotizador sin salir de /cotizador. Self-contained:
+// todo el state vive en el <script> del componente.
+
+import Icon from '@/components/ui/Icon.astro';
+import EquipmentPickerCard from '@/components/quote/EquipmentPickerCard.astro';
+import { RENTAL_CATEGORIES } from '@/data/rental';
+import type { Equipment } from '@/data/rental';
+
+interface PickerEntry {
+  equipment: Equipment;
+  categorySlug: string;
+  categoryName: string;
+  subcategorySlug: string;
+  subcategoryName: string;
+}
+
+// Aplanar RENTAL_CATEGORIES a una lista de equipos con su ubicación.
+// Se ejecuta en build time; cero runtime cost.
+const ALL_EQUIPMENT: PickerEntry[] = RENTAL_CATEGORIES.flatMap((category) =>
+  category.subcategories.flatMap((subcategory) =>
+    subcategory.catalog.map((equipment) => ({
+      equipment,
+      categorySlug: category.slug,
+      categoryName: category.name,
+      subcategorySlug: subcategory.slug,
+      subcategoryName: subcategory.name,
+    }))
+  )
+);
+
+const totalEquipment = ALL_EQUIPMENT.length;
+const categories = RENTAL_CATEGORIES.map((c) => ({ slug: c.slug, name: c.name }));
+
+// El picker ahora vive en la columna derecha del cotizador y está
+// siempre expandido. No requiere props.
+export type Props = Record<string, never>;
+---
+
+<section
+  class="picker"
+  data-quote-picker
+  data-total-equipment={totalEquipment}
+  aria-label="Selector de equipos adicionales"
+>
+  <header class="picker__head">
+    <span class="picker__head-icon" aria-hidden="true">
+      <Icon name="search" size={18} />
+    </span>
+    <h2 class="picker__head-title">
+      Agregar más equipos
+      <span class="picker__head-count" data-picker-total>
+        ({totalEquipment} disponibles)
+      </span>
+    </h2>
+  </header>
+
+  <div class="picker__body">
+      <div class="picker__cap-warning" data-picker-cap-warning hidden role="status">
+        <Icon name="warning" size={16} />
+        <span>
+          Ya tienes <strong data-picker-cap-count>5</strong> equipos en tu cotizador.
+          Quita uno para agregar otro.
+        </span>
+      </div>
+
+      <div class="picker__filters">
+        <div class="picker__search">
+          <label for="picker-query" class="picker__label">Busca tu equipo</label>
+          <div class="picker__search-input">
+            <Icon name="search" size={16} class="picker__search-icon" />
+            <input
+              type="search"
+              id="picker-query"
+              class="picker__input"
+              placeholder="Nombre, capacidad, altura…"
+              autocomplete="off"
+              data-picker-query
+              aria-describedby="picker-query-hint"
+            />
+          </div>
+          <p id="picker-query-hint" class="picker__hint">
+            Ej: "Grove 100", "150 t", "pluma 88 m"
+          </p>
+        </div>
+
+        <div class="picker__filter">
+          <label for="picker-category" class="picker__label">Categoría</label>
+          <select id="picker-category" class="picker__select" data-picker-category>
+            <option value="all">Todas las categorías</option>
+            {categories.map((c) => (
+              <option value={c.slug}>{c.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div class="picker__filter">
+          <label for="picker-subcategory" class="picker__label">Subcategoría</label>
+          <select
+            id="picker-subcategory"
+            class="picker__select"
+            data-picker-subcategory
+            disabled
+          >
+            <option value="all">Todas</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="picker__toggle">
+        <label class="picker__toggle-label">
+          <input
+            type="checkbox"
+            class="picker__toggle-input"
+            data-picker-hide-incart
+            checked
+          />
+          <span>Ocultar equipos ya agregados</span>
+        </label>
+        <p
+          class="picker__live"
+          data-picker-live
+          aria-live="polite"
+          aria-atomic="true"
+        ></p>
+      </div>
+
+      <div class="picker__results" data-picker-results>
+        {/* SSR initial: renderiza todas las cards. El script las reemplaza al hidratar. */}
+        {ALL_EQUIPMENT.map((entry) => (
+          <EquipmentPickerCard
+            entry={entry}
+            sourceUrl={Astro.url.pathname}
+          />
+        ))}
+      </div>
+
+      <div class="picker__empty" data-picker-empty hidden>
+        <p>No encontramos equipos con esos filtros.</p>
+        <div class="picker__empty-actions">
+          <button
+            type="button"
+            class="picker__empty-btn"
+            data-picker-action="reset"
+          >
+            Limpiar filtros
+          </button>
+          <a href="/arriendo" class="picker__empty-link">
+            Volver al catálogo
+            <Icon name="arrow-right" size={14} />
+          </a>
+        </div>
+      </div>
+    </div>
+</section>
+
+<script>
+  import { addItem, subscribe, getCart } from '@/lib/quoteCart';
+  import { QUOTE_CART_MAX_ITEMS } from '@/types/quote';
+  import { RENTAL_CATEGORIES } from '@/data/rental';
+  import type { Equipment } from '@/data/rental';
+
+  if (typeof window !== 'undefined') {
+    type PickerEntry = {
+      equipment: Equipment;
+      categorySlug: string;
+      categoryName: string;
+      subcategorySlug: string;
+      subcategoryName: string;
+    };
+
+    const root = document.querySelector<HTMLElement>('[data-quote-picker]');
+    if (!root) {
+      // Selector no presente en esta página; nada que hacer.
+    } else {
+      const queryEl = root.querySelector<HTMLInputElement>('[data-picker-query]');
+      const catEl = root.querySelector<HTMLSelectElement>('[data-picker-category]');
+      const subEl = root.querySelector<HTMLSelectElement>('[data-picker-subcategory]');
+      const hideToggle = root.querySelector<HTMLInputElement>('[data-picker-hide-incart]');
+      const resultsEl = root.querySelector<HTMLElement>('[data-picker-results]');
+      const emptyEl = root.querySelector<HTMLElement>('[data-picker-empty]');
+      const capWarn = root.querySelector<HTMLElement>('[data-picker-cap-warning]');
+      const capCount = root.querySelector<HTMLElement>('[data-picker-cap-count]');
+      const liveEl = root.querySelector<HTMLElement>('[data-picker-live]');
+
+      // Aplanar el árbol (cliente) — duplica la lógica del frontmatter
+      // pero evita pedir el JSON via data-attributes (sería 1+KB extra).
+      const ALL: PickerEntry[] = RENTAL_CATEGORIES.flatMap((c) =>
+        c.subcategories.flatMap((s) =>
+          s.catalog.map((equipment) => ({
+            equipment,
+            categorySlug: c.slug,
+            categoryName: c.name,
+            subcategorySlug: s.slug,
+            subcategoryName: s.name,
+          }))
+        )
+      );
+
+      const state = {
+        query: '',
+        categorySlug: 'all',
+        subcategorySlug: 'all',
+        hideAlreadyInCart: true,
+      };
+
+      // ─── Utilidades ───
+
+      function normalize(s: string): string {
+        return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      }
+
+      function categories(): { slug: string; name: string }[] {
+        return RENTAL_CATEGORIES.map((c) => ({ slug: c.slug, name: c.name }));
+      }
+
+      function allSubcategories(): { slug: string; name: string; categorySlug: string; categoryName: string }[] {
+        return RENTAL_CATEGORIES.flatMap((c) =>
+          c.subcategories.map((s) => ({
+            slug: s.slug,
+            name: s.name,
+            categorySlug: c.slug,
+            categoryName: c.name,
+          }))
+        );
+      }
+
+      function availableSubcategories(): { slug: string; name: string; prefix?: string }[] {
+        if (state.categorySlug === 'all') {
+          return allSubcategories().map((s) => ({
+            slug: s.slug,
+            name: s.name,
+            prefix: s.categoryName,
+          }));
+        }
+        const cat = RENTAL_CATEGORIES.find((c) => c.slug === state.categorySlug);
+        if (!cat) return [];
+        return cat.subcategories.map((s) => ({ slug: s.slug, name: s.name }));
+      }
+
+      function readUrlParams(): void {
+        const params = new URLSearchParams(window.location.search);
+        const q = params.get('q');
+        const cat = params.get('cat');
+        const sub = params.get('subcat');
+        const showInCart = params.get('showInCart');
+        if (q != null) state.query = q;
+        if (cat != null && (cat === 'all' || categories().some((c) => c.slug === cat))) {
+          state.categorySlug = cat;
+        }
+        if (sub != null && (sub === 'all' || allSubcategories().some((s) => s.slug === sub))) {
+          state.subcategorySlug = sub;
+        }
+        if (showInCart === '1') state.hideAlreadyInCart = false;
+      }
+
+      function writeUrlParams(): void {
+        const params = new URLSearchParams();
+        if (state.query) params.set('q', state.query);
+        if (state.categorySlug !== 'all') params.set('cat', state.categorySlug);
+        if (state.subcategorySlug !== 'all') params.set('subcat', state.subcategorySlug);
+        if (!state.hideAlreadyInCart) params.set('showInCart', '1');
+        const search = params.toString();
+        const next = search ? `?${search}` : window.location.pathname;
+        if (next !== window.location.pathname + window.location.search) {
+          window.history.replaceState({}, '', next);
+        }
+      }
+
+      function matches(entry: PickerEntry, cart: { items: { equipmentSlug: string }[] }): boolean {
+        // Texto libre
+        if (state.query) {
+          const haystack = normalize(
+            [
+              entry.equipment.name,
+              entry.equipment.capacity,
+              entry.equipment.height ?? '',
+            ].join(' ')
+          );
+          const needle = normalize(state.query);
+          if (!haystack.includes(needle)) return false;
+        }
+        // Categoría
+        if (state.categorySlug !== 'all' && entry.categorySlug !== state.categorySlug) {
+          return false;
+        }
+        // Subcategoría
+        if (state.subcategorySlug !== 'all' && entry.subcategorySlug !== state.subcategorySlug) {
+          return false;
+        }
+        // Hide in cart
+        if (state.hideAlreadyInCart) {
+          if (cart.items.some((i) => i.equipmentSlug === entry.equipment.slug)) return false;
+        }
+        return true;
+      }
+
+      function escapeHtml(s: string): string {
+        return s.replace(/[&<>"']/g, (ch) => {
+          const map: Record<string, string> = {
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+          };
+          return map[ch] ?? ch;
+        });
+      }
+
+      function renderCard(entry: PickerEntry, atCap: boolean, inCart: boolean): string {
+        const e = entry.equipment;
+        const safeName = escapeHtml(e.name);
+        const safeCapacity = escapeHtml(e.capacity);
+        const safeHeight = e.height ? escapeHtml(e.height) : '';
+        const safeCategory = escapeHtml(entry.categoryName);
+        const safeSubcategory = escapeHtml(entry.subcategoryName);
+        const safeImage = escapeHtml(e.image);
+        const detailsHref = `/arriendo/${encodeURIComponent(entry.categorySlug)}/${encodeURIComponent(entry.subcategorySlug)}#${encodeURIComponent(e.slug)}`;
+
+        const label = atCap && !inCart ? 'Máximo alcanzado' : inCart ? 'En el cotizador' : 'Agregar al cotizador';
+        const buttonState: 'cap' | 'added' | 'idle' = atCap && !inCart ? 'cap' : inCart ? 'added' : 'idle';
+        const disabled = atCap && !inCart;
+
+        // SVGs idénticos a src/assets/icons/{cart,check}.svg (consistencia
+        // visual con la card renderizada en SSR por EquipmentPickerCard.astro).
+        const checkSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+        const cartSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
+
+        return `
+          <article
+            class="picker-card ${inCart ? 'is-in-cart' : ''}"
+            data-picker-card
+            data-equipment-slug="${escapeHtml(e.slug)}"
+            aria-label="${safeName}, capacidad ${safeCapacity}"
+          >
+            <a
+              class="picker-card__media"
+              href="${detailsHref}"
+              aria-label="Ver detalles de ${safeName}"
+            >
+              <img
+                src="${safeImage}"
+                alt="${safeName}"
+                class="picker-card__image"
+                loading="lazy"
+                width="240"
+                height="180"
+              />
+              ${inCart ? `<span class="picker-card__badge">
+                ${checkSvg}
+                En el cotizador
+              </span>` : ''}
+            </a>
+            <div class="picker-card__body">
+              <span class="picker-card__category">${safeCategory} · ${safeSubcategory}</span>
+              <h3 class="picker-card__name">
+                <a class="picker-card__name-link" href="${detailsHref}">${safeName}</a>
+              </h3>
+              <p class="picker-card__capacity">${safeCapacity}${safeHeight ? ' · ' + safeHeight : ''}</p>
+              <button
+                type="button"
+                class="picker-card__add ${buttonState === 'added' ? 'is-added' : ''} ${buttonState === 'cap' ? 'is-cap' : ''}"
+                data-picker-add
+                data-equipment-slug="${escapeHtml(e.slug)}"
+                data-name="${safeName}"
+                data-capacity="${safeCapacity}"
+                data-height="${safeHeight}"
+                data-image="${safeImage}"
+                data-source-url="${escapeHtml(window.location.pathname)}"
+                aria-label="Agregar ${safeName} al cotizador"
+                aria-disabled="${disabled ? 'true' : 'false'}"
+                ${disabled ? 'disabled' : ''}
+              >
+                <span class="picker-card__add-icon" aria-hidden="true">
+                  ${buttonState === 'added' ? checkSvg : cartSvg}
+                </span>
+                <span class="picker-card__add-label" data-picker-add-label>
+                  ${escapeHtml(label)}
+                </span>
+              </button>
+            </div>
+          </article>
+        `;
+      }
+
+      function renderResults(): void {
+        if (!resultsEl) return;
+        const cart = getCart();
+        const uniqueCount = cart.items.length;
+        const atCap = uniqueCount >= QUOTE_CART_MAX_ITEMS;
+
+        const filtered = ALL.filter((entry) => matches(entry, cart));
+        const inCartSlugs = new Set(cart.items.map((i) => i.equipmentSlug));
+
+        if (filtered.length === 0) {
+          resultsEl.hidden = true;
+          if (emptyEl) emptyEl.hidden = false;
+        } else {
+          resultsEl.hidden = false;
+          if (emptyEl) emptyEl.hidden = true;
+          resultsEl.innerHTML = filtered
+            .map((entry) =>
+              renderCard(entry, atCap, inCartSlugs.has(entry.equipment.slug))
+            )
+            .join('');
+        }
+
+        // Banner de cap
+        if (capWarn && capCount) {
+          if (atCap) {
+            capCount.textContent = String(uniqueCount);
+            capWarn.hidden = false;
+          } else {
+            capWarn.hidden = true;
+          }
+        }
+
+        // ARIA live
+        if (liveEl) {
+          const filterDesc = [
+            state.query && `"${state.query}"`,
+            state.categorySlug !== 'all' &&
+              categories().find((c) => c.slug === state.categorySlug)?.name,
+          ]
+            .filter(Boolean)
+            .join(', ');
+          const suffix = filterDesc ? ` Filtro aplicado: ${filterDesc}.` : '';
+          liveEl.textContent = `Mostrando ${filtered.length} equipos.${suffix}`;
+        }
+      }
+
+      function refreshSubcategoryOptions(): void {
+        if (!subEl) return;
+        const subs = availableSubcategories();
+        if (state.categorySlug === 'all') {
+          // Mostrar todas con prefijo de categoría
+          subEl.innerHTML =
+            `<option value="all">Todas</option>` +
+            subs
+              .map(
+                (s) =>
+                  `<option value="${escapeHtml(s.slug)}">${escapeHtml(
+                    s.prefix + ' › ' + s.name
+                  )}</option>`
+              )
+              .join('');
+        } else {
+          subEl.innerHTML =
+            `<option value="all">Todas</option>` +
+            subs
+              .map((s) => `<option value="${escapeHtml(s.slug)}">${escapeHtml(s.name)}</option>`)
+              .join('');
+        }
+        // Si la subcategoría actual no está disponible, reset
+        if (state.subcategorySlug !== 'all' && !subs.some((s) => s.slug === state.subcategorySlug)) {
+          state.subcategorySlug = 'all';
+        }
+        subEl.value = state.subcategorySlug;
+        subEl.disabled = subs.length === 0;
+      }
+
+      function applyStateToInputs(): void {
+        if (queryEl) queryEl.value = state.query;
+        if (catEl) catEl.value = state.categorySlug;
+        if (hideToggle) hideToggle.checked = state.hideAlreadyInCart;
+        refreshSubcategoryOptions();
+      }
+
+      function debounce<T extends (...args: never[]) => void>(fn: T, ms: number): T {
+        let t: ReturnType<typeof setTimeout> | null = null;
+        return ((...args: Parameters<T>) => {
+          if (t) clearTimeout(t);
+          t = setTimeout(() => fn(...args), ms);
+        }) as T;
+      }
+
+      // ─── Wiring ───
+
+      readUrlParams();
+      applyStateToInputs();
+
+      const debouncedQuery = debounce((value: string) => {
+        state.query = value;
+        writeUrlParams();
+        renderResults();
+      }, 150);
+
+      queryEl?.addEventListener('input', () => {
+        if (queryEl) debouncedQuery(queryEl.value);
+      });
+
+      catEl?.addEventListener('change', () => {
+        if (catEl) {
+          state.categorySlug = catEl.value;
+          state.subcategorySlug = 'all';
+          refreshSubcategoryOptions();
+          writeUrlParams();
+          renderResults();
+        }
+      });
+
+      subEl?.addEventListener('change', () => {
+        if (subEl) {
+          state.subcategorySlug = subEl.value;
+          writeUrlParams();
+          renderResults();
+        }
+      });
+
+      hideToggle?.addEventListener('change', () => {
+        if (hideToggle) {
+          state.hideAlreadyInCart = hideToggle.checked;
+          writeUrlParams();
+          renderResults();
+        }
+      });
+
+      // Click delegation para "Agregar"
+      root.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement | null;
+        if (!target) return;
+
+        // Reset de empty state
+        const resetBtn = target.closest<HTMLElement>('[data-picker-action="reset"]');
+        if (resetBtn) {
+          state.query = '';
+          state.categorySlug = 'all';
+          state.subcategorySlug = 'all';
+          state.hideAlreadyInCart = true;
+          applyStateToInputs();
+          writeUrlParams();
+          renderResults();
+          return;
+        }
+
+        // Add item
+        const addBtn = target.closest<HTMLButtonElement>('[data-picker-add]');
+        if (!addBtn || addBtn.disabled || addBtn.getAttribute('aria-disabled') === 'true') return;
+        event.preventDefault();
+
+        const slug = addBtn.dataset.equipmentSlug;
+        const name = addBtn.dataset.name;
+        const capacity = addBtn.dataset.capacity;
+        const height = addBtn.dataset.height || undefined;
+        const image = addBtn.dataset.image;
+        const sourceUrl = addBtn.dataset.sourceUrl;
+        if (!slug || !name || !capacity || !image || !sourceUrl) return;
+
+        const equipment: Equipment = {
+          slug,
+          name,
+          capacity,
+          height,
+          shortDesc: '',
+          features: [],
+          image,
+          whatsappMessage: '',
+        };
+
+        const result = addItem(equipment, sourceUrl);
+        if (!result.ok) {
+          if (result.reason === 'max_items') {
+            window.dispatchEvent(
+              new CustomEvent('quote-cart:toast', {
+                detail: { kind: 'warning', message: 'Máximo 5 equipos por cotización.' },
+              })
+            );
+            return;
+          }
+          if (result.reason === 'storage_unavailable') {
+            window.dispatchEvent(
+              new CustomEvent('quote-cart:toast', {
+                detail: { kind: 'error', message: 'No se pudo guardar. Intenta en una ventana normal del navegador.' },
+              })
+            );
+            return;
+          }
+          window.dispatchEvent(
+            new CustomEvent('quote-cart:toast', {
+              detail: { kind: 'error', message: 'No se pudo agregar el equipo.' },
+            })
+          );
+          return;
+        }
+
+        // Feedback inline 1.5s
+        const labelEl = addBtn.querySelector<HTMLElement>('[data-picker-add-label]');
+        if (labelEl) {
+          const prev = labelEl.textContent ?? 'Agregar al cotizador';
+          labelEl.textContent = '¡Agregado!';
+          window.setTimeout(() => {
+            labelEl.textContent = prev;
+          }, 1500);
+        }
+
+        window.dispatchEvent(new CustomEvent('quote_add_item', { detail: { slug } }));
+        // El subscribe() más abajo re-renderiza; no hace falta renderResults() manual.
+      });
+
+      // Re-render cuando el carrito cambia
+      subscribe(() => {
+        renderResults();
+      });
+
+      // Pintar estado inicial (los inputs ya están aplicados)
+      renderResults();
+    }
+  }
+</script>
+
+<style>
+  .picker {
+    background-color: var(--color-surface, #fff);
+    border: 1px solid var(--color-line, #e2e4e5);
+    border-radius: 16px;
+  }
+
+  .picker__head {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 1rem 1.25rem;
+    background-color: var(--color-surface-alt, #f6f7f8);
+    border-bottom: 1px solid var(--color-line, #e2e4e5);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+  }
+
+  .picker__head-icon {
+    color: var(--color-brand, #348f41);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--color-brand-050, #ebf5ed);
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+
+  .picker__head-title {
+    margin: 0;
+    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
+    font-weight: 800;
+    font-size: 1.125rem;
+    color: var(--color-ink, #242627);
+  }
+
+  .picker__head-count {
+    font-weight: 500;
+    color: var(--color-ink-700, #3a3d3e);
+    margin-left: 0.4rem;
+    font-size: 0.875rem;
+  }
+
+  .picker__body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .picker__cap-warning {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #f59e0b;
+    border-radius: 10px;
+    font-size: 0.9rem;
+  }
+
+  .picker__filters {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+  }
+
+  @media (min-width: 640px) {
+    .picker__filters {
+      grid-template-columns: 2fr 1fr 1fr;
+    }
+  }
+
+  .picker__label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-ink-700, #3a3d3e);
+    margin-bottom: 0.375rem;
+  }
+
+  .picker__search-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .picker__search-icon {
+    position: absolute;
+    left: 0.75rem;
+    color: var(--color-ink-700, #3a3d3e);
+    pointer-events: none;
+  }
+
+  .picker__input {
+    width: 100%;
+    padding: 0.625rem 0.75rem 0.625rem 2.25rem;
+    border: 1px solid var(--color-line, #e2e4e5);
+    border-radius: 8px;
+    font-family: var(--font-body, 'Bliss Pro', sans-serif);
+    font-size: 0.95rem;
+    background-color: var(--color-surface, #fff);
+  }
+
+  .picker__input:focus {
+    outline: 2px solid var(--color-brand, #348f41);
+    border-color: var(--color-brand, #348f41);
+  }
+
+  .picker__hint {
+    margin: 0.375rem 0 0;
+    font-size: 0.8rem;
+    color: var(--color-ink-500, #6b7072);
+  }
+
+  .picker__select {
+    width: 100%;
+    padding: 0.625rem 0.75rem;
+    border: 1px solid var(--color-line, #e2e4e5);
+    border-radius: 8px;
+    font-family: var(--font-body, 'Bliss Pro', sans-serif);
+    font-size: 0.95rem;
+    background-color: var(--color-surface, #fff);
+    color: var(--color-ink, #242627);
+  }
+
+  .picker__select:focus {
+    outline: 2px solid var(--color-brand, #348f41);
+    border-color: var(--color-brand, #348f41);
+  }
+
+  .picker__select:disabled {
+    background-color: var(--color-surface-alt, #f6f7f8);
+    color: var(--color-ink-500, #6b7072);
+  }
+
+  .picker__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .picker__toggle-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--color-ink, #242627);
+    cursor: pointer;
+  }
+
+  .picker__toggle-input {
+    accent-color: var(--color-brand, #348f41);
+  }
+
+  .picker__live {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-ink-500, #6b7072);
+  }
+
+  .picker__live:not(:empty)::before {
+    content: '· ';
+  }
+
+  .picker__results {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .picker__results {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .picker__results {
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+  }
+
+  .picker__empty {
+    padding: 2rem 1rem;
+    text-align: center;
+    background-color: var(--color-surface-alt, #f6f7f8);
+    border: 1px dashed var(--color-line, #e2e4e5);
+    border-radius: 16px;
+  }
+
+  .picker__empty p {
+    margin: 0 0 1rem;
+    color: var(--color-ink-700, #3a3d3e);
+  }
+
+  .picker__empty-actions {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .picker__empty-btn {
+    padding: 0.625rem 1.25rem;
+    background-color: transparent;
+    color: var(--color-brand, #348f41);
+    border: 1.5px solid var(--color-brand, #348f41);
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .picker__empty-btn:hover,
+  .picker__empty-btn:focus-visible {
+    background-color: var(--color-brand-050, #ebf5ed);
+  }
+
+  .picker__empty-btn:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  .picker__empty-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-ink, #242627);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .picker__empty-link:hover,
+  .picker__empty-link:focus-visible {
+    color: var(--color-brand, #348f41);
+  }
+
+  .picker__empty-link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+</style>

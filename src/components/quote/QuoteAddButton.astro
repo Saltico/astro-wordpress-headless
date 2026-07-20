@@ -1,0 +1,194 @@
+---
+// src/components/quote/QuoteAddButton.astro
+// Botón que agrega el equipo al cotizador. Muestra 3 estados visuales:
+// 'idle' (Agregar), 'added' (En el cotizador), 'error' (No se pudo guardar).
+// El estado se sincroniza con el carrito vía CustomEvent.
+
+import Icon from '@/components/ui/Icon.astro';
+import type { Equipment } from '@/data/rental';
+
+export interface Props {
+  item: Equipment;
+  sourceUrl: string;
+}
+
+const { item, sourceUrl } = Astro.props;
+---
+
+<button
+  type="button"
+  class="quote-add-btn"
+  data-quote-add
+  data-equipment-slug={item.slug}
+  data-name={item.name}
+  data-capacity={item.capacity}
+  data-height={item.height ?? ''}
+  data-image={item.image}
+  data-source-url={sourceUrl}
+  aria-label={`Agregar ${item.name} al cotizador`}
+>
+  <span class="quote-add-btn__icon" data-state="idle" aria-hidden="true">
+    <Icon name="cart" size={16} />
+  </span>
+  <span class="quote-add-btn__icon" data-state="added" aria-hidden="true">
+    <Icon name="check" size={16} />
+  </span>
+  <span class="quote-add-btn__label" data-state="idle">Agregar al cotizador</span>
+  <span class="quote-add-btn__label" data-state="added" hidden>En el cotizador</span>
+  <span class="quote-add-btn__label" data-state="error" hidden>Reintentar</span>
+</button>
+
+<script>
+  import { addItem, subscribe, getCart } from '@/lib/quoteCart';
+
+  type BtnState = 'idle' | 'added' | 'error';
+
+  function paintState(btn: HTMLButtonElement, state: BtnState): void {
+    btn.dataset.state = state;
+    btn.classList.toggle('is-added', state === 'added');
+    btn.classList.toggle('is-error', state === 'error');
+    btn.querySelectorAll<HTMLElement>('[data-state]').forEach((el) => {
+      el.hidden = el.dataset.state !== state;
+    });
+    if (state === 'added') {
+      btn.setAttribute('aria-pressed', 'true');
+    } else {
+      btn.setAttribute('aria-pressed', 'false');
+    }
+  }
+
+  function isInCart(slug: string): boolean {
+    return getCart().items.some((i) => i.equipmentSlug === slug);
+  }
+
+  function syncOne(btn: HTMLButtonElement): void {
+    const slug = btn.dataset.equipmentSlug;
+    if (!slug) return;
+    paintState(btn, isInCart(slug) ? 'added' : 'idle');
+  }
+
+  function syncAll(): void {
+    document.querySelectorAll<HTMLButtonElement>('[data-quote-add]').forEach(syncOne);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    syncAll();
+    subscribe(syncAll);
+  });
+
+  document.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement | null;
+    const btn = target?.closest<HTMLButtonElement>('[data-quote-add]');
+    if (!btn) return;
+    event.preventDefault();
+
+    const slug = btn.dataset.equipmentSlug;
+    const name = btn.dataset.name;
+    const capacity = btn.dataset.capacity;
+    const image = btn.dataset.image;
+    const sourceUrl = btn.dataset.sourceUrl;
+    if (!slug || !name || !capacity || !image || !sourceUrl) return;
+
+    const equipment = {
+      slug,
+      name,
+      capacity,
+      height: btn.dataset.height || undefined,
+      shortDesc: '',
+      features: [],
+      image,
+      whatsappMessage: '',
+    };
+
+    const result = addItem(equipment, sourceUrl);
+    if (!result.ok) {
+      if (result.reason === 'max_items') {
+        paintState(btn, 'idle');
+        window.dispatchEvent(
+          new CustomEvent('quote-cart:toast', {
+            detail: { kind: 'warning', message: 'Máximo 5 equipos por cotización.' },
+          })
+        );
+        return;
+      }
+      paintState(btn, 'error');
+      return;
+    }
+
+    paintState(btn, 'added');
+
+    // Inline feedback
+    const original = btn.querySelector<HTMLElement>('.quote-add-btn__label[data-state="added"]');
+    if (original) {
+      const prev = original.textContent;
+      original.textContent = '¡Agregado!';
+      window.setTimeout(() => {
+        original.textContent = prev ?? 'En el cotizador';
+      }, 1500);
+    }
+
+    // Future analytics hook.
+    window.dispatchEvent(new CustomEvent('quote_add_item', { detail: { slug } }));
+  });
+</script>
+
+<style>
+  .quote-add-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 8px;
+    padding: 12px 18px;
+    background-color: var(--color-brand, #348f41);
+    color: var(--color-on-brand, #fff);
+    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: 1.5px solid transparent;
+    border-radius: 999px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.18s var(--ease-out, ease), color 0.18s var(--ease-out, ease),
+      border-color 0.18s var(--ease-out, ease), transform 0.18s var(--ease-out, ease);
+  }
+
+  .quote-add-btn:hover,
+  .quote-add-btn:focus-visible {
+    background-color: var(--color-brand-600, #2c7c37);
+    transform: translateY(-1px);
+  }
+
+  .quote-add-btn:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  .quote-add-btn.is-added {
+    background-color: transparent;
+    color: var(--color-brand, #348f41);
+    border-color: var(--color-brand, #348f41);
+  }
+
+  .quote-add-btn.is-added:hover,
+  .quote-add-btn.is-added:focus-visible {
+    background-color: var(--color-brand-050, #ebf5ed);
+  }
+
+  .quote-add-btn.is-error {
+    background-color: var(--color-danger, #c0392b);
+    color: #fff;
+  }
+
+  .quote-add-btn__icon,
+  .quote-add-btn__label {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1;
+  }
+
+  .quote-add-btn__icon[hidden],
+  .quote-add-btn__label[hidden] {
+    display: none !important;
+  }
+</style>

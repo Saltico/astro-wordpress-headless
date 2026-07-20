@@ -1,0 +1,135 @@
+---
+// src/components/rental/FAQSection.astro
+// Acordeón de preguntas frecuentes con schema FAQPage.
+
+import Container from '@/components/ui/Container.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { faqPageSchema } from '@/lib/seo';
+
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+export interface Props {
+  items: FAQItem[];
+  background?: 'light' | 'dark';
+  title?: string;
+}
+
+const { items, background = 'light', title = 'Preguntas frecuentes' } = Astro.props;
+const jsonLd = faqPageSchema(items);
+---
+
+<section class:list={['faq-section', `faq-section--${background}`]}>
+  <Container>
+    <header class="faq-section__header">
+      <h2 class="faq-section__title">{title}</h2>
+    </header>
+    <ul class="faq-section__list">
+      {items.map((item) => (
+        <li class="faq-item">
+          <details class="faq-item__details">
+            <summary class="faq-item__question">
+              <span>{item.question}</span>
+              <Icon name="chevron-down" size={18} class="faq-item__icon" />
+            </summary>
+            <p class="faq-item__answer">{item.answer}</p>
+          </details>
+        </li>
+      ))}
+    </ul>
+  </Container>
+</section>
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+<style>
+  .faq-section {
+    padding-block: clamp(48px, 6vw, 80px);
+  }
+
+  .faq-section--light {
+    background-color: var(--color-surface, #fff);
+  }
+
+  .faq-section--dark {
+    background-color: var(--color-graphite, #0d1611);
+    color: #fff;
+  }
+
+  .faq-section__header {
+    margin-bottom: clamp(24px, 3vw, 36px);
+    text-align: center;
+  }
+
+  .faq-section__title {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 800;
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  .faq-section__list {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 800px;
+  }
+
+  .faq-item__details {
+    background-color: var(--color-surface-alt, #f7f9f7);
+    border: 1px solid var(--color-line, #e5e7eb);
+    border-radius: 12px;
+    padding: 20px 24px;
+    transition: border-color 0.2s ease;
+  }
+
+  .faq-section--dark .faq-item__details {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .faq-item__details[open] {
+    border-color: var(--color-brand, #1a9c4a);
+  }
+
+  .faq-item__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    cursor: pointer;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 1.05rem;
+    list-style: none;
+  }
+
+  .faq-item__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item__icon {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  .faq-item__details[open] .faq-item__icon {
+    transform: rotate(180deg);
+  }
+
+  .faq-item__answer {
+    margin: 16px 0 0;
+    line-height: 1.6;
+    color: var(--color-ink-700, #374151);
+  }
+
+  .faq-section--dark .faq-item__answer {
+    color: rgba(255, 255, 255, 0.75);
+  }
+</style>

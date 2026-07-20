@@ -1,0 +1,304 @@
+---
+// src/components/ui/CTABand.astro
+// Sección CTA con imagen de fondo
+// Altamente configurable para reutilización en plantillas
+
+import Icon from './Icon.astro';
+import QuoteFormAdvanced from './QuoteFormAdvanced.astro';
+import type { IconName } from '@/lib/icons';
+
+export interface CTAButton {
+  label: string;
+  href: string;
+  variant?: 'primary' | 'secondary' | 'outline';
+  icon?: IconName;
+  external?: boolean;
+}
+
+export interface Props {
+  title: string;
+  subtitle?: string;
+  eyebrow?: string;
+  backgroundImage?: string;
+  backgroundAlt?: string;
+  showForm?: boolean;
+  formAction?: string;
+  preselectedServices?: string[];
+  overlayOpacity?: number;
+  contentAlign?: 'left' | 'center' | 'right';
+  minHeight?: 'sm' | 'md' | 'lg';
+  className?: string;
+}
+
+const {
+  title,
+  subtitle,
+  eyebrow,
+  backgroundImage,
+  backgroundAlt = '',
+  showForm = false,
+  formAction,
+  preselectedServices = [],
+  overlayOpacity = 0.85,
+  contentAlign = 'center',
+  minHeight = 'md',
+  className = '',
+} = Astro.props;
+
+const minHeightClasses = {
+  sm: 'cta-band--sm',
+  md: 'cta-band--md',
+  lg: 'cta-band--lg',
+};
+
+const alignClasses = {
+  left: 'cta-band--left',
+  center: 'cta-band--center',
+  right: 'cta-band--right',
+};
+---
+
+<section
+  class={`cta-band ${minHeightClasses[minHeight]} ${alignClasses[contentAlign]} ${className}`.trim()}
+>
+  {backgroundImage && (
+    <img
+      src={backgroundImage}
+      alt={backgroundAlt}
+      class="cta-band__background"
+      loading="lazy"
+      decoding="async"
+    />
+  )}
+  <div class="cta-band__overlay" style={`opacity: ${overlayOpacity};`}></div>
+
+  <div class="cta-band__container">
+    {eyebrow && <p class="cta-band__eyebrow">{eyebrow}</p>}
+    
+    <h2 class="cta-band__title">{title}</h2>
+    
+    {subtitle && <p class="cta-band__subtitle">{subtitle}</p>}
+
+    {showForm && (
+      <div class="cta-band__form">
+        <QuoteFormAdvanced action={formAction} preselectedServices={preselectedServices} />
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .cta-band {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cta-band--sm {
+    padding-block: clamp(60px, 8vw, 100px);
+  }
+
+  .cta-band--md {
+    padding-block: clamp(80px, 10vw, 130px);
+  }
+
+  .cta-band--lg {
+    padding-block: clamp(100px, 12vw, 160px);
+  }
+
+  .cta-band__background {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .cta-band__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      radial-gradient(ellipse at top, rgba(26, 156, 74, 0.15) 0%, transparent 50%),
+      linear-gradient(180deg, rgba(13, 22, 17, 0.85) 0%, rgba(13, 22, 17, 0.95) 100%);
+    backdrop-filter: blur(2px);
+  }
+
+  .cta-band__container {
+    position: relative;
+    z-index: 2;
+    max-width: 1360px;
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--container-padding, 20px);
+  }
+
+  /* Alignment */
+  .cta-band--center .cta-band__container {
+    text-align: center;
+  }
+
+  .cta-band--center .cta-band__eyebrow {
+    justify-content: center;
+  }
+
+  .cta-band--center .cta-band__buttons {
+    justify-content: center;
+  }
+
+  .cta-band--left .cta-band__container {
+    text-align: left;
+  }
+
+  .cta-band--left .cta-band__eyebrow {
+    justify-content: flex-start;
+  }
+
+  .cta-band--left .cta-band__buttons {
+    justify-content: flex-start;
+  }
+
+  .cta-band--right .cta-band__container {
+    text-align: right;
+  }
+
+  .cta-band--right .cta-band__eyebrow {
+    justify-content: flex-end;
+  }
+
+  .cta-band--right .cta-band__buttons {
+    justify-content: flex-end;
+  }
+
+  /* Eyebrow */
+  .cta-band__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-brand-300, #4ade80);
+    margin-bottom: 20px;
+  }
+
+  .cta-band__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  /* Title */
+  .cta-band__title {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 900;
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    color: #fff;
+    max-width: 20ch;
+    margin: 0 auto 26px;
+  }
+
+  .cta-band--center .cta-band__title {
+    margin-inline: auto;
+  }
+
+  /* Subtitle */
+  .cta-band__subtitle {
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 60ch;
+    margin: 0 auto 32px;
+    line-height: 1.5;
+  }
+
+  .cta-band--center .cta-band__subtitle {
+    margin-inline: auto;
+  }
+
+  /* Form */
+  .cta-band__form {
+    margin: 32px auto;
+    background: rgba(13, 22, 17, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: clamp(24px, 4vw, 40px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Buttons */
+  .cta-band__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 26px;
+  }
+
+  .cta-band__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 16px 30px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  }
+
+  .cta-band__btn--primary {
+    background: var(--color-brand, #1a9c4a);
+    color: #fff;
+  }
+
+  .cta-band__btn--primary:hover {
+    background: var(--color-brand-700, #15803d);
+    transform: translateY(-2px);
+  }
+
+  .cta-band__btn--secondary {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .cta-band__btn--secondary:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+  }
+
+  .cta-band__btn--outline {
+    background: transparent;
+    color: #fff;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .cta-band__btn--outline:hover {
+    border-color: #fff;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 640px) {
+    .cta-band__buttons {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .cta-band--center .cta-band__buttons {
+      align-items: center;
+    }
+
+    .cta-band__btn {
+      justify-content: center;
+    }
+  }
+</style>

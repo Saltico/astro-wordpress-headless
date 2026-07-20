@@ -2,57 +2,240 @@
 // src/pages/noticias/[post].astro
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
-import SectionLayout from '@/components/ui/SectionLayout.astro';
-import { newsArticleSchema } from '@/lib/seo';
+import NewsGrid from '@/components/ui/NewsGrid.astro';
+import { getNewsBySlug, getRelatedNews } from '@/lib/news';
+import { newsArticles } from '@/data/news';
+import { newsArticleSchemaExtended, breadcrumbSchema, combineSchemas } from '@/lib/seo';
+import { getSiteUrl } from '@/lib/seo';
 
-export function getStaticPaths() {
-  return [
-    {
-      params: { post: 'nuevo-proyecto-minera' },
-      props: {
-        title: 'Nuevo proyecto en minería | IP Proyectos Industriales',
-        description:
-          'IP Proyectos Industriales inicia nuevo proyecto de izaje y montaje en faena minera.',
-        datePublished: '2026-07-01T08:00:00-04:00',
-      },
-    },
-  ];
+export async function getStaticPaths() {
+  // Mañana: await fetchAllNews({ perPage: 100 });
+  return newsArticles.map((article) => ({
+    params: { post: article.slug },
+    props: { article },
+  }));
 }
 
-const { post } = Astro.params;
-const { title, description, datePublished } = Astro.props;
-const postName = (post as string).replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+const { article } = Astro.props;
+
+const siteUrl = getSiteUrl(article.link);
+const image = article._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+const author = article._embedded?.author?.[0]?.name ?? 'IP Proyectos Industriales';
+const category = article._embedded?.['wp:term']?.[0]?.[0]?.name;
+
+const title = `${article.title.rendered} | IP Proyectos Industriales`;
+const description = article.excerpt.rendered.replace(/<[^>]+>/g, '').trim().slice(0, 160);
 
 const breadcrumbs = [
   { label: 'Inicio', url: '/' },
   { label: 'Noticias', url: '/noticias' },
-  { label: postName },
+  { label: article.title.rendered },
 ];
 
-const jsonLd = newsArticleSchema(title.replace(' | IP Proyectos Industriales', ''), description, Astro.url.pathname, datePublished);
+const jsonLd = combineSchemas(
+  newsArticleSchemaExtended({
+    headline: article.title.rendered,
+    description,
+    url: siteUrl,
+    image,
+    datePublished: article.date,
+    dateModified: article.date,
+    authorName: author,
+    articleSection: category,
+  }),
+  breadcrumbSchema(breadcrumbs)
+);
+
+const related = await getRelatedNews(article.slug, 3);
+const dateFormatted = new Date(article.date).toLocaleDateString('es-CL', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
 ---
 
-<BaseLayout title={title} description={description} breadcrumbs={breadcrumbs} jsonLd={jsonLd}>
-  <SectionLayout spacing="lg">
-    <Container>
-      <article>
-        <time datetime={datePublished}>{new Date(datePublished).toLocaleDateString('es-CL')}</time>
-        <h1>{title.replace(' | IP Proyectos Industriales', '')}</h1>
-        <p>{description}</p>
-      </article>
-    </Container>
-  </SectionLayout>
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+  ogImage={image}
+>
+  <article class="news-article">
+    <header class="news-article__header">
+      <Container>
+        {category && <p class="news-article__category">{category}</p>}
+        <h1 class="news-article__title">{article.title.rendered}</h1>
+        <div class="news-article__meta">
+          <span>Por <strong>{author}</strong></span>
+          <time datetime={article.date}>{dateFormatted}</time>
+        </div>
+      </Container>
+    </header>
+
+    {image && (
+      <figure class="news-article__hero">
+        <img
+          src={image}
+          alt={article._embedded?.['wp:featuredmedia']?.[0]?.alt_text ?? article.title.rendered}
+          loading="eager"
+          decoding="async"
+          width="1200"
+          height="675"
+        />
+      </figure>
+    )}
+
+    <div class="news-article__body">
+      <Container>
+        <div class="news-article__content" set:html={article.content.rendered} />
+      </Container>
+    </div>
+  </article>
+
+  {related.length > 0 && (
+    <NewsGrid
+      items={related}
+      title="Noticias relacionadas"
+      columns={3}
+      variant="light"
+    />
+  )}
 </BaseLayout>
 
-<style>
-  time {
-    display: block;
-    font-size: var(--text-small);
-    color: var(--color-ink-500);
-    margin-bottom: var(--space-2);
+<style is:global>
+  /* Estilos del artículo — se aplican globalmente al set:html de WordPress */
+  .news-article__content {
+    font-family: var(--font-body, 'Bliss Pro', system-ui, sans-serif);
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--color-ink-700, #2d3748);
+    max-width: 68ch;
+    margin: 0 auto;
   }
 
-  h1 {
-    margin-bottom: var(--space-6);
+  .news-article__content > * + * {
+    margin-top: 1.4em;
+  }
+
+  .news-article__content h2 {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: var(--color-ink, #1a1a1a);
+    margin-top: 2em;
+  }
+
+  .news-article__content h3 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1.3;
+    color: var(--color-ink, #1a1a1a);
+    margin-top: 1.6em;
+  }
+
+  .news-article__content p {
+    margin: 0;
+  }
+
+  .news-article__content a {
+    color: var(--color-brand, #1a9c4a);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .news-article__content blockquote {
+    border-left: 4px solid var(--color-brand, #1a9c4a);
+    padding: 0.4em 0 0.4em 1.4em;
+    font-style: italic;
+    color: var(--color-ink-500, #6b7280);
+  }
+
+  .news-article__content ul,
+  .news-article__content ol {
+    padding-left: 1.6em;
+  }
+
+  .news-article__content ul li { list-style: disc; }
+  .news-article__content ol li { list-style: decimal; }
+
+  .news-article__content img {
+    border-radius: 8px;
+    margin-block: 2em;
+  }
+
+  .news-article__content code {
+    font-family: 'Menlo', 'Monaco', monospace;
+    font-size: 0.9em;
+    background: var(--color-surface-alt, #f7f9f7);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+  }
+</style>
+
+<style>
+  .news-article__header {
+    background-color: var(--color-graphite, #0d1611);
+    color: #fff;
+    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
+    padding-block: calc(clamp(60px, 8vw, 100px) + var(--topbar-height, 40px) + var(--header-height, 80px)) clamp(40px, 6vw, 60px);
+  }
+
+  .news-article__category {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--color-brand-050, rgba(26, 156, 74, 0.15));
+    color: var(--color-brand-300, #4ade80);
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+
+  .news-article__title {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: clamp(2rem, 4.5vw, 3.4rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin: 0 0 24px;
+    max-width: 22ch;
+    text-wrap: balance;
+  }
+
+  .news-article__meta {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .news-article__meta time {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .news-article__hero {
+    margin: 0;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background-color: var(--color-surface-alt, #2a2a2a);
+  }
+
+  .news-article__hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .news-article__body {
+    padding-block: clamp(60px, 8vw, 100px);
   }
 </style>

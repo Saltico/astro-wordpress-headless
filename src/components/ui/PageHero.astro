@@ -1,0 +1,170 @@
+---
+// src/components/ui/PageHero.astro
+// Hero reutilizable para páginas internas.
+// Características:
+//  - Imagen de fondo (placeholder hero.jpg o la que se pase)
+//  - Overlay oscuro para legibilidad
+//  - margin-top negativo para subir bajo el topbar + header
+//  - min-height compensado para que el contenido visible cubra la viewport
+//  - Slots: "breadcrumbs" (arriba) y "actions" (debajo del subtítulo)
+//
+// Pensado para reemplazar los .services-hero, .arriendo-hero, .cat-hero,
+// .compliance-hero, .contact-hero, .news-hero, etc. con un único componente
+// consistente.
+
+export interface Props {
+  image: string;
+  imageAlt?: string;
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  /** Tamaño del hero. Default: "md" (~50vh). */
+  minHeight?: 'sm' | 'md' | 'lg';
+}
+
+const {
+  image,
+  imageAlt = '',
+  eyebrow,
+  title,
+  subtitle,
+  minHeight = 'md',
+} = Astro.props;
+
+const minHeightClass = `page-hero--${minHeight}`;
+const hasBreadcrumbsSlot = Astro.slots.has('breadcrumbs');
+const hasActionsSlot = Astro.slots.has('actions');
+---
+
+<section class:list={['page-hero', minHeightClass]}>
+  <img
+    src={image}
+    alt={imageAlt}
+    class="page-hero__bg"
+    loading="eager"
+    fetchpriority="high"
+  />
+  <div class="page-hero__overlay" aria-hidden="true"></div>
+  <div class="page-hero__container">
+    {hasBreadcrumbsSlot && (
+      <div class="page-hero__breadcrumbs">
+        <slot name="breadcrumbs" />
+      </div>
+    )}
+
+    {eyebrow && <p class="page-hero__eyebrow">{eyebrow}</p>}
+    <h1 class="page-hero__title">{title}</h1>
+    {subtitle && <p class="page-hero__subtitle">{subtitle}</p>}
+
+    {hasActionsSlot && (
+      <div class="page-hero__actions">
+        <slot name="actions" />
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .page-hero {
+    position: relative;
+    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    color: #ffffff;
+    isolation: isolate;
+  }
+
+  .page-hero--sm {
+    min-height: calc(320px + var(--topbar-height, 40px) + var(--header-height, 80px));
+  }
+
+  .page-hero--md {
+    min-height: calc(60vh + var(--topbar-height, 40px) + var(--header-height, 80px));
+  }
+
+  .page-hero--lg {
+    min-height: calc(80vh + var(--topbar-height, 40px) + var(--header-height, 80px));
+  }
+
+  .page-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .page-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(13, 22, 17, 0.35) 0%,
+      rgba(13, 22, 17, 0.55) 35%,
+      rgba(13, 22, 17, 0.92) 100%
+    );
+  }
+
+  .page-hero__container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1360px;
+    margin-inline: auto;
+    padding: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 60px)
+      var(--container-padding, 20px) clamp(40px, 5vh, 64px);
+  }
+
+  .page-hero__breadcrumbs {
+    margin-bottom: 20px;
+  }
+
+  .page-hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-brand-300, #4ade80);
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin: 0 0 16px;
+  }
+
+  .page-hero__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: var(--color-brand, #348f41);
+  }
+
+  .page-hero__title {
+    color: #ffffff;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    max-width: 20ch;
+    margin: 0 0 16px;
+  }
+
+  .page-hero__subtitle {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    max-width: 60ch;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .page-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+</style>

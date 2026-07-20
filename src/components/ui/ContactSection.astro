@@ -1,0 +1,389 @@
+---
+// src/components/ui/ContactSection.astro
+// Sección de contacto con información y formulario
+// Inspirado en el formulario de contacto de Tecnisud
+
+import Container from './Container.astro';
+import Icon from './Icon.astro';
+import type { IconName } from '@/lib/icons';
+
+export interface ContactInfo {
+  address?: string;
+  phone?: string;
+  email?: string;
+  schedule?: string;
+  departmentEmails?: Array<{ label: string; email: string }>;
+}
+
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  contactInfo?: ContactInfo;
+  formAction?: string;
+  formFields?: Array<{
+    name: string;
+    type: 'text' | 'email' | 'tel' | 'select' | 'textarea';
+    label: string;
+    placeholder?: string;
+    required?: boolean;
+    options?: string[];
+  }>;
+  submitLabel?: string;
+  background?: 'light' | 'alt' | 'brand';
+}
+
+const {
+  title = 'Llevá tu proyecto al siguiente nivel',
+  subtitle = 'Completá nuestro formulario de contacto y un asesor especializado se pondrá en contacto con vos a la brevedad.',
+  contactInfo,
+  formAction = '/api/contact',
+  formFields,
+  submitLabel = 'Enviar mensaje',
+  background = 'alt',
+} = Astro.props;
+
+const defaultFields = [
+  { name: 'nombre', type: 'text' as const, label: 'Nombre', placeholder: 'Tu nombre completo', required: true },
+  { name: 'email', type: 'email' as const, label: 'Email', placeholder: 'tu@email.com', required: true },
+  { name: 'telefono', type: 'tel' as const, label: 'Teléfono', placeholder: '+56 9 0000 0000' },
+  { name: 'tipo_obra', type: 'select' as const, label: 'Tipo de obra', options: ['Minería', 'Industrial', 'Energía', 'Infraestructura', 'Otro'] },
+  { name: 'mensaje', type: 'textarea' as const, label: 'Mensaje', placeholder: 'Cuéntanos sobre tu proyecto...', required: true },
+];
+
+const fields = formFields || defaultFields;
+
+const backgroundClasses = {
+  light: 'contact-section--light',
+  alt: 'contact-section--alt',
+  brand: 'contact-section--brand',
+};
+---
+
+<section class={`contact-section ${backgroundClasses[background]}`}>
+  <Container>
+    <div class="contact-section__grid">
+      <!-- Contact Info -->
+      {contactInfo && (
+        <div class="contact-section__info">
+          <h2 class="contact-section__title">{title}</h2>
+          <p class="contact-section__subtitle">{subtitle}</p>
+
+          <div class="contact-section__details">
+            <h3 class="contact-section__details-title">Información de contacto</h3>
+            
+            {contactInfo.address && (
+              <div class="contact-section__detail">
+                <Icon name="location" size={20} />
+                <div>
+                  <p class="contact-section__detail-label">Oficinas</p>
+                  <p class="contact-section__detail-value">{contactInfo.address}</p>
+                </div>
+              </div>
+            )}
+
+            {contactInfo.phone && (
+              <div class="contact-section__detail">
+                <Icon name="phone" size={20} />
+                <div>
+                  <p class="contact-section__detail-label">Teléfono</p>
+                  <a href={`tel:${contactInfo.phone.replace(/\s/g, '')}`} class="contact-section__detail-link">
+                    {contactInfo.phone}
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {contactInfo.email && (
+              <div class="contact-section__detail">
+                <Icon name="email" size={20} />
+                <div>
+                  <p class="contact-section__detail-label">Email</p>
+                  <a href={`mailto:${contactInfo.email}`} class="contact-section__detail-link">
+                    {contactInfo.email}
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {contactInfo.schedule && (
+              <div class="contact-section__detail">
+                <Icon name="clock" size={20} />
+                <div>
+                  <p class="contact-section__detail-label">Horarios de atención</p>
+                  <p class="contact-section__detail-value">{contactInfo.schedule}</p>
+                </div>
+              </div>
+            )}
+
+            {contactInfo.departmentEmails && contactInfo.departmentEmails.length > 0 && (
+              <div class="contact-section__departments">
+                {contactInfo.departmentEmails.map((dept) => (
+                  <a href={`mailto:${dept.email}`} class="contact-section__department-link">
+                    {dept.label}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      <!-- Contact Form -->
+      <div class="contact-section__form-wrapper">
+        {!contactInfo && (
+          <div class="contact-section__form-header">
+            <h2 class="contact-section__title">{title}</h2>
+            <p class="contact-section__subtitle">{subtitle}</p>
+          </div>
+        )}
+
+        <form class="contact-form" action={formAction} method="POST">
+          {fields.map((field) => (
+            <div class="contact-form__field">
+              <label for={field.name} class="contact-form__label">
+                {field.label}
+                {field.required && <span class="contact-form__required">*</span>}
+              </label>
+
+              {field.type === 'textarea' ? (
+                <textarea
+                  id={field.name}
+                  name={field.name}
+                  class="contact-form__input contact-form__textarea"
+                  placeholder={field.placeholder}
+                  required={field.required}
+                  rows={4}
+                ></textarea>
+              ) : field.type === 'select' ? (
+                <select
+                  id={field.name}
+                  name={field.name}
+                  class="contact-form__input contact-form__select"
+                  required={field.required}
+                >
+                  <option value="">Selecciona una opción</option>
+                  {field.options?.map((option) => (
+                    <option value={option}>{option}</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type={field.type}
+                  id={field.name}
+                  name={field.name}
+                  class="contact-form__input"
+                  placeholder={field.placeholder}
+                  required={field.required}
+                />
+              )}
+            </div>
+          ))}
+
+          <button type="submit" class="button button--primary button--large contact-form__submit">
+            {submitLabel}
+            <Icon name="arrow-right" size={18} />
+          </button>
+        </form>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .contact-section {
+    padding: var(--space-16) 0;
+  }
+
+  .contact-section--light {
+    background-color: var(--color-surface);
+  }
+
+  .contact-section--alt {
+    background-color: var(--color-surface-alt);
+  }
+
+  .contact-section--brand {
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+
+  .contact-section__grid {
+    display: grid;
+    gap: var(--space-10);
+  }
+
+  @media (min-width: 1024px) {
+    .contact-section__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-16);
+    }
+  }
+
+  .contact-section__title {
+    margin: 0 0 var(--space-4);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .contact-section--brand .contact-section__title {
+    color: var(--color-on-brand);
+  }
+
+  .contact-section__subtitle {
+    font-size: var(--text-lead);
+    color: var(--color-ink-500);
+    margin: 0 0 var(--space-8);
+    line-height: 1.6;
+  }
+
+  .contact-section--brand .contact-section__subtitle {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Contact Info */
+  .contact-section__details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .contact-section__details-title {
+    margin: 0 0 var(--space-4);
+    font-size: var(--text-h4);
+    font-weight: 600;
+  }
+
+  .contact-section__detail {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+  }
+
+  .contact-section__detail :global(svg) {
+    flex-shrink: 0;
+    color: var(--color-brand);
+    margin-top: 2px;
+  }
+
+  .contact-section__detail-label {
+    margin: 0 0 var(--space-1);
+    font-size: var(--text-small);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-500);
+  }
+
+  .contact-section__detail-value {
+    margin: 0;
+    color: var(--color-ink);
+  }
+
+  .contact-section__detail-link {
+    color: var(--color-brand);
+    text-decoration: none;
+    transition: color var(--motion-base) var(--ease-out);
+  }
+
+  .contact-section__detail-link:hover {
+    color: var(--color-brand-600);
+  }
+
+  .contact-section__departments {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .contact-section__department-link {
+    color: var(--color-brand);
+    text-decoration: none;
+    font-size: var(--text-small);
+    transition: color var(--motion-base) var(--ease-out);
+  }
+
+  .contact-section__department-link:hover {
+    color: var(--color-brand-600);
+  }
+
+  /* Form */
+  .contact-section__form-wrapper {
+    background-color: var(--color-surface);
+    padding: var(--space-8);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+  }
+
+  .contact-section__form-header {
+    margin-bottom: var(--space-6);
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .contact-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .contact-form__label {
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .contact-form__required {
+    color: var(--color-error, #dc2626);
+    margin-left: var(--space-1);
+  }
+
+  .contact-form__input {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-body);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    color: var(--color-ink);
+    transition:
+      border-color var(--motion-base) var(--ease-out),
+      box-shadow var(--motion-base) var(--ease-out);
+  }
+
+  .contact-form__input:focus {
+    outline: none;
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px var(--color-brand-050);
+  }
+
+  .contact-form__input::placeholder {
+    color: var(--color-ink-300);
+  }
+
+  .contact-form__textarea {
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+  }
+
+  .contact-form__select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right var(--space-4) center;
+    padding-right: var(--space-10);
+  }
+
+  .contact-form__submit {
+    margin-top: var(--space-4);
+    width: 100%;
+    justify-content: center;
+  }
+</style>

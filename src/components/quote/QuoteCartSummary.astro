@@ -1,0 +1,254 @@
+---
+// src/components/quote/QuoteCartSummary.astro
+// Resumen + notas globales + acciones finales (Limpiar / WhatsApp).
+// La data se hidrata en cliente desde getCart().
+
+import Icon from '@/components/ui/Icon.astro';
+---
+
+<section class="quote-summary" data-quote-summary aria-live="polite">
+  <h2 class="quote-summary__title">Resumen</h2>
+  <dl class="quote-summary__list">
+    <div class="quote-summary__row">
+      <dt>Equipos distintos</dt>
+      <dd data-quote-stat="unique">0</dd>
+    </div>
+    <div class="quote-summary__row">
+      <dt>Unidades totales</dt>
+      <dd data-quote-stat="units">0</dd>
+    </div>
+    <div class="quote-summary__row">
+      <dt>Total días agregados</dt>
+      <dd data-quote-stat="days">0</dd>
+    </div>
+    <div class="quote-summary__row">
+      <dt>Mayor fecha de inicio</dt>
+      <dd data-quote-stat="earliest">—</dd>
+    </div>
+    <div class="quote-summary__row">
+      <dt>Final calculado</dt>
+      <dd data-quote-stat="latestEnd">—</dd>
+    </div>
+  </dl>
+
+  <div class="quote-summary__notes">
+    <label for="quote-global-notes">Notas globales (opcional)</label>
+    <textarea
+      id="quote-global-notes"
+      rows="3"
+      maxlength="500"
+      placeholder="Información que aplique a toda la cotización…"
+      data-quote-global-notes
+    ></textarea>
+  </div>
+
+  <div class="quote-summary__actions">
+    <button
+      type="button"
+      class="quote-summary__clear"
+      data-quote-action="clear"
+    >
+      <Icon name="close" size={14} />
+      Limpiar cotizador
+    </button>
+    <a
+      href="#"
+      class="quote-summary__whatsapp"
+      data-quote-action="whatsapp"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Icon name="whatsapp" size={18} />
+      Enviar por WhatsApp
+    </a>
+  </div>
+</section>
+
+<script>
+  import { clearCart, getCart, subscribe } from '@/lib/quoteCart';
+  import { buildWhatsAppUrl, computeCartTotals } from '@/lib/quoteMessage';
+
+  function setText(selector: string, value: string): void {
+    const el = document.querySelector<HTMLElement>(`[data-quote-stat="${selector}"]`);
+    if (el) el.textContent = value;
+  }
+
+  function paint(): void {
+    const cart = getCart();
+    const totals = computeCartTotals(cart);
+    setText('unique', String(totals.uniqueItems));
+    setText('units', String(totals.totalUnits));
+    setText('days', String(totals.totalDays));
+    setText('earliest', totals.earliestStart ?? '—');
+    setText('latestEnd', totals.latestEnd ?? '—');
+
+    const wa = document.querySelector<HTMLAnchorElement>('[data-quote-action="whatsapp"]');
+    if (wa) {
+      if (cart.items.length === 0) {
+        wa.setAttribute('aria-disabled', 'true');
+        wa.classList.add('is-disabled');
+      } else {
+        wa.removeAttribute('aria-disabled');
+        wa.classList.remove('is-disabled');
+        wa.href = buildWhatsAppUrl(cart);
+      }
+    }
+  }
+
+  function handleClear(): void {
+    if (!confirm('¿Vaciar todo el cotizador? Esta acción no se puede deshacer.')) return;
+    clearCart();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    paint();
+    subscribe(paint);
+    const clearBtn = document.querySelector<HTMLButtonElement>('[data-quote-action="clear"]');
+    clearBtn?.addEventListener('click', handleClear);
+  });
+</script>
+
+<style>
+  .quote-summary {
+    background-color: var(--color-surface, #fff);
+    border: 1px solid var(--color-line, #e2e4e5);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .quote-summary__title {
+    margin: 0;
+    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-ink, #242627);
+  }
+
+  .quote-summary__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+  }
+
+  .quote-summary__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.25rem;
+    border-bottom: 1px dashed var(--color-line, #e2e4e5);
+  }
+
+  .quote-summary__row:last-child {
+    border-bottom: none;
+  }
+
+  .quote-summary__row dt {
+    font-size: 0.9rem;
+    color: var(--color-ink-700, #3a3d3e);
+    margin: 0;
+  }
+
+  .quote-summary__row dd {
+    margin: 0;
+    font-weight: 700;
+    color: var(--color-ink, #242627);
+    font-size: 0.95rem;
+  }
+
+  .quote-summary__notes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .quote-summary__notes label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-700, #3a3d3e);
+  }
+
+  .quote-summary__notes textarea {
+    font-family: var(--font-body, 'Bliss Pro', sans-serif);
+    font-size: 0.95rem;
+    border: 1px solid var(--color-line, #e2e4e5);
+    border-radius: 8px;
+    padding: 0.625rem;
+    color: var(--color-ink, #242627);
+    background-color: var(--color-surface, #fff);
+    resize: vertical;
+  }
+
+  .quote-summary__notes textarea:focus {
+    outline: 2px solid var(--color-brand, #348f41);
+    border-color: var(--color-brand, #348f41);
+  }
+
+  .quote-summary__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .quote-summary__clear {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.75rem 1.25rem;
+    background-color: transparent;
+    color: var(--color-ink-700, #3a3d3e);
+    border: 1px solid var(--color-line, #e2e4e5);
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: color 0.15s var(--ease-out, ease), border-color 0.15s var(--ease-out, ease);
+  }
+
+  .quote-summary__clear:hover,
+  .quote-summary__clear:focus-visible {
+    color: var(--color-danger, #c0392b);
+    border-color: var(--color-danger, #c0392b);
+  }
+
+  .quote-summary__clear:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  .quote-summary__whatsapp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    background-color: var(--color-brand, #348f41);
+    color: var(--color-on-brand, #fff);
+    font-weight: 800;
+    font-size: 0.95rem;
+    text-decoration: none;
+    border-radius: 999px;
+    transition: background-color 0.15s var(--ease-out, ease), transform 0.15s var(--ease-out, ease);
+  }
+
+  .quote-summary__whatsapp:hover,
+  .quote-summary__whatsapp:focus-visible {
+    background-color: var(--color-brand-600, #2c7c37);
+    transform: translateY(-1px);
+  }
+
+  .quote-summary__whatsapp:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  .quote-summary__whatsapp.is-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+</style>

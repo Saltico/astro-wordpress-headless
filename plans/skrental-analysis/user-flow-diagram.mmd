@@ -1,0 +1,118 @@
+sequenceDiagram
+    autonumber
+    participant U as 👤 Usuario
+    participant H as 🏠 Home
+    participant S as 🔍 Buscador
+    participant C as 📂 Categoría
+    participant P as 📋 Producto
+    participant Q as 🛒 Cotizador
+    participant A as 🔐 Auth
+    participant API as 🔌 API
+    participant DB as 🗄️ Base Datos
+
+    Note over U,DB: Flujo de Exploración y Cotización
+
+    U->>H: 1. Ingresa a skrental.com
+    H-->>U: Muestra homepage completa
+
+    alt Busca producto específico
+        U->>S: 2. Usa buscador
+        S->>API: 3. Consulta productos
+        API->>DB: 4. Busca en BD
+        DB-->>API: 5. Retorna resultados
+        API-->>S: 6. Lista de productos
+        S-->>U: 7. Muestra sugerencias
+    else Navega por categorías
+        U->>H: 2. Selecciona categoría
+        H->>C: 3. Navega a categoría
+        C-->>U: 8. Muestra subcategorías
+    end
+
+    U->>C: 9. Selecciona subcategoría
+    C->>API: 10. Obtiene productos
+    API->>DB: 11. Consulta productos
+    DB-->>API: 12. Retorna lista
+    API-->>C: 13. Productos disponibles
+    C-->>U: 14. Grid de productos
+
+    U->>P: 15. Selecciona producto
+    P->>API: 16. Obtiene detalles
+    API->>DB: 17. Consulta producto
+    DB-->>API: 18. Detalles completos
+    API-->>P: 19. Información producto
+    P-->>U: 20. Ficha de producto
+
+    Note over U,Q: Flujo de Cotización
+
+    U->>Q: 21. Agrega a cotización
+    Q->>API: 22. Agrega producto
+    API->>DB: 23. Guarda en sesión
+    DB-->>API: 24. Confirma
+    API-->>Q: 25. Actualiza contador
+    Q-->>U: 26. Notificación éxito
+
+    alt Agrega más productos
+        U->>P: 27. Selecciona otro producto
+        P->>Q: 28. Agrega a cotización
+        Q->>API: 29. Agrega producto
+        API->>DB: 30. Guarda
+        DB-->>API: 31. Confirma
+        API-->>Q: 32. Actualiza
+        Q-->>U: 33. Actualiza contador
+    end
+
+    U->>Q: 34. Ve cotización
+    Q-->>U: 35. Muestra resumen
+
+    U->>Q: 36. Envía cotización
+    
+    alt No está logueado
+        Q->>A: 37. Solicita login
+        A-->>U: 38. Muestra formulario
+        U->>A: 39. Ingresa credenciales
+        A->>API: 40. Valida usuario
+        API->>DB: 41. Consulta usuario
+        DB-->>API: 42. Usuario válido
+        API-->>A: 43. Token sesión
+        A-->>U: 44. Login exitoso
+    end
+
+    Q->>API: 45. Envía cotización
+    API->>DB: 46. Guarda cotización
+    DB-->>API: 47. Confirma
+    API->>EMAIL: 48. Envía confirmación
+    EMAIL-->>U: 49. Email confirmación
+    API-->>Q: 50. Cotización enviada
+    Q-->>U: 51. Mensaje éxito
+
+    Note over U,DB: Flujo de Login Directo
+
+    U->>A: 52. Click "Mi Cuenta"
+    A-->>U: 53. Formulario login
+    U->>A: 54. Ingresa credenciales
+    A->>API: 55. Valida
+    API->>DB: 56. Consulta
+    DB-->>API: 57. Válido
+    API-->>A: 58. Token
+    A-->>U: 59. Dashboard
+
+    Note over U,DB: Flujo de Recuperación de Contraseña
+
+    U->>A: 60. Click "Olvidé contraseña"
+    A-->>U: 61. Formulario RUT
+    U->>A: 62. Ingresa RUT
+    A->>API: 63. Valida RUT
+    API->>DB: 64. Consulta usuario
+    DB-->>API: 65. Usuario encontrado
+    API->>EMAIL: 66. Envía código
+    EMAIL-->>U: 67. Email con código
+    U->>A: 68. Ingresa código
+    A->>API: 69. Valida código
+    API-->>A: 70. Código válido
+    A-->>U: 71. Formulario nueva clave
+    U->>A: 72. Ingresa nueva clave
+    A->>API: 73. Actualiza clave
+    API->>DB: 74. Guarda
+    DB-->>API: 75. Actualizado
+    API-->>A: 76. Éxito
+    A-->>U: 77. Login automático

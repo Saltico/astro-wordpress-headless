@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "hostinger-hosting": {
+      "type": "local",
+      "command": ["hostinger-hosting-mcp"],
+      "enabled": true,
+      "timeout": 15000
+    },
+    "hostinger-wordpress": {
+      "type": "local",
+      "command": ["hostinger-wordpress-mcp"],
+      "enabled": true,
+      "timeout": 15000
+    },
+    "hostinger-dns": {
+      "type": "local",
+      "command": ["hostinger-dns-mcp"],
+      "enabled": true,
+      "timeout": 15000
+    }
+  }
+}

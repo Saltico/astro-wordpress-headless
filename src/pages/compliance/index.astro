@@ -1,47 +1,279 @@
 ---
 // src/pages/compliance/index.astro
+// Hub de documentos de Compliance y HSEQ.
+// Los documentos se descargan directo como PDF; no hay sub-páginas por tema.
+
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
-import SectionLayout from '@/components/ui/SectionLayout.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import Icon from '@/components/ui/Icon.astro';
+import heroImg from '@/assets/imgs/hero.jpg';
+import { complianceDocs, formatSize } from '@/data/compliance';
+import { articleSchema, breadcrumbSchema, combineSchemas } from '@/lib/seo';
+import { getSiteUrl } from '@/lib/seo';
 
 const title = 'Compliance y HSEQ | IP Proyectos Industriales';
 const description =
-  'Compromiso con la seguridad, el medio ambiente y la calidad. Conoce nuestros estándares HSEQ y compliance.';
+  'Compromiso con la integridad y la transparencia. Descarga nuestros documentos de compliance, código de ética, política de donaciones y modelo de prevención del delito.';
 
 const breadcrumbs = [
   { label: 'Inicio', url: '/' },
   { label: 'Compliance' },
 ];
+
+const jsonLd = combineSchemas(
+  articleSchema('Compliance y HSEQ', description, getSiteUrl('/compliance')),
+  breadcrumbSchema(breadcrumbs)
+);
+
+function formatDate(iso?: string): string {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('es-CL', {
+    year: 'numeric',
+    month: 'long',
+  });
+}
 ---
 
-<BaseLayout title={title} description={description} breadcrumbs={breadcrumbs}>
-  <SectionLayout spacing="lg">
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <!-- Hero -->
+  <PageHero
+    image={heroImg.src}
+    imageAlt="Compliance IP Proyectos Industriales"
+    eyebrow="Compliance"
+    title="Compromiso con la integridad y la transparencia"
+    subtitle="Operamos bajo un modelo de cumplimiento conforme a la Ley N° 20.393 sobre responsabilidad penal de las personas jurídicas. Aquí encuentras nuestras políticas y documentos vigentes."
+    minHeight="sm"
+  />
+
+  <!-- Documentos -->
+  <section class="compliance-docs">
     <Container>
-      <h1>Compliance y HSEQ</h1>
-      <p>Hub de documentación sobre seguridad, medio ambiente y calidad.</p>
-      <ul>
-        <li><a href="/compliance/hseq">HSEQ</a></li>
-        <li><a href="/compliance/certificaciones">Certificaciones</a></li>
+      <header class="compliance-docs__header">
+        <h2 class="compliance-docs__title">Documentos</h2>
+        <p class="compliance-docs__subtitle">
+          Descarga nuestros documentos vigentes. Para versiones oficiales o consultas,
+          escríbenos a <a href="mailto:contacto@ipproyectosindustriales.cl">contacto@ipproyectosindustriales.cl</a>.
+        </p>
+      </header>
+
+      <ul class="compliance-docs__grid" role="list">
+        {complianceDocs.map((doc) => (
+          <li>
+            <article class="doc-card">
+              <div class="doc-card__icon" aria-hidden="true">
+                <Icon name="file-text" size={28} />
+              </div>
+              <div class="doc-card__body">
+                <h3 class="doc-card__title">{doc.title}</h3>
+                <p class="doc-card__description">{doc.description}</p>
+                <div class="doc-card__meta">
+                  {doc.version && <span class="doc-card__version">{doc.version}</span>}
+                  {doc.updatedAt && <span class="doc-card__date">{formatDate(doc.updatedAt)}</span>}
+                  {doc.sizeBytes && <span class="doc-card__size">{formatSize(doc.sizeBytes)}</span>}
+                </div>
+                <a
+                  href={doc.pdfUrl}
+                  class="doc-card__download"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Descargar ${doc.title} en PDF`}
+                >
+                  <Icon name="download" size={16} />
+                  Descargar PDF
+                </a>
+              </div>
+            </article>
+          </li>
+        ))}
       </ul>
+
+      <!-- CTA canal de denuncias -->
+      <aside class="compliance-cta">
+        <p>¿Necesitas reportar una conducta?</p>
+        <a href="/canal-integridad" class="compliance-cta__link">
+          Usa nuestro canal de denuncias
+          <Icon name="arrow-right" size={16} />
+        </a>
+      </aside>
     </Container>
-  </SectionLayout>
+  </section>
 </BaseLayout>
 
 <style>
-  ul {
+  /* (El hero ahora usa el componente <PageHero />) */
+
+  .compliance-hero__subtitle a {
+    color: var(--color-brand-300, #4ade80);
+    text-decoration: underline;
+  }
+
+  /* Documentos */
+  .compliance-docs {
+    padding-block: clamp(60px, 8vw, 100px);
+    background-color: var(--color-surface, #fff);
+  }
+
+  .compliance-docs__header {
+    text-align: center;
+    max-width: 60ch;
+    margin: 0 auto clamp(40px, 5vw, 60px);
+  }
+
+  .compliance-docs__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    letter-spacing: -0.02em;
+    color: var(--color-ink, #1a1a1a);
+    margin: 0 0 12px;
+  }
+
+  .compliance-docs__subtitle {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--color-ink-500, #6b7280);
+  }
+
+  .compliance-docs__subtitle a {
+    color: var(--color-brand, #1a9c4a);
+  }
+
+  .compliance-docs__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 40px;
+  }
+
+  .doc-card {
+    display: flex;
+    gap: 18px;
+    background: var(--color-surface, #fff);
+    border: 1px solid var(--color-line, #e5e7eb);
+    border-radius: 14px;
+    padding: 24px;
+    transition: transform 0.2s var(--ease-out, ease),
+      border-color 0.2s var(--ease-out, ease),
+      box-shadow 0.2s var(--ease-out, ease);
+  }
+
+  .doc-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-brand, #1a9c4a);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  }
+
+  .doc-card__icon {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-brand-050, rgba(26, 156, 74, 0.1));
+    color: var(--color-brand, #1a9c4a);
+    border-radius: 12px;
+  }
+
+  .doc-card__body {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
-    margin-top: var(--space-6);
+    gap: 8px;
+    min-width: 0;
   }
 
-  a {
-    color: var(--color-brand);
-    font-weight: 500;
+  .doc-card__title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.05rem;
+    line-height: 1.3;
+    color: var(--color-ink, #1a1a1a);
+    margin: 0;
   }
 
-  a:hover,
-  a:focus {
-    text-decoration: underline;
+  .doc-card__description {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--color-ink-500, #6b7280);
+  }
+
+  .doc-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--color-ink-400, #9ca3af);
+    margin-top: 2px;
+  }
+
+  .doc-card__version,
+  .doc-card__date,
+  .doc-card__size {
+    padding: 2px 8px;
+    background: var(--color-surface-alt, #f7f9f7);
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  .doc-card__download {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 8px 16px;
+    background: var(--color-brand, #1a9c4a);
+    color: #fff;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.85rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background 0.15s var(--ease-out, ease),
+      transform 0.15s var(--ease-out, ease);
+  }
+
+  .doc-card__download:hover,
+  .doc-card__download:focus-visible {
+    background: var(--color-brand-700, #15803d);
+    transform: translateY(-1px);
+  }
+
+  /* CTA Canal */
+  .compliance-cta {
+    text-align: center;
+    padding: 32px;
+    background: var(--color-surface-alt, #f7f9f7);
+    border-radius: 14px;
+  }
+
+  .compliance-cta p {
+    margin: 0 0 12px;
+    font-size: 1.05rem;
+    color: var(--color-ink, #1a1a1a);
+  }
+
+  .compliance-cta__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    color: var(--color-brand, #1a9c4a);
+    text-decoration: none;
+  }
+
+  .compliance-cta__link:hover {
+    gap: 12px;
   }
 </style>

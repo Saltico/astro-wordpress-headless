@@ -1,0 +1,838 @@
+---
+// src/components/ui/QuoteFormAdvanced.astro
+// Formulario de cotización avanzado con checkboxes colapsables
+// Inspirado en el sitio de referencia
+
+import Icon from './Icon.astro';
+
+export interface Props {
+  action?: string;
+  preselectedServices?: string[];
+  className?: string;
+}
+
+const {
+  action = '/api/contact',
+  preselectedServices = [],
+  className = '',
+} = Astro.props;
+
+// Detectar ruta actual para premarcar servicios
+const currentPath = Astro.url.pathname;
+const isIzaje = currentPath.includes('/arriendo/izaje');
+const isMovimientoTierra = currentPath.includes('/arriendo/movimiento-de-tierra');
+const isTransporte = currentPath.includes('/arriendo/transporte');
+const isEquiposEspeciales = currentPath.includes('/arriendo/equipos-especiales');
+const isIngenieria = currentPath.includes('/servicios/ingenieria');
+const isConstruccion = currentPath.includes('/servicios/construccion');
+const isMontajes = currentPath.includes('/servicios/montajes');
+const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria');
+---
+
+<form class={`quote-form-advanced ${className}`.trim()} action={action} method="POST" id="quoteFormAdvanced">
+  <!-- Sección 1: Datos de la empresa -->
+  <div class="qsection">
+    <div class="qsection__head">
+      <span class="qsection__num">1</span>
+      <div>
+        <h3>Datos de la empresa</h3>
+        <p class="qsub">Cotizamos a empresas. Estos datos agilizan la respuesta y la facturación.</p>
+      </div>
+    </div>
+    <div class="qgrid">
+      <div class="qfield">
+        <label>RUT empresa *</label>
+        <input type="text" name="rut" placeholder="76.123.456-7" required>
+      </div>
+      <div class="qfield">
+        <label>Razón social *</label>
+        <input type="text" name="razon_social" placeholder="Razón social" required>
+      </div>
+      <div class="qfield">
+        <label>Giro</label>
+        <input type="text" name="giro" placeholder="Giro comercial">
+      </div>
+      <div class="qfield">
+        <label>Nombre de fantasía</label>
+        <input type="text" name="nombre_fantasia" placeholder="Nombre de fantasía">
+      </div>
+      <div class="qfield">
+        <label>Dirección</label>
+        <input type="text" name="direccion" placeholder="Calle y número">
+      </div>
+      <div class="qfield">
+        <label>Ciudad</label>
+        <input type="text" name="ciudad" placeholder="Ciudad">
+      </div>
+      <div class="qfield">
+        <label>Comuna</label>
+        <input type="text" name="comuna" placeholder="Comuna">
+      </div>
+      <div class="qfield">
+        <label>Nombre de contacto *</label>
+        <input type="text" name="contacto" placeholder="Tu nombre" required>
+      </div>
+      <div class="qfield">
+        <label>E-mail de contacto *</label>
+        <input type="email" name="email" placeholder="tu@correo.cl" required>
+      </div>
+      <div class="qfield">
+        <label>Teléfono / WhatsApp *</label>
+        <input type="tel" name="telefono" placeholder="+56 9 ..." required>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección 2: Servicio de interés -->
+  <div class="qsection">
+    <div class="qsection__head">
+      <span class="qsection__num">2</span>
+      <div>
+        <h3>Servicio de interés</h3>
+        <p class="qsub">Puedes cotizar varias categorías a la vez. Marca las que necesites.</p>
+      </div>
+    </div>
+
+    <!-- Izaje -->
+    <div class="qdivcard" data-collapse data-div="izaje">
+      <label class="qdivcard__head">
+        <input type="checkbox" class="js-collapse" name="servicio_izaje" {isIzaje || preselectedServices.includes('izaje') ? 'checked' : ''}>
+        <span class="qbox"><Icon name="check" size={16} /></span>
+        <b>Izaje</b>
+        <span class="qtag">Grúas y altura</span>
+      </label>
+      <div class="qcollapse qdivcard__body">
+        <p class="qhint">Marca cada equipo que necesites y completa sus datos.</p>
+        
+        <!-- Grúas alto tonelaje -->
+        <div class="qeqitem" data-collapse>
+          <label class="qeqitem__head">
+            <input type="checkbox" class="js-collapse" name="gruas_alto_tonelaje">
+            <span class="qbox"><Icon name="check" size={16} /></span>
+            <b>Grúas alto tonelaje</b>
+          </label>
+          <div class="qcollapse qeqitem__sub">
+            <div class="qgrid-2">
+              <div class="qfield">
+                <label>Tipo</label>
+                <select name="tipo_grua">
+                  <option value="" selected disabled>Selecciona</option>
+                  <option>AT — Todo Terreno</option>
+                  <option>RT — Rough Terrain</option>
+                </select>
+              </div>
+              <div class="qfield">
+                <label>Tonelaje requerido</label>
+                <input type="text" name="tonelaje" placeholder="ej: 250 t">
+              </div>
+              <div class="qfield">
+                <label>Peso de la carga a izar</label>
+                <input type="text" name="peso_carga" placeholder="ej: 80 t">
+              </div>
+              <div class="qfield">
+                <label>Radio / altura de izaje</label>
+                <input type="text" name="radio_altura" placeholder="ej: radio 18 m, altura 40 m">
+              </div>
+            </div>
+            <div>
+              <p class="qsublabel">Servicio adicional</p>
+              <div class="qchips">
+                <label class="qchip"><input type="checkbox" name="con_operador"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Con operador</span></label>
+                <label class="qchip"><input type="checkbox" name="rigger"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Rigger</span></label>
+                <label class="qchip"><input type="checkbox" name="apr"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">APR (prevencionista)</span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Alza-hombre -->
+        <div class="qeqitem" data-collapse>
+          <label class="qeqitem__head">
+            <input type="checkbox" class="js-collapse" name="alza_hombre">
+            <span class="qbox"><Icon name="check" size={16} /></span>
+            <b>Alza-hombre</b>
+          </label>
+          <div class="qcollapse qeqitem__sub">
+            <div class="qfield">
+              <label>Altura requerida</label>
+              <input type="text" name="altura_alza" placeholder="hasta 43 m">
+            </div>
+          </div>
+        </div>
+
+        <!-- Camión pluma -->
+        <div class="qeqitem" data-collapse>
+          <label class="qeqitem__head">
+            <input type="checkbox" class="js-collapse" name="camion_pluma">
+            <span class="qbox"><Icon name="check" size={16} /></span>
+            <b>Camión pluma</b>
+          </label>
+          <div class="qcollapse qeqitem__sub">
+            <div class="qfield">
+              <label>Altura y/o capacidad</label>
+              <input type="text" name="capacidad_pluma" placeholder="hasta 26 t">
+            </div>
+          </div>
+        </div>
+
+        <!-- Manipulador telescópico -->
+        <div class="qeqitem" data-collapse>
+          <label class="qeqitem__head">
+            <input type="checkbox" class="js-collapse" name="manipulador_telescopico">
+            <span class="qbox"><Icon name="check" size={16} /></span>
+            <b>Manipulador telescópico</b>
+          </label>
+          <div class="qcollapse qeqitem__sub">
+            <div class="qfield">
+              <label>Altura y/o capacidad</label>
+              <input type="text" name="capacidad_manipulador" placeholder="ej: 17 m / 4 t">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Movimiento de Tierra -->
+    <div class="qdivcard" data-collapse data-div="tierra">
+      <label class="qdivcard__head">
+        <input type="checkbox" class="js-collapse" name="servicio_tierra" {isMovimientoTierra || preselectedServices.includes('tierra') ? 'checked' : ''}>
+        <span class="qbox"><Icon name="check" size={16} /></span>
+        <b>Movimiento de Tierra</b>
+        <span class="qtag">Maquinaria pesada</span>
+      </label>
+      <div class="qcollapse qdivcard__body">
+        <div class="qchips">
+          <label class="qchip"><input type="checkbox" name="camiones_tolva"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Camiones tolva</span></label>
+          <label class="qchip"><input type="checkbox" name="cargadores_frontales"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Cargadores frontales</span></label>
+          <label class="qchip"><input type="checkbox" name="excavadoras"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Excavadoras</span></label>
+          <label class="qchip"><input type="checkbox" name="retroexcavadoras"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Retroexcavadoras</span></label>
+          <label class="qchip"><input type="checkbox" name="minicargadores"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Minicargadores</span></label>
+          <label class="qchip"><input type="checkbox" name="rodillos"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Rodillos compactadores</span></label>
+          <label class="qchip"><input type="checkbox" name="aljibes"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Aljibes</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transporte -->
+    <div class="qdivcard" data-collapse data-div="transporte">
+      <label class="qdivcard__head">
+        <input type="checkbox" class="js-collapse" name="servicio_transporte" {isTransporte || preselectedServices.includes('transporte') ? 'checked' : ''}>
+        <span class="qbox"><Icon name="check" size={16} /></span>
+        <b>Transporte</b>
+        <span class="qtag">Punto a punto</span>
+      </label>
+      <div class="qcollapse qdivcard__body">
+        <p class="qhint">Servicio punto a punto (origen → destino), no arriendo en faena.</p>
+        <div class="qgrid-2">
+          <div class="qfield">
+            <label>Tipo de transporte</label>
+            <select name="tipo_transporte">
+              <option value="" selected disabled>Selecciona</option>
+              <option>Rampla seca</option>
+              <option>Cama baja</option>
+              <option>Carga sobredimensionada</option>
+            </select>
+          </div>
+          <div class="qfield">
+            <label>Peso de la carga</label>
+            <input type="text" name="peso_transporte" placeholder="ej: 45 t">
+          </div>
+        </div>
+        <div>
+          <p class="qsublabel">Dimensiones de la carga</p>
+          <div class="qgrid-3">
+            <div class="qfield">
+              <label>Largo</label>
+              <input type="text" name="largo" placeholder="m">
+            </div>
+            <div class="qfield">
+              <label>Ancho</label>
+              <input type="text" name="ancho" placeholder="m">
+            </div>
+            <div class="qfield">
+              <label>Alto</label>
+              <input type="text" name="alto" placeholder="m">
+            </div>
+          </div>
+        </div>
+        <div class="qgrid-2">
+          <div class="qfield">
+            <label>Fecha de inicio</label>
+            <input type="date" name="fecha_inicio_transporte">
+          </div>
+          <div class="qfield">
+            <label>¿Requiere escolta?</label>
+            <select name="escolta">
+              <option value="" selected disabled>Selecciona</option>
+              <option>Sí</option>
+              <option>No</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Equipos Especiales -->
+    <div class="qdivcard" data-collapse data-div="especiales">
+      <label class="qdivcard__head">
+        <input type="checkbox" class="js-collapse" name="servicio_especiales" {isEquiposEspeciales || preselectedServices.includes('especiales') ? 'checked' : ''}>
+        <span class="qbox"><Icon name="check" size={16} /></span>
+        <b>Equipos Especiales</b>
+        <span class="qtag">Apoyo a faena</span>
+      </label>
+      <div class="qcollapse qdivcard__body">
+        <div class="qchips">
+          <label class="qchip"><input type="checkbox" name="torre_iluminacion"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Torre iluminación</span></label>
+          <label class="qchip"><input type="checkbox" name="generador"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Generador</span></label>
+          <label class="qchip"><input type="checkbox" name="compresor"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Compresor</span></label>
+          <label class="qchip"><input type="checkbox" name="bus"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Bus</span></label>
+          <label class="qchip"><input type="checkbox" name="minibus"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Minibús</span></label>
+          <label class="qchip"><input type="checkbox" name="camion_34"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Camión 3/4</span></label>
+          <label class="qchip"><input type="checkbox" name="camioneta"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Camioneta</span></label>
+          <label class="qchip"><input type="checkbox" name="petroleador"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Camión petroleador</span></label>
+          <label class="qchip"><input type="checkbox" name="canastillo"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Canastillo</span></label>
+          <label class="qchip"><input type="checkbox" name="bomba_hormigon"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Bomba hormigón</span></label>
+          <label class="qchip"><input type="checkbox" name="termofusion"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Equipo termofusión</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ingeniería -->
+    <div class="qdivcard" data-collapse data-div="ingenieria">
+      <label class="qdivcard__head">
+        <input type="checkbox" class="js-collapse" name="servicio_ingenieria" {isIngenieria || preselectedServices.includes('ingenieria') ? 'checked' : ''}>
+        <span class="qbox"><Icon name="check" size={16} /></span>
+        <b>Ingeniería</b>
+        <span class="qtag">Diseño y gestión</span>
+      </label>
+      <div class="qcollapse qdivcard__body">
+        <div class="qchips">
+          <label class="qchip"><input type="checkbox" name="ing_detalle"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Ingeniería de detalle</span></label>
+          <label class="qchip"><input type="checkbox" name="ing_gestion"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Gestión de proyectos</span></label>
+          <label class="qchip"><input type="checkbox" name="ing_compras"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Compras y contratos</span></label>
+          <label class="qchip"><input type="checkbox" name="ing_puesta_marcha"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Puesta en marcha</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Construcción -->
+    <div class="qdivcard" data-collapse data-div="construccion">
+      <label class="qdivcard__head">
+        <input type="checkbox" class="js-collapse" name="servicio_construccion" {isConstruccion || preselectedServices.includes('construccion') ? 'checked' : ''}>
+        <span class="qbox"><Icon name="check" size={16} /></span>
+        <b>Construcción</b>
+        <span class="qtag">Obras civiles</span>
+      </label>
+      <div class="qcollapse qdivcard__body">
+        <div class="qchips">
+          <label class="qchip"><input type="checkbox" name="contratos_epc"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Contratos EPC</span></label>
+          <label class="qchip"><input type="checkbox" name="prefabricados"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Prefabricados</span></label>
+          <label class="qchip"><input type="checkbox" name="estructuras_metalicas"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Estructuras metálicas</span></label>
+          <label class="qchip"><input type="checkbox" name="granallado"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Granallado ecológico</span></label>
+          <label class="qchip"><input type="checkbox" name="pinturas_especiales"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Pinturas especiales</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Montajes -->
+    <div class="qdivcard" data-collapse data-div="montajes">
+      <label class="qdivcard__head">
+        <input type="checkbox" class="js-collapse" name="servicio_montajes" {isMontajes || preselectedServices.includes('montajes') ? 'checked' : ''}>
+        <span class="qbox"><Icon name="check" size={16} /></span>
+        <b>Montajes</b>
+        <span class="qtag">Electromecánico</span>
+      </label>
+      <div class="qcollapse qdivcard__body">
+        <div class="qchips">
+          <label class="qchip"><input type="checkbox" name="montaje_electromecanico"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Montaje electromecánico</span></label>
+          <label class="qchip"><input type="checkbox" name="pipelines"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Pipelines industriales</span></label>
+          <label class="qchip"><input type="checkbox" name="termofusion_hdpe"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Termofusión HDPE</span></label>
+          <label class="qchip"><input type="checkbox" name="cortinas_eolicas"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Cortinas y pantallas eólicas</span></label>
+          <label class="qchip"><input type="checkbox" name="estructuras_montaje"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Estructuras metálicas</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Infraestructura Portuaria -->
+    <div class="qdivcard" data-collapse data-div="portuaria">
+      <label class="qdivcard__head">
+        <input type="checkbox" class="js-collapse" name="servicio_portuaria" {isPortuaria || preselectedServices.includes('portuaria') ? 'checked' : ''}>
+        <span class="qbox"><Icon name="check" size={16} /></span>
+        <b>Infraestructura Portuaria</b>
+        <span class="qtag">Obras marítimas</span>
+      </label>
+      <div class="qcollapse qdivcard__body">
+        <div class="qchips">
+          <label class="qchip"><input type="checkbox" name="mantencion_maritima"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Mantención obras marítimas</span></label>
+          <label class="qchip"><input type="checkbox" name="muelles"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Muelles y defensas</span></label>
+          <label class="qchip"><input type="checkbox" name="impermeabilizacion"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Impermeabilización</span></label>
+          <label class="qchip"><input type="checkbox" name="estructuras_costeras"><span class="qbox"><Icon name="check" size={14} /></span><span class="qlbl">Estructuras costeras</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección 3: Datos del arriendo (solo si hay izaje, tierra o especiales) -->
+  <div class="qsection" id="sec-arriendo">
+    <div class="qsection__head">
+      <span class="qsection__num">3</span>
+      <div>
+        <h3>Datos del arriendo</h3>
+        <p class="qsub">Para calcular disponibilidad y tarifa de movilización.</p>
+      </div>
+    </div>
+    <div class="qgrid-2">
+      <div class="qfield">
+        <label>Fecha de inicio</label>
+        <input type="date" name="fecha_inicio">
+      </div>
+      <div class="qfield">
+        <label>Fecha de término</label>
+        <input type="date" name="fecha_termino">
+      </div>
+      <div class="qfield">
+        <label>Duración (cantidad)</label>
+        <input type="number" name="duracion" placeholder="ej: 10">
+      </div>
+      <div class="qfield">
+        <label>Unidad</label>
+        <select name="unidad" id="dur-unit">
+          <option value="" selected disabled>Selecciona</option>
+          <option>Días</option>
+          <option>Turnos</option>
+          <option>Horas</option>
+        </select>
+      </div>
+    </div>
+    <hr class="qdivider">
+    <div>
+      <p class="qsublabel">Ubicación del servicio</p>
+      <div class="qgrid">
+        <div class="qfield">
+          <label>Región</label>
+          <select name="region">
+            <option value="" selected disabled>Selecciona</option>
+            <option>Antofagasta (II)</option>
+            <option>Atacama (III)</option>
+            <option>Coquimbo (IV)</option>
+            <option>Valparaíso (V)</option>
+            <option>Metropolitana (RM)</option>
+            <option>Otra región</option>
+          </select>
+        </div>
+        <div class="qfield">
+          <label>Comuna</label>
+          <input type="text" name="comuna_servicio" placeholder="Comuna">
+        </div>
+        <div class="qfield">
+          <label>Dirección / link Maps</label>
+          <input type="text" name="direccion_servicio" placeholder="Dirección o link de Google Maps">
+        </div>
+        <div class="qfield">
+          <label>Tipo de acceso</label>
+          <select name="tipo_acceso">
+            <option value="" selected disabled>Selecciona</option>
+            <option>Pavimentado</option>
+            <option>Ripio</option>
+            <option>Tierra</option>
+            <option>Difícil acceso</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="qactions">
+    <button class="qsubmit qsubmit--primary" type="submit">
+      Solicitar cotización
+    </button>
+    <a class="qsubmit qsubmit--whatsapp" href="https://wa.me/56965593202?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20solicitar%20una%20cotizaci%C3%B3n." target="_blank" rel="noopener noreferrer">
+      <Icon name="whatsapp" size={20} />
+      Escribir por WhatsApp
+    </a>
+  </div>
+</form>
+
+<script>
+  (function() {
+    const form = document.getElementById('quoteFormAdvanced');
+    if (!form) return;
+
+    // Expandir/colapsar divisiones
+    form.querySelectorAll('.js-collapse').forEach((cb) => {
+      cb.addEventListener('change', () => {
+        const container = cb.closest('[data-collapse]');
+        if (container) {
+          container.classList.toggle('open', cb.checked);
+        }
+        syncArriendo();
+      });
+    });
+
+    // Mostrar/ocultar sección de arriendo
+    const arriendoSection = document.getElementById('sec-arriendo');
+    function isOpen(divName) {
+      const el = form.querySelector(`[data-div="${divName}"]`);
+      return !!(el && el.classList.contains('open'));
+    }
+    function syncArriendo() {
+      if (arriendoSection) {
+        const show = isOpen('izaje') || isOpen('tierra') || isOpen('especiales');
+        arriendoSection.style.display = show ? '' : 'none';
+      }
+    }
+
+    // Inicializar estados de checkboxes premarcados (sincroniza visual).
+    // Necesario porque el atributo `checked` en el HTML no dispara el evento `change`.
+    form.querySelectorAll('.js-collapse:checked').forEach((cb) => {
+      const container = cb.closest('[data-collapse]');
+      if (container) {
+        container.classList.add('open');
+      }
+    });
+    syncArriendo();
+  })();
+</script>
+
+<style>
+  .quote-form-advanced {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .qsection {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .qsection__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .qsection__num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--color-brand, #1a9c4a);
+    color: #fff;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  .qsection__head h3 {
+    margin: 0 0 4px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .qsub {
+    margin: 0;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .qgrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  @media (min-width: 640px) {
+    .qgrid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .qgrid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  @media (min-width: 640px) {
+    .qgrid-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .qgrid-3 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  @media (min-width: 640px) {
+    .qgrid-3 {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+
+  .qfield {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .qfield label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .qfield input,
+  .qfield select {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #fff;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .qfield input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .qfield input:focus,
+  .qfield select:focus {
+    outline: none;
+    border-color: var(--color-brand-300, #4ade80);
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .qfield select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+  }
+
+  /* Divisiones colapsables */
+  .qdivcard {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .qdivcard__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .qdivcard__head:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .qdivcard__head b {
+    font-size: 1rem;
+    color: #fff;
+  }
+
+  .qtag {
+    margin-left: auto;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .qbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+
+  .qbox svg {
+    opacity: 0;
+    color: #fff;
+    transition: opacity 0.2s ease;
+  }
+
+  input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Selector corregido: el checkbox y el qbox son hermanos dentro del label */
+  input[type="checkbox"]:checked ~ .qbox {
+    background: var(--color-brand, #1a9c4a);
+    border-color: var(--color-brand, #1a9c4a);
+  }
+
+  input[type="checkbox"]:checked ~ .qbox svg {
+    opacity: 1;
+  }
+
+  /* Acordeón: el .open está en [data-collapse], no en .qcollapse */
+  .qcollapse {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s var(--ease-out, ease);
+  }
+
+  [data-collapse].open > .qcollapse {
+    max-height: 5000px;
+  }
+
+  .qdivcard__body {
+    padding: 0 16px 16px;
+  }
+
+  .qhint {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 16px;
+  }
+
+  .qeqitem {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .qeqitem__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .qeqitem__head:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .qeqitem__head b {
+    font-size: 0.95rem;
+    color: #fff;
+  }
+
+  .qeqitem__sub {
+    padding: 0 16px 16px;
+  }
+
+  .qsublabel {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 16px 0 12px;
+  }
+
+  .qchips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .qchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .qchip:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+
+  .qchip .qbox {
+    width: 18px;
+    height: 18px;
+    border-width: 1.5px;
+  }
+
+  .qlbl {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .qdivider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 20px 0;
+  }
+
+  .qactions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: flex-start;
+  }
+
+  .qsubmit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 32px;
+    border: none;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .qsubmit--primary {
+    background: var(--color-brand, #1a9c4a);
+    color: #fff;
+  }
+
+  .qsubmit--primary:hover {
+    background: var(--color-brand-700, #15803d);
+    transform: translateY(-2px);
+  }
+
+  .qsubmit--whatsapp {
+    background: transparent;
+    color: #fff;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .qsubmit--whatsapp:hover {
+    border-color: #fff;
+    transform: translateY(-2px);
+  }
+</style>

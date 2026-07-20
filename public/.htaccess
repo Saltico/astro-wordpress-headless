@@ -1,0 +1,75 @@
+# ============================================================
+# .htaccess — IP Proyectos Industriales
+# ============================================================
+
+RewriteEngine On
+
+# Forzar HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ============================================================
+# REDIRECTS 301 — Consolidación del catálogo de arriendo
+# /arriendos/*           → /arriendo/*
+# /arriendo-maquinaria/* → /arriendo/*
+# ============================================================
+
+# Raíz
+RedirectMatch 301 ^/arriendos/?$             /arriendo
+RedirectMatch 301 ^/arriendo-maquinaria/?$   /arriendo
+
+# Categorías específicas (slug de movimiento-tierra cambia)
+RedirectMatch 301 ^/arriendos/izaje/?$                       /arriendo/izaje
+RedirectMatch 301 ^/arriendos/movimiento-tierra/?$           /arriendo/movimiento-de-tierra
+RedirectMatch 301 ^/arriendos/transporte/?$                  /arriendo/transporte
+RedirectMatch 301 ^/arriendos/equipos-especiales/?$          /arriendo/equipos-especiales
+
+# Catch-all por categoría
+RedirectMatch 301 ^/arriendos/izaje/(.*)$                     /arriendo/izaje/$1
+RedirectMatch 301 ^/arriendos/movimiento-tierra/(.*)$         /arriendo/movimiento-de-tierra/$1
+RedirectMatch 301 ^/arriendos/transporte/(.*)$                /arriendo/transporte/$1
+RedirectMatch 301 ^/arriendos/equipos-especiales/(.*)$        /arriendo/equipos-especiales/$1
+
+# Legacy /arriendo-maquinaria (específicos)
+RedirectMatch 301 ^/arriendo-maquinaria/gruas-alto-tonelaje/?$                /arriendo/izaje/gruas-alto-tonelaje
+RedirectMatch 301 ^/arriendo-maquinaria/gruas-alto-tonelaje/gruas-grove-gmk$  /arriendo/izaje/gruas-100-toneladas#grua-grove-gmk-4100
+RedirectMatch 301 ^/arriendo-maquinaria/equipos-de-izaje/?$                   /arriendo/izaje
+
+# Catch-all para /arriendo-maquinaria
+RedirectMatch 301 ^/arriendo-maquinaria/(.*)$  /arriendo/$1
+
+# ============================================================
+# Compliance legacy (páginas eliminadas en spec 08)
+# ============================================================
+RedirectMatch 301 ^/compliance/hseq/?$            /compliance
+RedirectMatch 301 ^/compliance/certificaciones/?$  /compliance
+
+# ============================================================
+# Compresión y caché
+# ============================================================
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# ============================================================
+# Headers de seguridad
+# ============================================================
+
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>

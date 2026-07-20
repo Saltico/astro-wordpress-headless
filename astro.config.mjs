@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
 // TODO: reemplazar por dominio final antes de produccion
-const SITE_URL = 'https://ipproyectosindustriales.cl';
+const SITE_URL = 'https://orangered-deer-742907.hostingersite.com';
 
 // https://astro.build/config
 export default defineConfig({
@@ -27,7 +27,7 @@ export default defineConfig({
         },
       },
       filter: (page) => {
-        const noIndexPaths = ['/gracias', '/404', '/500', '/aviso-legal', '/privacidad', '/cookies'];
+        const noIndexPaths = ['/gracias', '/404', '/500', '/aviso-legal', '/privacidad', '/cookies', '/cotizador'];
         return !noIndexPaths.some((path) => page.includes(path));
       },
     }),

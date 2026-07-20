@@ -1,0 +1,253 @@
+---
+// src/components/quote/EquipmentPickerCard.astro
+// Card de un equipo en el grid del selector. Pensada para SSR + no-JS fallback;
+// la versión interactiva (con estado de cap y badge "en el cotizador") la
+// genera EquipmentPicker.astro en el cliente.
+//
+// IMPORTANTE: este componente define el layout canónico del card. El script
+// de EquipmentPicker.astro debe generar markup equivalente para que la
+// hidratación no produzca un cambio visual.
+
+import Icon from '@/components/ui/Icon.astro';
+import type { Equipment } from '@/data/rental';
+
+export interface Props {
+  entry: {
+    equipment: Equipment;
+    categorySlug: string;
+    categoryName: string;
+    subcategorySlug: string;
+    subcategoryName: string;
+  };
+  sourceUrl: string;
+}
+
+const { entry, sourceUrl } = Astro.props;
+const e = entry.equipment;
+const detailsHref = `/arriendo/${entry.categorySlug}/${entry.subcategorySlug}#${e.slug}`;
+---
+
+<article
+  class="picker-card"
+  data-picker-card
+  data-equipment-slug={e.slug}
+  aria-label={`${e.name}, capacidad ${e.capacity}`}
+>
+  <a
+    class="picker-card__media"
+    href={detailsHref}
+    aria-label={`Ver detalles de ${e.name}`}
+  >
+    <img
+      src={e.image}
+      alt={e.name}
+      class="picker-card__image"
+      loading="lazy"
+      width="240"
+      height="180"
+    />
+  </a>
+  <div class="picker-card__body">
+    <span class="picker-card__category">
+      {entry.categoryName} · {entry.subcategoryName}
+    </span>
+    <h3 class="picker-card__name">
+      <a class="picker-card__name-link" href={detailsHref}>
+        {e.name}
+      </a>
+    </h3>
+    <p class="picker-card__capacity">
+      {e.capacity}{e.height ? ` · ${e.height}` : ''}
+    </p>
+    <button
+      type="button"
+      class="picker-card__add"
+      data-picker-add
+      data-equipment-slug={e.slug}
+      data-name={e.name}
+      data-capacity={e.capacity}
+      data-height={e.height ?? ''}
+      data-image={e.image}
+      data-source-url={sourceUrl}
+      aria-label={`Agregar ${e.name} al cotizador`}
+    >
+      <span class="picker-card__add-icon" aria-hidden="true">
+        <Icon name="cart" size={14} />
+      </span>
+      <span data-picker-add-label>Agregar al cotizador</span>
+    </button>
+  </div>
+</article>
+
+<style is:global>
+  /* ── Card: layout vertical (imagen arriba, info abajo) ──
+     is:global es necesario porque el script de EquipmentPicker.astro
+     regenera estas cards vía innerHTML tras la hidratación; las reglas
+     con scope no alcanzarían al markup inyectado por JS. ── */
+  .picker-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-surface, #fff);
+    border: 1px solid var(--color-line, #e2e4e5);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.2s var(--ease-out, ease),
+      box-shadow 0.2s var(--ease-out, ease),
+      border-color 0.2s var(--ease-out, ease);
+    height: 100%;
+  }
+
+  .picker-card:hover,
+  .picker-card:focus-within {
+    transform: translateY(-2px);
+    border-color: var(--color-brand, #348f41);
+    box-shadow: 0 12px 28px rgba(36, 38, 39, 0.08);
+  }
+
+  .picker-card:focus-visible {
+    outline: 2px solid var(--color-brand, #348f41);
+    outline-offset: 2px;
+  }
+
+  .picker-card__media {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 3;
+    background-color: var(--color-graphite, #0d1611);
+    overflow: hidden;
+  }
+
+  .picker-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s var(--ease-out, ease);
+  }
+
+  .picker-card:hover .picker-card__image {
+    transform: scale(1.04);
+  }
+
+  /* Badge "En el cotizador" — solo presente tras hidratación */
+  .picker-card__badge {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background-color: var(--color-brand, #348f41);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-radius: 999px;
+  }
+
+  .picker-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2, 0.5rem);
+    padding: var(--space-4, 1rem);
+    flex: 1;
+  }
+
+  .picker-card__category {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-ink-500, #6b7072);
+  }
+
+  .picker-card__name {
+    margin: 0;
+    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-ink, #242627);
+  }
+
+  .picker-card__name-link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .picker-card__name-link:hover,
+  .picker-card__name-link:focus-visible {
+    color: var(--color-brand, #348f41);
+  }
+
+  .picker-card__name-link:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .picker-card__capacity {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--color-ink-700, #3a3d3e);
+  }
+
+  .picker-card__add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding: 0.625rem 1rem;
+    background-color: var(--color-brand, #348f41);
+    color: var(--color-on-brand, #fff);
+    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
+    font-weight: 700;
+    font-size: 0.85rem;
+    border: 1.5px solid transparent;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 0.15s var(--ease-out, ease),
+      color 0.15s var(--ease-out, ease),
+      border-color 0.15s var(--ease-out, ease),
+      transform 0.15s var(--ease-out, ease);
+  }
+
+  .picker-card__add:hover,
+  .picker-card__add:focus-visible {
+    background-color: var(--color-brand-600, #2c7c37);
+    transform: translateY(-1px);
+  }
+
+  .picker-card__add:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  .picker-card__add.is-added {
+    background-color: transparent;
+    color: var(--color-brand, #348f41);
+    border-color: var(--color-brand, #348f41);
+  }
+
+  .picker-card__add.is-cap,
+  .picker-card__add[aria-disabled='true'] {
+    background-color: var(--color-surface-alt, #f6f7f8);
+    color: var(--color-ink-500, #6b7072);
+    border-color: var(--color-line, #e2e4e5);
+    cursor: not-allowed;
+  }
+
+  .picker-card__add.is-cap:hover,
+  .picker-card__add[aria-disabled='true']:hover {
+    background-color: var(--color-surface-alt, #f6f7f8);
+    color: var(--color-ink-500, #6b7072);
+    transform: none;
+  }
+
+  .picker-card__add-icon {
+    display: inline-flex;
+  }
+</style>

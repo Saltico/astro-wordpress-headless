@@ -1,0 +1,263 @@
+---
+// src/components/quote/QuoteHero.astro
+// Hero compacto y específico de la página Cotizador.
+//
+// Diferencias con <PageHero>:
+//  - Altura ajustada al contenido (sin min-height arbitrario). Solo lo
+//    necesario para mostrar eyebrow + h1 + subtítulo + acciones.
+//  - Layout horizontal en desktop: el bloque intro (eyebrow/h1/subtítulo)
+//    a la izquierda y las acciones a la derecha, alineadas al final del
+//    bloque intro (mismo row).
+//  - En mobile (< 768px) se apila: intro arriba, acciones debajo, ambas
+//    a ancho completo.
+//  - Mantiene el lenguaje visual del sitio: imagen + overlay oscuro,
+//    tipografía Plateia, eyebrow brand-300, botones outline.
+
+import Icon from '@/components/ui/Icon.astro';
+
+export interface Props {
+  image: string;
+  imageAlt?: string;
+  eyebrow?: string;
+  title: string;
+  subtitle?: string;
+  catalogUrl?: string;
+  clearHidden?: boolean;
+}
+
+const {
+  image,
+  imageAlt = '',
+  eyebrow,
+  title,
+  subtitle,
+  catalogUrl,
+  clearHidden = true,
+} = Astro.props;
+
+const hasActionsSlot = Astro.slots.has('actions');
+---
+
+<section class="quote-hero" aria-labelledby="quote-hero-title">
+  <img
+    src={image}
+    alt={imageAlt}
+    class="quote-hero__bg"
+    loading="eager"
+    fetchpriority="high"
+  />
+  <div class="quote-hero__overlay" aria-hidden="true"></div>
+
+  <div class="quote-hero__container">
+    <div class="quote-hero__intro">
+      {eyebrow && <p class="quote-hero__eyebrow">{eyebrow}</p>}
+      <h1 id="quote-hero-title" class="quote-hero__title">{title}</h1>
+      {subtitle && <p class="quote-hero__subtitle">{subtitle}</p>}
+    </div>
+
+    {hasActionsSlot && (
+      <div class="quote-hero__actions">
+        <slot name="actions" />
+      </div>
+    )}
+
+    {!hasActionsSlot && (catalogUrl || clearHidden !== undefined) && (
+      <div class="quote-hero__actions">
+        {catalogUrl && (
+          <a
+            href={catalogUrl}
+            class="quote-hero__btn quote-hero__btn--outline"
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon name="download" size={16} />
+            Descargar catálogo
+          </a>
+        )}
+        <button
+          type="button"
+          class="quote-hero__btn quote-hero__btn--danger"
+          data-quote-clear-top
+          hidden={clearHidden}
+          aria-label="Limpiar todo el cotizador"
+        >
+          <Icon name="close" size={14} />
+          Limpiar cotizador
+        </button>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .quote-hero {
+    position: relative;
+    /* Sube el hero bajo el topbar + header (transparentes) para que el
+       texto blanco del header quede superpuesto al fondo oscuro. */
+    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
+    color: #ffffff;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .quote-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .quote-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(13, 22, 17, 0.45) 0%,
+      rgba(13, 22, 17, 0.62) 55%,
+      rgba(13, 22, 17, 0.88) 100%
+    );
+  }
+
+  .quote-hero__container {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: var(--container-max-width, 1360px);
+    margin-inline: auto;
+    padding: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 28px)
+      var(--container-padding, 20px) 28px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1.25rem 2rem;
+  }
+
+  .quote-hero__intro {
+    flex: 1 1 320px;
+    min-width: 0;
+  }
+
+  .quote-hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-brand-300, #4ade80);
+    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin: 0 0 12px;
+  }
+
+  .quote-hero__eyebrow::before {
+    content: '';
+    width: 32px;
+    height: 2px;
+    background: var(--color-brand, #348f41);
+  }
+
+  .quote-hero__title {
+    margin: 0 0 8px;
+    color: #ffffff;
+    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+    max-width: 20ch;
+  }
+
+  .quote-hero__subtitle {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+    line-height: 1.5;
+    max-width: 60ch;
+  }
+
+  .quote-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    flex: 0 1 auto;
+  }
+
+  /* ── Botones ── */
+  .quote-hero__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    padding: 12px 22px;
+    border-radius: 999px;
+    text-decoration: none;
+    border: 1.5px solid;
+    cursor: pointer;
+    transition: transform 0.18s var(--ease-out, ease),
+      background-color 0.18s var(--ease-out, ease),
+      border-color 0.18s var(--ease-out, ease),
+      color 0.18s var(--ease-out, ease),
+      box-shadow 0.18s var(--ease-out, ease);
+  }
+
+  .quote-hero__btn--outline {
+    background: transparent;
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .quote-hero__btn--outline:hover,
+  .quote-hero__btn--outline:focus-visible {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: #ffffff;
+    transform: translateY(-2px);
+  }
+
+  .quote-hero__btn--danger {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.92);
+    border-color: rgba(252, 165, 165, 0.45);
+  }
+
+  .quote-hero__btn--danger:hover,
+  .quote-hero__btn--danger:focus-visible {
+    color: #fecaca;
+    border-color: #fecaca;
+    background: rgba(220, 38, 38, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .quote-hero__btn:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 3px;
+  }
+
+  /* ── Mobile: apilar intro arriba, acciones debajo ── */
+  @media (max-width: 767.98px) {
+    .quote-hero__container {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1.5rem;
+    }
+
+    .quote-hero__intro {
+      flex-basis: auto;
+    }
+
+    .quote-hero__actions {
+      width: 100%;
+    }
+
+    .quote-hero__actions :global(.quote-hero__btn) {
+      flex: 1 1 auto;
+    }
+  }
+</style>

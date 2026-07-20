@@ -4,7 +4,7 @@
 import type { SiteConfig } from '@/types/seo';
 
 const DEFAULT_CONFIG: SiteConfig = {
-  siteUrl: 'https://ipproyectosindustriales.cl',
+  siteUrl: 'https://orangered-deer-742907.hostingersite.com',
   siteName: 'IP Proyectos Industriales',
   defaultLocale: 'es',
   phone: '+56 9 0000 0000',
@@ -68,7 +68,11 @@ export function serviceSchema(
   name: string,
   description: string,
   url: string,
-  provider = organizationSchema()
+  provider = organizationSchema(),
+  options?: {
+    serviceType?: string;
+    areaServed?: string[];
+  }
 ): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
@@ -77,6 +81,8 @@ export function serviceSchema(
     description,
     url,
     provider,
+    ...(options?.serviceType && { serviceType: options.serviceType }),
+    ...(options?.areaServed && { areaServed: options.areaServed }),
   };
 }
 
@@ -100,6 +106,79 @@ export function productSchema(
       priceCurrency: 'CLP',
       seller: organizationSchema(),
     },
+  };
+}
+
+export interface ProductSchemaOptions {
+  name: string;
+  description: string;
+  url: string;
+  image?: string;
+  sku?: string;
+  mpn?: string;
+  brand?: string;
+  offers?: {
+    availability?: 'InStock' | 'OutOfStock' | 'PreOrder' | 'BackOrder';
+    priceCurrency?: string;
+    price?: number;
+    priceRange?: string;
+    validFrom?: string;
+  };
+}
+
+export function productSchemaExtended(
+  options: ProductSchemaOptions
+): Record<string, unknown> {
+  const { name, description, url, image, sku, mpn, brand, offers } = options;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name,
+    description,
+    url,
+    ...(image && { image }),
+    ...(sku && { sku }),
+    ...(mpn && { mpn }),
+    ...(brand && { brand: { '@type': 'Brand', name: brand } }),
+    offers: {
+      '@type': 'Offer',
+      url,
+      availability: `https://schema.org/${offers?.availability ?? 'InStock'}`,
+      priceCurrency: offers?.priceCurrency ?? 'CLP',
+      ...(offers?.price !== undefined && { price: offers.price }),
+      ...(offers?.priceRange && { priceRange: offers.priceRange }),
+      ...(offers?.validFrom && { validFrom: offers.validFrom }),
+      seller: organizationSchema(),
+    },
+  };
+}
+
+export interface ItemListItem {
+  name: string;
+  url: string;
+  image?: string;
+  description?: string;
+  position?: number;
+}
+
+export function itemListSchema(opts: {
+  name: string;
+  items: ItemListItem[];
+  url?: string;
+}): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: opts.name,
+    ...(opts.url && { url: opts.url }),
+    itemListElement: opts.items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: item.position ?? index + 1,
+      name: item.name,
+      url: item.url,
+      ...(item.image && { image: item.image }),
+      ...(item.description && { description: item.description }),
+    })),
   };
 }
 
@@ -171,6 +250,39 @@ export function newsArticleSchema(
   };
 }
 
+export interface NewsArticleSchemaExtendedOptions {
+  headline: string;
+  description: string;
+  url: string;
+  image?: string;
+  datePublished: string;
+  dateModified?: string;
+  authorName?: string;
+  articleSection?: string;
+}
+
+export function newsArticleSchemaExtended(
+  options: NewsArticleSchemaExtendedOptions
+): Record<string, unknown> {
+  const { headline, description, url, image, datePublished, dateModified, authorName, articleSection } = options;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline,
+    description,
+    url,
+    image: image ?? getSiteUrl('/og-default.jpg'),
+    datePublished,
+    dateModified: dateModified ?? datePublished,
+    author: {
+      '@type': 'Organization',
+      name: authorName ?? getSiteConfig().siteName,
+    },
+    publisher: organizationSchema(),
+    ...(articleSection && { articleSection }),
+  };
+}
+
 export function aboutPageSchema(): Record<string, unknown> {
   return {
     '@context': 'https://schema.org',
@@ -193,6 +305,43 @@ export function contactPageSchema(): Record<string, unknown> {
       contactType: 'sales',
       availableLanguage: ['Spanish'],
     },
+  };
+}
+
+export interface LocalBusinessSchemaOptions {
+  name: string;
+  description: string;
+  telephone: string;
+  email: string;
+  address: {
+    streetAddress: string;
+    addressLocality: string;
+    addressRegion: string;
+    addressCountry: string;
+  };
+  areaServed?: string[];
+  openingHours?: string[];   // formato ISO 8601
+  url?: string;
+}
+
+export function localBusinessSchema(opts: LocalBusinessSchemaOptions): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: opts.name,
+    description: opts.description,
+    telephone: opts.telephone,
+    email: opts.email,
+    url: opts.url,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: opts.address.streetAddress,
+      addressLocality: opts.address.addressLocality,
+      addressRegion: opts.address.addressRegion,
+      addressCountry: opts.address.addressCountry,
+    },
+    ...(opts.areaServed && { areaServed: opts.areaServed }),
+    ...(opts.openingHours && { openingHours: opts.openingHours }),
   };
 }
 

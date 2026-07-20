@@ -1,0 +1,409 @@
+---
+// src/layouts/RentalLayout.astro
+// Layout reutilizable para páginas de rental/arriendos (v2 — con slots)
+
+import BaseLayout from './BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
+import Icon from '@/components/ui/Icon.astro';
+import CTABand from '@/components/ui/CTABand.astro';
+import EquipmentCatalog from '@/components/rental/EquipmentCatalog.astro';
+import heroImg from '@/assets/imgs/hero.jpg';
+import type { Equipment } from '@/data/rental';
+
+export interface Props {
+  // Existentes (sin cambios)
+  title: string;
+  subtitle: string;
+  description: string;
+  heroImage: string;
+  heroImageAlt: string;
+  category: string;
+  features: string[];
+  breadcrumbs: Array<{ label: string; url: string }>;
+  whatsappMessage: string;
+  catalogUrl?: string;
+  catalogLabel?: string;
+
+  // Nuevas (todas opcionales)
+  showRelated?: boolean;
+  showFaq?: boolean;
+  catalogItems?: Equipment[];
+  catalogColumns?: 2 | 3 | 4;
+  relatedItems?: Array<{ name: string; href: string; shortDesc: string; badge?: string }>;
+  faqItems?: Array<{ question: string; answer: string }>;
+}
+
+const {
+  title,
+  subtitle,
+  description,
+  heroImage,
+  heroImageAlt,
+  category,
+  features,
+  breadcrumbs,
+  whatsappMessage,
+  catalogUrl = '/catalogo.pdf',
+  catalogLabel = 'Descargar catálogo',
+  showRelated = false,
+  showFaq = false,
+  catalogItems,
+  catalogColumns = 3,
+  relatedItems,
+  faqItems,
+} = Astro.props;
+
+const hasCatalogSlot = Astro.slots.has('catalog');
+const hasStatsSlot = Astro.slots.has('stats');
+const hasRelatedSlot = Astro.slots.has('related');
+const hasFaqSlot = Astro.slots.has('faq');
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumbs={breadcrumbs}
+>
+  <!-- Hero con imagen y breadcrumbs integrados -->
+  <section class="rental-hero">
+    <img
+      src={heroImage}
+      alt={heroImageAlt}
+      class="rental-hero__bg"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div class="rental-hero__overlay"></div>
+    <div class="rental-hero__container">
+      <Breadcrumbs items={breadcrumbs} variant="hero" />
+      <p class="rental-hero__category">{category}</p>
+      <h1 class="rental-hero__title">{title}</h1>
+      <p class="rental-hero__subtitle">{subtitle}</p>
+      <div class="rental-hero__ctas">
+        <a href="#cotizar" class="rental-hero__btn rental-hero__btn--primary">
+          Cotizar
+          <Icon name="arrow-right" size={16} />
+        </a>
+        <a href={catalogUrl} class="rental-hero__btn rental-hero__btn--outline" download>
+          <Icon name="download" size={16} />
+          {catalogLabel}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contenido principal -->
+  <section class="rental-content">
+    <Container>
+      <div class="rental-content__grid">
+        <!-- Imagen destacada -->
+        <div class="rental-content__image-wrapper">
+          <img
+            src={heroImage}
+            alt={heroImageAlt}
+            class="rental-content__image"
+            loading="lazy"
+          />
+        </div>
+
+        <!-- Contenido -->
+        <div class="rental-content__main">
+          <p class="rental-content__eyebrow">Qué incluye</p>
+          <h2 class="rental-content__title">{description}</h2>
+
+          <ul class="rental-content__list">
+            {features.map((item) => (
+              <li class="rental-content__list-item">
+                <Icon name="check" size={20} />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- Catálogo (slot o prop) -->
+  {hasCatalogSlot ? (
+    <slot name="catalog" />
+  ) : catalogItems && catalogItems.length > 0 ? (
+    <EquipmentCatalog items={catalogItems} columns={catalogColumns} />
+  ) : null}
+
+  <!-- Specs/stats (slot) — antes "Especificaciones técnicas", ahora un StatsCounter -->
+  {hasStatsSlot && (
+    <section class="rental-slot-section rental-slot-section--dark">
+      <slot name="stats" />
+    </section>
+  )}
+
+  <!-- Related (slot o prop) -->
+  {(hasRelatedSlot || (showRelated && relatedItems && relatedItems.length > 0)) && (
+    <section class="rental-slot-section rental-slot-section--dark">
+      {hasRelatedSlot ? <slot name="related" /> : null}
+    </section>
+  )}
+
+  <!-- FAQ (slot o prop) -->
+  {(hasFaqSlot || (showFaq && faqItems && faqItems.length > 0)) && (
+    <section class="rental-slot-section rental-slot-section--light">
+      {hasFaqSlot ? <slot name="faq" /> : null}
+    </section>
+  )}
+
+  <!-- CTA de cotización -->
+  <div id="cotizar">
+    <CTABand
+      eyebrow="¿Necesitas equipos para tu faena?"
+      title="Arrienda con nosotros"
+      subtitle="Contamos con operadores certificados y disponibilidad 24/7 para tu proyecto."
+      showForm={true}
+      backgroundImage={heroImg.src}
+      contentAlign="center"
+      minHeight="sm"
+    />
+  </div>
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .rental-hero {
+    position: relative;
+    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
+    min-height: calc(320px + var(--topbar-height, 40px) + var(--header-height, 80px));
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .rental-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .rental-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(13, 22, 17, 0.3) 0%,
+      rgba(13, 22, 17, 0.7) 60%,
+      rgba(13, 22, 17, 0.95) 100%
+    );
+  }
+
+  .rental-hero__container {
+    position: relative;
+    z-index: 2;
+    max-width: 1360px;
+    width: 100%;
+    margin-inline: auto;
+    padding: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 60px)
+      var(--container-padding, 20px) 56px;
+  }
+
+  .rental-hero__category {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-brand-300, #4ade80);
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .rental-hero__title {
+    color: #fff;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    max-width: 18ch;
+    margin: 0 0 16px;
+  }
+
+  .rental-hero__subtitle {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    max-width: 60ch;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* Hero CTAs */
+  .rental-hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .rental-hero__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    padding: 14px 28px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .rental-hero__btn--primary {
+    background: var(--color-brand, #1a9c4a);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .rental-hero__btn--primary:hover,
+  .rental-hero__btn--primary:focus {
+    background: var(--color-brand-700, #15803d);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .rental-hero__btn--outline {
+    background: transparent;
+    color: #fff;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .rental-hero__btn--outline:hover,
+  .rental-hero__btn--outline:focus {
+    border-color: #fff;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 480px) {
+    .rental-hero__ctas {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .rental-hero__btn {
+      justify-content: center;
+    }
+  }
+
+  /* Content */
+  .rental-content {
+    padding-block: clamp(60px, 8vw, 100px);
+    background-color: var(--color-surface, #fff);
+  }
+
+  .rental-content__grid {
+    display: grid;
+    gap: clamp(30px, 5vw, 60px);
+    align-items: start;
+  }
+
+  @media (min-width: 860px) {
+    .rental-content__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .rental-content__image-wrapper {
+    position: sticky;
+    top: 120px;
+  }
+
+  .rental-content__image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+
+  @media (max-width: 859px) {
+    .rental-content__image-wrapper {
+      position: static;
+    }
+  }
+
+  .rental-content__main {
+    max-width: 540px;
+  }
+
+  .rental-content__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-brand, #1a9c4a);
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .rental-content__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .rental-content__title {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--color-ink, #1a1a1a);
+    margin: 0 0 24px;
+  }
+
+  .rental-content__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .rental-content__list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: var(--color-ink-700, #374151);
+  }
+
+  .rental-content__list-item :global(svg) {
+    flex-shrink: 0;
+    color: var(--color-brand, #1a9c4a);
+    margin-top: 2px;
+  }
+
+  /* Slots sections */
+  .rental-slot-section {
+    padding-block: clamp(48px, 6vw, 80px);
+  }
+
+  .rental-slot-section--light {
+    background-color: var(--color-surface, #fff);
+  }
+
+  .rental-slot-section--dark {
+    background-color: var(--color-graphite, #0d1611);
+    color: #fff;
+  }
+</style>

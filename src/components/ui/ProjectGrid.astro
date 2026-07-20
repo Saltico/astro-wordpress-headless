@@ -1,0 +1,311 @@
+---
+// src/components/ui/ProjectGrid.astro
+// Grid de proyectos con filtros por categoría
+// Inspirado en la sección de proyectos de Tecnisud
+
+import Container from './Container.astro';
+import ProjectCard from './ProjectCard.astro';
+import type { ProjectData } from './ProjectCard.astro';
+
+export interface Props {
+  projects: ProjectData[];
+  categories?: string[];
+  title?: string;
+  subtitle?: string;
+  showFilters?: boolean;
+  showLoadMore?: boolean;
+  initialCount?: number;
+  loadMoreLabel?: string;
+  columns?: 2 | 3 | 4;
+}
+
+const {
+  projects,
+  categories,
+  title,
+  subtitle,
+  showFilters = true,
+  showLoadMore = true,
+  initialCount = 9,
+  loadMoreLabel = 'Ver más proyectos',
+  columns = 3,
+} = Astro.props;
+
+const allCategories = categories || [...new Set(projects.map(p => p.category).filter(Boolean))] as string[];
+const columnsClass = `project-grid--cols-${columns}`;
+---
+
+<section class="project-grid-section">
+  <Container>
+    {title && (
+      <div class="project-grid-section__header">
+        <h2 class="project-grid-section__title">{title}</h2>
+        {subtitle && <p class="project-grid-section__subtitle">{subtitle}</p>}
+      </div>
+    )}
+
+    {showFilters && allCategories.length > 0 && (
+      <div class="project-grid-section__filters" role="tablist" aria-label="Filtrar proyectos por categoría">
+        <button
+          class="project-filter-btn active"
+          data-category="all"
+          role="tab"
+          aria-selected="true"
+        >
+          Todos
+        </button>
+        {allCategories.map((category) => (
+          <button
+            class="project-filter-btn"
+            data-category={category}
+            role="tab"
+            aria-selected="false"
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+    )}
+
+    <div class={`project-grid ${columnsClass}`} data-project-grid>
+      {projects.map((project, index) => (
+        <div
+          class="project-grid__item"
+          data-category={project.category}
+          data-index={index}
+          style={index >= initialCount ? 'display: none;' : ''}
+        >
+          <ProjectCard project={project} variant="default" showImage={true} showCategory={true} />
+        </div>
+      ))}
+    </div>
+
+    {showLoadMore && projects.length > initialCount && (
+      <div class="project-grid-section__load-more">
+        <button class="button button--secondary button--large" data-load-more>
+          {loadMoreLabel}
+        </button>
+      </div>
+    )}
+  </Container>
+</section>
+
+<script>
+  (function () {
+    // Filter functionality
+    const filterButtons = document.querySelectorAll<HTMLButtonElement>('.project-filter-btn');
+    const projectItems = document.querySelectorAll<HTMLElement>('.project-grid__item');
+    const loadMoreBtn = document.querySelector<HTMLButtonElement>('[data-load-more]');
+
+    if (filterButtons.length > 0) {
+      filterButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const category = btn.dataset.category;
+          
+          // Update active state
+          filterButtons.forEach((b) => {
+            b.classList.remove('active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          btn.classList.add('active');
+          btn.setAttribute('aria-selected', 'true');
+
+          // Filter projects
+          projectItems.forEach((item) => {
+            const itemCategory = item.dataset.category;
+            if (category === 'all' || itemCategory === category) {
+              item.style.display = '';
+              item.classList.add('fade-in');
+            } else {
+              item.style.display = 'none';
+              item.classList.remove('fade-in');
+            }
+          });
+
+          // Update URL
+          const url = new URL(window.location.href);
+          if (category && category !== 'all') {
+            url.searchParams.set('categoria', category.toLowerCase().replace(/\s+/g, '-'));
+          } else {
+            url.searchParams.delete('categoria');
+          }
+          window.history.replaceState({}, '', url.toString());
+        });
+      });
+    }
+
+    // Load more functionality
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener('click', () => {
+        projectItems.forEach((item) => {
+          if (item.style.display === 'none') {
+            const category = item.dataset.category;
+            const activeFilter = document.querySelector<HTMLButtonElement>('.project-filter-btn.active');
+            const activeCategory = activeFilter?.dataset.category;
+            
+            if (activeCategory === 'all' || category === activeCategory) {
+              item.style.display = '';
+              item.classList.add('fade-in');
+            }
+          }
+        });
+        loadMoreBtn.style.display = 'none';
+      });
+    }
+
+    // Read initial filter from URL
+    const url = new URL(window.location.href);
+    const categoryParam = url.searchParams.get('categoria');
+    if (categoryParam) {
+      const matchingBtn = Array.from(filterButtons).find((btn) => {
+        const btnCategory = btn.dataset.category?.toLowerCase().replace(/\s+/g, '-');
+        return btnCategory === categoryParam;
+      });
+      if (matchingBtn) {
+        matchingBtn.click();
+      }
+    }
+  })();
+</script>
+
+<style>
+  .project-grid-section {
+    padding: var(--space-16) 0;
+  }
+
+  .project-grid-section__header {
+    text-align: center;
+    margin-bottom: var(--space-10);
+  }
+
+  .project-grid-section__title {
+    margin: 0 0 var(--space-4);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+  }
+
+  .project-grid-section__subtitle {
+    font-size: var(--text-lead);
+    color: var(--color-ink-500);
+    margin: 0;
+    max-width: 60ch;
+    margin-inline: auto;
+  }
+
+  /* Filters */
+  .project-grid-section__filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    justify-content: center;
+    margin-bottom: var(--space-10);
+  }
+
+  .project-filter-btn {
+    padding: var(--space-2) var(--space-5);
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-ink-500);
+    background-color: transparent;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition:
+      background-color var(--motion-base) var(--ease-out),
+      border-color var(--motion-base) var(--ease-out),
+      color var(--motion-base) var(--ease-out);
+  }
+
+  .project-filter-btn:hover {
+    background-color: var(--color-brand-050);
+    border-color: var(--color-brand-050);
+    color: var(--color-brand);
+  }
+
+  .project-filter-btn.active {
+    background-color: var(--color-brand);
+    border-color: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+
+  /* Grid */
+  .project-grid {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .project-grid--cols-2 {
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .project-grid--cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .project-grid--cols-3 {
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .project-grid--cols-3 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .project-grid--cols-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .project-grid--cols-4 {
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .project-grid--cols-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .project-grid--cols-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  /* Load more */
+  .project-grid-section__load-more {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-10);
+  }
+
+  /* Animations */
+  .project-grid__item {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .project-grid__item.fade-in {
+    animation: fadeInUp 0.4s var(--ease-out);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-grid__item.fade-in {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,113 @@
+graph TB
+    subgraph "🏠 Home Page"
+        HOME["🏠 Home<br/>skrental.com"]
+        HERO["🎠 Hero Slider<br/>3 slides"]
+        CATEGORIES["📂 Grid Categorías<br/>11 categorías"]
+        BLOG["📝 Blog Preview<br/>3 artículos"]
+        SOLUTIONS["💡 Soluciones<br/>4 empresas"]
+    end
+    
+    subgraph "🔧 Arriendo"
+        ARRIENDO["🔧 Arriendo"]
+        PROMO["⭐ Promociones<br/>9 subcategorías"]
+        DISP["⚡ Disponibilidad<br/>3 subcategorías"]
+        MOV["🚜 Mov. Tierra<br/>6 subcategorías"]
+        CAM["🚛 Camiones<br/>7 subcategorías"]
+        GRU["🏗️ Grúas<br/>2 subcategorías"]
+        ALZ["⬆️ Alzahombres<br/>2 subcategorías"]
+        APO["🔧 Equipos Apoyo<br/>3 subcategorías"]
+        COM["🔩 Compactación<br/>1 subcategoría"]
+        MAR["🔨 Martillos<br/>2 subcategorías"]
+        SUS["🌱 Sustentables<br/>1 subcategoría"]
+        MIN["⛏️ Minería<br/>1 subcategoría"]
+    end
+    
+    subgraph "📋 Productos"
+        PRODUCTOS["📋 Productos<br/>80+ productos"]
+        DETALLE["📄 Detalle Producto<br/>Ficha completa"]
+        COTIZAR["🛒 Cotizar<br/>Agregar a carro"]
+    end
+    
+    subgraph "📄 Páginas Estáticas"
+        ESTATICOS["📄 Estáticas<br/>8 páginas"]
+        SOBRE["🏢 Somos SKR"]
+        PROY["📁 Proyectos"]
+        TEST["💬 Testimonios"]
+        FAQ["❓ Preg. Frecuentes"]
+        TERM["📜 Términos"]
+        PRIV["🔒 Privacidad"]
+        WEB["💳 Webpay"]
+        CUENTA["👤 Mi Cuenta"]
+    end
+    
+    subgraph "📝 Blog"
+        BLOG_EXT["📝 Blog<br/>blog.skrental.com"]
+        ART1["📄 Art. 1<br/>Camión Articulado"]
+        ART2["📄 Art. 2<br/>Sandvik"]
+        ART3["📄 Art. 3<br/>Volvo CoPilot"]
+    end
+    
+    subgraph "🌍 Multi-País"
+        PAISES["🌍 Países<br/>4 mercados"]
+        CL["🇨🇱 Chile<br/>Principal"]
+        BO["🇧🇴 Bolivia"]
+        PE["🇵🇪 Perú"]
+        CO["🇨🇴 Colombia"]
+    end
+    
+    HOME --> HERO
+    HOME --> CATEGORIES
+    HOME --> BLOG
+    HOME --> SOLUTIONS
+    
+    ARRIENDO --> PROMO
+    ARRIENDO --> DISP
+    ARRIENDO --> MOV
+    ARRIENDO --> CAM
+    ARRIENDO --> GRU
+    ARRIENDO --> ALZ
+    ARRIENDO --> APO
+    ARRIENDO --> COM
+    ARRIENDO --> MAR
+    ARRIENDO --> SUS
+    ARRIENDO --> MIN
+    
+    PROMO --> PRODUCTOS
+    DISP --> PRODUCTOS
+    MOV --> PRODUCTOS
+    CAM --> PRODUCTOS
+    GRU --> PRODUCTOS
+    ALZ --> PRODUCTOS
+    APO --> PRODUCTOS
+    COM --> PRODUCTOS
+    MAR --> PRODUCTOS
+    SUS --> PRODUCTOS
+    MIN --> PRODUCTOS
+    
+    PRODUCTOS --> DETALLE
+    DETALLE --> COTIZAR
+    
+    ESTATICOS --> SOBRE
+    ESTATICOS --> PROY
+    ESTATICOS --> TEST
+    ESTATICOS --> FAQ
+    ESTATICOS --> TERM
+    ESTATICOS --> PRIV
+    ESTATICOS --> WEB
+    ESTATICOS --> CUENTA
+    
+    BLOG_EXT --> ART1
+    BLOG_EXT --> ART2
+    BLOG_EXT --> ART3
+    
+    PAISES --> CL
+    PAISES --> BO
+    PAISES --> PE
+    PAISES --> CO
+    
+    style HOME fill:#4CAF50,color:white
+    style ARRIENDO fill:#2196F3,color:white
+    style PRODUCTOS fill:#FF9800,color:white
+    style ESTATICOS fill:#9C27B0,color:white
+    style BLOG_EXT fill:#F44336,color:white
+    style PAISES fill:#00BCD4,color:white

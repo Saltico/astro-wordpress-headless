@@ -1,0 +1,26 @@
+---
+// src/pages/servicios/ingenieria.astro
+import ServiceLayout from '@/layouts/ServiceLayout.astro';
+import heroImg from '@/assets/imgs/hero.jpg';
+---
+
+<ServiceLayout
+  title="Ingeniería con foco en constructibilidad"
+  subtitle="Diseño e ingeniería de detalle para proyectos mineros e industriales, gestionados de principio a fin."
+  description="De la idea a la obra, con respaldo técnico"
+  heroImage={heroImg.src}
+  heroImageAlt="Ingeniería con foco en constructibilidad"
+  category="Servicios · Ingeniería"
+  includes={[
+    'Diseño e ingeniería de detalle.',
+    'Gestión integral de proyectos, compras y contratos.',
+    'Constructibilidad evaluada desde el diseño.',
+    'Construcción y puesta en marcha.',
+  ]}
+  breadcrumbs={[
+    { label: 'Empresa', url: '/' },
+    { label: 'Servicios', url: '/servicios' },
+    { label: 'Ingeniería', url: '/servicios/ingenieria' },
+  ]}
+  whatsappMessage="Hola IP, quisiera cotizar ingeniería."
+/>

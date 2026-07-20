@@ -3,9 +3,11 @@
 import JsonLd from './JsonLd.astro';
 import type { BreadcrumbsProps } from '@/types/seo';
 
-export interface Props extends BreadcrumbsProps {}
+export interface Props extends BreadcrumbsProps {
+  variant?: 'default' | 'hero';
+}
 
-const { items } = Astro.props;
+const { items, variant = 'default' } = Astro.props;
 
 const schema = {
   '@context': 'https://schema.org',
@@ -17,10 +19,12 @@ const schema = {
     item: item.url ? new URL(item.url, Astro.site).toString() : undefined,
   })),
 };
+
+const variantClass = variant === 'hero' ? 'breadcrumbs--hero' : '';
 ---
 
-<nav aria-label="Breadcrumb">
-  <ol class="breadcrumbs">
+<nav aria-label="Breadcrumb" class:list={['breadcrumbs', variantClass]}>
+  <ol class="breadcrumbs__list">
     {
       items.map((item, index) => (
         <li class="breadcrumbs__item">
@@ -43,23 +47,35 @@ const schema = {
 
 <style>
   .breadcrumbs {
+    margin-bottom: var(--space-6);
+  }
+
+  .breadcrumbs__list {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2);
     align-items: center;
+    gap: var(--space-2);
     font-size: var(--text-small);
     color: var(--color-ink-500);
-    margin-bottom: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .breadcrumbs__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
   }
 
   .breadcrumbs__item:not(:last-child)::after {
     content: '/';
-    margin-left: var(--space-2);
     color: var(--color-line);
   }
 
   .breadcrumbs__link {
     color: var(--color-ink-700);
+    text-decoration: none;
     transition: color var(--motion-base) var(--ease-out);
   }
 
@@ -71,5 +87,32 @@ const schema = {
   .breadcrumbs__current {
     color: var(--color-ink);
     font-weight: 500;
+  }
+
+  /* Variant: hero (para usar sobre imágenes de fondo) */
+  .breadcrumbs--hero {
+    margin-bottom: var(--space-4);
+  }
+
+  .breadcrumbs--hero .breadcrumbs__list {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .breadcrumbs--hero .breadcrumbs__item:not(:last-child)::after {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .breadcrumbs--hero .breadcrumbs__link {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .breadcrumbs--hero .breadcrumbs__link:hover,
+  .breadcrumbs--hero .breadcrumbs__link:focus {
+    color: #ffffff;
+  }
+
+  .breadcrumbs--hero .breadcrumbs__current {
+    color: rgba(255, 255, 255, 0.95);
   }
 </style>

@@ -1,0 +1,153 @@
+---
+// src/components/rental/RelatedEquipment.astro
+// Grilla de sub-rutas hermanas.
+
+import Container from '@/components/ui/Container.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+export interface RelatedItem {
+  name: string;
+  shortDesc: string;
+  href: string;
+  badge?: string;
+}
+
+export interface Props {
+  items: RelatedItem[];
+  background?: 'light' | 'dark';
+  title?: string;
+}
+
+const { items, background = 'dark', title = 'Equipos relacionados' } = Astro.props;
+---
+
+<section class:list={['related-equipment', `related-equipment--${background}`]}>
+  <Container>
+    <header class="related-equipment__header">
+      <h2 class="related-equipment__title">{title}</h2>
+    </header>
+    <div class="related-equipment__grid">
+      {items.map((item) => (
+        <a href={item.href} class="related-card">
+          <div class="related-card__header">
+            {item.badge && <span class="related-card__badge">{item.badge}</span>}
+            <h3 class="related-card__title">{item.name}</h3>
+          </div>
+          <p class="related-card__desc">{item.shortDesc}</p>
+          <span class="related-card__cta">
+            Ver detalle
+            <Icon name="arrow-right" size={16} />
+          </span>
+        </a>
+      ))}
+    </div>
+  </Container>
+</section>
+
+<style>
+  .related-equipment {
+    padding-block: clamp(48px, 6vw, 80px);
+  }
+
+  .related-equipment--dark {
+    background-color: var(--color-graphite, #0d1611);
+    color: #fff;
+  }
+
+  .related-equipment--light {
+    background-color: var(--color-surface, #fff);
+    color: var(--color-ink, #1a1a1a);
+  }
+
+  .related-equipment__header {
+    margin-bottom: clamp(24px, 3vw, 36px);
+  }
+
+  .related-equipment__title {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 800;
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  .related-equipment__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .related-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px;
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+  }
+
+  .related-equipment--light .related-card {
+    background-color: var(--color-surface-alt, #f7f9f7);
+    border-color: var(--color-line, #e5e7eb);
+  }
+
+  .related-card:hover {
+    border-color: var(--color-brand, #1a9c4a);
+    background-color: rgba(26, 156, 74, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .related-equipment--light .related-card:hover {
+    background-color: rgba(26, 156, 74, 0.05);
+  }
+
+  .related-card__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .related-card__badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background-color: var(--color-brand, #1a9c4a);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 999px;
+  }
+
+  .related-card__title {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .related-card__desc {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.75);
+    flex: 1;
+  }
+
+  .related-equipment--light .related-card__desc {
+    color: var(--color-ink-700, #374151);
+  }
+
+  .related-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-brand, #1a9c4a);
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+</style>

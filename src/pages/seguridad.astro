@@ -1,0 +1,324 @@
+---
+// src/pages/seguridad.astro
+// Página de Seguridad/HSEC
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SplitSection from '@/components/ui/SplitSection.astro';
+import CTABand from '@/components/ui/CTABand.astro';
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
+import Icon from '@/components/ui/Icon.astro';
+import StatsCounter from '@/components/ui/StatsCounter.astro';
+import type { StatItem } from '@/components/ui/StatsCounter.astro';
+import heroImg from '@/assets/imgs/hero.jpg';
+
+const title = 'Seguridad | HSEC — IP Proyectos Industriales';
+const description = 'Seguridad, salud y medio ambiente. El cuidado de las personas es nuestro primer estándar.';
+
+const miniStats: StatItem[] = [
+  { value: '460.000', label: 'Horas hombre trabajadas' },
+  { value: '0,93%', label: 'Tasa de cotización (R12)' },
+  { value: 'Bajo', label: 'Riesgo psicosocial' },
+];
+
+const pilares = [
+  {
+    icon: 'shield',
+    title: 'Seguridad',
+    description: 'Protocolos reforzados, EPP certificado y capacitación continua para cada faena.',
+  },
+  {
+    icon: 'certificate',
+    title: 'Salud',
+    description: 'Vigilancia médica preventiva y programas de bienestar para nuestros colaboradores.',
+  },
+  {
+    icon: 'check',
+    title: 'Medio Ambiente',
+    description: 'Gestión responsable de residuos, emisiones y recursos naturales en cada proyecto.',
+  },
+  {
+    icon: 'warning',
+    title: 'Calidad',
+    description: 'Sistemas de gestión integrados con mejora continua y auditorías periódicas.',
+  },
+];
+
+const breadcrumbs = [
+  { label: 'Empresa', url: '/' },
+  { label: 'Seguridad', url: '/seguridad' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumbs={breadcrumbs}
+>
+  <!-- Hero con breadcrumbs integrados -->
+  <section class="safety-hero">
+    <img
+      src={heroImg.src}
+      alt="Seguridad en faena"
+      class="safety-hero__bg"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div class="safety-hero__overlay"></div>
+    <div class="safety-hero__container">
+      <Breadcrumbs items={breadcrumbs} variant="hero" />
+      <p class="safety-hero__eyebrow">Seguridad, salud y medio ambiente</p>
+      <h1 class="safety-hero__title">El cuidado de las personas es nuestro primer estándar</h1>
+      <p class="safety-hero__subtitle">Contamos con un Departamento de Prevención de Riesgos y Medio Ambiente propio, y un Sistema de Gestión HSEC que respalda cada faena.</p>
+    </div>
+  </section>
+
+  <!-- Mini Stats -->
+  <StatsCounter
+    stats={miniStats}
+    variant="dark"
+    layout="horizontal"
+    columns={3}
+    animated={false}
+    showDividers={true}
+  />
+
+  <!-- Pilares -->
+  <section class="safety-pillars">
+    <Container>
+      <div class="safety-pillars__header">
+        <p class="safety-pillars__eyebrow">Nuestros pilares</p>
+        <h2 class="safety-pillars__title">Un sistema integral de gestión</h2>
+        <p class="safety-pillars__subtitle">Cada proyecto se ejecuta bajo un marco riguroso que prioriza la seguridad de las personas, la salud de nuestros colaboradores y el cuidado del medio ambiente.</p>
+      </div>
+
+      <div class="safety-pillars__grid">
+        {pilares.map((pilar) => (
+          <article class="pillar-card">
+            <div class="pillar-card__icon">
+              <Icon name={pilar.icon as any} size={32} />
+            </div>
+            <h3 class="pillar-card__title">{pilar.title}</h3>
+            <p class="pillar-card__description">{pilar.description}</p>
+          </article>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- Split Section -->
+  <SplitSection
+    eyebrow="Cultura de seguridad"
+    title="Formación continua y liderazgo visible"
+    description="Nuestro equipo participa en capacitaciones semanales, charlas de 5 minutos y simulacros periódicos. El liderazgo visible en terreno es un pilar fundamental de nuestra cultura HSEC."
+    image={heroImg.src}
+    imageAlt="Cultura de seguridad en faena"
+    variant="default"
+    background="dark"
+  />
+
+  <!-- CTA -->
+  <CTABand
+    eyebrow="¿Quieres saber más?"
+    title="Conoce nuestro sistema de gestión"
+    subtitle="Descarga nuestra política HSEC o contáctanos para más información."
+    showForm={true}
+    buttons={[
+      { label: 'Contactar', href: '/contacto', variant: 'primary' },
+      { label: 'Descargar catálogo', href: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/IPP-2025.pdf', variant: 'outline', external: true },
+    ]}
+    backgroundImage={heroImg.src}
+    contentAlign="center"
+    minHeight="sm"
+  />
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .safety-hero {
+    position: relative;
+    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
+    min-height: calc(320px + var(--topbar-height, 40px) + var(--header-height, 80px));
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .safety-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .safety-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(13, 22, 17, 0.3) 0%,
+      rgba(13, 22, 17, 0.7) 60%,
+      rgba(13, 22, 17, 0.95) 100%
+    );
+  }
+
+  .safety-hero__container {
+    position: relative;
+    z-index: 2;
+    max-width: 1360px;
+    width: 100%;
+    margin-inline: auto;
+    padding: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 60px)
+      var(--container-padding, 20px) 56px;
+  }
+
+  .safety-hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-brand-300, #4ade80);
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .safety-hero__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: var(--color-brand, #1a9c4a);
+  }
+
+  .safety-hero__title {
+    color: #fff;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    max-width: 18ch;
+    margin: 0 0 16px;
+  }
+
+  .safety-hero__subtitle {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    max-width: 60ch;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* Pillars */
+  .safety-pillars {
+    background-color: var(--color-graphite, #0d1611);
+    padding-block: clamp(60px, 8vw, 100px);
+  }
+
+  .safety-pillars__header {
+    text-align: center;
+    max-width: 60ch;
+    margin: 0 auto 50px;
+  }
+
+  .safety-pillars__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-brand-300, #4ade80);
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    justify-content: center;
+  }
+
+  .safety-pillars__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: var(--color-brand, #1a9c4a);
+  }
+
+  .safety-pillars__title {
+    color: #fff;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+  }
+
+  .safety-pillars__subtitle {
+    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .safety-pillars__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 900px) {
+    .safety-pillars__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 560px) {
+    .safety-pillars__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .pillar-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 30px 24px;
+    text-align: center;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .pillar-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-brand-700, #15803d);
+  }
+
+  .pillar-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: var(--color-brand-050, rgba(26, 156, 74, 0.1));
+    border-radius: 50%;
+    color: var(--color-brand-300, #4ade80);
+    margin-bottom: 20px;
+  }
+
+  .pillar-card__title {
+    color: #fff;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin: 0 0 12px;
+  }
+
+  .pillar-card__description {
+    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+  }
+</style>

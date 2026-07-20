@@ -1,17 +1,18 @@
 ---
 // src/components/layout/Header.astro
+// Header sticky debajo del topbar. Slots: logo, navigation, cta.
+// Comportamiento: transparente en el top, fondo oscuro (graphite) al hacer scroll.
+// El CTA vive en el slot para que el padre controle la etiqueta final.
+
 export interface Props {
-  compact?: boolean;
   variant?: 'default' | 'brand';
 }
 
-const { compact = true, variant = 'default' } = Astro.props;
+const { variant = 'default' } = Astro.props;
 const headerClassList = ['header', variant === 'brand' && 'header--brand'];
 ---
 
-{compact && <div class="header__sentinel" aria-hidden="true"></div>}
-
-<header class:list={headerClassList} role="banner">
+<header class:list={headerClassList} role="banner" data-header>
   <div class="header__inner">
     <div class="header__logo">
       <slot name="logo">
@@ -24,80 +25,53 @@ const headerClassList = ['header', variant === 'brand' && 'header--brand'];
     </div>
 
     <div class="header__cta">
-      <slot name="cta">
-        <a href="/contacto" class="header__cta-button">Solicitar cotización</a>
-      </slot>
+      <slot name="cta" />
     </div>
   </div>
 </header>
 
-{compact && (
-  <script>
-    (function () {
-      const sentinel = document.querySelector('.header__sentinel');
-      const header = document.querySelector('.header');
-      if (!sentinel || !header) return;
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          header.classList.toggle('is-compact', !entry.isIntersecting);
-        },
-        { threshold: [1] }
-      );
-
-      observer.observe(sentinel);
-    })();
-  </script>
-)}
-
 <style>
-  .header__sentinel {
-    position: absolute;
-    top: 1px;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    pointer-events: none;
-  }
-
   .header {
     position: sticky;
-    top: 0;
+    top: var(--topbar-height, 40px);
     z-index: 100;
-    background-color: var(--color-surface);
+    background-color: transparent;
     border-bottom: 1px solid transparent;
-    height: var(--header-height);
-    transition: height var(--motion-base) var(--ease-out),
-      box-shadow var(--motion-base) var(--ease-out),
-      border-color var(--motion-base) var(--ease-out);
+    height: var(--header-height, 72px);
+    font-family: var(--font-body);
+    color: #ffffff;
+    transition: top 0.3s var(--ease-out, ease),
+      background-color 0.25s var(--ease-out, ease),
+      box-shadow 0.25s var(--ease-out, ease),
+      border-color 0.25s var(--ease-out, ease);
   }
 
-  .header.is-compact {
-    height: var(--header-compact-height);
-    border-color: var(--color-line);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  /* Cuando el topbar se oculta (clase puesta en <body> por TopBar.astro),
+     el header sube a top: 0 para no dejar el espacio vacío. */
+  :global(body.topbar-hidden) .header {
+    top: 0;
+  }
+
+  .header.is-scrolled {
+    background-color: var(--color-graphite, #0d1611);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+    border-bottom-color: rgba(255, 255, 255, 0.06);
   }
 
   .header--brand {
-    background-color: var(--color-brand);
-    color: var(--color-on-brand);
-    border-color: rgba(255, 255, 255, 0.2);
-  }
-
-  .header--brand.is-compact {
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    background-color: var(--color-brand, #348f41);
+    color: var(--color-on-brand, #fff);
   }
 
   .header__inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-4);
-    max-width: var(--container-max-width);
+    gap: var(--space-4, 16px);
+    max-width: var(--container-max-width, 1360px);
     height: 100%;
     margin-inline: auto;
-    padding-inline: var(--container-padding);
+    padding-inline: var(--container-padding, 20px);
   }
 
   .header__logo {
@@ -106,9 +80,11 @@ const headerClassList = ['header', variant === 'brand' && 'header--brand'];
 
   .header__brand {
     display: inline-block;
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 1.125rem;
-    color: var(--color-ink);
+    color: inherit;
+    text-decoration: none;
   }
 
   @media (min-width: 768px) {
@@ -120,42 +96,76 @@ const headerClassList = ['header', variant === 'brand' && 'header--brand'];
   .header__nav {
     flex: 1;
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
   }
 
-  @media (min-width: 1024px) {
+  @media (max-width: 1023px) {
     .header__nav {
-      justify-content: center;
+      justify-content: flex-end;
     }
   }
 
   .header__cta {
-    display: block;
     flex-shrink: 0;
-  }
-
-  .header__cta-button {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    min-height: 2.75rem;
-    padding: 0.625rem 1.25rem;
-    background-color: var(--color-brand);
-    color: var(--color-on-brand);
-    font-weight: 600;
-    border-radius: var(--radius-sm);
-    transition: background-color var(--motion-base) var(--ease-out),
-      transform var(--motion-base) var(--ease-out);
+    gap: 0.5rem;
   }
 
-  .header__cta-button:hover,
-  .header__cta-button:focus {
-    background-color: var(--color-brand-600);
-    transform: scale(1.02);
+  /* Estilos del CTA que viene por slot. El padre pone el contenido
+     (texto + icono); aquí solo tipografía y estado focus visible. */
+  .header__cta :global(a),
+  .header__cta :global(.quote-badge) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 2.5rem;
+    padding: 0.5rem 0.875rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8125rem;
+    letter-spacing: 0.015em;
+    border-radius: 9999px;
+    text-decoration: none;
+    transition: background-color 0.15s var(--ease-out, ease),
+      transform 0.15s var(--ease-out, ease),
+      box-shadow 0.15s var(--ease-out, ease);
   }
 
-  .header__cta-button:focus-visible {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 2px;
+  @media (min-width: 640px) {
+    .header__cta :global(a) {
+      min-height: 2.75rem;
+      padding: 0.5625rem 1.125rem;
+      font-size: 0.9375rem;
+    }
+  }
+
+  .header__cta :global(a):focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
   }
 </style>
+
+<script>
+  // Marca .is-scrolled cuando el header se separa del tope.
+  // Útil para dar sombra/borde en scroll. No cambia la posición sticky.
+  (function () {
+    if (typeof window === 'undefined') return;
+    const header = document.querySelector<HTMLElement>('[data-header]');
+    if (!header) return;
+
+    const sentinel = document.createElement('div');
+    sentinel.setAttribute('aria-hidden', 'true');
+    sentinel.style.cssText =
+      'position:absolute;top:0;left:0;width:100%;height:1px;pointer-events:none;';
+    header.parentElement?.insertBefore(sentinel, header);
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        header.classList.toggle('is-scrolled', !entry.isIntersecting);
+      },
+      { threshold: [0, 1] }
+    );
+    observer.observe(sentinel);
+  })();
+</script>

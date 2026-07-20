@@ -1,0 +1,73 @@
+graph TB
+    subgraph "🌐 Frontend Layer"
+        WEB["Web Application<br/>Angular/Vue/React"]
+        CDN["Amazon CloudFront<br/>CDN Global"]
+        STATIC["Static Assets<br/>CSS/JS/Images"]
+    end
+    
+    subgraph "🔌 API Layer"
+        API["REST API<br/>Node.js/PHP"]
+        AUTH["Authentication<br/>JWT/Session"]
+        ROUTER["API Router<br/>/tiendaonline/webapp/"]
+    end
+    
+    subgraph "🗄️ Data Layer"
+        DB[(MySQL/PostgreSQL<br/>Primary Database)]
+        CACHE[(Redis<br/>Cache Layer)]
+        SEARCH["Elasticsearch<br/>Search Engine"]
+    end
+    
+    subgraph "📁 Storage Layer"
+        S3["Amazon S3<br/>Image Storage"]
+        BLOG["WordPress Blog<br/>blog.skrental.com"]
+    end
+    
+    subgraph "💳 External Services"
+        WEBPAY["Webpay<br/>Payment Gateway"]
+        EMAIL["Email Service<br/>Transactional"]
+        SMS["SMS Service<br/>Notifications"]
+    end
+    
+    subgraph "🌍 Multi-Country"
+        CL["🇨🇱 Chile<br/>Primary"]
+        BO["🇧🇴 Bolivia"]
+        PE["🇵🇪 Perú"]
+        CO["🇨🇴 Colombia"]
+    end
+    
+    subgraph "📊 Analytics & Monitoring"
+        GA["Google Analytics<br/>Tracking"]
+        GSC["Google Search Console<br/>SEO Monitoring"]
+        MONITOR["APM<br/>Performance"]
+    end
+    
+    WEB --> CDN
+    CDN --> STATIC
+    WEB --> API
+    API --> ROUTER
+    ROUTER --> AUTH
+    ROUTER --> DB
+    ROUTER --> CACHE
+    ROUTER --> SEARCH
+    API --> S3
+    WEB --> BLOG
+    API --> WEBPAY
+    API --> EMAIL
+    API --> SMS
+    WEB --> CL
+    WEB --> BO
+    WEB --> PE
+    WEB --> CO
+    WEB --> GA
+    WEB --> GSC
+    API --> MONITOR
+    
+    style WEB fill:#4CAF50,color:white
+    style API fill:#2196F3,color:white
+    style DB fill:#FF9800,color:white
+    style S3 fill:#9C27B0,color:white
+    style WEBPAY fill:#F44336,color:white
+    style CL fill:#00BCD4,color:white
+    style BO fill:#00BCD4,color:white
+    style PE fill:#00BCD4,color:white
+    style CO fill:#00BCD4,color:white

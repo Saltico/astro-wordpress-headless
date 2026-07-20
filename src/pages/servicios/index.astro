@@ -1,0 +1,205 @@
+---
+// src/pages/servicios/index.astro
+// Página index de servicios - Replica estructura del sitio de referencia
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
+import StatsCounter from '@/components/ui/StatsCounter.astro';
+import CTABand from '@/components/ui/CTABand.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import Icon from '@/components/ui/Icon.astro';
+import type { StatItem } from '@/components/ui/StatsCounter.astro';
+import heroImg from '@/assets/imgs/hero.jpg';
+
+const title = 'Servicios | Ingeniería, construcción, montajes e infraestructura portuaria — IP Proyectos Industriales';
+const description = 'Reunimos ingeniería, construcción, montajes e infraestructura portuaria bajo un mismo equipo, con estándares de la gran minería.';
+
+const breadcrumbs = [
+  { label: 'Empresa', url: '/' },
+  { label: 'Servicios', url: '/servicios' },
+];
+
+const stats: StatItem[] = [
+  { value: 25, prefix: '+', label: 'Años de experiencia', prefixPosition: 'before' },
+  { value: 5, label: 'Líneas de servicio' },
+  { value: 100, prefix: '+', label: 'Equipos propios', prefixPosition: 'before' },
+  { value: 2, label: 'Sucursales en III y IV región' },
+];
+
+const services = [
+  {
+    number: '01',
+    category: 'Ingeniería',
+    title: 'Ingeniería con foco en constructibilidad',
+    description: 'Diseño e ingeniería de detalle para proyectos mineros e industriales, con gestión integral de compras, contratos y puesta en marcha.',
+    link: '/servicios/ingenieria',
+  },
+  {
+    number: '02',
+    category: 'Construcción',
+    title: 'Obras civiles e industriales',
+    description: 'Construcción industrial con control de calidad en cada etapa: contratos EPC, prefabricados y pinturas especiales.',
+    link: '/servicios/construccion',
+  },
+  {
+    number: '03',
+    category: 'Montajes',
+    title: 'Montajes mineros e industriales',
+    description: 'Montaje electromecánico y estructural en faena, con foco en seguridad. Pipelines, termofusión HDPE y pantallas eólicas.',
+    link: '/servicios/montajes',
+  },
+  {
+    number: '04',
+    category: 'Infraestructura portuaria',
+    title: 'Infraestructura para puertos y terminales',
+    description: 'Obras marítimas que integran ingeniería, construcción y montaje: muelles, defensas marítimas e impermeabilización de piscinas y tranques.',
+    link: '/servicios/infraestructura-portuaria',
+  },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  breadcrumbs={breadcrumbs}
+>
+  <PageHero
+    image={heroImg.src}
+    imageAlt="Servicios IP Proyectos Industriales"
+    eyebrow="Nuestros servicios"
+    title="Soluciones integrales para cada etapa de tu proyecto"
+    subtitle="Reunimos ingeniería, construcción, montajes e infraestructura portuaria bajo un mismo equipo, con estándares de la gran minería."
+    minHeight="sm"
+  >
+    <Breadcrumbs slot="breadcrumbs" items={breadcrumbs} variant="hero" />
+  </PageHero>
+
+  <!-- Stats -->
+  <StatsCounter
+    stats={stats}
+    variant="dark"
+    layout="horizontal"
+    columns={4}
+    animated={true}
+  />
+
+  <!-- Lista de servicios -->
+  <section class="services-list">
+    <Container>
+      <div class="services-list__items">
+        {services.map((service) => (
+          <article class="service-item">
+            <div class="service-item__number">{service.number} — {service.category}</div>
+            <div class="service-item__content">
+              <h2 class="service-item__title">{service.title}</h2>
+              <p class="service-item__description">{service.description}</p>
+              <a href={service.link} class="service-item__link">
+                Conocer más
+                <Icon name="arrow-right" size={18} />
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <!-- CTA -->
+  <CTABand
+    eyebrow="¿Tienes un proyecto en mente?"
+    title="Diseñemos la solución que tu faena necesita"
+    subtitle="Cuéntanos el alcance y recibe una propuesta clara y a tu medida."
+    showForm={true}
+    buttons={[
+      { label: 'Solicitar cotización', href: '/contacto', variant: 'primary' },
+      { label: 'Escribir por WhatsApp', href: 'https://wa.me/56965593202?text=Hola%2C%20quisiera%20cotizar%20un%20servicio%20con%20IP%20Proyectos%20Industriales.', variant: 'outline', external: true },
+    ]}
+    backgroundImage={heroImg.src}
+    contentAlign="center"
+    minHeight="sm"
+  />
+</BaseLayout>
+
+<style>
+  /* Services List */
+  .services-list {
+    background-color: var(--color-graphite, #0d1611);
+    padding-block: clamp(40px, 6vw, 80px);
+  }
+
+  .services-list__items {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .service-item {
+    display: grid;
+    gap: 20px;
+    padding-block: clamp(30px, 4vw, 50px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .service-item:last-child {
+    border-bottom: none;
+  }
+
+  @media (min-width: 768px) {
+    .service-item {
+      grid-template-columns: 200px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+  }
+
+  .service-item__number {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brand-300, #4ade80);
+  }
+
+  .service-item__content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .service-item__title {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 800;
+    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .service-item__description {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 60ch;
+  }
+
+  .service-item__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--color-brand-300, #4ade80);
+    text-decoration: none;
+    margin-top: 8px;
+    transition: gap 0.2s ease;
+  }
+
+  .service-item__link:hover {
+    gap: 12px;
+  }
+</style>

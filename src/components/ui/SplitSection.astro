@@ -1,0 +1,450 @@
+---
+// src/components/ui/SplitSection.astro
+// Sección de texto + imagen en layout dividido
+// Altamente configurable para reutilización en plantillas
+
+import Container from './Container.astro';
+import Icon from './Icon.astro';
+import type { IconName } from '@/lib/icons';
+
+export interface MiniStat {
+  value: string;
+  label: string;
+}
+
+export interface Props {
+  eyebrow?: string;
+  title: string;
+  description: string;
+  image?: string;
+  imageAlt?: string;
+  features?: Array<{
+    icon: IconName;
+    title: string;
+    description: string;
+  }>;
+  miniStats?: MiniStat[];
+  cta?: {
+    label: string;
+    href: string;
+  };
+  variant?: 'default' | 'reversed' | 'centered';
+  background?: 'light' | 'alt' | 'dark';
+  ghostText?: string;
+  className?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  image,
+  imageAlt = '',
+  features,
+  miniStats,
+  cta,
+  variant = 'default',
+  background = 'light',
+  ghostText,
+  className = '',
+} = Astro.props;
+
+const variantClasses = {
+  default: 'split-section--default',
+  reversed: 'split-section--reversed',
+  centered: 'split-section--centered',
+};
+
+const backgroundClasses = {
+  light: 'split-section--light',
+  alt: 'split-section--alt',
+  dark: 'split-section--dark',
+};
+---
+
+<section class={`split-section ${variantClasses[variant]} ${backgroundClasses[background]} ${className}`.trim()}>
+  {ghostText && <div class="split-section__ghost">{ghostText}</div>}
+  
+  <Container>
+    <div class="split-section__grid">
+      <div class="split-section__content reveal">
+        {eyebrow && <p class="split-section__eyebrow">{eyebrow}</p>}
+        
+        <h2 class="split-section__title">{title}</h2>
+        
+        <p class="split-section__description">{description}</p>
+
+        {features && features.length > 0 && (
+          <div class="split-section__features">
+            {features.map((feature) => (
+              <div class="split-section__feature">
+                <div class="split-section__feature-icon">
+                  <Icon name={feature.icon} size={24} />
+                </div>
+                <div class="split-section__feature-content">
+                  <h3 class="split-section__feature-title">{feature.title}</h3>
+                  <p class="split-section__feature-description">{feature.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {miniStats && miniStats.length > 0 && (
+          <div class="split-section__mini-stats">
+            {miniStats.map((stat) => (
+              <div class="split-section__mini-stat">
+                <b>{stat.value}</b>
+                <small>{stat.label}</small>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {cta && (
+          <div class="split-section__cta">
+            <a href={cta.href} class="split-section__btn">
+              {cta.label}
+            </a>
+          </div>
+        )}
+      </div>
+
+      {image && (
+        <div class="split-section__visual reveal">
+          <img
+            src={image}
+            alt={imageAlt}
+            class="split-section__image"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      )}
+    </div>
+  </Container>
+</section>
+
+<style>
+  .split-section {
+    padding-block: clamp(56px, 8vw, 110px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .split-section--light {
+    background-color: var(--color-surface, #fff);
+  }
+
+  .split-section--alt {
+    background-color: var(--color-surface-alt, #f5f5f5);
+  }
+
+  .split-section--dark {
+    background-color: var(--color-graphite, #0d1611);
+  }
+
+  /* Ghost text */
+  .split-section__ghost {
+    position: absolute;
+    right: -2vw;
+    top: -4vh;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 900;
+    font-size: 30vw;
+    line-height: 0.8;
+    color: rgba(255, 255, 255, 0.035);
+    letter-spacing: -0.05em;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .split-section__grid {
+    display: grid;
+    gap: clamp(30px, 5vw, 70px);
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (min-width: 860px) {
+    .split-section__grid {
+      grid-template-columns: 1.05fr 1fr;
+    }
+
+    .split-section--reversed .split-section__grid {
+      direction: rtl;
+    }
+
+    .split-section--reversed .split-section__grid > * {
+      direction: ltr;
+    }
+  }
+
+  .split-section--centered .split-section__grid {
+    grid-template-columns: 1fr;
+    max-width: 50rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  /* Eyebrow */
+  .split-section__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .split-section--light .split-section__eyebrow,
+  .split-section--alt .split-section__eyebrow {
+    color: var(--color-brand, #1a9c4a);
+  }
+
+  .split-section--dark .split-section__eyebrow {
+    color: var(--color-brand-300, #4ade80);
+  }
+
+  .split-section__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  /* Title */
+  .split-section__title {
+    margin: 0 0 20px;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 800;
+    font-size: clamp(1.9rem, 3.6vw, 3rem);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+
+  .split-section--light .split-section__title,
+  .split-section--alt .split-section__title {
+    color: var(--color-ink, #1a1a1a);
+  }
+
+  .split-section--dark .split-section__title {
+    color: #fff;
+  }
+
+  /* Description */
+  .split-section__description {
+    font-size: 1.08rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 48ch;
+  }
+
+  .split-section--light .split-section__description,
+  .split-section--alt .split-section__description {
+    color: var(--color-ink-500, #6b7280);
+  }
+
+  .split-section--dark .split-section__description {
+    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+  }
+
+  /* Features */
+  .split-section__features {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 30px;
+  }
+
+  .split-section__feature {
+    display: flex;
+    gap: 16px;
+  }
+
+  .split-section__feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-md, 8px);
+  }
+
+  .split-section--light .split-section__feature-icon,
+  .split-section--alt .split-section__feature-icon {
+    background-color: var(--color-brand-050, rgba(26, 156, 74, 0.1));
+    color: var(--color-brand, #1a9c4a);
+  }
+
+  .split-section--dark .split-section__feature-icon {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-brand-300, #4ade80);
+  }
+
+  .split-section__feature-title {
+    margin: 0 0 4px;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .split-section--light .split-section__feature-title,
+  .split-section--alt .split-section__feature-title {
+    color: var(--color-ink, #1a1a1a);
+  }
+
+  .split-section--dark .split-section__feature-title {
+    color: #fff;
+  }
+
+  .split-section__feature-description {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .split-section--light .split-section__feature-description,
+  .split-section--alt .split-section__feature-description {
+    color: var(--color-ink-500, #6b7280);
+  }
+
+  .split-section--dark .split-section__feature-description {
+    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+  }
+
+  /* Mini Stats */
+  .split-section__mini-stats {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+
+  .split-section__mini-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .split-section__mini-stat b {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 900;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+  }
+
+  .split-section--dark .split-section__mini-stat b {
+    color: #fff;
+  }
+
+  .split-section--light .split-section__mini-stat b,
+  .split-section--alt .split-section__mini-stat b {
+    color: var(--color-ink, #1a1a1a);
+  }
+
+  .split-section__mini-stat b span {
+    color: var(--color-brand-300, #4ade80);
+  }
+
+  .split-section__mini-stat small {
+    font-size: 0.8rem;
+  }
+
+  .split-section--dark .split-section__mini-stat small {
+    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+  }
+
+  .split-section--light .split-section__mini-stat small,
+  .split-section--alt .split-section__mini-stat small {
+    color: var(--color-ink-500, #6b7280);
+  }
+
+  /* CTA Button */
+  .split-section__cta {
+    margin-top: 26px;
+  }
+
+  .split-section__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 16px 30px;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: transform 0.18s ease, background 0.18s ease;
+  }
+
+  .split-section--dark .split-section__btn {
+    background: var(--color-brand, #1a9c4a);
+    color: #fff;
+  }
+
+  .split-section--dark .split-section__btn:hover {
+    background: var(--color-brand-700, #15803d);
+    transform: translateY(-2px);
+  }
+
+  .split-section--light .split-section__btn,
+  .split-section--alt .split-section__btn {
+    background: var(--color-brand, #1a9c4a);
+    color: #fff;
+  }
+
+  .split-section--light .split-section__btn:hover,
+  .split-section--alt .split-section__btn:hover {
+    background: var(--color-brand-700, #15803d);
+    transform: translateY(-2px);
+  }
+
+  /* Image */
+  .split-section__visual {
+    position: relative;
+  }
+
+  .split-section__image {
+    width: 100%;
+    height: clamp(320px, 46vh, 500px);
+    object-fit: cover;
+    border-radius: 16px;
+  }
+
+  /* Animación reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  // Intersection Observer para animación reveal
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll('.reveal').forEach((el) => {
+      observer.observe(el);
+    });
+  }
+</script>

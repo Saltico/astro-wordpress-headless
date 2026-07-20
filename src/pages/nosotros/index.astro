@@ -1,30 +1,126 @@
 ---
 // src/pages/nosotros/index.astro
+// Página Nosotros replicando estructura de Tecnisud
+// Secciones: Hero → Historia → Metodología → Equipo
+
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import Container from '@/components/ui/Container.astro';
-import SectionLayout from '@/components/ui/SectionLayout.astro';
-import { aboutPageSchema } from '@/lib/seo';
+import HeroSection from '@/components/ui/HeroSection.astro';
+import SplitSection from '@/components/ui/SplitSection.astro';
+import TeamGrid from '@/components/ui/TeamGrid.astro';
+import type { TeamMember } from '@/components/ui/TeamGrid.astro';
+import Icon from '@/components/ui/Icon.astro';
+import type { IconName } from '@/lib/icons';
 
-const title = 'Nosotros | IP Proyectos Industriales';
-const description =
-  'Conoce a IP Proyectos Industriales: historia, equipo y valores de una empresa líder en proyectos de ingeniería para la gran minería.';
+import heroImg from '@/assets/imgs/hero.jpg';
 
-const breadcrumbs = [
-  { label: 'Inicio', url: '/' },
-  { label: 'Nosotros' },
+const title = 'Nosotros · IP Proyectos Industriales';
+const description = 'Conoce nuestra historia, metodología y el equipo detrás de cada proyecto de ingeniería industrial.';
+
+const metodologiaFeatures = [
+  {
+    icon: 'shield' as IconName,
+    title: 'Reingeniería de planos',
+    description: 'Racionalizamos recorridos, ajustamos materiales y mejoramos soluciones técnicas antes de la ejecución.',
+  },
+  {
+    icon: 'check' as IconName,
+    title: 'Control técnico',
+    description: 'Cada sistema pasa por validación técnica para garantizar eficiencia y cumplimiento normativo.',
+  },
+  {
+    icon: 'certificate' as IconName,
+    title: 'Cumplimiento normativo',
+    description: 'Alineación total con normativa minera, de seguridad y medioambiente en cada proyecto.',
+  },
+];
+
+const teamMembers: TeamMember[] = [
+  {
+    name: 'Jorge L. Faccio',
+    role: 'Fundador y Director',
+    image: heroImg.src,
+    bio: 'Más de 35 años de experiencia en ingeniería industrial y montaje.',
+    email: 'jorge.faccio@ipproyectosindustriales.cl',
+    linkedin: 'https://www.linkedin.com/in/jorgefaccio',
+  },
+  {
+    name: 'María González',
+    role: 'Gerente de Operaciones',
+    image: heroImg.src,
+    bio: 'Especialista en gestión de proyectos mineros de alta complejidad.',
+  },
+  {
+    name: 'Carlos Muñoz',
+    role: 'Jefe de Montaje',
+    image: heroImg.src,
+    bio: 'Ingeniero mecánico con 20 años en montaje industrial.',
+  },
+  {
+    name: 'Andrea Torres',
+    role: 'Coordinadora HSEQ',
+    image: heroImg.src,
+    bio: 'Certificada en sistemas de gestión integrados.',
+  },
 ];
 ---
 
 <BaseLayout
   title={title}
   description={description}
-  breadcrumbs={breadcrumbs}
-  jsonLd={aboutPageSchema()}
+  breadcrumbs={[
+    { label: 'Inicio', url: '/' },
+    { label: 'Nosotros', url: '/nosotros' },
+  ]}
 >
-  <SectionLayout spacing="lg">
-    <Container>
-      <h1>Nosotros</h1>
-      <p>Historia, equipo y valores de IP Proyectos Industriales.</p>
-    </Container>
-  </SectionLayout>
+  <!-- Hero -->
+  <HeroSection
+    title="Ingeniería que construye confianza desde 2009"
+    subtitle="IP Proyectos Industriales fue fundada con una misión clara: desarrollar ingeniería aplicada a obras críticas para la gran minería e industria. Desde nuestros inicios, nos especializamos en ejecución de obras civiles, montaje industrial y arriendo de maquinaria de alto tonelaje, consolidándonos como referente en sistemas que no pueden fallar."
+    backgroundImage={heroImg.src}
+    eyebrow="Un legado en construcción"
+    variant="left"
+    minHeight="md"
+  />
+
+  <!-- Historia -->
+  <SplitSection
+    eyebrow="Nuestra historia"
+    title="Más de 15 años construyendo infraestructura crítica"
+    description="Con más de una década de trayectoria y cientos de proyectos ejecutados, IP Proyectos Industriales ha construido algo más que infraestructura: ha construido confianza. Nos especializamos en obras civiles, montaje industrial, izaje y arriendo de maquinaria para la gran minería e industria, con presencia en las principales faenas de la Región de Coquimbo y más allá."
+    image={heroImg.src}
+    imageAlt="Equipo de IP Proyectos Industriales en faena"
+    variant="reversed"
+    background="light"
+  />
+
+  <!-- Metodología -->
+  <SplitSection
+    eyebrow="Nuestra forma de trabajar"
+    title="Entendemos que cada obra es un sistema integral"
+    description="No solo ejecutamos proyectos: los optimizamos. Aplicamos procesos de reingeniería sobre la documentación recibida, racionalizando recorridos, ajustando materiales y mejorando soluciones técnicas antes de su ejecución. Este enfoque permite elevar la eficiencia, reducir desvíos y garantizar resultados sólidos."
+    features={metodologiaFeatures}
+    image={heroImg.src}
+    imageAlt="Metodología de trabajo IP Proyectos Industriales"
+    variant="default"
+    background="alt"
+  />
+
+  <!-- Las personas detrás de cada obra -->
+  <SplitSection
+    eyebrow="Nuestro equipo"
+    title="Las personas detrás de cada obra"
+    description="Más de 200 profesionales ingenieros, técnicos y especialistas integran un equipo comprometido con la calidad, la seguridad y la mejora continua. Creemos en una cultura de responsabilidad y cumplimiento. En IP Proyectos Industriales, lo que se empieza, se termina."
+    image={heroImg.src}
+    imageAlt="Equipo IP Proyectos Industriales"
+    variant="reversed"
+    background="light"
+  />
+
+  <!-- Team Grid -->
+  <TeamGrid
+    members={teamMembers}
+    title="Equipo directivo"
+    subtitle="Profesionales comprometidos con la excelencia en cada proyecto."
+    columns={4}
+  />
 </BaseLayout>
