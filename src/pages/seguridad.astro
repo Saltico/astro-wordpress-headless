@@ -10,7 +10,8 @@ import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import Icon from '@/components/ui/Icon.astro';
 import StatsCounter from '@/components/ui/StatsCounter.astro';
 import type { StatItem } from '@/components/ui/StatsCounter.astro';
-import heroImg from '@/assets/imgs/hero.jpg';
+import montajesImg from '@/assets/imgs/montajes.jpg';
+import edificioImg from '@/assets/imgs/edificio.jpg';
 
 const title = 'Seguridad | HSEC — IP Proyectos Industriales';
 const description = 'Seguridad, salud y medio ambiente. El cuidado de las personas es nuestro primer estándar.';
@@ -58,9 +59,11 @@ const breadcrumbs = [
   <!-- Hero con breadcrumbs integrados -->
   <section class="safety-hero">
     <img
-      src={heroImg.src}
-      alt="Seguridad en faena"
+      src={montajesImg.src}
+      alt="Operación minera con estándares de seguridad y EPP, sistema HSEC de IP Proyectos Industriales"
       class="safety-hero__bg"
+      width={montajesImg.width}
+      height={montajesImg.height}
       loading="eager"
       fetchpriority="high"
     />
@@ -111,8 +114,10 @@ const breadcrumbs = [
     eyebrow="Cultura de seguridad"
     title="Formación continua y liderazgo visible"
     description="Nuestro equipo participa en capacitaciones semanales, charlas de 5 minutos y simulacros periódicos. El liderazgo visible en terreno es un pilar fundamental de nuestra cultura HSEC."
-    image={heroImg.src}
-    imageAlt="Cultura de seguridad en faena"
+    image={edificioImg.src}
+    imageAlt="Equipo de IP Proyectos Industriales en formación de seguridad HSEC"
+    imageWidth={edificioImg.width}
+    imageHeight={edificioImg.height}
     variant="default"
     background="dark"
   />
@@ -127,7 +132,9 @@ const breadcrumbs = [
       { label: 'Contactar', href: '/contacto', variant: 'primary' },
       { label: 'Descargar catálogo', href: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/IPP-2025.pdf', variant: 'outline', external: true },
     ]}
-    backgroundImage={heroImg.src}
+    backgroundImage={montajesImg.src}
+    backgroundWidth={montajesImg.width}
+    backgroundHeight={montajesImg.height}
     contentAlign="center"
     minHeight="sm"
   />
@@ -180,7 +187,7 @@ const breadcrumbs = [
     align-items: center;
     gap: 12px;
     color: var(--color-brand-300, #4ade80);
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.8rem;
     letter-spacing: 0.16em;
@@ -197,7 +204,7 @@ const breadcrumbs = [
 
   .safety-hero__title {
     color: #fff;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 900;
     line-height: 1.05;
     letter-spacing: -0.02em;
@@ -231,7 +238,7 @@ const breadcrumbs = [
     align-items: center;
     gap: 12px;
     color: var(--color-brand-300, #4ade80);
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.8rem;
     letter-spacing: 0.16em;
@@ -249,7 +256,7 @@ const breadcrumbs = [
 
   .safety-pillars__title {
     color: #fff;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 800;
     font-size: clamp(1.8rem, 3.4vw, 2.8rem);
     letter-spacing: -0.02em;
@@ -309,7 +316,7 @@ const breadcrumbs = [
 
   .pillar-card__title {
     color: #fff;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 1.2rem;
     margin: 0 0 12px;

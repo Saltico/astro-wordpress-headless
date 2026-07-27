@@ -1,7 +1,10 @@
 ---
 // src/components/ui/LogoCarousel.astro
 // Carrusel horizontal de logos con efecto grayscale → color en hover.
-// Con título y subtítulo SEO para dar contexto a los crawlers y a11y.
+// Header con eyebrow + H2 + subtitle, siguiendo el patrón de las demás
+// secciones del sitio (eyebrow verde claro, H2 con la tipografía del
+// design system, subtítulo en tono medio). Mantiene la animación
+// marquee con 2 grupos duplicados y `pauseOnHover` opcional.
 
 export interface LogoItem {
   src: string;
@@ -13,8 +16,9 @@ export interface LogoItem {
 
 export interface Props {
   logos: LogoItem[];
-  title?: string;                    // ej. "Confían en nosotros"
-  subtitle?: string;                 // ej. "Empresas líderes de la gran minería"
+  eyebrow?: string;                  // ej. "Confían en nosotros"
+  title?: string;                    // ej. "Empresas líderes de la gran minería"
+  subtitle?: string;                 // descripción debajo del H2
   speed?: 'slow' | 'normal' | 'fast';
   backgroundColor?: string;
   backgroundVariant?: 'white' | 'muted' | 'dark';
@@ -24,6 +28,7 @@ export interface Props {
 
 const {
   logos,
+  eyebrow,
   title,
   subtitle,
   speed = 'normal',
@@ -42,14 +47,16 @@ const speedDurations = {
 const duration = speedDurations[speed];
 
 const bgClass = `logo-carousel--bg-${backgroundVariant}`;
+const hasHeader = Boolean(eyebrow || title || subtitle);
 ---
 
 <section
   class:list={['logo-carousel', `logo-carousel--pause-hover-${pauseOnHover}`, bgClass, className]}
-  aria-label={title || 'Clientes'}
+  aria-label={title || eyebrow || 'Clientes'}
 >
-  {(title || subtitle) && (
+  {hasHeader && (
     <header class="logo-carousel__header">
+      {eyebrow && <p class="logo-carousel__eyebrow">{eyebrow}</p>}
       {title && <h2 class="logo-carousel__title">{title}</h2>}
       {subtitle && <p class="logo-carousel__subtitle">{subtitle}</p>}
     </header>
@@ -131,13 +138,50 @@ const bgClass = `logo-carousel--bg-${backgroundVariant}`;
     margin-bottom: clamp(28px, 4vw, 48px);
   }
 
+  /* Eyebrow — mismo patrón que en el resto del sitio (ServicesGrid,
+     SplitSection, CTABand, etc.): línea decorativa ::before, color de
+     acento, mayúsculas, tracking amplio, tipografía del design system. */
+  .logo-carousel__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin: 0 0 14px;
+  }
+
+  .logo-carousel--bg-white .logo-carousel__eyebrow,
+  .logo-carousel--bg-muted .logo-carousel__eyebrow {
+    color: var(--color-brand, #348f41);
+  }
+
+  .logo-carousel--bg-dark .logo-carousel__eyebrow {
+    color: var(--color-brand-300, #62bb74);
+  }
+
+  .logo-carousel__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
   .logo-carousel__title {
     font-family: var(--font-heading);
     font-weight: 800;
-    font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
     letter-spacing: -0.02em;
-    line-height: 1.2;
-    margin: 0 0 8px;
+    line-height: 1.12;
+    margin: 0 0 12px;
+    text-wrap: balance;
+  }
+
+  .logo-carousel--bg-white .logo-carousel__title,
+  .logo-carousel--bg-muted .logo-carousel__title {
+    color: var(--color-ink, #242627);
   }
 
   .logo-carousel--bg-dark .logo-carousel__title {
@@ -145,14 +189,16 @@ const bgClass = `logo-carousel--bg-${backgroundVariant}`;
   }
 
   .logo-carousel__subtitle {
-    margin: 0;
+    margin: 0 auto;
+    font-family: var(--font-body);
     font-size: 1rem;
-    line-height: 1.5;
-    color: var(--color-ink-500, #6b7280);
+    line-height: 1.55;
+    color: var(--color-ink-500, #6b7072);
+    max-width: 60ch;
   }
 
   .logo-carousel--bg-dark .logo-carousel__subtitle {
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--color-on-dark-muted, #9bab9f);
   }
 
   .logo-carousel__track {

@@ -16,6 +16,8 @@ export interface Props {
   description: string;
   heroImage: string;
   heroImageAlt: string;
+  heroImageWidth?: number;
+  heroImageHeight?: number;
   category: string;
   includes: string[];
   breadcrumbs: Array<{ label: string; url: string }>;
@@ -28,6 +30,8 @@ const {
   description,
   heroImage,
   heroImageAlt,
+  heroImageWidth,
+  heroImageHeight,
   category,
   includes,
   breadcrumbs,
@@ -46,6 +50,8 @@ const {
       src={heroImage}
       alt={heroImageAlt}
       class="service-hero__bg"
+      width={heroImageWidth}
+      height={heroImageHeight}
       loading="eager"
       fetchpriority="high"
     />
@@ -68,7 +74,10 @@ const {
             src={heroImage}
             alt={heroImageAlt}
             class="service-content__image"
+            width={heroImageWidth}
+            height={heroImageHeight}
             loading="lazy"
+            decoding="async"
           />
         </div>
 
@@ -97,6 +106,8 @@ const {
     subtitle="Cuéntanos el alcance y te respondemos a la brevedad con una propuesta a tu medida."
     showForm={true}
     backgroundImage={heroImage}
+    backgroundWidth={heroImageWidth}
+    backgroundHeight={heroImageHeight}
     contentAlign="center"
     minHeight="sm"
   />
@@ -149,7 +160,7 @@ const {
     align-items: center;
     gap: 12px;
     color: var(--color-brand-300, #4ade80);
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.85rem;
     letter-spacing: 0.12em;
@@ -166,7 +177,7 @@ const {
 
   .service-hero__title {
     color: #fff;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 900;
     line-height: 1.05;
     letter-spacing: -0.02em;
@@ -229,7 +240,7 @@ const {
     align-items: center;
     gap: 12px;
     color: var(--color-brand, #1a9c4a);
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.8rem;
     letter-spacing: 0.16em;
@@ -245,7 +256,7 @@ const {
   }
 
   .service-content__title {
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 800;
     font-size: clamp(1.6rem, 3vw, 2.2rem);
     letter-spacing: -0.02em;

@@ -4,6 +4,7 @@
 // Inspirado en el hero de Tecnisud
 
 import Container from './Container.astro';
+import Button from './Button.astro';
 import StatsCounter from './StatsCounter.astro';
 import type { StatItem } from './StatsCounter.astro';
 
@@ -78,14 +79,14 @@ const variantClasses = {
       {(ctaPrimary || ctaSecondary) && (
         <div class="hero-section__ctas">
           {ctaPrimary && (
-            <a href={ctaPrimary.href} class="button button--primary button--large">
+            <Button href={ctaPrimary.href} variant="primary" size="lg">
               {ctaPrimary.label}
-            </a>
+            </Button>
           )}
           {ctaSecondary && (
-            <a href={ctaSecondary.href} class="button button--secondary button--large">
+            <Button href={ctaSecondary.href} variant="ghost" onDark size="lg">
               {ctaSecondary.label}
-            </a>
+            </Button>
           )}
         </div>
       )}

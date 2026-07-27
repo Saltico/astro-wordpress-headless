@@ -1,0 +1,218 @@
+---
+// src/components/ui/Button.astro
+// Botón/enlace unificado del design system.
+//
+// Una sola fuente de verdad para todos los CTAs del sitio. Reemplaza los
+// estilos duplicados de .button, .cta-band__btn, .split-section__btn,
+// .rental-hero__btn, .arriendo-hero__btn, .quote-hero__btn,
+// .quote-form__submit, .qsubmit, etc.
+//
+// Sistema alineado a la referencia `IP-Sitio-Web/styles.css` (líneas 101–117):
+//   - 2 variantes:  primary (relleno) | ghost (outline)
+//   - 1 modificador de contexto: onDark (solo aplica a ghost)
+//   - 2 tamaños:    md (default) | lg
+//   - Estados:      disabled (via aria-disabled o atributo disabled nativo)
+//
+// Ejemplos:
+//   <Button href="/arriendo" variant="primary" icon="arrow-right" iconPosition="right">
+//     Cotizar
+//   </Button>
+//   <Button type="submit" variant="primary" size="lg">Enviar solicitud</Button>
+//   <Button variant="ghost">Ver más proyectos</Button>
+//   <Button variant="ghost" onDark>Hablar con ejecutivo</Button>
+//
+// Los atributos extra (data-*, aria-*, id, etc.) se propagan al elemento.
+
+import Icon from '@/components/ui/Icon.astro';
+import type { IconName } from '@/lib/icons';
+
+export interface Props {
+  /** Si se define, renderiza <a>; si no, renderiza <button>. */
+  href?: string;
+  variant?: 'primary' | 'ghost';
+  size?: 'md' | 'lg';
+  type?: 'button' | 'submit' | 'reset';
+  /**
+   * Modificador de contexto: aplica a `ghost` cuando se renderiza sobre un
+   * fondo oscuro (hero grafito, banda CTA, etc.). No-op si variant !== 'ghost'.
+   */
+  onDark?: boolean;
+  icon?: IconName;
+  iconPosition?: 'left' | 'right';
+  iconSize?: number;
+  disabled?: boolean;
+  fullWidth?: boolean;
+  target?: string;
+  rel?: string;
+  download?: boolean | string;
+  ariaLabel?: string;
+  class?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [attr: string]: any;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
+  onDark = false,
+  icon,
+  iconPosition = 'left',
+  iconSize,
+  disabled = false,
+  fullWidth = false,
+  target,
+  rel,
+  download,
+  ariaLabel,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const classes = [
+  'btn',
+  `btn--${variant}`,
+  size === 'lg' && 'btn--lg',
+  variant === 'ghost' && onDark && 'on-dark',
+  fullWidth && 'btn--block',
+  className,
+]
+  .filter(Boolean)
+  .join(' ');
+
+// Referencia IP-Sitio-Web/.btn svg (línea 117): 18px para todos los tamaños.
+const computedIconSize = iconSize ?? 18;
+// Abrir en pestaña nueva siempre con rel seguro por defecto.
+const computedRel = target === '_blank' ? (rel ?? 'noopener noreferrer') : rel;
+---
+
+{
+  href ? (
+    <a
+      href={disabled ? undefined : href}
+      class={classes}
+      target={target}
+      rel={computedRel}
+      download={download}
+      aria-label={ariaLabel}
+      aria-disabled={disabled ? 'true' : undefined}
+      tabindex={disabled ? -1 : undefined}
+      {...rest}
+    >
+      {icon && iconPosition === 'left' && <Icon name={icon} size={computedIconSize} />}
+      <span class="btn__label"><slot /></span>
+      {icon && iconPosition === 'right' && <Icon name={icon} size={computedIconSize} />}
+    </a>
+  ) : (
+    <button type={type} class={classes} disabled={disabled} aria-label={ariaLabel} {...rest}>
+      {icon && iconPosition === 'left' && <Icon name={icon} size={computedIconSize} />}
+      <span class="btn__label"><slot /></span>
+      {icon && iconPosition === 'right' && <Icon name={icon} size={computedIconSize} />}
+    </button>
+  )
+}
+
+<style>
+  /* ── Base: idéntico a IP-Sitio-Web/styles.css líneas 102-108 ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem; /* 10px — coincide con la referencia */
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.98rem; /* ≈15.7px — referencia */
+    line-height: 1;
+    white-space: nowrap;
+    padding: 14px 26px; /* tamaño md — referencia */
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+    transition:
+      transform var(--motion-base) var(--ease-out),
+      background-color var(--motion-base) var(--ease-out),
+      color var(--motion-base) var(--ease-out),
+      border-color var(--motion-base) var(--ease-out);
+  }
+
+  .btn__label {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1.1;
+  }
+
+  /* Tamaño lg: idéntico a IP-Sitio-Web/.btn-lg (línea 116) */
+  .btn--lg {
+    padding: 17px 32px;
+    font-size: 1.05rem;
+  }
+
+  .btn--block {
+    width: 100%;
+  }
+
+  /* Estado activo: idéntico a IP-Sitio-Web/.btn:active (línea 109) */
+  .btn:active {
+    transform: translateY(1px) scale(0.99);
+  }
+
+  /* Focus visible: color de marca (coherente con foco de inputs) */
+  .btn:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+  }
+
+  /* ── Variante primary (relleno) — IP-Sitio-Web/.btn-primary (línea 110) ── */
+  .btn--primary {
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+
+  .btn--primary:hover {
+    background-color: var(--color-brand-600);
+    transform: translateY(-2px);
+  }
+
+  /* ── Variante ghost (outline) — IP-Sitio-Web/.btn-ghost (línea 112) ── */
+  .btn--ghost {
+    background-color: transparent;
+    color: var(--color-ink);
+    border-color: var(--color-line);
+  }
+
+  .btn--ghost:hover {
+    border-color: var(--color-ink);
+    transform: translateY(-2px);
+  }
+
+  /* ── Ghost sobre fondo oscuro — IP-Sitio-Web/.btn-ghost.on-dark (línea 114) ── */
+  .btn--ghost.on-dark {
+    color: var(--color-on-dark);
+    border-color: var(--color-line-dark);
+  }
+
+  .btn--ghost.on-dark:hover {
+    border-color: var(--color-on-dark);
+    background-color: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+  }
+
+  /* ── Disabled (button nativo o link con aria-disabled) ── */
+  .btn:disabled,
+  .btn[aria-disabled='true'],
+  .btn.is-disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+    transform: none;
+  }
+
+  /* El tamaño del ícono lo fija el propio <Icon> (18px por defecto, como la
+     referencia); solo evitamos que el svg lo deforme por flex. */
+  .btn :global(svg) {
+    flex-shrink: 0;
+  }
+</style>

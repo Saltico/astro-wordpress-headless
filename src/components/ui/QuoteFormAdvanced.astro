@@ -4,6 +4,7 @@
 // Inspirado en el sitio de referencia
 
 import Icon from './Icon.astro';
+import Button from './Button.astro';
 
 export interface Props {
   action?: string;
@@ -443,13 +444,19 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
   </div>
 
   <div class="qactions">
-    <button class="qsubmit qsubmit--primary" type="submit">
+    <Button type="submit" variant="primary" size="lg">
       Solicitar cotización
-    </button>
-    <a class="qsubmit qsubmit--whatsapp" href="https://wa.me/56965593202?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20solicitar%20una%20cotizaci%C3%B3n." target="_blank" rel="noopener noreferrer">
-      <Icon name="whatsapp" size={20} />
+    </Button>
+    <Button
+      href="https://wa.me/56965593202?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20solicitar%20una%20cotizaci%C3%B3n."
+      variant="ghost"
+      onDark
+      size="lg"
+      icon="whatsapp"
+      target="_blank"
+    >
       Escribir por WhatsApp
-    </a>
+    </Button>
   </div>
 </form>
 
@@ -793,46 +800,14 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
     margin: 20px 0;
   }
 
+  /* El formulario vive sobre fondo oscuro: el color de contexto blanco
+     permite que la variante secondary del Button (basada en currentColor)
+     se vea correcta sin estilos extra. */
   .qactions {
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
     justify-content: flex-start;
-  }
-
-  .qsubmit {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 16px 32px;
-    border: none;
-    border-radius: 999px;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
-  }
-
-  .qsubmit--primary {
-    background: var(--color-brand, #1a9c4a);
     color: #fff;
-  }
-
-  .qsubmit--primary:hover {
-    background: var(--color-brand-700, #15803d);
-    transform: translateY(-2px);
-  }
-
-  .qsubmit--whatsapp {
-    background: transparent;
-    color: #fff;
-    border: 1.5px solid rgba(255, 255, 255, 0.4);
-  }
-
-  .qsubmit--whatsapp:hover {
-    border-color: #fff;
-    transform: translateY(-2px);
   }
 </style>

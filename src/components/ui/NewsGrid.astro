@@ -1,32 +1,48 @@
 ---
 // src/components/ui/NewsGrid.astro
 // Grid de noticias / blog posts.
-// Accesibilidad: cada card es un link único, time semántico, alt descriptivo, aria-label.
+// Header con eyebrow + H2 + subtitle, siguiendo el patrón unificado del sitio
+// (mismo eyebrow decorado con línea, H2 con la tipografía del design system,
+// subtítulo en tono medio, alineación que se ajusta a la variante light/dark).
+// Card alineada con la maqueta IP-Sitio-Web (image + date + title + link).
+// Accesibilidad: la `<section>` se referencia con `aria-labelledby` al H2
+// para que lectores de pantalla anuncien la sección por su título visible.
 
 import type { NewsCard } from '@/lib/news';
 
 export interface Props {
   items: NewsCard[];
-  title?: string;
-  subtitle?: string;
+  eyebrow?: string;                  // ej. "Blog" / "Actualidad" / "Sigue leyendo"
+  title?: string;                    // ej. "Novedades" / "Noticias relacionadas"
+  subtitle?: string;                 // descripción debajo del H2
   columns?: 2 | 3 | 4;
   variant?: 'light' | 'dark';
   showCategory?: boolean;
   className?: string;
+  /** id estable para `aria-labelledby` en la `<section>`. Útil cuando hay varias en la misma página. */
+  headingId?: string;
 }
 
 const {
   items,
+  eyebrow,
   title,
   subtitle,
   columns = 3,
   variant = 'dark',
   showCategory = true,
   className = '',
+  headingId,
 } = Astro.props;
 
 const columnsClass = `news-grid--cols-${columns}`;
 const variantClass = `news-grid--${variant}`;
+
+// Generamos un id estable si no se pasa, para soportar `aria-labelledby` sin
+// requerir configuración manual en cada llamada.
+const resolvedHeadingId =
+  headingId ?? `news-grid-title-${Math.random().toString(36).slice(2, 9)}`;
+const hasHeader = Boolean(eyebrow || title || subtitle);
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('es-CL', {
@@ -37,11 +53,17 @@ function formatDate(iso: string): string {
 }
 ---
 
-<section class:list={['news-grid', variantClass, columnsClass, className]}>
+<section
+  class:list={['news-grid', variantClass, columnsClass, className]}
+  aria-labelledby={hasHeader && title ? resolvedHeadingId : undefined}
+>
   <div class="news-grid__container">
-    {(title || subtitle) && (
+    {hasHeader && (
       <header class="news-grid__header">
-        {title && <h2 class="news-grid__title">{title}</h2>}
+        {eyebrow && <p class="news-grid__eyebrow">{eyebrow}</p>}
+        {title && (
+          <h2 id={resolvedHeadingId} class="news-grid__title">{title}</h2>
+        )}
         {subtitle && <p class="news-grid__subtitle">{subtitle}</p>}
       </header>
     )}
@@ -66,18 +88,11 @@ function formatDate(iso: string): string {
                 />
               </div>
               <div class="news-card__body">
-                {showCategory && item.category && (
-                  <span class="news-card__category">{item.category}</span>
-                )}
+                <time datetime={item.date} class="news-card__date">
+                  {formatDate(item.date)}
+                </time>
                 <h3 class="news-card__title">{item.title}</h3>
-                <p class="news-card__excerpt">{item.excerpt}</p>
-                <div class="news-card__meta">
-                  <time datetime={item.date} class="news-card__date">
-                    {formatDate(item.date)}
-                  </time>
-                  {item.author && <span class="news-card__author">{item.author}</span>}
-                </div>
-                <span class="news-card__cta" aria-hidden="true">
+                <span class="news-card__link-cta" aria-hidden="true">
                   Leer artículo
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <path d="M5 12h14M13 5l7 7-7 7"/>
@@ -93,6 +108,7 @@ function formatDate(iso: string): string {
 </section>
 
 <style>
+  /* ── Sección ─────────────────────────────────────────────────── */
   .news-grid {
     padding-block: clamp(56px, 8vw, 100px);
   }
@@ -102,7 +118,7 @@ function formatDate(iso: string): string {
   }
 
   .news-grid--dark {
-    background-color: var(--color-surface-alt, #1a1a1a);
+    background-color: var(--color-graphite-2, #15201a);
   }
 
   .news-grid__container {
@@ -112,36 +128,83 @@ function formatDate(iso: string): string {
   }
 
   .news-grid__header {
-    text-align: center;
-    margin-bottom: clamp(36px, 5vw, 56px);
-    max-width: 60ch;
-    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: clamp(28px, 4vw, 48px);
+  }
+
+  /* Cuando la sección va en una página de detalle (noticias/[post]),
+     el layout flex-end mantiene la coherencia con los split-sections. */
+  @media (min-width: 768px) {
+    .news-grid__header {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+  }
+
+  /* Eyebrow — mismo patrón que el resto del sitio: línea decorativa
+     ::before, color de acento, mayúsculas, tracking amplio,
+     tipografía del design system. */
+  .news-grid__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .news-grid--light .news-grid__eyebrow {
+    color: var(--color-brand, #348f41);
+  }
+
+  .news-grid--dark .news-grid__eyebrow {
+    color: var(--color-brand-300, #62bb74);
+  }
+
+  .news-grid__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
   }
 
   .news-grid__title {
     font-family: var(--font-heading);
     font-weight: 800;
-    font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+    font-size: clamp(1.7rem, 3.2vw, 2.6rem);
     letter-spacing: -0.02em;
-    margin: 0 0 12px;
+    line-height: 1.12;
+    margin: 0;
+    text-wrap: balance;
   }
 
-  .news-grid--light .news-grid__title { color: var(--color-ink, #1a1a1a); }
+  .news-grid--light .news-grid__title { color: var(--color-ink, #242627); }
   .news-grid--dark .news-grid__title { color: #fff; }
 
   .news-grid__subtitle {
     margin: 0;
+    font-family: var(--font-body);
+    font-size: 1rem;
     line-height: 1.55;
-    color: var(--color-ink-500, #6b7280);
+    color: var(--color-ink-500, #6b7072);
+    max-width: 46ch;
   }
 
   .news-grid--dark .news-grid__subtitle {
-    color: rgba(255, 255, 255, 0.65);
+    color: var(--color-on-dark-muted, #9bab9f);
   }
 
   .news-grid__items {
     display: grid;
-    gap: 24px;
+    gap: 20px;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -166,10 +229,10 @@ function formatDate(iso: string): string {
     }
   }
 
-  /* ── Card ───────────────────────────────────────────────────────── */
+  /* ── Card ────────────────────────────────────────────────────── */
   .news-card {
-    background: var(--color-surface, #1a1a1a);
-    border: 1px solid var(--color-line, rgba(255, 255, 255, 0.1));
+    background: var(--color-graphite, #0d1611);
+    border: 1px solid var(--color-line-dark, rgba(255, 255, 255, 0.1));
     border-radius: 14px;
     overflow: hidden;
     height: 100%;
@@ -179,12 +242,16 @@ function formatDate(iso: string): string {
 
   .news-grid--light .news-card {
     background: var(--color-surface, #fff);
-    border-color: var(--color-line, #e5e7eb);
+    border-color: var(--color-line, #e2e4e5);
   }
 
   .news-card:hover {
     transform: translateY(-4px);
-    border-color: var(--color-brand, #1a9c4a);
+    border-color: var(--color-brand, #348f41);
+  }
+
+  .news-grid--light .news-card:hover {
+    border-color: var(--color-brand, #348f41);
   }
 
   .news-card__link {
@@ -196,15 +263,16 @@ function formatDate(iso: string): string {
   }
 
   .news-card__link:focus-visible {
-    outline: 2px solid var(--color-brand, #1a9c4a);
+    outline: 2px solid var(--color-brand, #348f41);
     outline-offset: 4px;
     border-radius: 14px;
   }
 
   .news-card__image {
+    display: block;
     aspect-ratio: 16 / 10;
     overflow: hidden;
-    background-color: var(--color-surface-alt, #2a2a2a);
+    background-color: var(--color-graphite, #0d1611);
   }
 
   .news-card__image img {
@@ -219,96 +287,58 @@ function formatDate(iso: string): string {
   }
 
   .news-card__body {
-    padding: 22px 24px 24px;
+    padding: 20px 22px 22px;
     display: flex;
     flex-direction: column;
     gap: 8px;
     flex: 1;
   }
 
-  .news-card__category {
-    display: inline-block;
-    align-self: flex-start;
-    padding: 4px 12px;
-    background: var(--color-brand-050, rgba(26, 156, 74, 0.12));
-    color: var(--color-brand-300, #4ade80);
+  /* Fecha: verde claro, mayúscula, tracking — patrón del card IP-Sitio-Web */
+  .news-card__date {
+    color: var(--color-brand-300, #62bb74);
     font-family: var(--font-heading);
+    font-weight: 700;
     font-size: 0.72rem;
-    font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    border-radius: 999px;
   }
 
-  .news-grid--light .news-card__category {
-    color: var(--color-brand, #1a9c4a);
-  }
-
+  /* Título: blanco sobre grafito, ink sobre light */
   .news-card__title {
+    color: var(--color-ink, #242627);
     font-family: var(--font-heading);
+    font-size: 1.06rem;
+    line-height: 1.25;
     font-weight: 700;
-    font-size: 1.1rem;
-    line-height: 1.3;
-    margin: 4px 0 0;
+    margin: 4px 0 12px;
+    letter-spacing: -0.005em;
   }
 
-  .news-grid--light .news-card__title { color: var(--color-ink, #1a1a1a); }
   .news-grid--dark .news-card__title { color: #fff; }
 
-  .news-card__excerpt {
-    margin: 4px 0 0;
-    font-size: 0.9rem;
-    line-height: 1.55;
-    color: var(--color-ink-500, #6b7280);
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .news-grid--dark .news-card__excerpt {
-    color: rgba(255, 255, 255, 0.65);
-  }
-
-  .news-card__meta {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    font-size: 0.78rem;
-    color: var(--color-ink-400, rgba(255, 255, 255, 0.5));
-    margin-top: 8px;
-  }
-
-  .news-card__date {
-    font-weight: 600;
-  }
-
-  .news-card__author::before {
-    content: '·';
-    margin-right: 12px;
-    color: var(--color-ink-400, rgba(255, 255, 255, 0.3));
-  }
-
-  .news-card__cta {
+  /* CTA inline: verde claro, con flecha que se desplaza en hover */
+  .news-card__link-cta {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    margin-top: 12px;
+    margin-top: auto;
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 0.85rem;
-    color: var(--color-brand-300, #4ade80);
+    font-size: 0.9rem;
+    color: var(--color-brand-300, #62bb74);
+    transition: color 0.2s var(--ease-out, ease);
   }
 
-  .news-grid--light .news-card__cta {
-    color: var(--color-brand, #1a9c4a);
+  .news-grid--light .news-card__link-cta {
+    color: var(--color-brand, #348f41);
   }
 
-  .news-card__cta svg {
+  .news-card__link-cta svg {
     transition: transform 0.2s var(--ease-out, ease);
   }
 
-  .news-card:hover .news-card__cta svg {
+  .news-card:hover .news-card__link-cta svg {
     transform: translateX(4px);
   }
 </style>

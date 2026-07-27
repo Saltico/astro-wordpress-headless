@@ -15,6 +15,8 @@
 export interface Props {
   image: string;
   imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   eyebrow?: string;
   title: string;
   subtitle?: string;
@@ -25,6 +27,8 @@ export interface Props {
 const {
   image,
   imageAlt = '',
+  imageWidth,
+  imageHeight,
   eyebrow,
   title,
   subtitle,
@@ -41,6 +45,8 @@ const hasActionsSlot = Astro.slots.has('actions');
     src={image}
     alt={imageAlt}
     class="page-hero__bg"
+    width={imageWidth}
+    height={imageHeight}
     loading="eager"
     fetchpriority="high"
   />
@@ -127,7 +133,7 @@ const hasActionsSlot = Astro.slots.has('actions');
     align-items: center;
     gap: 12px;
     color: var(--color-brand-300, #4ade80);
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.85rem;
     letter-spacing: 0.12em;
@@ -144,7 +150,7 @@ const hasActionsSlot = Astro.slots.has('actions');
 
   .page-hero__title {
     color: #ffffff;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 900;
     line-height: 1.05;
     letter-spacing: -0.02em;

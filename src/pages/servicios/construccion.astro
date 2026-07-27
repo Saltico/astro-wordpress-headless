@@ -1,15 +1,17 @@
 ---
 // src/pages/servicios/construccion.astro
 import ServiceLayout from '@/layouts/ServiceLayout.astro';
-import heroImg from '@/assets/imgs/hero.jpg';
+import servConstruccion from '@/assets/imgs/serv-construccion.jpg';
 ---
 
 <ServiceLayout
   title="Obras civiles e industriales"
   subtitle="Construcción industrial con control de calidad en cada etapa, con estándares de la gran minería."
   description="Construcción con estándares de la gran minería"
-  heroImage={heroImg.src}
-  heroImageAlt="Obras civiles e industriales"
+  heroImage={servConstruccion.src}
+  heroImageAlt="Construcción de obras civiles e industriales en faena minera, contratos EPC, IP Proyectos Industriales"
+  heroImageWidth={servConstruccion.width}
+  heroImageHeight={servConstruccion.height}
   category="Servicios · Construcción"
   includes={[
     'Contratos EPC y obras civiles.',

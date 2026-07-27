@@ -385,3 +385,44 @@ export function collectionPageSchema(name: string, url: string): Record<string, 
 export function combineSchemas(...schemas: Record<string, unknown>[]): Record<string, unknown>[] {
   return schemas;
 }
+
+export interface VideoSchemaInput {
+  name: string;
+  description: string;
+  thumbnailUrl: string;       // URL absoluta
+  contentUrl: string;          // URL absoluta
+  duration?: string;           // ISO 8601, ej 'PT15.8S'
+  width?: number;
+  height?: number;
+  uploadDate?: string;         // ISO 8601, default hoy
+}
+
+/**
+ * Genera un schema.org `VideoObject` para SEO de video.
+ * Permite a Google indexar el video y mostrarlo en resultados enriquecidos.
+ *
+ * @example
+ *   videoSchema({
+ *     name: 'IP Proyectos Industriales — Servicios de ingeniería y grúas',
+ *     description: 'Video institucional...',
+ *     thumbnailUrl: 'https://.../poster.jpg',
+ *     contentUrl: 'https://.../video.mp4',
+ *     duration: 'PT15.8S',
+ *     width: 1920,
+ *     height: 1080,
+ *   })
+ */
+export function videoSchema(input: VideoSchemaInput): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name: input.name,
+    description: input.description,
+    thumbnailUrl: input.thumbnailUrl,
+    contentUrl: input.contentUrl,
+    uploadDate: input.uploadDate ?? new Date().toISOString(),
+    ...(input.duration && { duration: input.duration }),
+    ...(input.width && { width: input.width }),
+    ...(input.height && { height: input.height }),
+  };
+}

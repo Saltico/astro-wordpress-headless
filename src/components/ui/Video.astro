@@ -1,0 +1,131 @@
+---
+// src/components/ui/Video.astro
+// Componente <video> reutilizable con SEO y best practices:
+// - autoplay/muted/loop/playsinline por defecto (móvil-friendly)
+// - poster como LCP-friendly fallback
+// - IntersectionObserver: pausa fuera del viewport
+// - Respeta prefers-reduced-motion
+// - aria-hidden por defecto (decorativo); acepta ariaLabel para contexto
+// - Sin controls (uso decorativo en hero)
+// - Soporta múltiples <source> (preparado para futuro WebM/MP4 dual)
+
+export interface VideoSource {
+  src: string;
+  type: string; // ej 'video/mp4', 'video/webm'
+}
+
+export interface Props {
+  src: string;
+  poster?: string;
+  sources?: VideoSource[];
+  width?: number;
+  height?: number;
+  autoplay?: boolean;
+  muted?: boolean;
+  loop?: boolean;
+  playsinline?: boolean;
+  preload?: 'none' | 'metadata' | 'auto';
+  class?: string;
+  ariaLabel?: string;
+  ariaHidden?: boolean;
+  respectReducedMotion?: boolean;
+}
+
+const {
+  src,
+  poster,
+  sources,
+  width = 1920,
+  height = 1080,
+  autoplay = true,
+  muted = true,
+  loop = true,
+  playsinline = true,
+  preload = 'metadata',
+  class: className,
+  ariaLabel,
+  ariaHidden = true,
+  respectReducedMotion = true,
+} = Astro.props;
+
+// Si hay ariaLabel, NO marcar como aria-hidden
+const shouldHide = ariaLabel ? false : ariaHidden;
+---
+
+<video
+  class:list={['ui-video', className]}
+  width={width}
+  height={height}
+  poster={poster}
+  preload={preload}
+  autoplay={autoplay}
+  muted={muted}
+  loop={loop}
+  playsinline={playsinline}
+  aria-hidden={shouldHide ? 'true' : undefined}
+  aria-label={ariaLabel}
+  data-respect-motion={respectReducedMotion ? 'true' : 'false'}
+>
+  {sources && sources.length > 0 ? (
+    sources.map((s) => <source src={s.src} type={s.type} />)
+  ) : (
+    <source src={src} type="video/mp4" />
+  )}
+</video>
+
+<script>
+  // Pausa con IntersectionObserver + respeto a prefers-reduced-motion
+  // Este script se ejecuta una vez por página, observando todos los <video> con class="ui-video"
+  (function initUiVideos() {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+
+    const videos = document.querySelectorAll<HTMLVideoElement>('video.ui-video');
+    if (videos.length === 0) return;
+
+    // Detectar prefers-reduced-motion una sola vez
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const reducedMotion = motionQuery.matches;
+
+    // Si el navegador no soporta IntersectionObserver, no pausamos (deja autoplay nativo)
+    if (!('IntersectionObserver' in window)) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target as HTMLVideoElement;
+          const respectMotion = video.dataset.respectMotion === 'true';
+
+          if (entry.isIntersecting) {
+            // Reproducir solo si no hay reduced-motion o si no se respeta
+            if (!respectMotion || !reducedMotion) {
+              // .play() devuelve Promise; ignorar errores de autoplay policy
+              video.play().catch(() => {
+                /* usuario aún no interactuó; ignore */
+              });
+            }
+          } else {
+            video.pause();
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    videos.forEach((v) => observer.observe(v));
+
+    // Si cambia la preferencia de motion en caliente, recargar el flag
+    motionQuery.addEventListener?.('change', () => {
+      // Re-evaluar; cada video ya está observado y decide en cada intersection
+      // No hace falta re-observar
+    });
+  })();
+</script>
+
+<style>
+  .ui-video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

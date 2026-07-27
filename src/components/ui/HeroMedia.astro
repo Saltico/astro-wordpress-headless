@@ -1,0 +1,114 @@
+---
+// src/components/ui/HeroMedia.astro
+// Wrapper para el medio de fondo del hero.
+// - Si hay videoSrc: renderiza <Video> con poster como fallback LCP-friendly.
+// - Si no: renderiza <img> estática.
+// El contenedor padre (la página) controla el tamaño/positioning con CSS.
+
+import Video from './Video.astro';
+
+export interface Props {
+  videoSrc?: string;
+  videoPoster?: string;
+  videoSources?: Array<{ src: string; type: string }>;
+  fallbackImage?: string;       // URL de imagen (usado si no hay video, o como fallback siempre)
+  fallbackAlt: string;
+  fallbackWidth?: number;
+  fallbackHeight?: number;
+  class?: string;
+  videoClass?: string;
+  imgClass?: string;
+  respectReducedMotion?: boolean;
+  videoAriaLabel?: string;
+}
+
+const {
+  videoSrc,
+  videoPoster,
+  videoSources,
+  fallbackImage,
+  fallbackAlt,
+  fallbackWidth,
+  fallbackHeight,
+  class: className,
+  videoClass,
+  imgClass,
+  respectReducedMotion = true,
+  videoAriaLabel,
+} = Astro.props;
+
+const hasVideo = !!(videoSrc && (videoPoster || videoSources));
+---
+
+{hasVideo ? (
+  <div class:list={['hero-media', className]}>
+    <Video
+      src={videoSrc!}
+      poster={videoPoster}
+      sources={videoSources}
+      class={videoClass ?? 'hero-media__video'}
+      ariaLabel={videoAriaLabel ?? 'Video institucional de fondo del hero'}
+      respectReducedMotion={respectReducedMotion}
+    />
+    {fallbackImage && (
+      <img
+        src={fallbackImage}
+        alt={fallbackAlt}
+        width={fallbackWidth}
+        height={fallbackHeight}
+        class:list={['hero-media__fallback', imgClass]}
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+        aria-hidden="true"
+      />
+    )}
+  </div>
+) : fallbackImage ? (
+  <img
+    src={fallbackImage}
+    alt={fallbackAlt}
+    width={fallbackWidth}
+    height={fallbackHeight}
+    class:list={['hero-media__image', imgClass]}
+    loading="eager"
+    fetchpriority="high"
+    decoding="async"
+  />
+) : null}
+
+<style>
+  .hero-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .hero-media :global(.hero-media__video) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .hero-media__fallback {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
+
+  .hero-media__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+</style>

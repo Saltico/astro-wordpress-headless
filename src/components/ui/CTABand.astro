@@ -1,9 +1,12 @@
 ---
 // src/components/ui/CTABand.astro
-// Sección CTA con imagen de fondo
-// Altamente configurable para reutilización en plantillas
+// Sección CTA con imagen de fondo, totalmente configurable.
+// Header con eyebrow + H2 + subtitle (mismo patrón que el resto del sitio).
+// Soporta botones CTA (primary/secondary/outline) y/o formulario cotizador
+// embebido. Botones con icono opcional, `external` abre en nueva pestaña
+// con rel="noopener" y el aria-label describe el destino.
 
-import Icon from './Icon.astro';
+import Button from './Button.astro';
 import QuoteFormAdvanced from './QuoteFormAdvanced.astro';
 import type { IconName } from '@/lib/icons';
 
@@ -13,14 +16,18 @@ export interface CTAButton {
   variant?: 'primary' | 'secondary' | 'outline';
   icon?: IconName;
   external?: boolean;
+  ariaLabel?: string;
 }
 
 export interface Props {
   title: string;
   subtitle?: string;
   eyebrow?: string;
+  buttons?: CTAButton[];
   backgroundImage?: string;
   backgroundAlt?: string;
+  backgroundWidth?: number;
+  backgroundHeight?: number;
   showForm?: boolean;
   formAction?: string;
   preselectedServices?: string[];
@@ -34,8 +41,11 @@ const {
   title,
   subtitle,
   eyebrow,
+  buttons = [],
   backgroundImage,
   backgroundAlt = '',
+  backgroundWidth,
+  backgroundHeight,
   showForm = false,
   formAction,
   preselectedServices = [],
@@ -66,6 +76,8 @@ const alignClasses = {
       src={backgroundImage}
       alt={backgroundAlt}
       class="cta-band__background"
+      width={backgroundWidth}
+      height={backgroundHeight}
       loading="lazy"
       decoding="async"
     />
@@ -74,10 +86,29 @@ const alignClasses = {
 
   <div class="cta-band__container">
     {eyebrow && <p class="cta-band__eyebrow">{eyebrow}</p>}
-    
+
     <h2 class="cta-band__title">{title}</h2>
-    
+
     {subtitle && <p class="cta-band__subtitle">{subtitle}</p>}
+
+    {buttons.length > 0 && (
+      <div class="cta-band__buttons">
+        {buttons.map((btn) => (
+          <Button
+            href={btn.href}
+            variant={btn.variant === 'primary' ? 'primary' : 'ghost'}
+            onDark={btn.variant !== 'primary'}
+            size="lg"
+            icon={btn.icon}
+            iconPosition="right"
+            ariaLabel={btn.ariaLabel ?? btn.label}
+            target={btn.external ? '_blank' : undefined}
+          >
+            {btn.label}
+          </Button>
+        ))}
+      </div>
+    )}
 
     {showForm && (
       <div class="cta-band__form">
@@ -178,12 +209,12 @@ const alignClasses = {
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.8rem;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--color-brand-300, #4ade80);
+    color: var(--color-brand-300, #62bb74);
     margin-bottom: 20px;
   }
 
@@ -196,7 +227,7 @@ const alignClasses = {
 
   /* Title */
   .cta-band__title {
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 900;
     font-size: clamp(2rem, 5vw, 3.6rem);
     letter-spacing: -0.03em;
@@ -212,6 +243,7 @@ const alignClasses = {
 
   /* Subtitle */
   .cta-band__subtitle {
+    font-family: var(--font-body);
     font-size: clamp(1rem, 1.5vw, 1.2rem);
     color: rgba(255, 255, 255, 0.8);
     max-width: 60ch;
@@ -233,58 +265,15 @@ const alignClasses = {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   }
 
-  /* Buttons */
+  /* Buttons — el color blanco de contexto permite que la variante
+     secondary del Button unificado (basada en currentColor) se vea
+     correcta sobre la banda oscura. */
   .cta-band__buttons {
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
     margin-top: 26px;
-  }
-
-  .cta-band__btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
-    font-weight: 700;
-    font-size: 1rem;
-    padding: 16px 30px;
-    border-radius: 999px;
-    text-decoration: none;
-    transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
-  }
-
-  .cta-band__btn--primary {
-    background: var(--color-brand, #1a9c4a);
     color: #fff;
-  }
-
-  .cta-band__btn--primary:hover {
-    background: var(--color-brand-700, #15803d);
-    transform: translateY(-2px);
-  }
-
-  .cta-band__btn--secondary {
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-    border: 1.5px solid rgba(255, 255, 255, 0.3);
-  }
-
-  .cta-band__btn--secondary:hover {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: translateY(-2px);
-  }
-
-  .cta-band__btn--outline {
-    background: transparent;
-    color: #fff;
-    border: 1.5px solid rgba(255, 255, 255, 0.4);
-  }
-
-  .cta-band__btn--outline:hover {
-    border-color: #fff;
-    transform: translateY(-2px);
   }
 
   @media (max-width: 640px) {
@@ -295,10 +284,6 @@ const alignClasses = {
 
     .cta-band--center .cta-band__buttons {
       align-items: center;
-    }
-
-    .cta-band__btn {
-      justify-content: center;
     }
   }
 </style>

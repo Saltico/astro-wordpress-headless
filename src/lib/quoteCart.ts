@@ -9,7 +9,6 @@ import type {
   QuoteCartItemCustomization,
 } from '@/types/quote';
 import {
-  QUOTE_CART_MAX_ITEMS,
   QUOTE_CART_STORAGE_KEY,
   QUOTE_ITEM_MAX_QUANTITY,
   QUOTE_PERIOD_MAX_COUNT,
@@ -222,7 +221,7 @@ export function subscribe(callback: (cart: QuoteCart) => void): () => void {
 /** Resultado de mutación. */
 export interface MutationResult {
   ok: boolean;
-  reason?: 'max_items' | 'not_found' | 'invalid' | 'storage_unavailable';
+  reason?: 'not_found' | 'invalid' | 'storage_unavailable';
 }
 
 /** Limpia el carrito. */
@@ -299,9 +298,6 @@ export function addItem(equipment: Equipment, sourceUrl: string): MutationResult
       return { ok: false, reason: 'invalid' };
     }
     return updateItem(existing.lineId, { quantity: next });
-  }
-  if (current.items.length >= QUOTE_CART_MAX_ITEMS) {
-    return { ok: false, reason: 'max_items' };
   }
   const location = equipmentToLocation(equipment.slug);
   const now = new Date().toISOString();

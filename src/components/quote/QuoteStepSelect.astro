@@ -1,0 +1,726 @@
+---
+// src/components/quote/QuoteStepSelect.astro
+// Paso 1 del wizard: selector de equipos + líneas del carrito + resumen.
+// Extraído de src/pages/cotizador.astro para mantener la página limpia.
+
+import EquipmentPicker from '@/components/quote/EquipmentPicker.astro';
+import QuoteCartSummary from '@/components/quote/QuoteCartSummary.astro';
+import Icon from '@/components/ui/Icon.astro';
+---
+
+<div class="quote-page__columns">
+  <aside class="quote-page__col quote-page__col--picker" aria-label="Buscador de equipos">
+    <EquipmentPicker />
+  </aside>
+
+  <div class="quote-page__col quote-page__col--cart">
+    <div class="quote-page__empty" data-quote-empty hidden>
+      <span class="quote-page__empty-icon" aria-hidden="true">
+        <Icon name="cart" size={40} />
+      </span>
+      <h2>Tu cotizador está vacío</h2>
+      <p>
+        Usa el buscador para descubrir y agregar equipos al cotizador.
+      </p>
+    </div>
+
+    <div class="quote-page__lines" data-quote-lines hidden>
+      {/* Hydrated from localStorage on the client */}
+    </div>
+
+    <div class="quote-page__summary" data-quote-summary-wrapper hidden>
+      <QuoteCartSummary variant="wizard" />
+    </div>
+  </div>
+</div>
+
+<script>
+  import { getCart, subscribe, updateItem, removeItem, clearCart, initStorageSync } from '@/lib/quoteCart';
+  import { QUOTE_ITEM_MAX_QUANTITY, QUOTE_PERIOD_MAX_COUNT, type QuoteCartItem } from '@/types/quote';
+  import { RENTAL_CATEGORIES } from '@/data/rental';
+
+  const linesEl = document.querySelector<HTMLElement>('[data-quote-lines]');
+  const emptyEl = document.querySelector<HTMLElement>('[data-quote-empty]');
+  const summaryWrapper = document.querySelector<HTMLElement>('[data-quote-summary-wrapper]');
+
+  const CHEVRON_DOWN_SVG =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+
+  const SHORT_DESC_BY_SLUG = new Map<string, string>();
+  for (const cat of RENTAL_CATEGORIES) {
+    for (const sub of cat.subcategories) {
+      for (const eq of sub.catalog) {
+        SHORT_DESC_BY_SLUG.set(eq.slug, eq.shortDesc);
+      }
+    }
+  }
+
+  function findShortDesc(slug: string, fallback: string): string {
+    return SHORT_DESC_BY_SLUG.get(slug) ?? fallback;
+  }
+
+  function todayIso(): string {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function escapeHtml(s: string): string {
+    return s.replace(/[&<>"']/g, (ch) => {
+      const map: Record<string, string> = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      };
+      return map[ch] ?? ch;
+    });
+  }
+
+  function debounce<T extends (...args: never[]) => void>(fn: T, ms: number): T {
+    let t: ReturnType<typeof setTimeout> | null = null;
+    return ((...args: Parameters<T>) => {
+      if (t) clearTimeout(t);
+      t = setTimeout(() => fn(...args), ms);
+    }) as T;
+  }
+
+  function clamp(value: number, min: number, max: number): number {
+    if (Number.isNaN(value)) return min;
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function renderLine(item: QuoteCartItem): string {
+    const c = item.customization;
+    const safeId = escapeHtml(item.lineId);
+    const safeName = escapeHtml(item.name);
+    const meta = [item.capacity, item.height].filter(Boolean).join(' · ');
+    const safeDesc = escapeHtml(findShortDesc(item.equipmentSlug, meta));
+    const safeNotes = escapeHtml(c.notes ?? '');
+    const safeAddress = escapeHtml(c.transportAddress ?? '');
+    const minStart = todayIso();
+    const panelId = `line-panel-${safeId}`;
+    const toggleId = `line-toggle-${safeId}`;
+    return `
+      <article class="quote-line" data-line-id="${safeId}">
+        <header class="quote-line__head">
+          <img src="${escapeHtml(item.image)}" alt="${safeName}" class="quote-line__thumb" loading="lazy" />
+          <div class="quote-line__heading">
+            <h3 class="quote-line__name">${safeName}</h3>
+            <p class="quote-line__desc">${safeDesc}</p>
+          </div>
+          <div class="quote-line__head-actions">
+            <button
+              id="${toggleId}"
+              type="button"
+              class="quote-line__toggle"
+              data-line-action="toggle"
+              data-line-id="${safeId}"
+              aria-expanded="false"
+              aria-controls="${panelId}"
+              aria-label="Ver detalles de ${safeName}"
+            >${CHEVRON_DOWN_SVG}</button>
+            <button
+              type="button"
+              class="quote-line__remove"
+              data-line-action="remove"
+              data-line-id="${safeId}"
+              aria-label="Quitar ${safeName} del cotizador"
+            ><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+          </div>
+        </header>
+        <div class="quote-line__panel" id="${panelId}" role="region" aria-labelledby="${toggleId}" hidden>
+          <div class="quote-line__panel-inner">
+            <div class="quote-line__grid">
+              <div class="quote-line__field">
+                <label>Cantidad</label>
+                <div class="quote-line__stepper">
+                  <button type="button" class="quote-line__step" data-line-action="dec" data-line-id="${safeId}" aria-label="Disminuir cantidad">−</button>
+                  <input type="number" min="1" max="50" step="1" value="${c.quantity}" data-line-action="qty" data-line-id="${safeId}" inputmode="numeric" />
+                  <button type="button" class="quote-line__step" data-line-action="inc" data-line-id="${safeId}" aria-label="Aumentar cantidad">+</button>
+                </div>
+              </div>
+              <div class="quote-line__field">
+                <label>Tipo de periodo</label>
+                <select data-line-action="periodType" data-line-id="${safeId}">
+                  <option value="diario" ${c.periodType === 'diario' ? 'selected' : ''}>Diario</option>
+                  <option value="semanal" ${c.periodType === 'semanal' ? 'selected' : ''}>Semanal</option>
+                  <option value="mensual" ${c.periodType === 'mensual' ? 'selected' : ''}>Mensual</option>
+                </select>
+              </div>
+              <div class="quote-line__field">
+                <label>Cantidad de periodos</label>
+                <input type="number" min="1" max="365" step="1" value="${c.periodCount}" data-line-action="periodCount" data-line-id="${safeId}" inputmode="numeric" />
+              </div>
+              <div class="quote-line__field">
+                <label>Fecha de inicio</label>
+                <input type="date" min="${minStart}" value="${c.startDate}" data-line-action="startDate" data-line-id="${safeId}" />
+              </div>
+              <div class="quote-line__field quote-line__field--full">
+                <label>Notas del equipo (opcional)</label>
+                <textarea rows="2" maxlength="280" placeholder="Información específica de este equipo…" data-line-action="notes" data-line-id="${safeId}">${safeNotes}</textarea>
+              </div>
+              <div class="quote-line__field quote-line__field--full">
+                <fieldset class="quote-line__transport-group">
+                  <legend>Traslado a la faena</legend>
+                  <div class="quote-line__radio-row">
+                    <label class="quote-line__radio">
+                      <input type="radio" name="transport-${safeId}" value="no" ${c.transport === 'no' ? 'checked' : ''} data-line-action="transport" data-line-id="${safeId}" />
+                      <span>No</span>
+                    </label>
+                    <label class="quote-line__radio">
+                      <input type="radio" name="transport-${safeId}" value="si" ${c.transport === 'si' ? 'checked' : ''} data-line-action="transport" data-line-id="${safeId}" />
+                      <span>Sí</span>
+                    </label>
+                  </div>
+                </fieldset>
+                <input type="text" placeholder="Dirección de entrega" value="${safeAddress}" data-line-action="transportAddress" data-line-id="${safeId}" ${c.transport === 'si' ? '' : 'disabled'} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  const openLineIds = new Set<string>();
+  let lastRenderedLineIds: string[] = [];
+
+  function setLinePanelOpen(
+    article: HTMLElement,
+    panel: HTMLElement,
+    toggleBtn: HTMLButtonElement,
+    isOpen: boolean,
+  ): void {
+    const lineId = article.dataset.lineId;
+    const nameEl = article.querySelector<HTMLElement>('.quote-line__name');
+    const name = nameEl?.textContent?.trim() || 'este equipo';
+    if (isOpen) {
+      panel.removeAttribute('hidden');
+      toggleBtn.setAttribute('aria-expanded', 'true');
+      toggleBtn.setAttribute('aria-label', `Ocultar detalles de ${name}`);
+      if (lineId) openLineIds.add(lineId);
+    } else {
+      panel.setAttribute('hidden', '');
+      toggleBtn.setAttribute('aria-expanded', 'false');
+      toggleBtn.setAttribute('aria-label', `Ver detalles de ${name}`);
+      if (lineId) openLineIds.delete(lineId);
+    }
+  }
+
+  function restoreOpenState(): void {
+    for (const id of openLineIds) {
+      const article = document.querySelector<HTMLElement>(`[data-line-id="${id}"]`);
+      if (!article) continue;
+      const panel = article.querySelector<HTMLElement>('.quote-line__panel');
+      const toggleBtn = article.querySelector<HTMLButtonElement>('[data-line-action="toggle"]');
+      if (panel && toggleBtn && panel.hasAttribute('hidden')) {
+        setLinePanelOpen(article, panel, toggleBtn, true);
+      }
+    }
+  }
+
+  function render(): void {
+    if (!linesEl || !emptyEl || !summaryWrapper) return;
+    const cart = getCart();
+    const empty = cart.items.length === 0;
+    emptyEl.hidden = !empty;
+    linesEl.hidden = empty;
+    summaryWrapper.hidden = empty;
+    const topbarClear = document.querySelector<HTMLButtonElement>('[data-quote-clear-top]');
+    if (topbarClear) topbarClear.hidden = empty;
+    if (empty) {
+      linesEl.innerHTML = '';
+      lastRenderedLineIds = [];
+      openLineIds.clear();
+      return;
+    }
+    const newLineIds = cart.items.map((i) => i.lineId);
+    const structureChanged =
+      newLineIds.length !== lastRenderedLineIds.length ||
+      newLineIds.some((id, idx) => lastRenderedLineIds[idx] !== id);
+    if (structureChanged) {
+      linesEl.innerHTML = cart.items.map((item) => renderLine(item)).join('');
+      linesEl.querySelectorAll<HTMLElement>('[data-line-id]').forEach(attachLineHandlers);
+      lastRenderedLineIds = newLineIds;
+    }
+    restoreOpenState();
+  }
+
+  function attachLineHandlers(article: HTMLElement): void {
+    const lineId = article.dataset.lineId;
+    if (!lineId) return;
+    const panel = article.querySelector<HTMLElement>(`#line-panel-${lineId}`);
+
+    const toggleBtn = article.querySelector<HTMLButtonElement>('[data-line-action="toggle"]');
+    if (toggleBtn && panel) {
+      toggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isOpen = !panel.hasAttribute('hidden');
+        setLinePanelOpen(article, panel, toggleBtn, !isOpen);
+      });
+    }
+
+    const removeBtn = article.querySelector<HTMLButtonElement>('[data-line-action="remove"]');
+    if (removeBtn) {
+      removeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        removeItem(lineId);
+      });
+    }
+
+    const qtyInput = article.querySelector<HTMLInputElement>('[data-line-action="qty"]');
+    const setQty = (next: number) => {
+      const clamped = clamp(next, 1, QUOTE_ITEM_MAX_QUANTITY);
+      if (qtyInput) qtyInput.value = String(clamped);
+      updateItem(lineId, { quantity: clamped });
+    };
+    article.querySelector<HTMLButtonElement>('[data-line-action="inc"]')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      setQty((Number(qtyInput?.value) || 1) + 1);
+    });
+    article.querySelector<HTMLButtonElement>('[data-line-action="dec"]')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      setQty((Number(qtyInput?.value) || 1) - 1);
+    });
+    if (qtyInput) {
+      qtyInput.addEventListener('input', () => setQty(Number(qtyInput.value)));
+    }
+
+    const periodType = article.querySelector<HTMLSelectElement>('[data-line-action="periodType"]');
+    if (periodType) {
+      periodType.addEventListener('change', () => {
+        const v = periodType.value;
+        if (v === 'diario' || v === 'semanal' || v === 'mensual') {
+          updateItem(lineId, { periodType: v });
+        }
+      });
+    }
+
+    const periodCount = article.querySelector<HTMLInputElement>('[data-line-action="periodCount"]');
+    if (periodCount) {
+      const apply = (v: number) => {
+        const clamped = clamp(v, 1, QUOTE_PERIOD_MAX_COUNT);
+        if (String(clamped) !== periodCount.value) periodCount.value = String(clamped);
+        updateItem(lineId, { periodCount: clamped });
+      };
+      periodCount.addEventListener('input', () => apply(Number(periodCount.value)));
+    }
+
+    const startDate = article.querySelector<HTMLInputElement>('[data-line-action="startDate"]');
+    if (startDate) {
+      startDate.addEventListener('change', () => {
+        updateItem(lineId, { startDate: startDate.value });
+      });
+    }
+
+    const notes = article.querySelector<HTMLTextAreaElement>('[data-line-action="notes"]');
+    if (notes) {
+      const apply = debounce((v: string) => updateItem(lineId, { notes: v }), 200);
+      notes.addEventListener('input', () => apply(notes.value));
+    }
+
+    article.querySelectorAll<HTMLInputElement>('[data-line-action="transport"]').forEach((radio) => {
+      radio.addEventListener('change', () => {
+        const v = radio.value;
+        if (v === 'si' || v === 'no') {
+          const addressInput = article.querySelector<HTMLInputElement>('[data-line-action="transportAddress"]');
+          if (addressInput) addressInput.disabled = v !== 'si';
+          updateItem(lineId, { transport: v });
+        }
+      });
+    });
+
+    const transportAddress = article.querySelector<HTMLInputElement>('[data-line-action="transportAddress"]');
+    if (transportAddress) {
+      const apply = debounce((v: string) => updateItem(lineId, { transportAddress: v }), 200);
+      transportAddress.addEventListener('input', () => apply(transportAddress.value));
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initStorageSync();
+    render();
+    subscribe(render);
+
+    const topbarClear = document.querySelector<HTMLButtonElement>('[data-quote-clear-top]');
+    if (topbarClear) {
+      topbarClear.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!confirm('¿Vaciar todo el cotizador? Esta acción no se puede deshacer.')) return;
+        clearCart();
+      });
+    }
+  });
+</script>
+
+<style>
+  /* ── Layout 2 columnas: izquierda = buscador, derecha = cotizador ──
+     Punto de anclaje sticky: siempre DEBAJO del stepper del wizard.
+     --quote-wizard-nav-h la publica QuoteWizard midiendo su nav real,
+     así el stepper permanece visible sin tapar nunca las cards. */
+  .quote-page__columns {
+    --quote-sticky-top: calc(
+      var(--header-height, 5rem) + var(--quote-wizard-nav-h, 4.5rem) + var(--space-6)
+    );
+
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  @media (min-width: 1024px) {
+    .quote-page__columns {
+      grid-template-columns: minmax(0, 1fr) clamp(320px, 32vw, 420px);
+      gap: var(--space-8);
+    }
+  }
+
+  .quote-page__col {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  /* En desktop el carrito es sticky bajo el stepper para que quede visible
+     mientras el usuario recorre la lista de equipos. Su z-index es menor
+     que el del nav del wizard (30): siempre queda debajo. */
+  @media (min-width: 1024px) {
+    .quote-page__col--cart {
+      position: sticky;
+      top: var(--quote-sticky-top);
+      z-index: 10;
+    }
+
+    /* El carrito scrollea internamente solo si supera la altura visible. */
+    .quote-page__col--cart {
+      max-height: calc(100vh - var(--quote-sticky-top) - var(--space-4));
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-line) transparent;
+      /* Espacio para que los focus-ring de los inputs no se recorten. */
+      padding: var(--space-1);
+      margin: calc(-1 * var(--space-1));
+    }
+
+    .quote-page__col--cart::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .quote-page__col--cart::-webkit-scrollbar-thumb {
+      background-color: var(--color-line);
+      border-radius: var(--radius-pill);
+    }
+  }
+
+  .quote-page__empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    background-color: var(--color-surface, #fff);
+    border: 1px solid var(--color-line, #e2e4e5);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .quote-page__empty[hidden] {
+    display: none;
+  }
+
+  .quote-page__empty-icon {
+    display: inline-flex;
+    color: var(--color-brand, #348f41);
+  }
+
+  .quote-page__empty h2 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    color: var(--color-ink, #242627);
+  }
+
+  .quote-page__empty p {
+    margin: 0;
+    color: var(--color-ink-700, #3a3d3e);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .quote-page__lines {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .quote-page__summary {
+    margin-top: 1.5rem;
+  }
+
+  :global(.quote-line) {
+    background-color: var(--color-surface, #fff);
+    border: 1px solid var(--color-line, #e2e4e5);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: border-color 0.15s var(--ease-out, ease),
+      box-shadow 0.15s var(--ease-out, ease);
+  }
+
+  :global(.quote-line:hover) {
+    border-color: rgba(52, 143, 65, 0.35);
+  }
+
+  :global(.quote-line__head) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px 10px 14px;
+  }
+
+  :global(.quote-line__thumb) {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 8px;
+    background-color: var(--color-graphite, #0d1611);
+    flex-shrink: 0;
+  }
+
+  :global(.quote-line__heading) {
+    flex: 1;
+    min-width: 0;
+  }
+
+  :global(.quote-line__name) {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-ink, #242627);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  :global(.quote-line__desc) {
+    margin: 2px 0 0;
+    font-size: 0.78rem;
+    color: var(--color-ink-700, #3a3d3e);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  :global(.quote-line__head-actions) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  :global(.quote-line__toggle),
+  :global(.quote-line__remove) {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-line, #e2e4e5);
+    background-color: transparent;
+    color: var(--color-ink-700, #3a3d3e);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    transition: background-color 0.15s var(--ease-out, ease),
+      color 0.15s var(--ease-out, ease),
+      border-color 0.15s var(--ease-out, ease);
+  }
+
+  :global(.quote-line__toggle svg),
+  :global(.quote-line__remove svg) {
+    transition: transform 0.2s var(--ease-out, ease);
+  }
+
+  :global(.quote-line__toggle:hover),
+  :global(.quote-line__toggle:focus-visible) {
+    color: var(--color-brand, #348f41);
+    border-color: var(--color-brand, #348f41);
+  }
+
+  :global(.quote-line__toggle[aria-expanded='true']) {
+    color: var(--color-brand, #348f41);
+    border-color: var(--color-brand, #348f41);
+    background-color: rgba(52, 143, 65, 0.08);
+  }
+
+  :global(.quote-line__toggle[aria-expanded='true'] svg) {
+    transform: rotate(180deg);
+  }
+
+  :global(.quote-line__toggle:focus-visible),
+  :global(.quote-line__remove:focus-visible) {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+
+  :global(.quote-line__remove:hover),
+  :global(.quote-line__remove:focus-visible) {
+    color: #fff;
+    background-color: var(--color-danger, #c0392b);
+    border-color: var(--color-danger, #c0392b);
+  }
+
+  :global(.quote-line__panel[hidden]) {
+    display: none;
+  }
+
+  :global(.quote-line__panel-inner) {
+    padding: 4px 16px 18px;
+    border-top: 1px solid var(--color-line, #e2e4e5);
+    background-color: var(--color-surface-alt, #f6f7f8);
+  }
+
+  :global(.quote-line__grid) {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+    padding-top: 14px;
+  }
+
+  @media (min-width: 640px) {
+    :global(.quote-line__grid) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  :global(.quote-line__field) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  :global(.quote-line__field--full) {
+    grid-column: 1 / -1;
+  }
+
+  :global(.quote-line__field label),
+  :global(.quote-line__transport-group legend) {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-700, #3a3d3e);
+  }
+
+  :global(.quote-line__field input),
+  :global(.quote-line__field select),
+  :global(.quote-line__field textarea) {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--color-ink, #242627);
+    background-color: var(--color-surface, #fff);
+    border: 1px solid var(--color-line, #e2e4e5);
+    border-radius: 8px;
+    padding: 0.55rem 0.625rem;
+  }
+
+  :global(.quote-line__field input:focus),
+  :global(.quote-line__field select:focus),
+  :global(.quote-line__field textarea:focus) {
+    outline: 2px solid var(--color-brand, #348f41);
+    outline-offset: 2px;
+    border-color: var(--color-brand, #348f41);
+  }
+
+  :global(.quote-line__field input:disabled) {
+    background-color: var(--color-surface-alt, #f6f7f8);
+    color: var(--color-ink-500, #6b7072);
+  }
+
+  :global(.quote-line__stepper) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem;
+  }
+
+  :global(.quote-line__step) {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-surface, #fff);
+    color: var(--color-ink, #242627);
+    border: 1px solid var(--color-line, #e2e4e5);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  :global(.quote-line__step:hover),
+  :global(.quote-line__step:focus-visible) {
+    background-color: var(--color-brand, #348f41);
+    color: #fff;
+    border-color: var(--color-brand, #348f41);
+  }
+
+  :global(.quote-line__stepper input) {
+    width: 3.5rem;
+    text-align: center;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    font-weight: 700;
+  }
+
+  :global(.quote-line__stepper input:focus) {
+    outline: 2px solid var(--color-brand, #348f41);
+    border-radius: 4px;
+  }
+
+  :global(.quote-line__transport-group) {
+    border: none;
+    padding: 0;
+    margin: 0 0 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  :global(.quote-line__radio-row) {
+    display: inline-flex;
+    gap: 0.75rem;
+  }
+
+  :global(.quote-line__radio) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--color-ink, #242627);
+  }
+
+  :global(.quote-line__radio input) {
+    accent-color: var(--color-brand, #348f41);
+  }
+</style>

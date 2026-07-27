@@ -1,12 +1,19 @@
 ---
 // src/components/quote/QuoteCartSummary.astro
-// Resumen + notas globales + acciones finales (Limpiar / WhatsApp).
+// Resumen + notas globales + acciones finales (Limpiar / WhatsApp / Continuar).
 // La data se hidrata en cliente desde getCart().
 
-import Icon from '@/components/ui/Icon.astro';
+import Button from '@/components/ui/Button.astro';
+
+export interface Props {
+  variant?: 'default' | 'wizard';
+}
+
+const { variant = 'default' } = Astro.props;
+const isWizard = variant === 'wizard';
 ---
 
-<section class="quote-summary" data-quote-summary aria-live="polite">
+<section class="quote-summary" data-quote-summary aria-live="polite" data-summary-variant={variant}>
   <h2 class="quote-summary__title">Resumen</h2>
   <dl class="quote-summary__list">
     <div class="quote-summary__row">
@@ -43,30 +50,49 @@ import Icon from '@/components/ui/Icon.astro';
   </div>
 
   <div class="quote-summary__actions">
-    <button
+    <Button
       type="button"
-      class="quote-summary__clear"
+      variant="ghost"
+      icon="close"
       data-quote-action="clear"
     >
-      <Icon name="close" size={14} />
       Limpiar cotizador
-    </button>
-    <a
-      href="#"
-      class="quote-summary__whatsapp"
-      data-quote-action="whatsapp"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <Icon name="whatsapp" size={18} />
-      Enviar por WhatsApp
-    </a>
+    </Button>
+    {!isWizard && (
+      <Button
+        href="#"
+        variant="primary"
+        icon="whatsapp"
+        data-quote-action="whatsapp"
+        target="_blank"
+      >
+        Enviar por WhatsApp
+      </Button>
+    )}
+    {isWizard && (
+      <Button
+        type="button"
+        variant="primary"
+        icon="arrow-right"
+        iconPosition="right"
+        data-quote-wizard-next
+        disabled
+      >
+        Continuar
+      </Button>
+    )}
   </div>
 </section>
 
 <script>
   import { clearCart, getCart, subscribe } from '@/lib/quoteCart';
   import { buildWhatsAppUrl, computeCartTotals } from '@/lib/quoteMessage';
+  import {
+    getGlobalNotes,
+    setGlobalNotes,
+    subscribeGlobalNotes,
+    initGlobalNotesStorageSync,
+  } from '@/lib/quoteGlobalNotes';
 
   function setText(selector: string, value: string): void {
     const el = document.querySelector<HTMLElement>(`[data-quote-stat="${selector}"]`);
@@ -93,6 +119,13 @@ import Icon from '@/components/ui/Icon.astro';
         wa.href = buildWhatsAppUrl(cart);
       }
     }
+
+    const nextBtn = document.querySelector<HTMLButtonElement>('[data-quote-wizard-next]');
+    if (nextBtn) {
+      const hasItems = cart.items.length > 0;
+      nextBtn.disabled = !hasItems;
+      nextBtn.setAttribute('aria-disabled', String(!hasItems));
+    }
   }
 
   function handleClear(): void {
@@ -101,10 +134,30 @@ import Icon from '@/components/ui/Icon.astro';
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    initGlobalNotesStorageSync();
     paint();
     subscribe(paint);
+
     const clearBtn = document.querySelector<HTMLButtonElement>('[data-quote-action="clear"]');
     clearBtn?.addEventListener('click', handleClear);
+
+    const notesEl = document.querySelector<HTMLTextAreaElement>('[data-quote-global-notes]');
+    if (notesEl) {
+      notesEl.value = getGlobalNotes();
+      notesEl.addEventListener('input', () => {
+        setGlobalNotes(notesEl.value);
+      });
+      subscribeGlobalNotes((notes) => {
+        if (notesEl.value !== notes) notesEl.value = notes;
+      });
+    }
+
+    const nextBtn = document.querySelector<HTMLButtonElement>('[data-quote-wizard-next]');
+    nextBtn?.addEventListener('click', () => {
+      window.dispatchEvent(
+        new CustomEvent('quote-wizard-navigate', { detail: { direction: 'next' } })
+      );
+    });
   });
 </script>
 
@@ -121,7 +174,7 @@ import Icon from '@/components/ui/Icon.astro';
 
   .quote-summary__title {
     margin: 0;
-    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
+    font-family: var(--font-heading);
     font-size: 1.25rem;
     font-weight: 800;
     color: var(--color-ink, #242627);
@@ -175,7 +228,7 @@ import Icon from '@/components/ui/Icon.astro';
   }
 
   .quote-summary__notes textarea {
-    font-family: var(--font-body, 'Bliss Pro', sans-serif);
+    font-family: var(--font-body);
     font-size: 0.95rem;
     border: 1px solid var(--color-line, #e2e4e5);
     border-radius: 8px;
@@ -193,62 +246,6 @@ import Icon from '@/components/ui/Icon.astro';
   .quote-summary__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
-  }
-
-  .quote-summary__clear {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.75rem 1.25rem;
-    background-color: transparent;
-    color: var(--color-ink-700, #3a3d3e);
-    border: 1px solid var(--color-line, #e2e4e5);
-    border-radius: 999px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: color 0.15s var(--ease-out, ease), border-color 0.15s var(--ease-out, ease);
-  }
-
-  .quote-summary__clear:hover,
-  .quote-summary__clear:focus-visible {
-    color: var(--color-danger, #c0392b);
-    border-color: var(--color-danger, #c0392b);
-  }
-
-  .quote-summary__clear:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 3px;
-  }
-
-  .quote-summary__whatsapp {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.875rem 1.5rem;
-    background-color: var(--color-brand, #348f41);
-    color: var(--color-on-brand, #fff);
-    font-weight: 800;
-    font-size: 0.95rem;
-    text-decoration: none;
-    border-radius: 999px;
-    transition: background-color 0.15s var(--ease-out, ease), transform 0.15s var(--ease-out, ease);
-  }
-
-  .quote-summary__whatsapp:hover,
-  .quote-summary__whatsapp:focus-visible {
-    background-color: var(--color-brand-600, #2c7c37);
-    transform: translateY(-1px);
-  }
-
-  .quote-summary__whatsapp:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 3px;
-  }
-
-  .quote-summary__whatsapp.is-disabled {
-    opacity: 0.5;
-    pointer-events: none;
+    gap: var(--space-3, 0.75rem);
   }
 </style>

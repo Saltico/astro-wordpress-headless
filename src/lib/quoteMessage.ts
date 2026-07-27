@@ -4,6 +4,8 @@
 
 import type { PeriodType, QuoteCart } from '@/types/quote';
 import { customizationToDays } from '@/types/quote';
+import type { QuoteCompanyData } from '@/types/quoteCompany';
+import { normalizeRut } from '@/types/quoteCompany';
 
 // ─────────────────────────────────────────────────────────────
 // Constantes
@@ -165,6 +167,7 @@ export interface BuildWhatsAppOptions {
   contactName?: string;
   contactCompany?: string;
   globalNotes?: string;
+  company?: QuoteCompanyData;
 }
 
 /** Construye el mensaje consolidado para WhatsApp. */
@@ -172,7 +175,7 @@ export function buildWhatsAppMessage(
   cart: QuoteCart,
   options: BuildWhatsAppOptions = {}
 ): string {
-  const { includeContactData = false, contactName, contactCompany, globalNotes } = options;
+  const { includeContactData = false, contactName, contactCompany, globalNotes, company } = options;
   const header = 'Hola IP Proyectos Industriales, quisiera cotizar el siguiente arriendo:';
   const itemLines = cart.items
     .map((item) => renderItemLine(renderItemLineForBuild(item)))
@@ -187,11 +190,44 @@ export function buildWhatsAppMessage(
   if (totals.earliestStart) {
     lines.push(`Mayor inicio: ${totals.earliestStart}.`);
   }
+  if (company && Object.values(company).some((v) => String(v).trim())) {
+    lines.push('', 'Datos de la empresa:');
+    if (company.rut) {
+      lines.push(`• RUT: ${normalizeRut(company.rut)}`);
+    }
+    if (company.razonSocial) {
+      lines.push(`• Razón social: ${sanitizePlainText(company.razonSocial, 120)}`);
+    }
+    if (company.nombreFantasia) {
+      lines.push(`• Nombre de fantasía: ${sanitizePlainText(company.nombreFantasia, 120)}`);
+    }
+    if (company.giro) {
+      lines.push(`• Giro: ${sanitizePlainText(company.giro, 120)}`);
+    }
+    if (company.direccion) {
+      lines.push(`• Dirección: ${sanitizePlainText(company.direccion, 160)}`);
+    }
+    if (company.ciudad || company.comuna) {
+      const location = [company.ciudad, company.comuna].filter(Boolean).join(', ');
+      lines.push(`• Ciudad / Comuna: ${sanitizePlainText(location, 120)}`);
+    }
+    if (company.nombreContacto) {
+      lines.push(`• Contacto: ${sanitizePlainText(company.nombreContacto, 80)}`);
+    }
+    if (company.email) {
+      lines.push(`• Email: ${sanitizePlainText(company.email, 80)}`);
+    }
+    if (company.telefono) {
+      lines.push(`• Teléfono: ${sanitizePlainText(company.telefono, 30)}`);
+    }
+  }
+
   if (includeContactData) {
     lines.push('', 'Mis datos:');
     if (contactName) lines.push(`• Nombre: ${sanitizePlainText(contactName, 80)}`);
     if (contactCompany) lines.push(`• Empresa: ${sanitizePlainText(contactCompany, 80)}`);
   }
+
   const gNotes = sanitizePlainText(globalNotes, 500);
   if (gNotes) {
     lines.push('', 'Notas globales:', gNotes);
@@ -199,7 +235,14 @@ export function buildWhatsAppMessage(
   return lines.join('\n');
 }
 
-/** Construye la URL wa.me con el mensaje codificado. */
+/** Construye la URL wa.me con un mensaje genérico de contacto. */
+export function buildWhatsAppTalkUrl(): string {
+  const message =
+    'Hola IP Proyectos Industriales, quisiera hablar con un ejecutivo sobre una cotización.';
+  return `${WHATSAPP_BASE_URL}${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
+}
+
+/** Construye la URL wa.me con el mensaje de cotización codificado. */
 export function buildWhatsAppUrl(
   cart: QuoteCart,
   options: BuildWhatsAppOptions = {}

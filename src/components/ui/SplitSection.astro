@@ -5,6 +5,7 @@
 
 import Container from './Container.astro';
 import Icon from './Icon.astro';
+import Button from './Button.astro';
 import type { IconName } from '@/lib/icons';
 
 export interface MiniStat {
@@ -18,6 +19,8 @@ export interface Props {
   description: string;
   image?: string;
   imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   features?: Array<{
     icon: IconName;
     title: string;
@@ -40,6 +43,8 @@ const {
   description,
   image,
   imageAlt = '',
+  imageWidth,
+  imageHeight,
   features,
   miniStats,
   cta,
@@ -103,9 +108,9 @@ const backgroundClasses = {
 
         {cta && (
           <div class="split-section__cta">
-            <a href={cta.href} class="split-section__btn">
+            <Button href={cta.href} variant="primary" size="lg" icon="arrow-right" iconPosition="right">
               {cta.label}
-            </a>
+            </Button>
           </div>
         )}
       </div>
@@ -116,6 +121,8 @@ const backgroundClasses = {
             src={image}
             alt={imageAlt}
             class="split-section__image"
+            width={imageWidth}
+            height={imageHeight}
             loading="lazy"
             decoding="async"
           />
@@ -149,7 +156,7 @@ const backgroundClasses = {
     position: absolute;
     right: -2vw;
     top: -4vh;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 900;
     font-size: 30vw;
     line-height: 0.8;
@@ -194,7 +201,7 @@ const backgroundClasses = {
     align-items: center;
     gap: 12px;
     margin-bottom: 16px;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.8rem;
     letter-spacing: 0.16em;
@@ -220,7 +227,7 @@ const backgroundClasses = {
   /* Title */
   .split-section__title {
     margin: 0 0 20px;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 800;
     font-size: clamp(1.9rem, 3.6vw, 3rem);
     letter-spacing: -0.02em;
@@ -331,7 +338,7 @@ const backgroundClasses = {
   }
 
   .split-section__mini-stat b {
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 900;
     font-size: 1.6rem;
     letter-spacing: -0.02em;
@@ -366,41 +373,6 @@ const backgroundClasses = {
   /* CTA Button */
   .split-section__cta {
     margin-top: 26px;
-  }
-
-  .split-section__btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
-    font-weight: 700;
-    font-size: 1rem;
-    padding: 16px 30px;
-    border-radius: 999px;
-    text-decoration: none;
-    transition: transform 0.18s ease, background 0.18s ease;
-  }
-
-  .split-section--dark .split-section__btn {
-    background: var(--color-brand, #1a9c4a);
-    color: #fff;
-  }
-
-  .split-section--dark .split-section__btn:hover {
-    background: var(--color-brand-700, #15803d);
-    transform: translateY(-2px);
-  }
-
-  .split-section--light .split-section__btn,
-  .split-section--alt .split-section__btn {
-    background: var(--color-brand, #1a9c4a);
-    color: #fff;
-  }
-
-  .split-section--light .split-section__btn:hover,
-  .split-section--alt .split-section__btn:hover {
-    background: var(--color-brand-700, #15803d);
-    transform: translateY(-2px);
   }
 
   /* Image */

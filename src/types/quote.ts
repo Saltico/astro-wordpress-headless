@@ -24,9 +24,6 @@ export const PERIOD_TYPE_LABELS: Record<PeriodType, string> = {
 // Validación (rangos, caps, regex)
 // ─────────────────────────────────────────────────────────────
 
-/** Cap blando de items en el carrito. Superarlo muestra warning. */
-export const QUOTE_CART_MAX_ITEMS = 5;
-
 /** Cantidad mínima y máxima por item. */
 export const QUOTE_ITEM_MIN_QUANTITY = 1;
 export const QUOTE_ITEM_MAX_QUANTITY = 50;

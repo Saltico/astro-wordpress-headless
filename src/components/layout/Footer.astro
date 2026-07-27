@@ -2,6 +2,7 @@
 // src/components/layout/Footer.astro
 import type { FooterColumn, FooterLink, SocialLink } from '@/types/layout';
 import Icon from '@/components/ui/Icon.astro';
+import Button from '@/components/ui/Button.astro';
 import type { IconName } from '@/lib/icons';
 
 export interface Props {
@@ -124,10 +125,17 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
           )}
         </ul>
         {catalogUrl && (
-          <a href={catalogUrl} class="footer__catalog-btn" target="_blank" rel="noopener noreferrer">
-            <Icon name="download" size={16} />
-            {catalogLabel}
-          </a>
+          <div class="footer__catalog-action">
+            <Button
+              href={catalogUrl}
+              variant="primary"
+              icon="download"
+              target="_blank"
+              download
+            >
+              {catalogLabel}
+            </Button>
+          </div>
         )}
       </div>
     </div>
@@ -292,25 +300,10 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
     color: var(--color-brand-300, #4ade80);
   }
 
-  .footer__catalog-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
+  /* Wrapper del CTA de catálogo: el botón es el componente unificado
+     <Button variant="primary">; aquí solo el espaciado de layout. */
+  .footer__catalog-action {
     margin-top: var(--space-4);
-    padding: 10px 20px;
-    background: var(--color-brand, #1a9c4a);
-    color: #fff;
-    font-size: 0.875rem;
-    font-weight: 700;
-    border-radius: 999px;
-    text-decoration: none;
-    transition: background 0.2s ease, transform 0.2s ease;
-  }
-
-  .footer__catalog-btn:hover,
-  .footer__catalog-btn:focus {
-    background: var(--color-brand-700, #15803d);
-    transform: translateY(-2px);
   }
 
   /* Legal Bar */

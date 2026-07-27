@@ -6,6 +6,7 @@ import BaseLayout from './BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import Icon from '@/components/ui/Icon.astro';
+import Button from '@/components/ui/Button.astro';
 import CTABand from '@/components/ui/CTABand.astro';
 import EquipmentCatalog from '@/components/rental/EquipmentCatalog.astro';
 import heroImg from '@/assets/imgs/hero.jpg';
@@ -81,14 +82,12 @@ const hasFaqSlot = Astro.slots.has('faq');
       <h1 class="rental-hero__title">{title}</h1>
       <p class="rental-hero__subtitle">{subtitle}</p>
       <div class="rental-hero__ctas">
-        <a href="#cotizar" class="rental-hero__btn rental-hero__btn--primary">
+        <Button href="#cotizar" variant="primary" size="lg" icon="arrow-right" iconPosition="right">
           Cotizar
-          <Icon name="arrow-right" size={16} />
-        </a>
-        <a href={catalogUrl} class="rental-hero__btn rental-hero__btn--outline" download>
-          <Icon name="download" size={16} />
+        </Button>
+        <Button href={catalogUrl} variant="ghost" onDark size="lg" icon="download" download>
           {catalogLabel}
-        </a>
+        </Button>
       </div>
     </div>
   </section>
@@ -214,7 +213,7 @@ const hasFaqSlot = Astro.slots.has('faq');
     align-items: center;
     gap: 12px;
     color: var(--color-brand-300, #4ade80);
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.85rem;
     letter-spacing: 0.12em;
@@ -224,7 +223,7 @@ const hasFaqSlot = Astro.slots.has('faq');
 
   .rental-hero__title {
     color: #fff;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 900;
     line-height: 1.05;
     letter-spacing: -0.02em;
@@ -241,50 +240,15 @@ const hasFaqSlot = Astro.slots.has('faq');
     line-height: 1.5;
   }
 
-  /* Hero CTAs */
+  /* Hero CTAs — el color blanco de contexto hace que la variante
+     secondary del Button unificado (basada en currentColor) se vea
+     correcta sobre el hero oscuro. */
   .rental-hero__ctas {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
     margin-top: 28px;
-  }
-
-  .rental-hero__btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
-    font-weight: 700;
-    font-size: 0.9375rem;
-    padding: 14px 28px;
-    border-radius: 999px;
-    text-decoration: none;
-    transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-  }
-
-  .rental-hero__btn--primary {
-    background: var(--color-brand, #1a9c4a);
     color: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  }
-
-  .rental-hero__btn--primary:hover,
-  .rental-hero__btn--primary:focus {
-    background: var(--color-brand-700, #15803d);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-  }
-
-  .rental-hero__btn--outline {
-    background: transparent;
-    color: #fff;
-    border: 1.5px solid rgba(255, 255, 255, 0.4);
-  }
-
-  .rental-hero__btn--outline:hover,
-  .rental-hero__btn--outline:focus {
-    border-color: #fff;
-    transform: translateY(-2px);
   }
 
   @media (max-width: 480px) {
@@ -293,7 +257,7 @@ const hasFaqSlot = Astro.slots.has('faq');
       align-items: stretch;
     }
 
-    .rental-hero__btn {
+    .rental-hero__ctas :global(.btn) {
       justify-content: center;
     }
   }
@@ -344,7 +308,7 @@ const hasFaqSlot = Astro.slots.has('faq');
     align-items: center;
     gap: 12px;
     color: var(--color-brand, #1a9c4a);
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.8rem;
     letter-spacing: 0.16em;
@@ -360,7 +324,7 @@ const hasFaqSlot = Astro.slots.has('faq');
   }
 
   .rental-content__title {
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 800;
     font-size: clamp(1.6rem, 3vw, 2.2rem);
     letter-spacing: -0.02em;

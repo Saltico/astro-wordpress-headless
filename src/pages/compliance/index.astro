@@ -7,7 +7,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import PageHero from '@/components/ui/PageHero.astro';
 import Icon from '@/components/ui/Icon.astro';
-import heroImg from '@/assets/imgs/hero.jpg';
+import montajesImg from '@/assets/imgs/montajes.jpg';
 import { complianceDocs, formatSize } from '@/data/compliance';
 import { articleSchema, breadcrumbSchema, combineSchemas } from '@/lib/seo';
 import { getSiteUrl } from '@/lib/seo';
@@ -43,8 +43,10 @@ function formatDate(iso?: string): string {
 >
   <!-- Hero -->
   <PageHero
-    image={heroImg.src}
-    imageAlt="Compliance IP Proyectos Industriales"
+    image={montajesImg.src}
+    imageAlt="Operación minera con estándares de cumplimiento HSEC, IP Proyectos Industriales"
+    imageWidth={montajesImg.width}
+    imageHeight={montajesImg.height}
     eyebrow="Compliance"
     title="Compromiso con la integridad y la transparencia"
     subtitle="Operamos bajo un modelo de cumplimiento conforme a la Ley N° 20.393 sobre responsabilidad penal de las personas jurídicas. Aquí encuentras nuestras políticas y documentos vigentes."

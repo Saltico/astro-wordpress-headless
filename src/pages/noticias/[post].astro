@@ -96,9 +96,12 @@ const dateFormatted = new Date(article.date).toLocaleDateString('es-CL', {
   {related.length > 0 && (
     <NewsGrid
       items={related}
+      eyebrow="Sigue leyendo"
       title="Noticias relacionadas"
+      subtitle="Otros artículos sobre operaciones, seguridad y proyectos de IP Proyectos Industriales."
       columns={3}
       variant="light"
+      headingId="related-news"
     />
   )}
 </BaseLayout>
@@ -106,7 +109,7 @@ const dateFormatted = new Date(article.date).toLocaleDateString('es-CL', {
 <style is:global>
   /* Estilos del artículo — se aplican globalmente al set:html de WordPress */
   .news-article__content {
-    font-family: var(--font-body, 'Bliss Pro', system-ui, sans-serif);
+    font-family: var(--font-body);
     font-size: 1.0625rem;
     line-height: 1.75;
     color: var(--color-ink-700, #2d3748);

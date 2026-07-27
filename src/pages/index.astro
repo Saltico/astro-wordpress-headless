@@ -11,50 +11,85 @@ import SplitSection from '@/components/ui/SplitSection.astro';
 import ServicesGrid from '@/components/ui/ServicesGrid.astro';
 import CTABand from '@/components/ui/CTABand.astro';
 import NewsGrid from '@/components/ui/NewsGrid.astro';
+import HeroMedia from '@/components/ui/HeroMedia.astro';
 import Icon from '@/components/ui/Icon.astro';
 import type { StatItem } from '@/components/ui/StatsCounter.astro';
 import type { ServiceItem } from '@/components/ui/ServicesGrid.astro';
 import { getLatestNews } from '@/lib/news';
+import { videoSchema } from '@/lib/seo';
 
-import heroImg from '@/assets/imgs/hero.jpg';
+import heroVideo from '@/assets/videos/servicios.mp4';
+import heroPoster from '@/assets/videos/servicios-poster.jpg';
+import servIngenieria from '@/assets/imgs/serv-ingenieria.jpg';
+import servConstruccion from '@/assets/imgs/serv-construccion.jpg';
+import servMontajes from '@/assets/imgs/serv-montajes.jpg';
+import portuaria from '@/assets/imgs/portuaria.jpg';
+import servIzaje from '@/assets/imgs/serv-izaje.jpg';
+import faenaIzaje from '@/assets/imgs/faena-izaje.jpg';
+import edificio from '@/assets/imgs/edificio.jpg';
+import montajesImg from '@/assets/imgs/montajes.jpg';
+
+// En Vite/Astro, los videos importados son string URL directa (no objeto { src }).
+// Las imágenes, en cambio, devuelven un objeto con { src, width, height }.
+const heroVideoUrl = new URL(heroVideo, Astro.site).toString();
+const heroPosterUrl = new URL(heroPoster.src, Astro.site).toString();
+const heroPosterLocal = heroPoster.src; // ruta procesada por Vite para <link rel="preload">
 
 const title = 'IP Proyectos Industriales | Ingeniería, montajes y grúas de alto tonelaje para la minería';
 const description = 'IP Proyectos Industriales: ingeniería, construcción, montajes e izajes de alto tonelaje (hasta 400 t) para la gran minería en Atacama y Coquimbo. Cotiza fácil.';
 
+const videoJsonLd = videoSchema({
+  name: 'IP Proyectos Industriales — Servicios de ingeniería y grúas de alto tonelaje',
+  description: 'Video institucional de IP Proyectos Industriales mostrando servicios de ingeniería, montajes electromecánicos y arriendo de grúas de alto tonelaje para la gran minería en Chile.',
+  thumbnailUrl: heroPosterUrl,
+  contentUrl: heroVideoUrl,
+  duration: 'PT15.8S',
+  width: 1920,
+  height: 1080,
+});
+
+const ogVideo = {
+  url: heroVideoUrl,
+  type: 'video/mp4',
+  width: 1920,
+  height: 1080,
+  secureUrl: heroVideoUrl,
+};
+
 // Stats configurables como en el diseño final
 const stats: StatItem[] = [
-  { 
-    value: 25, 
+  {
+    value: 25,
     label: 'Años de experiencia',
     prefix: '+',
     prefixPosition: 'before'
   },
-  { 
-    value: 100, 
+  {
+    value: 100,
     label: 'Equipos propios',
     prefix: '+',
     prefixPosition: 'before'
   },
-  { 
-    value: 400, 
+  {
+    value: 400,
     label: 'Capacidad de izaje',
     suffix: 'Tons',
     suffixPosition: 'after'
   },
-  { 
-    value: 5, 
+  {
+    value: 5,
     label: 'Líneas de servicio'
   },
 ];
 
-// Servicios en layout bento
+// Servicios en layout bento — imágenes específicas por sección
 const services: ServiceItem[] = [
   {
     category: 'Ingeniería',
     title: 'Con foco en constructibilidad',
     subtitle: '',
     description: 'Diseño e ingeniería de detalle y gestión integral de proyectos, compras y contratos.',
-    image: heroImg.src,
+    image: servIngenieria.src,
     link: '/servicios/ingenieria',
     linkLabel: 'Conocer',
   },
@@ -63,7 +98,7 @@ const services: ServiceItem[] = [
     title: 'Obras civiles e industriales',
     subtitle: '',
     description: 'Control de calidad en cada etapa: contratos EPC, prefabricados y pinturas especiales.',
-    image: heroImg.src,
+    image: servConstruccion.src,
     link: '/servicios/construccion',
     linkLabel: 'Conocer',
   },
@@ -72,7 +107,7 @@ const services: ServiceItem[] = [
     title: 'Mineros e industriales',
     subtitle: '',
     description: 'Montaje electromecánico y estructural en faena, con foco en seguridad.',
-    image: heroImg.src,
+    image: servMontajes.src,
     link: '/servicios/montajes',
     linkLabel: 'Conocer',
   },
@@ -81,7 +116,7 @@ const services: ServiceItem[] = [
     title: 'Puertos y terminales',
     subtitle: '',
     description: 'Obras marítimas: muelles, defensas e impermeabilización de piscinas y tranques.',
-    image: heroImg.src,
+    image: portuaria.src,
     link: '/servicios/infraestructura-portuaria',
     linkLabel: 'Conocer',
   },
@@ -90,7 +125,7 @@ const services: ServiceItem[] = [
     title: 'Grúas de alto tonelaje',
     subtitle: '',
     description: 'Hasta 400 toneladas. Grúas AT/RT, alza-hombre, camión pluma y manipuladores, con operadores certificados. Más movimiento de tierra, transporte y equipos especiales.',
-    image: heroImg.src,
+    image: servIzaje.src,
     link: '/arriendo',
     linkLabel: 'Ver flota',
     featured: true,
@@ -120,15 +155,23 @@ const newsItems = await getLatestNews(3);
 <BaseLayout
   title={title}
   description={description}
+  ogVideo={ogVideo}
+  videoJsonLd={videoJsonLd}
 >
-  <!-- 1. HERO con video/imagen de fondo -->
+  <link slot="head" rel="preload" as="image" href={heroPosterLocal} fetchpriority="high" />
+
+  <!-- 1. HERO con video de fondo + poster como LCP -->
   <section class="d-hero">
-    <img
-      src={heroImg.src}
-      alt="Izaje en tándem con grúas de alto tonelaje en faena minera"
-      class="d-hero__bg"
-      loading="eager"
-      fetchpriority="high"
+    <HeroMedia
+      videoSrc={heroVideo}
+      videoPoster={heroPoster.src}
+      fallbackImage={heroPoster.src}
+      fallbackAlt="Vista aérea de faena minera con grúas de alto tonelaje en operación, IP Proyectos Industriales"
+      fallbackWidth={heroPoster.width}
+      fallbackHeight={heroPoster.height}
+      videoAriaLabel="Video institucional: servicios de ingeniería, montajes y arriendo de grúas de IP Proyectos Industriales para la gran minería"
+      class="d-hero__media"
+      videoClass="d-hero__bg"
     />
     <div class="d-hero__overlay"></div>
     <div class="d-hero__container">
@@ -159,8 +202,10 @@ const newsItems = await getLatestNews(3);
     eyebrow="Quiénes somos"
     title="En el corazón de los proyectos industriales más desafiantes"
     description="IP Proyectos Industriales se posiciona como referente en izajes seguros y eficientes, combinando tecnología de vanguardia con un equipo humano de alto nivel. Más de 25 años apoyando a la gran minería de Chile."
-    image={heroImg.src}
-    imageAlt="Izaje en tándem con grúas de alto tonelaje en faena minera"
+    image={faenaIzaje.src}
+    imageAlt="Izaje en tándem con grúas de alto tonelaje en faena minera de Atacama, IP Proyectos Industriales"
+    imageWidth={faenaIzaje.width}
+    imageHeight={faenaIzaje.height}
     cta={{ label: 'Conocer la empresa', href: '/nosotros' }}
     variant="default"
     background="dark"
@@ -169,8 +214,9 @@ const newsItems = await getLatestNews(3);
   <!-- 4. CARRUSEL DE LOGOS -->
   <LogoCarousel
     logos={clientLogos}
-    title="Confían en nosotros"
-    subtitle="Empresas líderes de la gran minería y la industria que han confiado en nuestro trabajo."
+    eyebrow="Confían en nosotros"
+    title="Empresas líderes de la gran minería y la industria"
+    subtitle="Más de dos décadas trabajando con clientes que son referente del sector en Chile."
     speed="normal"
     backgroundVariant="white"
     pauseOnHover={true}
@@ -190,8 +236,10 @@ const newsItems = await getLatestNews(3);
     eyebrow="Seguridad, salud y medio ambiente"
     title="El cuidado de las personas es nuestro primer estándar"
     description="Contamos con un Departamento de Prevención de Riesgos y Medio Ambiente propio, y un Sistema de Gestión HSEC que respalda cada faena."
-    image={heroImg.src}
-    imageAlt="Trabajo seguro en faena con EPP"
+    image={montajesImg.src}
+    imageAlt="Trabajo seguro en faena con EPP, sistema HSEC de IP Proyectos Industriales"
+    imageWidth={montajesImg.width}
+    imageHeight={montajesImg.height}
     variant="reversed"
     background="dark"
     miniStats={[
@@ -206,11 +254,13 @@ const newsItems = await getLatestNews(3);
   <CTABand
     eyebrow="Cotización rápida"
     title="Tu próximo proyecto empieza con una conversación"
-    backgroundImage={heroImg.src}
-    backgroundAlt="Edificio corporativo IP"
+    backgroundImage={edificio.src}
+    backgroundAlt="Edificio corporativo de IP Proyectos Industriales en Chile"
+    backgroundWidth={edificio.width}
+    backgroundHeight={edificio.height}
     buttons={[
-      { label: 'Cotizar ahora', href: '/contacto', variant: 'primary' },
-      { label: 'WhatsApp', href: 'https://wa.me/56965593202', variant: 'outline', external: true },
+      { label: 'Ir al cotizador', href: '/cotizador', variant: 'primary', icon: 'arrow-right', ariaLabel: 'Ir al cotizador en línea' },
+      { label: 'Hablar por WhatsApp', href: 'https://wa.me/56965593202?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20solicitar%20una%20cotizaci%C3%B3n.', variant: 'outline', external: true, icon: 'whatsapp' },
     ]}
     contentAlign="center"
     minHeight="md"
@@ -218,6 +268,7 @@ const newsItems = await getLatestNews(3);
 
   <!-- 9. NOTICIAS -->
   <NewsGrid
+    eyebrow="Blog"
     title="Novedades"
     subtitle="Operaciones, seguridad y crecimiento de nuestra flota. Síguenos para conocer nuestros proyectos más recientes."
     items={newsItems}
@@ -279,7 +330,7 @@ const newsItems = await getLatestNews(3);
     align-items: center;
     gap: 12px;
     color: var(--color-brand-300, #4ade80);
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.8rem;
     letter-spacing: 0.16em;
@@ -296,7 +347,7 @@ const newsItems = await getLatestNews(3);
 
   .d-hero__title {
     color: #fff;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 900;
     line-height: 0.98;
     letter-spacing: -0.03em;

@@ -10,7 +10,8 @@ import CTABand from '@/components/ui/CTABand.astro';
 import PageHero from '@/components/ui/PageHero.astro';
 import Icon from '@/components/ui/Icon.astro';
 import type { StatItem } from '@/components/ui/StatsCounter.astro';
-import heroImg from '@/assets/imgs/hero.jpg';
+import ingenieriaImg from '@/assets/imgs/ingenieria.jpg';
+import edificioImg from '@/assets/imgs/edificio.jpg';
 
 const title = 'Servicios | Ingeniería, construcción, montajes e infraestructura portuaria — IP Proyectos Industriales';
 const description = 'Reunimos ingeniería, construcción, montajes e infraestructura portuaria bajo un mismo equipo, con estándares de la gran minería.';
@@ -65,8 +66,10 @@ const services = [
   breadcrumbs={breadcrumbs}
 >
   <PageHero
-    image={heroImg.src}
-    imageAlt="Servicios IP Proyectos Industriales"
+    image={ingenieriaImg.src}
+    imageAlt="Equipo de ingeniería de IP Proyectos Industriales trabajando en proyecto minero"
+    imageWidth={ingenieriaImg.width}
+    imageHeight={ingenieriaImg.height}
     eyebrow="Nuestros servicios"
     title="Soluciones integrales para cada etapa de tu proyecto"
     subtitle="Reunimos ingeniería, construcción, montajes e infraestructura portuaria bajo un mismo equipo, con estándares de la gran minería."
@@ -115,7 +118,9 @@ const services = [
       { label: 'Solicitar cotización', href: '/contacto', variant: 'primary' },
       { label: 'Escribir por WhatsApp', href: 'https://wa.me/56965593202?text=Hola%2C%20quisiera%20cotizar%20un%20servicio%20con%20IP%20Proyectos%20Industriales.', variant: 'outline', external: true },
     ]}
-    backgroundImage={heroImg.src}
+    backgroundImage={edificioImg.src}
+    backgroundWidth={edificioImg.width}
+    backgroundHeight={edificioImg.height}
     contentAlign="center"
     minHeight="sm"
   />
@@ -154,7 +159,7 @@ const services = [
   }
 
   .service-item__number {
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.85rem;
     letter-spacing: 0.08em;
@@ -169,7 +174,7 @@ const services = [
   }
 
   .service-item__title {
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 800;
     font-size: clamp(1.4rem, 2.5vw, 1.8rem);
     letter-spacing: -0.02em;
@@ -190,7 +195,7 @@ const services = [
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.9rem;
     color: var(--color-brand-300, #4ade80);

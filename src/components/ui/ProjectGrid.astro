@@ -4,6 +4,7 @@
 // Inspirado en la sección de proyectos de Tecnisud
 
 import Container from './Container.astro';
+import Button from './Button.astro';
 import ProjectCard from './ProjectCard.astro';
 import type { ProjectData } from './ProjectCard.astro';
 
@@ -82,9 +83,9 @@ const columnsClass = `project-grid--cols-${columns}`;
 
     {showLoadMore && projects.length > initialCount && (
       <div class="project-grid-section__load-more">
-        <button class="button button--secondary button--large" data-load-more>
+        <Button type="button" variant="ghost" size="lg" data-load-more>
           {loadMoreLabel}
-        </button>
+        </Button>
       </div>
     )}
   </Container>

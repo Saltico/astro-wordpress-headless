@@ -18,13 +18,21 @@ import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import JsonLd from '@/components/seo/JsonLd.astro';
 import QuoteCartBadge from '@/components/quote/QuoteCartBadge.astro';
 import QuoteCartFloatingButton from '@/components/quote/QuoteCartFloatingButton.astro';
+import Button from '@/components/ui/Button.astro';
 import { organizationSchema, websiteSchema, getSiteUrl } from '@/lib/seo';
 import { siteBrand, siteContact, topbarData, navigationData, footerData } from '@/data/site';
 import logoImg from '@/assets/logos/logo_ipproyectosindustriales.png';
-import Icon from '@/components/ui/Icon.astro';
 
 export interface Props extends BaseLayoutProps {
   ogImage?: string;
+  ogVideo?: {
+    url: string;
+    type?: string;
+    width?: number;
+    height?: number;
+    secureUrl?: string;
+  };
+  videoJsonLd?: Record<string, unknown>;
   noindex?: boolean;
   breadcrumbs?: BreadcrumbItem[];
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
@@ -62,6 +70,8 @@ const {
   description,
   canonical: canonicalProp,
   ogImage,
+  ogVideo,
+  videoJsonLd,
   noindex = false,
   breadcrumbs,
   jsonLd,
@@ -104,7 +114,8 @@ const bodyClass = !showTopBar ? 'topbar-hidden' : undefined;
 // Schemas base inyectados en todas las paginas
 const baseSchemas = [organizationSchema(), websiteSchema()];
 const pageSchemas = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
-const allSchemas = [...baseSchemas, ...pageSchemas];
+const videoSchemas = videoJsonLd ? [videoJsonLd] : [];
+const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
 ---
 
 <!doctype html>
@@ -119,12 +130,13 @@ const allSchemas = [...baseSchemas, ...pageSchemas];
       description={description}
       canonical={canonical}
       ogImage={ogImage}
+      ogVideo={ogVideo}
       noindex={noindex}
     />
 
-    <!-- Preload de fuentes críticas (self-hosted) -->
-    <link rel="preload" href="/fonts/plateia-bold.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/fonts/blisspro-regular.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Preload de fuentes críticas (self-hosted, subset latin) -->
+    <link rel="preload" href="/fonts/archivo-var-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin />
 
     <slot name="head" />
 
@@ -152,11 +164,16 @@ const allSchemas = [...baseSchemas, ...pageSchemas];
           <Navigation slot="navigation" items={navItems} aria-label={navigation?.ariaLabel} variant="brand" />
           <Fragment slot="cta">
             <QuoteCartBadge />
-            <a href="/contacto" class="header-cta">
+            <Button
+              href="/contacto"
+              variant="primary"
+              icon="arrow-right"
+              iconPosition="right"
+              ariaLabel="Solicitar cotización"
+            >
               <span class="header-cta__text">Solicitar cotización</span>
               <span class="header-cta__text-short">Cotizar</span>
-              <Icon name="arrow-right" size={13} class="header-cta__icon" />
-            </a>
+            </Button>
           </Fragment>
         </Header>
       )
@@ -247,26 +264,18 @@ const allSchemas = [...baseSchemas, ...pageSchemas];
     }
   }
 
-  /* ── Header CTA: verde empresarial. Tipografía la aporta Header.astro ── */
-  .header-cta {
-    background-color: var(--color-brand, #348f41);
-    color: var(--color-on-brand, #ffffff);
-    border: 1.5px solid rgba(255, 255, 255, 0.35);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
-    font-weight: 800;
-  }
-
+  /* ── Header CTA: label responsive.
+     El botón es el componente unificado <Button variant="primary"> (ver
+     src/components/ui/Button.astro); aquí solo se controla qué etiqueta se
+     muestra según el ancho: "Cotizar" en mobile, "Solicitar cotización" en
+     desktop. El contenido del slot lo define este layout, por lo que el
+     scope de estos estilos sí alcanza a los spans. ── */
   .header-cta__text {
     display: none;
   }
 
   .header-cta__text-short {
     display: inline;
-  }
-
-  .header-cta__icon {
-    flex-shrink: 0;
-    transition: transform var(--motion-base) var(--ease-out);
   }
 
   @media (min-width: 640px) {
@@ -277,23 +286,5 @@ const allSchemas = [...baseSchemas, ...pageSchemas];
     .header-cta__text-short {
       display: none;
     }
-  }
-
-  .header-cta:hover,
-  .header-cta:focus {
-    background-color: var(--color-brand-600, #2c7c37);
-    border-color: rgba(255, 255, 255, 0.55);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
-    transform: translateY(-1px);
-  }
-
-  .header-cta:hover .header-cta__icon,
-  .header-cta:focus .header-cta__icon {
-    transform: translateX(3px);
-  }
-
-  .header-cta:focus-visible {
-    outline: 2px solid #ffffff;
-    outline-offset: 3px;
   }
 </style>

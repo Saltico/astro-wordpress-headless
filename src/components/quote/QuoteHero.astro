@@ -1,41 +1,40 @@
 ---
 // src/components/quote/QuoteHero.astro
-// Hero compacto y específico de la página Cotizador.
+// Hero compacto y utility-focused de la página Cotizador.
 //
-// Diferencias con <PageHero>:
-//  - Altura ajustada al contenido (sin min-height arbitrario). Solo lo
-//    necesario para mostrar eyebrow + h1 + subtítulo + acciones.
-//  - Layout horizontal en desktop: el bloque intro (eyebrow/h1/subtítulo)
-//    a la izquierda y las acciones a la derecha, alineadas al final del
-//    bloque intro (mismo row).
-//  - En mobile (< 768px) se apila: intro arriba, acciones debajo, ambas
-//    a ancho completo.
-//  - Mantiene el lenguaje visual del sitio: imagen + overlay oscuro,
-//    tipografía Plateia, eyebrow brand-300, botones outline.
+// Esta página es una herramienta de aplicación, no una landing SEO: el hero
+// se limita a orientar (qué es esto) y ofrecer UNA acción primaria útil en
+// cualquier paso del wizard (descargar el catálogo).
+//
+// Layout: título y CTA en la misma línea horizontal cuando el espacio lo
+// permite (desktop); se apilan en mobile. Mantiene el lenguaje visual del
+// sitio: imagen + overlay grafito, eyebrow brand-300, tipografía Plateia.
 
-import Icon from '@/components/ui/Icon.astro';
+import Button from '@/components/ui/Button.astro';
 
 export interface Props {
   image: string;
   imageAlt?: string;
   eyebrow?: string;
   title: string;
-  subtitle?: string;
-  catalogUrl?: string;
-  clearHidden?: boolean;
+  /** Una sola línea de apoyo. Opcional y breve por diseño. */
+  note?: string;
+  /** Acción primaria única del hero. */
+  cta?: {
+    href: string;
+    label: string;
+    download?: boolean;
+  };
 }
 
 const {
   image,
   imageAlt = '',
-  eyebrow,
+  eyebrow = 'Cotización en línea',
   title,
-  subtitle,
-  catalogUrl,
-  clearHidden = true,
+  note,
+  cta,
 } = Astro.props;
-
-const hasActionsSlot = Astro.slots.has('actions');
 ---
 
 <section class="quote-hero" aria-labelledby="quote-hero-title">
@@ -52,39 +51,21 @@ const hasActionsSlot = Astro.slots.has('actions');
     <div class="quote-hero__intro">
       {eyebrow && <p class="quote-hero__eyebrow">{eyebrow}</p>}
       <h1 id="quote-hero-title" class="quote-hero__title">{title}</h1>
-      {subtitle && <p class="quote-hero__subtitle">{subtitle}</p>}
+      {note && <p class="quote-hero__note">{note}</p>}
     </div>
 
-    {hasActionsSlot && (
-      <div class="quote-hero__actions">
-        <slot name="actions" />
-      </div>
-    )}
-
-    {!hasActionsSlot && (catalogUrl || clearHidden !== undefined) && (
-      <div class="quote-hero__actions">
-        {catalogUrl && (
-          <a
-            href={catalogUrl}
-            class="quote-hero__btn quote-hero__btn--outline"
-            download
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Icon name="download" size={16} />
-            Descargar catálogo
-          </a>
-        )}
-        <button
-          type="button"
-          class="quote-hero__btn quote-hero__btn--danger"
-          data-quote-clear-top
-          hidden={clearHidden}
-          aria-label="Limpiar todo el cotizador"
+    {cta && (
+      <div class="quote-hero__action">
+        <Button
+          href={cta.href}
+          variant="primary"
+          size="lg"
+          icon="download"
+          download={cta.download}
+          target="_blank"
         >
-          <Icon name="close" size={14} />
-          Limpiar cotizador
-        </button>
+          {cta.label}
+        </Button>
       </div>
     )}
   </div>
@@ -128,12 +109,13 @@ const hasActionsSlot = Astro.slots.has('actions');
     width: 100%;
     max-width: var(--container-max-width, 1360px);
     margin-inline: auto;
-    padding: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 28px)
-      var(--container-padding, 20px) 28px;
+    padding: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + var(--space-8))
+      var(--container-padding, 20px) var(--space-8);
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
-    gap: 1.25rem 2rem;
+    justify-content: space-between;
+    gap: var(--space-5) var(--space-8);
   }
 
   .quote-hero__intro {
@@ -144,14 +126,14 @@ const hasActionsSlot = Astro.slots.has('actions');
   .quote-hero__eyebrow {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    color: var(--color-brand-300, #4ade80);
-    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
+    gap: var(--space-3);
+    color: var(--color-brand-300, #62bb74);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.85rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    margin: 0 0 12px;
+    margin: 0 0 var(--space-3);
   }
 
   .quote-hero__eyebrow::before {
@@ -162,102 +144,43 @@ const hasActionsSlot = Astro.slots.has('actions');
   }
 
   .quote-hero__title {
-    margin: 0 0 8px;
+    margin: 0;
     color: #ffffff;
-    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 900;
     line-height: 1.05;
     letter-spacing: -0.02em;
     font-size: clamp(1.75rem, 3.4vw, 2.5rem);
-    max-width: 20ch;
+    max-width: 22ch;
   }
 
-  .quote-hero__subtitle {
-    margin: 0;
+  .quote-hero__note {
+    margin: var(--space-2) 0 0;
     color: rgba(255, 255, 255, 0.88);
-    font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+    font-size: var(--text-small);
     line-height: 1.5;
-    max-width: 60ch;
+    max-width: 56ch;
   }
 
-  .quote-hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    flex: 0 1 auto;
+  .quote-hero__action {
+    flex: 0 0 auto;
+    /* Alinea el CTA con la línea base del bloque del título en desktop. */
+    padding-bottom: 2px;
   }
 
-  /* ── Botones ── */
-  .quote-hero__btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
-    font-weight: 700;
-    font-size: 0.9375rem;
-    padding: 12px 22px;
-    border-radius: 999px;
-    text-decoration: none;
-    border: 1.5px solid;
-    cursor: pointer;
-    transition: transform 0.18s var(--ease-out, ease),
-      background-color 0.18s var(--ease-out, ease),
-      border-color 0.18s var(--ease-out, ease),
-      color 0.18s var(--ease-out, ease),
-      box-shadow 0.18s var(--ease-out, ease);
-  }
-
-  .quote-hero__btn--outline {
-    background: transparent;
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.4);
-  }
-
-  .quote-hero__btn--outline:hover,
-  .quote-hero__btn--outline:focus-visible {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: #ffffff;
-    transform: translateY(-2px);
-  }
-
-  .quote-hero__btn--danger {
-    background: transparent;
-    color: rgba(255, 255, 255, 0.92);
-    border-color: rgba(252, 165, 165, 0.45);
-  }
-
-  .quote-hero__btn--danger:hover,
-  .quote-hero__btn--danger:focus-visible {
-    color: #fecaca;
-    border-color: #fecaca;
-    background: rgba(220, 38, 38, 0.12);
-    transform: translateY(-2px);
-  }
-
-  .quote-hero__btn:focus-visible {
-    outline: 2px solid #ffffff;
-    outline-offset: 3px;
-  }
-
-  /* ── Mobile: apilar intro arriba, acciones debajo ── */
+  /* ── Mobile: apilar intro arriba, CTA a ancho completo debajo ── */
   @media (max-width: 767.98px) {
     .quote-hero__container {
       flex-direction: column;
       align-items: stretch;
-      gap: 1.5rem;
     }
 
-    .quote-hero__intro {
-      flex-basis: auto;
+    .quote-hero__action {
+      padding-bottom: 0;
     }
 
-    .quote-hero__actions {
+    .quote-hero__action :global(.btn) {
       width: 100%;
-    }
-
-    .quote-hero__actions :global(.quote-hero__btn) {
-      flex: 1 1 auto;
     }
   }
 </style>

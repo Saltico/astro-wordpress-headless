@@ -2,7 +2,17 @@
 // src/components/seo/MetaTags.astro
 import type { MetaTagsProps } from '@/types/seo';
 
-export interface Props extends MetaTagsProps {}
+export interface OgVideo {
+  url: string;
+  type?: string;        // default 'video/mp4'
+  width?: number;       // default 1920
+  height?: number;      // default 1080
+  secureUrl?: string;
+}
+
+export interface Props extends MetaTagsProps {
+  ogVideo?: OgVideo;
+}
 
 const {
   title,
@@ -14,6 +24,7 @@ const {
   twitterCard = 'summary_large_image',
   hreflang,
   noindex = false,
+  ogVideo,
 } = Astro.props;
 
 const finalRobots = noindex ? 'noindex, nofollow' : robots;
@@ -30,6 +41,16 @@ const ogImageUrl = ogImage ?? new URL('/og-default.jpg', canonical).toString();
 <meta property="og:image" content={ogImageUrl} />
 <meta property="og:locale" content="es_CL" />
 <meta property="og:site_name" content="IP Proyectos Industriales" />
+
+{ogVideo && (
+  <>
+    <meta property="og:video" content={ogVideo.url} />
+    <meta property="og:video:type" content={ogVideo.type ?? 'video/mp4'} />
+    <meta property="og:video:width" content={String(ogVideo.width ?? 1920)} />
+    <meta property="og:video:height" content={ogVideo.height ?? 1080} />
+    {ogVideo.secureUrl && <meta property="og:video:secure_url" content={ogVideo.secureUrl} />}
+  </>
+)}
 
 <meta name="twitter:card" content={twitterCard} />
 <meta name="twitter:title" content={title} />

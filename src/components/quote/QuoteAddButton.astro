@@ -102,15 +102,6 @@ const { item, sourceUrl } = Astro.props;
 
     const result = addItem(equipment, sourceUrl);
     if (!result.ok) {
-      if (result.reason === 'max_items') {
-        paintState(btn, 'idle');
-        window.dispatchEvent(
-          new CustomEvent('quote-cart:toast', {
-            detail: { kind: 'warning', message: 'Máximo 5 equipos por cotización.' },
-          })
-        );
-        return;
-      }
       paintState(btn, 'error');
       return;
     }
@@ -142,7 +133,7 @@ const { item, sourceUrl } = Astro.props;
     padding: 12px 18px;
     background-color: var(--color-brand, #348f41);
     color: var(--color-on-brand, #fff);
-    font-family: var(--font-heading, 'Plateia', 'Arial Narrow', sans-serif);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.9rem;
     border: 1.5px solid transparent;

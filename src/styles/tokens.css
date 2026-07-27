@@ -11,12 +11,17 @@
    THEME TOKENS (Tailwind v4)
    ======================================== */
 
-@theme {
-  /* Colores de marca */
-  --color-brand: #348f41;
-  --color-brand-600: #2c7c37;
-  --color-brand-700: #236a2e;
-  --color-brand-050: #ebf5ed;
+/* @theme static: fuerza la emisión de TODAS las variables en :root.
+   Sin `static`, Tailwind v4 hace tree-shaking y solo emite las variables
+   referenciadas por utilities; los componentes Astro que consumen tokens
+   vía var(--color-*) en CSS scoped recibirían variables inexistentes
+   (botones con texto heredado, hovers muertos, ghost on-dark invisible). */
+@theme static {
+  /* Colores de marca (alineados a la referencia IP-Sitio-Web/styles.css) */
+  --color-brand: #308f40;
+  --color-brand-600: #226f31;
+  --color-brand-700: #1d5a26;
+  --color-brand-050: #e7f3ea;
 
   /* Colores de contenido */
   --color-ink: #242627;
@@ -28,16 +33,31 @@
   --color-surface-alt: #f6f7f8;
   --color-line: #e2e4e5;
   --color-on-brand: #ffffff;
-  --color-graphite: #0d1611;
+
+  /* Grafito (anclas oscuras: hero, bandas, secciones oscuras) */
+  --color-graphite: #0d1611;   /* grafito verdoso profundo */
+  --color-graphite-2: #15201a; /* grafito medio para secciones alternas */
+  --color-graphite-3: #1e2a23; /* grafito claro para cards sobre grafito */
+  --color-on-dark: #f3f7f4;
+  --color-on-dark-muted: #9bab9f;
+  --color-line-dark: rgba(255, 255, 255, 0.1);
+
+  /* Acento verde claro (para textos sobre grafito, equivalente a accent-300 de la maqueta) */
+  --color-brand-300: #62bb74;
 
   /* Estados */
   --color-danger: #c0392b;
   --color-warning: #b7791f;
-  --color-success: #348f41;
+  --color-success: #308f40;
 
-  /* Tipografia */
-  --font-heading: 'Plateia', 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif;
-  --font-body: 'Bliss Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* Tipografia
+     Archivo/Inter son las fuentes canónicas (self-hosted en public/fonts/,
+     mismas familias que la referencia IP-Sitio-Web). Plateia/Bliss Pro
+     quedan como upgrade futuro: si los woff2 licenciados se agregan a
+     public/fonts/ y se reactivan sus @font-face (ver bloque FONT FACE),
+     basta con moverlas al frente de la pila. */
+  --font-heading: 'Archivo', 'Plateia', 'Arial Narrow', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Inter', 'Bliss Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
   /* Escala tipografica fluida */
   --text-h1: clamp(2rem, 5vw, 3rem);
@@ -135,38 +155,37 @@
 }
 
 /* ========================================
-   FONT FACE
-   Placeholders: colocar archivos reales en public/fonts/
+   FONT FACE — self-hosted (public/fonts/)
+   Archivo e Inter son variable fonts (un solo woff2 cubre todos los pesos).
+   Subset latin: cubre español completo (U+0000-00FF).
+   font-display: swap → el texto se pinta con fallback mientras carga
+   (mejor FCP; las métricas de los fallbacks sans-serif son cercanas,
+   por lo que el CLS es despreciable).
    ======================================== */
 
 @font-face {
-  font-family: 'Plateia';
-  src: url('/fonts/plateia-bold.woff2') format('woff2');
-  font-weight: 700;
+  font-family: 'Archivo';
+  src: url('/fonts/archivo-var-latin.woff2') format('woff2');
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Bliss Pro';
-  src: url('/fonts/blisspro-regular.woff2') format('woff2');
-  font-weight: 400;
+  font-family: 'Inter';
+  src: url('/fonts/inter-var-latin.woff2') format('woff2');
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
-@font-face {
-  font-family: 'Bliss Pro';
-  src: url('/fonts/blisspro-semibold.woff2') format('woff2');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
+/* Upgrade futuro (fuentes corporativas licenciadas): cuando los archivos
+   plateia-bold.woff2 / blisspro-*.woff2 existan en public/fonts/, reactivar
+   estos @font-face y mover 'Plateia'/'Bliss Pro' al frente de las pilas
+   --font-heading/--font-body en @theme.
 
-@font-face {
-  font-family: 'Bliss Pro';
-  src: url('/fonts/blisspro-bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+@font-face { font-family: 'Plateia'; src: url('/fonts/plateia-bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Bliss Pro'; src: url('/fonts/blisspro-regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Bliss Pro'; src: url('/fonts/blisspro-semibold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Bliss Pro'; src: url('/fonts/blisspro-bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+*/

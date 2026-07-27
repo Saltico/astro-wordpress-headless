@@ -1,0 +1,463 @@
+---
+// src/components/quote/QuoteCompanyForm.astro
+// Paso 2 del wizard: formulario de datos de la empresa.
+
+import Button from '@/components/ui/Button.astro';
+---
+
+<section class="quote-company" aria-labelledby="quote-company-title">
+  <div class="quote-company__head">
+    <h2 id="quote-company-title" class="quote-company__title">Datos de la empresa</h2>
+    <p class="quote-company__lead">
+      Completa los datos para que nuestro ejecutivo pueda contactarte.
+    </p>
+  </div>
+
+  <form class="quote-company__form" data-quote-company-form novalidate>
+    <div class="quote-company__field">
+      <label for="company-rut">RUT <span aria-label="obligatorio">*</span></label>
+      <input
+        type="text"
+        id="company-rut"
+        name="rut"
+        inputmode="text"
+        placeholder="12.345.678-9"
+        autocomplete="organization"
+        data-field="rut"
+        aria-describedby="error-rut"
+        aria-invalid="false"
+        required
+      />
+      <p class="quote-company__error" id="error-rut" data-error="rut" role="alert" aria-live="polite"></p>
+    </div>
+
+    <div class="quote-company__field">
+      <label for="company-giro">Giro <span aria-label="obligatorio">*</span></label>
+      <input
+        type="text"
+        id="company-giro"
+        name="giro"
+        placeholder="Ej: Arriendo de maquinaria"
+        data-field="giro"
+        aria-describedby="error-giro"
+        aria-invalid="false"
+        required
+      />
+      <p class="quote-company__error" id="error-giro" data-error="giro" role="alert" aria-live="polite"></p>
+    </div>
+
+    <div class="quote-company__field">
+      <label for="company-razon">Razón social <span aria-label="obligatorio">*</span></label>
+      <input
+        type="text"
+        id="company-razon"
+        name="razonSocial"
+        placeholder="Ej: Constructora SpA"
+        autocomplete="organization"
+        data-field="razonSocial"
+        aria-describedby="error-razonSocial"
+        aria-invalid="false"
+        required
+      />
+      <p class="quote-company__error" id="error-razonSocial" data-error="razonSocial" role="alert" aria-live="polite"></p>
+    </div>
+
+    <div class="quote-company__field">
+      <label for="company-fantasia">Nombre de fantasía <span aria-label="obligatorio">*</span></label>
+      <input
+        type="text"
+        id="company-fantasia"
+        name="nombreFantasia"
+        placeholder="Ej: IP Grúas"
+        data-field="nombreFantasia"
+        aria-describedby="error-nombreFantasia"
+        aria-invalid="false"
+        required
+      />
+      <p class="quote-company__error" id="error-nombreFantasia" data-error="nombreFantasia" role="alert" aria-live="polite"></p>
+    </div>
+
+    <div class="quote-company__field">
+      <label for="company-direccion">Dirección <span aria-label="obligatorio">*</span></label>
+      <input
+        type="text"
+        id="company-direccion"
+        name="direccion"
+        placeholder="Ej: Av. Apoquindo 1234, Oficina 101"
+        autocomplete="street-address"
+        data-field="direccion"
+        aria-describedby="error-direccion"
+        aria-invalid="false"
+        required
+      />
+      <p class="quote-company__error" id="error-direccion" data-error="direccion" role="alert" aria-live="polite"></p>
+    </div>
+
+    <div class="quote-company__field">
+      <label for="company-ciudad">Ciudad <span aria-label="obligatorio">*</span></label>
+      <input
+        type="text"
+        id="company-ciudad"
+        name="ciudad"
+        placeholder="Ej: Santiago"
+        autocomplete="address-level2"
+        data-field="ciudad"
+        aria-describedby="error-ciudad"
+        aria-invalid="false"
+        required
+      />
+      <p class="quote-company__error" id="error-ciudad" data-error="ciudad" role="alert" aria-live="polite"></p>
+    </div>
+
+    <div class="quote-company__field">
+      <label for="company-comuna">Comuna <span aria-label="obligatorio">*</span></label>
+      <input
+        type="text"
+        id="company-comuna"
+        name="comuna"
+        placeholder="Ej: Las Condes"
+        autocomplete="address-level1"
+        data-field="comuna"
+        aria-describedby="error-comuna"
+        aria-invalid="false"
+        required
+      />
+      <p class="quote-company__error" id="error-comuna" data-error="comuna" role="alert" aria-live="polite"></p>
+    </div>
+
+    <div class="quote-company__field">
+      <label for="company-contacto">Nombre de contacto</label>
+      <input
+        type="text"
+        id="company-contacto"
+        name="nombreContacto"
+        placeholder="Ej: Juan Pérez"
+        autocomplete="name"
+        data-field="nombreContacto"
+        aria-describedby="error-nombreContacto"
+        aria-invalid="false"
+      />
+      <p class="quote-company__error" id="error-nombreContacto" data-error="nombreContacto" role="alert" aria-live="polite"></p>
+    </div>
+
+    <div class="quote-company__field">
+      <label for="company-email">Email <span aria-label="obligatorio">*</span></label>
+      <input
+        type="email"
+        id="company-email"
+        name="email"
+        placeholder="ejemplo@empresa.cl"
+        autocomplete="email"
+        data-field="email"
+        aria-describedby="error-email"
+        aria-invalid="false"
+        required
+      />
+      <p class="quote-company__error" id="error-email" data-error="email" role="alert" aria-live="polite"></p>
+    </div>
+
+    <div class="quote-company__field">
+      <label for="company-telefono">Teléfono / WhatsApp <span aria-label="obligatorio">*</span></label>
+      <input
+        type="tel"
+        id="company-telefono"
+        name="telefono"
+        placeholder="+56 9 1234 5678"
+        autocomplete="tel"
+        data-field="telefono"
+        aria-describedby="error-telefono"
+        aria-invalid="false"
+        required
+      />
+      <p class="quote-company__error" id="error-telefono" data-error="telefono" role="alert" aria-live="polite"></p>
+    </div>
+
+    <p class="quote-company__form-error" data-form-error role="alert" aria-live="assertive"></p>
+
+    <div class="quote-company__actions">
+      <Button
+        type="button"
+        variant="ghost"
+        icon="arrow-left"
+        data-quote-wizard-prev="company"
+      >
+        Volver
+      </Button>
+      <Button type="submit" variant="primary" icon="arrow-right" iconPosition="right">
+        Continuar
+      </Button>
+    </div>
+  </form>
+</section>
+
+<script>
+  import {
+    getCompanyData,
+    setCompanyData,
+    subscribeCompanyData,
+    initCompanyStorageSync,
+  } from '@/lib/quoteCompany';
+  import {
+    type QuoteCompanyData,
+    validateCompanyData,
+    formatRut,
+  } from '@/types/quoteCompany';
+
+  const FIELD_NAMES: Array<keyof QuoteCompanyData> = [
+    'rut',
+    'giro',
+    'razonSocial',
+    'nombreFantasia',
+    'direccion',
+    'ciudad',
+    'comuna',
+    'nombreContacto',
+    'email',
+    'telefono',
+  ];
+
+  function getFormData(form: HTMLFormElement): QuoteCompanyData {
+    const data = {} as QuoteCompanyData;
+    for (const name of FIELD_NAMES) {
+      const input = form.querySelector<HTMLInputElement>(`[name="${name}"]`);
+      data[name] = input?.value ?? '';
+    }
+    return data;
+  }
+
+  function setFormData(form: HTMLFormElement, data: QuoteCompanyData): void {
+    for (const name of FIELD_NAMES) {
+      const input = form.querySelector<HTMLInputElement>(`[name="${name}"]`);
+      if (input) input.value = data[name] ?? '';
+    }
+  }
+
+  function clearFieldError(form: HTMLFormElement, field: string): void {
+    const input = form.querySelector<HTMLInputElement>(`[data-field="${field}"]`);
+    const error = form.querySelector<HTMLElement>(`[data-error="${field}"]`);
+    if (input) {
+      input.setAttribute('aria-invalid', 'false');
+      input.classList.remove('is-invalid');
+    }
+    if (error) error.textContent = '';
+  }
+
+  function showFieldError(form: HTMLFormElement, field: string, message: string): void {
+    const input = form.querySelector<HTMLInputElement>(`[data-field="${field}"]`);
+    const error = form.querySelector<HTMLElement>(`[data-error="${field}"]`);
+    if (input) {
+      input.setAttribute('aria-invalid', 'true');
+      input.classList.add('is-invalid');
+    }
+    if (error) error.textContent = message;
+  }
+
+  function clearAllErrors(form: HTMLFormElement): void {
+    for (const name of FIELD_NAMES) clearFieldError(form, name);
+    const formError = form.querySelector<HTMLElement>('[data-form-error]');
+    if (formError) formError.textContent = '';
+  }
+
+  function validateAndShow(form: HTMLFormElement, showAll = false): boolean {
+    const data = getFormData(form);
+    const result = validateCompanyData(data);
+    if (showAll) {
+      clearAllErrors(form);
+      for (const [field, message] of Object.entries(result.errors)) {
+        showFieldError(form, field, message);
+      }
+    } else {
+      // En validación en tiempo real solo mostramos/ocultamos el campo que cambió.
+      // Llamamos a validateCompanyData para actualizar el estado sin mostrar todos.
+    }
+    return result.valid;
+  }
+
+  function dispatchNavigate(direction: 'next' | 'prev' | number): void {
+    const detail = typeof direction === 'number' ? { step: direction } : { direction };
+    window.dispatchEvent(new CustomEvent('quote-wizard-navigate', { detail }));
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initCompanyStorageSync();
+    const form = document.querySelector<HTMLFormElement>('[data-quote-company-form]');
+    if (!form) return;
+
+    // Poblar formulario desde localStorage.
+    setFormData(form, getCompanyData());
+
+    // Formatear RUT al perder el foco.
+    const rutInput = form.querySelector<HTMLInputElement>('[data-field="rut"]');
+    rutInput?.addEventListener('blur', () => {
+      if (rutInput.value.trim()) {
+        rutInput.value = formatRut(rutInput.value);
+      }
+    });
+
+    // Persistir y validar en tiempo real.
+    FIELD_NAMES.forEach((name) => {
+      const input = form.querySelector<HTMLInputElement>(`[data-field="${name}"]`);
+      if (!input) return;
+      input.addEventListener('input', () => {
+        const data = getFormData(form);
+        setCompanyData(data);
+        const result = validateCompanyData(data);
+        if (result.errors[name]) {
+          showFieldError(form, name, result.errors[name]);
+        } else {
+          clearFieldError(form, name);
+        }
+      });
+    });
+
+    // Sincronizar cambios de otras pestañas.
+    subscribeCompanyData((data) => {
+      if (document.activeElement?.closest('[data-quote-company-form]')) {
+        // No sobrescribir mientras el usuario escribe.
+        return;
+      }
+      setFormData(form, data);
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = getFormData(form);
+      setCompanyData(data);
+      const isValid = validateAndShow(form, true);
+      if (isValid) {
+        dispatchNavigate('next');
+      } else {
+        const formError = form.querySelector<HTMLElement>('[data-form-error]');
+        if (formError) {
+          formError.textContent = 'Revisa los campos marcados antes de continuar.';
+        }
+        // Focus al primer campo con error.
+        const firstInvalid = form.querySelector<HTMLInputElement>('[aria-invalid="true"]');
+        firstInvalid?.focus();
+      }
+    });
+
+    form.querySelector<HTMLButtonElement>('[data-quote-wizard-prev="company"]')?.addEventListener('click', () => {
+      dispatchNavigate('prev');
+    });
+  });
+</script>
+
+<style>
+  .quote-company {
+    background-color: var(--color-surface, #fff);
+    border: 1px solid var(--color-line, #e2e4e5);
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+
+  .quote-company__head {
+    margin-bottom: 1.5rem;
+  }
+
+  .quote-company__title {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-ink, #242627);
+  }
+
+  .quote-company__lead {
+    margin: 0;
+    color: var(--color-ink-700, #3a3d3e);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .quote-company__form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .quote-company__form {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .quote-company__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .quote-company__field label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-700, #3a3d3e);
+  }
+
+  .quote-company__field input {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--color-ink, #242627);
+    background-color: var(--color-surface, #fff);
+    border: 1px solid var(--color-line, #e2e4e5);
+    border-radius: 8px;
+    padding: 0.625rem 0.75rem;
+    transition: border-color 0.15s var(--ease-out, ease),
+      box-shadow 0.15s var(--ease-out, ease);
+  }
+
+  .quote-company__field input:focus {
+    outline: 2px solid var(--color-brand, #348f41);
+    outline-offset: 2px;
+    border-color: var(--color-brand, #348f41);
+  }
+
+  .quote-company__field input.is-invalid {
+    border-color: var(--color-danger, #c0392b);
+    background-color: rgba(192, 57, 43, 0.04);
+  }
+
+  .quote-company__field input.is-invalid:focus {
+    outline-color: var(--color-danger, #c0392b);
+  }
+
+  .quote-company__error {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--color-danger, #c0392b);
+    min-height: 1.2em;
+  }
+
+  .quote-company__form-error {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 0.75rem;
+    background-color: rgba(192, 57, 43, 0.08);
+    border: 1px solid var(--color-danger, #c0392b);
+    border-radius: 8px;
+    color: var(--color-danger, #c0392b);
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .quote-company__form-error:empty {
+    display: none;
+  }
+
+  .quote-company__actions {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-3, 0.75rem);
+    margin-top: var(--space-2, 0.5rem);
+  }
+
+  @media (max-width: 639.98px) {
+    .quote-company__actions :global(.btn) {
+      width: 100%;
+    }
+  }
+</style>

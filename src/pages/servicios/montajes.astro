@@ -1,15 +1,17 @@
 ---
 // src/pages/servicios/montajes.astro
 import ServiceLayout from '@/layouts/ServiceLayout.astro';
-import heroImg from '@/assets/imgs/hero.jpg';
+import servMontajes from '@/assets/imgs/serv-montajes.jpg';
 ---
 
 <ServiceLayout
   title="Montajes mineros e industriales"
   subtitle="Montaje electromecánico y estructural en faena, con foco en seguridad."
   description="Montaje preciso, seguro y a tiempo"
-  heroImage={heroImg.src}
-  heroImageAlt="Montajes mineros e industriales"
+  heroImage={servMontajes.src}
+  heroImageAlt="Montaje electromecánico y estructural en planta industrial minera, IP Proyectos Industriales"
+  heroImageWidth={servMontajes.width}
+  heroImageHeight={servMontajes.height}
   category="Servicios · Montajes"
   includes={[
     'Montaje electromecánico y de equipos mineros.',

@@ -1,0 +1,416 @@
+---
+// src/components/quote/QuoteWizard.astro
+// Contenedor del wizard de cotización: stepper visual + paneles de 3 pasos.
+// Gestiona la navegación entre pasos y la persistencia del paso actual.
+//
+// El stepper es sticky y publica su altura real en la CSS var
+// --quote-wizard-nav-h para que las columnas sticky de los pasos
+// (buscador, carrito) se anclen siempre DEBAJO de él, sin solaparse.
+
+export interface Props {
+  step1Label?: string;
+  step2Label?: string;
+  step3Label?: string;
+}
+
+const {
+  step1Label = 'Equipos',
+  step2Label = 'Tus datos',
+  step3Label = 'Resumen',
+} = Astro.props;
+
+const steps = [step1Label, step2Label, step3Label];
+---
+
+<div class="quote-wizard" data-quote-wizard>
+  <nav class="quote-wizard__nav" aria-label="Progreso de la cotización">
+    <ol class="quote-wizard__stepper" role="list">
+      {steps.map((label, i) => (
+        <>
+          <li class="quote-wizard__step-item">
+            <button
+              type="button"
+              class="quote-wizard__step-btn"
+              data-step-index={i + 1}
+              data-step-label={label}
+              aria-current={i === 0 ? 'step' : undefined}
+              disabled={i > 0}
+            >
+              <span class="quote-wizard__step-indicator" aria-hidden="true">
+                <span class="quote-wizard__step-number">{i + 1}</span>
+              </span>
+              <span class="quote-wizard__step-label">{label}</span>
+            </button>
+          </li>
+          {i < steps.length - 1 && (
+            <li class="quote-wizard__step-divider" data-step-divider={i + 1} aria-hidden="true"></li>
+          )}
+        </>
+      ))}
+    </ol>
+  </nav>
+
+  <div class="quote-wizard__body">
+    <div class="sr-only" aria-live="polite" aria-atomic="true" data-wizard-live>
+      Paso 1 de 3: {step1Label}
+    </div>
+    <div class="quote-wizard__panel" data-step-panel="1">
+      <slot name="step-1" />
+    </div>
+    <div class="quote-wizard__panel" data-step-panel="2" hidden>
+      <slot name="step-2" />
+    </div>
+    <div class="quote-wizard__panel" data-step-panel="3" hidden>
+      <slot name="step-3" />
+    </div>
+  </div>
+</div>
+
+<script>
+  import { getCart, subscribe as subscribeCart } from '@/lib/quoteCart';
+  import { getCompanyData, subscribeCompanyData } from '@/lib/quoteCompany';
+  import { validateCompanyData } from '@/types/quoteCompany';
+
+  const STEP_KEY = 'ip_quote_wizard_step';
+  const TOTAL_STEPS = 3;
+
+  type WizardAPI = {
+    goToStep: (step: number) => void;
+    nextStep: () => void;
+    prevStep: () => void;
+    getCurrentStep: () => number;
+  };
+
+  declare global {
+    interface Window {
+      quoteWizard?: WizardAPI;
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    const wizardEl = document.querySelector<HTMLElement>('[data-quote-wizard]');
+    const stepButtons = document.querySelectorAll<HTMLButtonElement>('[data-step-index]');
+    const dividers = document.querySelectorAll<HTMLElement>('[data-step-divider]');
+    const panels = document.querySelectorAll<HTMLElement>('[data-step-panel]');
+
+    let currentStep = 1;
+
+    function canAdvanceToStep(step: number): boolean {
+      if (step === 1) return true;
+      const cart = getCart();
+      if (step === 2) return cart.items.length > 0;
+      if (step === 3) {
+        const company = getCompanyData();
+        const companyValid = validateCompanyData(company).valid;
+        return cart.items.length > 0 && companyValid;
+      }
+      return false;
+    }
+
+    function saveStep(step: number): void {
+      try {
+        window.localStorage.setItem(STEP_KEY, String(step));
+      } catch {
+        // Ignorar errores de storage.
+      }
+    }
+
+    function readSavedStep(): number {
+      try {
+        const raw = window.localStorage.getItem(STEP_KEY);
+        const n = raw ? Number.parseInt(raw, 10) : 1;
+        if (n >= 1 && n <= TOTAL_STEPS) return n;
+      } catch {
+        // Ignorar errores de storage.
+      }
+      return 1;
+    }
+
+    function updateStepper(): void {
+      stepButtons.forEach((btn) => {
+        const step = Number(btn.dataset.stepIndex);
+        const isActive = step === currentStep;
+        const isClickable = canAdvanceToStep(step);
+
+        btn.classList.toggle('is-active', isActive);
+        btn.disabled = !isClickable;
+        btn.setAttribute('aria-current', isActive ? 'step' : 'false');
+      });
+      // (Divisores se mantienen neutros en el look pre-refactor: no se tiñen
+      //  según el estado del wizard. Se conservan en el DOM por semántica.)
+    }
+
+    function updatePanels(): void {
+      panels.forEach((panel) => {
+        const step = Number(panel.dataset.stepPanel);
+        const isActive = step === currentStep;
+        panel.hidden = !isActive;
+        panel.classList.toggle('is-active', isActive);
+      });
+      wizardEl?.setAttribute('data-step', String(currentStep));
+    }
+
+    function goToStep(step: number): void {
+      if (step < 1 || step > TOTAL_STEPS) return;
+      if (step !== 1 && !canAdvanceToStep(step)) return;
+      currentStep = step;
+      updateStepper();
+      updatePanels();
+      saveStep(currentStep);
+      // Anunciar cambio de paso para lectores de pantalla.
+      const liveRegion = wizardEl?.querySelector<HTMLElement>('[data-wizard-live]');
+      if (liveRegion) {
+        const label =
+          wizardEl?.querySelector<HTMLButtonElement>(`[data-step-index="${currentStep}"]`)
+            ?.dataset.stepLabel ?? '';
+        liveRegion.textContent = `Paso ${currentStep} de ${TOTAL_STEPS}: ${label}`;
+      }
+    }
+
+    function nextStep(): void {
+      goToStep(currentStep + 1);
+    }
+
+    function prevStep(): void {
+      goToStep(currentStep - 1);
+    }
+
+    function resolveInitialStep(): number {
+      const saved = readSavedStep();
+      if (canAdvanceToStep(saved)) return saved;
+      if (getCart().items.length === 0) return 1;
+      if (!validateCompanyData(getCompanyData()).valid) return 2;
+      return 1;
+    }
+
+    // Inicializar stepper.
+    stepButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const step = Number(btn.dataset.stepIndex);
+        if (!Number.isNaN(step)) goToStep(step);
+      });
+    });
+
+    // Escuchar eventos de navegación desde componentes hijos.
+    window.addEventListener('quote-wizard-navigate', (event: Event) => {
+      const e = event as CustomEvent<{ direction?: 'next' | 'prev'; step?: number }>;
+      const { direction, step } = e.detail ?? {};
+      if (typeof step === 'number') {
+        goToStep(step);
+      } else if (direction === 'next') {
+        nextStep();
+      } else if (direction === 'prev') {
+        prevStep();
+      }
+    });
+
+    // Exponer API global.
+    window.quoteWizard = {
+      goToStep,
+      nextStep,
+      prevStep,
+      getCurrentStep: () => currentStep,
+    };
+
+    // Re-evaluar accesibilidad cuando cambia el carrito o los datos de empresa.
+    // Si el paso actual deja de ser válido (ej: se vació el carrito), bajamos
+    // al paso más alto permitido; si no, solo refrescamos el stepper.
+    function syncAfterDataChange(): void {
+      if (!canAdvanceToStep(currentStep)) {
+        if (getCart().items.length === 0) {
+          goToStep(1);
+        } else {
+          goToStep(2);
+        }
+        return;
+      }
+      updateStepper();
+    }
+
+    subscribeCart(syncAfterDataChange);
+    subscribeCompanyData(syncAfterDataChange);
+
+    // Publica la altura real del nav como CSS var. Las columnas sticky de
+    // los pasos (buscador, carrito) la consumen para anclarse debajo del
+    // stepper: así el stepper permanece visible sin tapar nunca las cards.
+    const navEl = wizardEl?.querySelector<HTMLElement>('.quote-wizard__nav');
+    if (wizardEl && navEl) {
+      const publishNavHeight = () => {
+        wizardEl.style.setProperty('--quote-wizard-nav-h', `${navEl.offsetHeight}px`);
+      };
+      if ('ResizeObserver' in window) {
+        new ResizeObserver(publishNavHeight).observe(navEl);
+      }
+      publishNavHeight();
+    }
+
+    // Inicializar en el paso guardado (o el permitido).
+    goToStep(resolveInitialStep());
+  }
+</script>
+
+<style>
+  .quote-wizard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  /* ── Stepper sticky.
+     Fondo opaco: sin él, el nav (z-index 30) deja ver las columnas
+     sticky de los pasos (z-index 10) cuando el usuario hace scroll y
+     el contenido pasa por debajo. El fondo iguala la superficie del
+     section--alt para integrarse visualmente. ── */
+  .quote-wizard__nav {
+    position: sticky;
+    top: calc(var(--header-height, 5rem) + var(--space-2));
+    /* Por encima de las columnas sticky de los pasos (z-index 10). */
+    z-index: 30;
+    background-color: var(--color-surface-alt, #f6f7f8);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-lg, 1.25rem);
+    border: 1px solid var(--color-line, #e2e4e5);
+  }
+
+  .quote-wizard__stepper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .quote-wizard__step-item {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .quote-wizard__step-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 2.75rem;
+    padding: var(--space-2) var(--space-3);
+    background-color: transparent;
+    border: 0;
+    border-radius: var(--radius-pill);
+    color: var(--color-ink-500);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.9rem;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      color var(--motion-base) var(--ease-out),
+      background-color var(--motion-base) var(--ease-out);
+  }
+
+  .quote-wizard__step-btn:disabled {
+    cursor: not-allowed;
+  }
+
+  .quote-wizard__step-btn:not(:disabled):hover {
+    color: var(--color-brand);
+  }
+
+  .quote-wizard__step-btn:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  /* Paso activo: color de marca en el texto + indicador con bg de marca. */
+  .quote-wizard__step-btn.is-active {
+    color: var(--color-brand);
+    cursor: default;
+  }
+
+  /* ── Indicador numérico (círculo) ── */
+  .quote-wizard__step-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--radius-pill);
+    background-color: var(--color-surface-alt);
+    color: var(--color-ink-500);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    transition:
+      background-color var(--motion-base) var(--ease-out),
+      color var(--motion-base) var(--ease-out);
+  }
+
+  .quote-wizard__step-number {
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .quote-wizard__step-btn.is-active .quote-wizard__step-indicator {
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+
+  .quote-wizard__step-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── Divisores neutros (sin estado coloreado) ── */
+  .quote-wizard__step-divider {
+    flex: 1 1 1.5rem;
+    height: 1px;
+    min-width: 0.75rem;
+    max-width: 2rem;
+    background-color: var(--color-line);
+  }
+
+  /* ── Paneles ── */
+  .quote-wizard__body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .quote-wizard__panel[hidden] {
+    display: none;
+  }
+
+  .quote-wizard__panel {
+    animation: quote-wizard-fade-in 0.2s var(--ease-out);
+  }
+
+  @keyframes quote-wizard-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .quote-wizard__step-btn {
+      flex-direction: column;
+      gap: var(--space-1);
+      min-height: 3.25rem;
+      padding: var(--space-2);
+      font-size: 0.75rem;
+    }
+
+    .quote-wizard__step-indicator {
+      width: 1.5rem;
+      height: 1.5rem;
+      font-size: 0.75rem;
+    }
+
+    .quote-wizard__step-divider {
+      display: none;
+    }
+  }
+</style>

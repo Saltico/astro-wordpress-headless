@@ -5,6 +5,7 @@
 
 import Container from './Container.astro';
 import Icon from './Icon.astro';
+import Button from './Button.astro';
 import type { IconName } from '@/lib/icons';
 
 export interface ContactInfo {
@@ -179,10 +180,9 @@ const backgroundClasses = {
             </div>
           ))}
 
-          <button type="submit" class="button button--primary button--large contact-form__submit">
+          <Button type="submit" variant="primary" size="lg" icon="arrow-right" iconPosition="right" fullWidth>
             {submitLabel}
-            <Icon name="arrow-right" size={18} />
-          </button>
+          </Button>
         </form>
       </div>
     </div>
@@ -379,11 +379,5 @@ const backgroundClasses = {
     background-repeat: no-repeat;
     background-position: right var(--space-4) center;
     padding-right: var(--space-10);
-  }
-
-  .contact-form__submit {
-    margin-top: var(--space-4);
-    width: 100%;
-    justify-content: center;
   }
 </style>
