@@ -4,7 +4,6 @@
 
 import RentalLayout from '@/layouts/RentalLayout.astro';
 import EquipmentCatalog from '@/components/rental/EquipmentCatalog.astro';
-import StatsCounter from '@/components/ui/StatsCounter.astro';
 import RelatedEquipment from '@/components/rental/RelatedEquipment.astro';
 import FAQSection from '@/components/rental/FAQSection.astro';
 import Container from '@/components/ui/Container.astro';
@@ -87,16 +86,16 @@ const faqItems = [
 
 <RentalLayout
   title={subcategory.seoTitle}
+  category={subcategory.name}
   description={subcategory.seoDescription}
   heroImage={subcategory.heroImage}
   heroImageAlt={subcategory.name}
-  category={`Arriendo · ${category.name}`}
   features={subcategory.features}
   description={subcategory.shortDesc}
   breadcrumbs={breadcrumbs}
   whatsappMessage={subcategory.whatsappMessage}
   jsonLd={jsonLd}
->
+  >
   <EquipmentCatalog
     slot="catalog"
     items={subcategory.catalog}
@@ -104,19 +103,6 @@ const faqItems = [
     background="light"
     title={`Modelos disponibles de ${subcategory.name.toLowerCase()}`}
     subtitle={`${subcategory.catalog.length} ${subcategory.catalog.length === 1 ? 'equipo' : 'equipos'} en arriendo con operador certificado y mantenimiento incluido.`}
-  />
-
-  <StatsCounter
-    slot="stats"
-    stats={subcategory.specs.map((s) => ({
-      value: s.value,
-      label: s.label,
-    }))}
-    variant="dark"
-    layout="horizontal"
-    columns={4}
-    animated={false}
-    showDividers={true}
   />
 
   <Fragment slot="related">

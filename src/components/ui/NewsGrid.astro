@@ -118,7 +118,7 @@ function formatDate(iso: string): string {
   }
 
   .news-grid--dark {
-    background-color: var(--color-graphite-2, #15201a);
+    background-color: var(--section-bg, var(--color-graphite, #0d1611));
   }
 
   .news-grid__container {
@@ -187,7 +187,7 @@ function formatDate(iso: string): string {
   }
 
   .news-grid--light .news-grid__title { color: var(--color-ink, #242627); }
-  .news-grid--dark .news-grid__title { color: #fff; }
+  .news-grid--dark .news-grid__title { color: var(--section-heading-color, #fff); }
 
   .news-grid__subtitle {
     margin: 0;

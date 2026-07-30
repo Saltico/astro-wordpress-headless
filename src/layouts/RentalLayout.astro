@@ -9,6 +9,7 @@ import Icon from '@/components/ui/Icon.astro';
 import Button from '@/components/ui/Button.astro';
 import CTABand from '@/components/ui/CTABand.astro';
 import EquipmentCatalog from '@/components/rental/EquipmentCatalog.astro';
+import edificio from '@/assets/imgs/edificio.jpg';
 import heroImg from '@/assets/imgs/hero.jpg';
 import type { Equipment } from '@/data/rental';
 
@@ -33,6 +34,7 @@ export interface Props {
   catalogColumns?: 2 | 3 | 4;
   relatedItems?: Array<{ name: string; href: string; shortDesc: string; badge?: string }>;
   faqItems?: Array<{ question: string; answer: string }>;
+  jsonLd?: any;
 }
 
 const {
@@ -154,16 +156,25 @@ const hasFaqSlot = Astro.slots.has('faq');
 
   <!-- CTA de cotización -->
   <div id="cotizar">
-    <CTABand
-      eyebrow="¿Necesitas equipos para tu faena?"
-      title="Arrienda con nosotros"
-      subtitle="Contamos con operadores certificados y disponibilidad 24/7 para tu proyecto."
-      showForm={true}
-      backgroundImage={heroImg.src}
-      contentAlign="center"
-      minHeight="sm"
-    />
+  <CTABand
+    eyebrow="¿Necesitas equipos para tu faena?"
+    title="Arrienda con nosotros"
+    subtitle="Contamos con operadores certificados y disponibilidad 24/7 para tu proyecto."
+    backgroundImage={edificio.src}
+    backgroundAlt="Edificio corporativo de IP Proyectos Industriales en Chile"
+    backgroundWidth={edificio.width}
+    backgroundHeight={edificio.height}
+    buttons={[
+      { label: 'Ir al cotizador', href: '/cotizador', variant: 'primary', icon: 'arrow-right', ariaLabel: 'Ir al cotizador en línea' },
+      { label: 'Hablar por WhatsApp', href: 'https://wa.me/56965593202?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20solicitar%20una%20cotizaci%C3%B3n.', variant: 'outline', external: true, icon: 'whatsapp' },
+    ]}
+    contentAlign="center"
+    minHeight="md"
+  />
   </div>
+  <!--       eyebrow="¿Necesitas equipos para tu faena?"
+        title="Arrienda con nosotros"
+        subtitle="Contamos con operadores certificados y disponibilidad 24/7 para tu proyecto." -->
 </BaseLayout>
 
 <style>

@@ -30,7 +30,7 @@
 
   /* Superficies */
   --color-surface: #ffffff;
-  --color-surface-alt: #f6f7f8;
+  --color-surface-alt: #1a1a1a;
   --color-line: #e2e4e5;
   --color-on-brand: #ffffff;
 
@@ -152,6 +152,15 @@
   --space-20: var(--spacing-20);
   --space-24: var(--spacing-24);
   --space-30: var(--spacing-30);
+
+  /* ── Tokens semánticos de sección ──
+     Controlan el background y color de encabezados (H2) de TODAS
+     las secciones del sitio. Modificar estos valores actualiza
+     todo el sitio de forma consistente. Los <p> verdes (eyebrows,
+     acentos) mantienen su color via tokens de marca (--color-brand-*). */
+  --section-bg: var(--color-graphite);
+  --section-bg-alt: var(--color-graphite-2);
+  --section-heading-color: var(--color-on-dark);
 }
 
 /* ========================================

@@ -148,7 +148,7 @@ const backgroundClasses = {
   }
 
   .split-section--dark {
-    background-color: var(--color-graphite, #0d1611);
+    background-color: var(--section-bg, var(--color-graphite, #0d1611));
   }
 
   /* Ghost text */
@@ -240,7 +240,7 @@ const backgroundClasses = {
   }
 
   .split-section--dark .split-section__title {
-    color: #fff;
+    color: var(--section-heading-color, #fff);
   }
 
   /* Description */

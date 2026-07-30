@@ -93,7 +93,7 @@ const IZAJE_GRUAS_60: RentalSubcategory = {
     { label: 'Disponibilidad', value: '24/7' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Grúas de 60 Toneladas | IP Proyectos',
+  seoTitle: 'Arriendo de Grúas de 60 Toneladas',
   seoDescription:
     'Arriendo de grúas de 60 toneladas con operador certificado en Chile. Equipos Grove, Tadano y Liebherr. Hasta 50 m de altura. Cotiza online.',
   catalog: [
@@ -104,7 +104,7 @@ const IZAJE_GRUAS_60: RentalSubcategory = {
       height: '44 m',
       shortDesc: 'Grúa hidráulica AT de 60 t con plumín telescópico y 4 ejes direccionales.',
       features: ['Motor Tier 4 Final', 'Plumín de 15 m', '4 ejes direccionales'],
-      image: HERO,
+      image: 'https://www.gruasyequiposgarcia.com/wp-content/uploads/2020/01/Grove-GMK-3050.jpg',
       whatsappMessage:
         'Hola IP, quisiera cotizar arriendo de Grúa Grove GMK 3060 (60 t).',
     },
@@ -152,7 +152,7 @@ const IZAJE_GRUAS_80: RentalSubcategory = {
     { label: 'Disponibilidad', value: '24/7' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Grúas de 80 Toneladas | IP Proyectos',
+  seoTitle: 'Arriendo de Grúas de 80 Toneladas',
   seoDescription:
     'Arriendo de grúas de 80 toneladas con operador certificado en Chile. Equipos Grove, Tadano y Liebherr. Hasta 60 m de altura. Cotiza online.',
   catalog: [
@@ -210,7 +210,7 @@ const IZAJE_GRUAS_100: RentalSubcategory = {
     { label: 'Disponibilidad', value: '24/7' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Grúas de 100 Toneladas | IP Proyectos',
+  seoTitle: 'Arriendo de Grúas de 100 Toneladas',
   seoDescription:
     'Arriendo de grúas de 100 toneladas con operador certificado en Chile. Equipos Grove, Liebherr y Tadano. Hasta 88 m de altura. Cotiza online.',
   catalog: [
@@ -268,7 +268,7 @@ const IZAJE_GRUAS_250: RentalSubcategory = {
     { label: 'Disponibilidad', value: '24/7' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Grúas de 250 Toneladas | IP Proyectos',
+  seoTitle: 'Arriendo de Grúas de 250 Toneladas',
   seoDescription:
     'Arriendo de grúas de 250 toneladas con operador certificado en Chile. Equipos Grove, Liebherr y Tadano. Hasta 130 m de altura. Cotiza online.',
   catalog: [
@@ -326,7 +326,7 @@ const IZAJE_CAMIONES_PLUMA: RentalSubcategory = {
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Camiones Pluma | IP Proyectos',
+  seoTitle: 'Arriendo de Camiones Pluma',
   seoDescription:
     'Arriendo de camiones pluma de 3 a 15 toneladas en Chile. Operador certificado, combustible y seguros incluidos. Disponibilidad inmediata. Cotiza online.',
   catalog: [
@@ -384,7 +384,7 @@ const IZAJE_ALZA_HOMBRE: RentalSubcategory = {
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Alza-hombre en Chile | IP Proyectos',
+  seoTitle: 'Arriendo de Alza-hombre en Chile',
   seoDescription:
     'Arriendo de alza-hombre y plataformas aéreas en Chile. Equipos articulados y telescópicos, altura de 8 a 40 m. Operador certificado. Cotiza online.',
   catalog: [
@@ -442,7 +442,7 @@ const IZAJE_GRUAS_HORQUILLA: RentalSubcategory = {
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Grúas Horquilla en Chile | IP Proyectos',
+  seoTitle: 'Arriendo de Grúas Horquilla en Chile',
   seoDescription:
     'Arriendo de grúas horquilla diésel y eléctricas en Chile. Capacidad de 2 a 25 toneladas. Mantenimiento y seguros incluidos. Cotiza online.',
   catalog: [
@@ -501,7 +501,7 @@ const MT_CAMIONES_TOLVA: RentalSubcategory = {
     { label: 'Disponibilidad', value: '24/7' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Camiones Tolva en Chile | IP Proyectos',
+  seoTitle: 'Arriendo de Camiones Tolva en Chile',
   seoDescription:
     'Arriendo de camiones tolva de 15 a 40 m³ con chofer en Chile. Ideal para movimiento de tierra y transporte de material. Cotiza online.',
   catalog: [
@@ -547,7 +547,7 @@ const MT_RETROEXCAVADORAS: RentalSubcategory = {
     { label: 'Disponibilidad', value: '24/7' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Retroexcavadoras en Chile | IP Proyectos',
+  seoTitle: 'Arriendo de Retroexcavadoras en Chile',
   seoDescription:
     'Arriendo de retroexcavadoras hidráulicas con operador en Chile. Equipos de 8 a 25 toneladas, profundidad hasta 6 m. Cotiza online.',
   catalog: [
@@ -593,7 +593,7 @@ const MT_MINICARGADORES: RentalSubcategory = {
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Minicargadores en Chile | IP Proyectos',
+  seoTitle: 'Arriendo de Minicargadores en Chile',
   seoDescription:
     'Arriendo de minicargadores con operador en Chile. Equipos Bobcat, Caterpillar y Case. Ideales para espacios reducidos. Cotiza online.',
   catalog: [
@@ -643,7 +643,7 @@ const TR_TRACTO_CAMIONES: RentalSubcategory = {
     { label: 'Disponibilidad', value: '24/7' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Tracto Camiones en Chile | IP Proyectos',
+  seoTitle: 'Arriendo de Tracto Camiones en Chile',
   seoDescription:
     'Arriendo de tracto camiones con chofer en Chile. Capacidad de tiro hasta 60 toneladas. Ideal para transporte de carga pesada. Cotiza online.',
   catalog: [
@@ -689,7 +689,7 @@ const TR_CAMA_BAJA: RentalSubcategory = {
     { label: 'Disponibilidad', value: '24/7' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Cama-baja en Chile | IP Proyectos',
+  seoTitle: 'Arriendo de Cama-baja en Chile',
   seoDescription:
     'Arriendo de camas-baja Eager Beaver de 25 a 80 t en Chile. Permisos de tránsito incluidos. Ideal para transporte de maquinaria pesada. Cotiza online.',
   catalog: [
@@ -735,7 +735,7 @@ const TR_SEMIREMOLQUES: RentalSubcategory = {
     { label: 'Disponibilidad', value: '24/7' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Semiremolques en Chile | IP Proyectos',
+  seoTitle: 'Arriendo de Semiremolques en Chile',
   seoDescription:
     'Arriendo de semiremolques de 25 a 40 t en Chile. Compatibles con contenedores de 20 y 40 pies. Mantenimiento y seguros incluidos. Cotiza online.',
   catalog: [
@@ -785,7 +785,7 @@ const EE_TORRES_ILUMINACION: RentalSubcategory = {
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Torres de Iluminación en Chile | IP Proyectos',
+  seoTitle: 'Arriendo de Torres de Iluminación en Chile',
   seoDescription:
     'Arriendo de torres de iluminación portátil en Chile. Cobertura hasta 4.000 m². Combustible y mantenimiento incluidos. Cotiza online.',
   catalog: [
@@ -831,7 +831,7 @@ const EE_BOMBAS_HORMIGON: RentalSubcategory = {
     { label: 'Disponibilidad', value: '24/7' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Bombas de Hormigón en Chile | IP Proyectos',
+  seoTitle: 'Arriendo de Bombas de Hormigón en Chile',
   seoDescription:
     'Arriendo de bombas de hormigón estacionarias y telescópicas en Chile. Capacidad hasta 150 m³/h. Operador certificado. Cotiza online.',
   catalog: [
@@ -877,7 +877,7 @@ const EE_COMPRESORES_AIRE: RentalSubcategory = {
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Compresores de Aire en Chile | IP Proyectos',
+  seoTitle: 'Arriendo de Compresores de Aire en Chile',
   seoDescription:
     'Arriendo de compresores de aire portátiles diésel en Chile. Capacidad 185 a 1.500 CFM. Combustible y mantenimiento incluidos. Cotiza online.',
   catalog: [
@@ -923,7 +923,7 @@ const EE_GENERADORES_ELECTRICOS: RentalSubcategory = {
     { label: 'Disponibilidad', value: '24/7' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Generadores Eléctricos en Chile | IP Proyectos',
+  seoTitle: 'Arriendo de Generadores Eléctricos en Chile',
   seoDescription:
     'Arriendo de generadores eléctricos diésel de 20 a 1.500 kVA en Chile. Combustible y mantenimiento incluidos. Disponibilidad 24/7. Cotiza online.',
   catalog: [
@@ -969,7 +969,7 @@ const EE_TERMOFUSIONADORAS: RentalSubcategory = {
     { label: 'Disponibilidad', value: 'Bajo pedido' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Termofusión Eléctrica en Chile | IP Proyectos',
+  seoTitle: 'Arriendo de Termofusión Eléctrica en Chile',
   seoDescription:
     'Arriendo de equipos de termofusión eléctrica en Chile. Para tuberías HDPE de 20 a 1.200 mm. Operador certificado. Cotiza online.',
   catalog: [
@@ -1015,7 +1015,7 @@ const EE_MEZCLADORAS_CANASTILLO: RentalSubcategory = {
     { label: 'Disponibilidad', value: 'Bajo pedido' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Mezcladora Eléctrica con Canastillo | IP Proyectos',
+  seoTitle: 'Arriendo de Mezcladora Eléctrica con Canastillo',
   seoDescription:
     'Arriendo de mezcladora eléctrica con canastillo en Chile. Capacidad 250 a 500 L, altura hasta 18 m. Operador certificado. Cotiza online.',
   catalog: [
@@ -1045,7 +1045,7 @@ export const RENTAL_CATEGORIES: RentalCategory[] = [
     description:
       'Arriendo de equipos de izaje y alto tonelaje para la gran minería e industria en Chile. Grúas hidráulicas todo terreno (AT) y rough terrain (RT) desde 60 hasta 400 toneladas, camiones pluma, alza-hombre, plataformas aéreas y grúas horquilla con operadores certificados. Servicio 24/7 con planes de izaje, permisos de trabajo y supervisión técnica incluidos. Disponibilidad en zona norte (Atacama, Coquimbo, Antofagasta) y centro del país con respuesta operativa en menos de 48 horas.',
     heroImage: HERO,
-    seoTitle: 'Arriendo de Equipos de Izaje en Chile | IP Proyectos',
+    seoTitle: 'Arriendo de Equipos de Izaje en Chile',
     seoDescription:
       'Arriendo de grúas, alza-hombre y equipos de izaje en Chile. Hasta 400 toneladas. Operador certificado, 24/7. Cotiza online o por WhatsApp.',
     subcategories: [
@@ -1065,7 +1065,7 @@ export const RENTAL_CATEGORIES: RentalCategory[] = [
     description:
       'Arriendo de equipos para movimiento de tierra en Chile. Camiones tolva, retroexcavadoras hidráulicas y minicargadores compactos para proyectos de construcción, minería y obras civiles. Equipos con operadores certificados, combustibles y mantenimiento incluidos. Disponibilidad en zona norte y centro del país con respuesta operativa en menos de 48 horas. Solución completa para proyectos de excavación, nivelación, transporte de material y faenas urbanas.',
     heroImage: HERO,
-    seoTitle: 'Arriendo de Equipos de Movimiento de Tierra | IP Proyectos',
+    seoTitle: 'Arriendo de Equipos de Movimiento de Tierra',
     seoDescription:
       'Arriendo de camiones tolva, retroexcavadoras y minicargadores en Chile. Operador certificado, combustibles incluidos. Cotiza online o por WhatsApp.',
     subcategories: [MT_CAMIONES_TOLVA, MT_RETROEXCAVADORAS, MT_MINICARGADORES],
@@ -1077,7 +1077,7 @@ export const RENTAL_CATEGORIES: RentalCategory[] = [
     description:
       'Arriendo de equipos de transporte de carga pesada en Chile. Tracto camiones, camas-baja tipo Eager Beaver y semiremolques para transporte de maquinaria, contenedores y cargas sobredimensionadas en faenas mineras e industriales. Choferes con licencia A5, mantenimiento y seguros incluidos. Disponibilidad en zona norte y centro de Chile con respuesta operativa en menos de 48 horas. Solución completa para proyectos de transporte entre faenas y rutas mineras.',
     heroImage: HERO,
-    seoTitle: 'Arriendo de Equipos de Transporte en Chile | IP Proyectos',
+    seoTitle: 'Arriendo de Equipos de Transporte en Chile',
     seoDescription:
       'Arriendo de tracto camiones, camas-baja y semiremolques en Chile. Chofer con licencia A5, seguros incluidos. Cotiza online o por WhatsApp.',
     subcategories: [TR_TRACTO_CAMIONES, TR_CAMA_BAJA, TR_SEMIREMOLQUES],
@@ -1089,7 +1089,7 @@ export const RENTAL_CATEGORIES: RentalCategory[] = [
     description:
       'Arriendo de equipos especiales en Chile para faenas mineras, construcción e industria. Torres de iluminación portátil, bombas de hormigón, compresores de aire, generadores eléctricos, termofusión eléctrica y mezcladoras con canastillo. Equipos con mantenimiento, combustibles y seguros incluidos. Disponibilidad en zona norte y centro de Chile con respuesta operativa en menos de 24-48 horas. Solución completa para faenas con necesidades específicas de soporte operacional.',
     heroImage: HERO,
-    seoTitle: 'Arriendo de Equipos Especiales en Chile | IP Proyectos',
+    seoTitle: 'Arriendo de Equipos Especiales en Chile',
     seoDescription:
       'Arriendo de torres de iluminación, bombas de hormigón, compresores y generadores en Chile. Mantenimiento y combustibles incluidos. Cotiza online.',
     subcategories: [

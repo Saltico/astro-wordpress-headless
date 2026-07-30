@@ -110,19 +110,18 @@ const services = [
 
   <!-- CTA -->
   <CTABand
-    eyebrow="¿Tienes un proyecto en mente?"
-    title="Diseñemos la solución que tu faena necesita"
-    subtitle="Cuéntanos el alcance y recibe una propuesta clara y a tu medida."
-    showForm={true}
-    buttons={[
-      { label: 'Solicitar cotización', href: '/contacto', variant: 'primary' },
-      { label: 'Escribir por WhatsApp', href: 'https://wa.me/56965593202?text=Hola%2C%20quisiera%20cotizar%20un%20servicio%20con%20IP%20Proyectos%20Industriales.', variant: 'outline', external: true },
-    ]}
+    eyebrow="Cotización rápida"
+    title="Tu próximo proyecto empieza con una conversación"
     backgroundImage={edificioImg.src}
+    backgroundAlt="Edificio corporativo de IP Proyectos Industriales en Chile"
     backgroundWidth={edificioImg.width}
     backgroundHeight={edificioImg.height}
+    buttons={[
+      { label: 'Ir al cotizador', href: '/cotizador', variant: 'primary', icon: 'arrow-right', ariaLabel: 'Ir al cotizador en línea' },
+      { label: 'Hablar por WhatsApp', href: 'https://wa.me/56965593202?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20solicitar%20una%20cotizaci%C3%B3n.', variant: 'outline', external: true, icon: 'whatsapp' },
+    ]}
     contentAlign="center"
-    minHeight="sm"
+    minHeight="md"
   />
 </BaseLayout>
 

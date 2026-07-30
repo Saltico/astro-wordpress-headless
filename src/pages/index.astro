@@ -181,10 +181,6 @@ const newsItems = await getLatestNews(3);
         <p class="d-hero__subtitle">Ingeniería, construcción, montajes y Rental de equipos. Todo de principio a fin, con una sola empresa.</p>
       </div>
     </div>
-    <div class="d-hero__scroll">
-      <span></span>
-      Scroll
-    </div>
   </section>
 
   <!-- 2. STATS COUNTER -->
@@ -218,7 +214,7 @@ const newsItems = await getLatestNews(3);
     title="Empresas líderes de la gran minería y la industria"
     subtitle="Más de dos décadas trabajando con clientes que son referente del sector en Chile."
     speed="normal"
-    backgroundVariant="white"
+    backgroundVariant="dark"
     pauseOnHover={true}
   />
 
@@ -368,33 +364,5 @@ const newsItems = await getLatestNews(3);
     max-width: 54ch;
     margin: 24px 0 0;
     line-height: 1.55;
-  }
-
-  .d-hero__scroll {
-    position: absolute;
-    left: 50%;
-    bottom: 18px;
-    transform: translateX(-50%);
-    z-index: 3;
-    color: rgba(255, 255, 255, 0.55);
-    font-size: 0.68rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .d-hero__scroll span {
-    width: 1px;
-    height: 30px;
-    background: linear-gradient(rgba(255, 255, 255, 0.55), transparent);
-  }
-
-  @media (max-width: 768px) {
-    .d-hero__scroll {
-      display: none;
-    }
   }
 </style>
