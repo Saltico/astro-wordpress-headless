@@ -179,12 +179,12 @@ const computedRel = target === '_blank' ? (rel ?? 'noopener noreferrer') : rel;
   /* ── Variante ghost (outline) — IP-Sitio-Web/.btn-ghost (línea 112) ── */
   .btn--ghost {
     background-color: transparent;
-    color: var(--color-ink);
-    border-color: var(--color-line);
+    color: var(--theme-text, var(--color-ink));
+    border-color: var(--theme-border, var(--color-line));
   }
 
   .btn--ghost:hover {
-    border-color: var(--color-ink);
+    border-color: var(--theme-text, var(--color-ink));
     transform: translateY(-2px);
   }
 

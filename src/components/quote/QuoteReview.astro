@@ -10,15 +10,6 @@ import Button from '@/components/ui/Button.astro';
 ---
 
 <section class="quote-review" aria-labelledby="quote-review-title">
-  <header class="quote-review__head">
-    <p class="quote-review__eyebrow">Paso 3 de 3</p>
-    <h2 id="quote-review-title" class="quote-review__title">Revisa y envía tu cotización</h2>
-    <p class="quote-review__lead">
-      Confirma que los equipos y tus datos estén correctos. Puedes editar cualquier
-      sección desde su tarjeta antes de enviar.
-    </p>
-  </header>
-
   <div class="quote-review__grid">
     <div class="quote-review__main">
       <section class="quote-review__card" aria-labelledby="quote-review-lines-title">
@@ -51,8 +42,7 @@ import Button from '@/components/ui/Button.astro';
       <section class="quote-review__card" aria-labelledby="quote-review-company-title">
         <div class="quote-review__card-head">
           <h3 id="quote-review-company-title" class="quote-review__card-title">Datos de la empresa</h3>
-          <Button variant="ghost" type="button" data-quote-wizard-prev="review">
-            Editar datos
+          <Button icon="trash" variant="ghost" type="button" data-quote-wizard-prev="review">
           </Button>
         </div>
         <div class="quote-review__company" data-review-company>
@@ -441,119 +431,121 @@ import Button from '@/components/ui/Button.astro';
     gap: 0;
   }
 
-  .quote-review__empty {
+  :global(.quote-review__empty) {
     margin: 0;
     color: var(--theme-text-muted);
     font-size: var(--text-small);
   }
 
-  .quote-review__line {
+  :global(.quote-review__line) {
     display: flex;
     flex-direction: row;
-    gap: var(--space-4);
-    padding: var(--space-5) 0;
+    gap: var(--space-6);
+    padding: var(--space-6) 0;
     border-bottom: 1px solid var(--theme-border);
+    align-items: center;
   }
 
-  .quote-review__line:first-child {
+  :global(.quote-review__line:first-child) {
     padding-top: 0;
   }
 
-  .quote-review__line:last-child {
+  :global(.quote-review__line:last-child) {
     border-bottom: none;
     padding-bottom: 0;
   }
 
   @media (min-width: 640px) {
-    .quote-review__line {
-      gap: var(--space-5);
-      padding: var(--space-6) 0;
+    :global(.quote-review__line) {
+      gap: var(--space-7);
+      padding: var(--space-7) 0;
     }
   }
 
-  .quote-review__line-thumb-wrapper {
+  :global(.quote-review__line-thumb-wrapper) {
     flex-shrink: 0;
     width: 25%;
-    max-width: 140px;
-    aspect-ratio: 4 / 3;
+    max-width: 180px;
+    aspect-ratio: 1 / 1;
+    margin: 1rem;
     border-radius: var(--radius-md);
     overflow: hidden;
     background-color: var(--theme-bg-alt);
   }
 
-  .quote-review__line-thumb {
+  :global(.quote-review__line-thumb) {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
   }
 
-  .quote-review__line-content {
+  :global(.quote-review__line-content) {
     flex: 1;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-4);
   }
 
-  .quote-review__line-header {
+  :global(.quote-review__line-header) {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--space-1);
   }
 
-  .quote-review__line-name {
+  :global(.quote-review__line-name) {
     margin: 0;
     font-family: var(--font-heading);
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     font-weight: 700;
     line-height: 1.3;
     color: var(--theme-text);
   }
 
   @media (min-width: 640px) {
-    .quote-review__line-name {
-      font-size: 1rem;
+    :global(.quote-review__line-name) {
+      font-size: 1.2rem;
     }
   }
 
-  .quote-review__line-specs {
+  :global(.quote-review__line-specs) {
     margin: 0;
-    font-size: 0.75rem;
+    font-size: 0.85rem;
     color: var(--theme-text-muted);
-    line-height: 1.3;
+    line-height: 1.4;
   }
 
   @media (min-width: 640px) {
-    .quote-review__line-specs {
-      font-size: 0.8rem;
+    :global(.quote-review__line-specs) {
+      font-size: 0.9rem;
     }
   }
 
-  /* ── Detalles de cotización: grid horizontal ── */
-  .quote-review__line-details {
+  /* ─ Detalles de cotización: grid horizontal ── */
+  :global(.quote-review__line-details) {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-2) var(--space-3);
-    margin-top: var(--space-1);
+    gap: var(--space-3);
+    margin-top: var(--space-2);
   }
 
   @media (min-width: 640px) {
-    .quote-review__line-details {
-      grid-template-columns: repeat(4, auto);
-      gap: var(--space-2) var(--space-5);
+    :global(.quote-review__line-details) {
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-3) var(--space-4);
     }
   }
 
-  .quote-review__line-detail {
+  :global(.quote-review__line-detail) {
     display: flex;
     flex-direction: column;
-    gap: 1px;
+    gap: var(--space-1);
     min-width: 0;
   }
 
-  .quote-review__line-detail-label {
-    font-size: 0.65rem;
+  :global(.quote-review__line-detail-label) {
+    font-size: 0.7rem;
     font-weight: 600;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -561,8 +553,8 @@ import Button from '@/components/ui/Button.astro';
     line-height: 1.3;
   }
 
-  .quote-review__line-detail-value {
-    font-size: 0.8rem;
+  :global(.quote-review__line-detail-value) {
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--theme-text);
     overflow-wrap: anywhere;
@@ -570,17 +562,17 @@ import Button from '@/components/ui/Button.astro';
   }
 
   @media (min-width: 640px) {
-    .quote-review__line-detail-value {
-      font-size: 0.85rem;
+    :global(.quote-review__line-detail-value) {
+      font-size: 0.95rem;
     }
   }
 
-  .quote-review__line-detail-value--highlight {
+  :global(.quote-review__line-detail-value--highlight) {
     color: var(--color-brand);
     font-weight: 700;
   }
 
-  .quote-review__line-notes {
+  :global(.quote-review__line-notes) {
     margin: var(--space-1) 0 0;
     padding: var(--space-2) var(--space-3);
     background-color: color-mix(in srgb, var(--color-brand) 6%, var(--theme-bg-alt));
@@ -593,31 +585,31 @@ import Button from '@/components/ui/Button.astro';
   }
 
   @media (min-width: 640px) {
-    .quote-review__line-notes {
+    :global(.quote-review__line-notes) {
       font-size: var(--text-small);
     }
   }
 
-  /* ── Datos de empresa: formato reporte horizontal ── */
-  .quote-review__company {
+  /* ── Datos de empresa: formato reporte horizontal ─ */
+  :global(.quote-review__company) {
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
     margin: 0;
   }
 
-  .quote-review__company-section {
+  :global(.quote-review__company-section) {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
   }
 
-  .quote-review__company-section + .quote-review__company-section {
+  :global(.quote-review__company-section + .quote-review__company-section) {
     padding-top: var(--space-5);
     border-top: 1px solid var(--theme-border);
   }
 
-  .quote-review__company-section-title {
+  :global(.quote-review__company-section-title) {
     margin: 0;
     font-family: var(--font-heading);
     font-size: 0.7rem;
@@ -627,47 +619,47 @@ import Button from '@/components/ui/Button.astro';
     color: var(--theme-eyebrow);
   }
 
-  .quote-review__company-fields {
+  :global(.quote-review__company-fields) {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
     margin: 0;
   }
 
-  .quote-review__company-field {
+  :global(.quote-review__company-field) {
     display: grid;
-    grid-template-columns: minmax(5.5rem, auto) 1fr;
+    grid-template-columns: minmax(7rem, auto) 1fr;
     align-items: baseline;
-    gap: var(--space-3);
+    gap: var(--space-4);
     min-width: 0;
     line-height: 1.55;
-    padding-block: var(--space-1);
+    padding-block: var(--space-2);
   }
 
-  .quote-review__company-field dt {
-    font-size: 0.8rem;
+  :global(.quote-review__company-field dt) {
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--theme-text-muted);
     white-space: nowrap;
   }
 
-  .quote-review__company-field dd {
+  :global(.quote-review__company-field dd) {
     margin: 0;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--theme-text);
     overflow-wrap: anywhere;
     min-width: 0;
   }
 
-  .quote-review__company-field a {
+  :global(.quote-review__company-field a) {
     color: var(--color-brand);
     text-decoration: none;
     transition: color 0.15s var(--ease-out);
   }
 
-  .quote-review__company-field a:hover,
-  .quote-review__company-field a:focus-visible {
+  :global(.quote-review__company-field a:hover),
+  :global(.quote-review__company-field a:focus-visible) {
     color: var(--color-brand-600);
     text-decoration: underline;
   }

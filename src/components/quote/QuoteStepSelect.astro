@@ -5,6 +5,7 @@
 
 import EquipmentPicker from '@/components/quote/EquipmentPicker.astro';
 import QuoteCartSummary from '@/components/quote/QuoteCartSummary.astro';
+import Button from '@/components/ui/Button.astro';
 import Icon from '@/components/ui/Icon.astro';
 ---
 
@@ -24,13 +25,39 @@ import Icon from '@/components/ui/Icon.astro';
       </p>
     </div>
 
+    <!-- Barra de acciones: Limpiar + Continuar -->
+    <div class="quote-page__actions" data-quote-actions hidden>
+      <Button
+        type="button"
+        variant="ghost"
+        icon="trash"
+        data-quote-action="clear"
+        class="quote-page__clear-btn"
+      >
+        Limpiar
+      </Button>
+      <Button
+        type="button"
+        variant="primary"
+        icon="arrow-right"
+        iconPosition="right"
+        data-quote-wizard-next
+        disabled
+      >
+        Continuar
+      </Button>
+    </div>
+
     <div class="quote-page__lines" data-quote-lines hidden>
       {/* Hydrated from localStorage on the client */}
     </div>
 
+    <!-- Resumen comentado (mantenido por si se necesita reactivar) -->
+    <!--
     <div class="quote-page__summary" data-quote-summary-wrapper hidden>
       <QuoteCartSummary variant="wizard" />
     </div>
+    -->
   </div>
 </div>
 
@@ -41,7 +68,7 @@ import Icon from '@/components/ui/Icon.astro';
 
   const linesEl = document.querySelector<HTMLElement>('[data-quote-lines]');
   const emptyEl = document.querySelector<HTMLElement>('[data-quote-empty]');
-  const summaryWrapper = document.querySelector<HTMLElement>('[data-quote-summary-wrapper]');
+  const actionsEl = document.querySelector<HTMLElement>('[data-quote-actions]');
 
   const CHEVRON_DOWN_SVG =
     '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
@@ -199,6 +226,11 @@ import Icon from '@/components/ui/Icon.astro';
     const lineId = article.dataset.lineId;
     const nameEl = article.querySelector<HTMLElement>('.quote-line__name');
     const name = nameEl?.textContent?.trim() || 'este equipo';
+    
+    // Guardar posición del scroll antes de cambiar
+    const scrollContainer = article.closest('.quote-page__col--cart');
+    const scrollTop = scrollContainer?.scrollTop || 0;
+    
     if (isOpen) {
       panel.removeAttribute('hidden');
       toggleBtn.setAttribute('aria-expanded', 'true');
@@ -209,6 +241,14 @@ import Icon from '@/components/ui/Icon.astro';
       toggleBtn.setAttribute('aria-expanded', 'false');
       toggleBtn.setAttribute('aria-label', `Ver detalles de ${name}`);
       if (lineId) openLineIds.delete(lineId);
+    }
+    
+    // Restaurar posición del scroll después del cambio
+    if (scrollContainer) {
+      // Usar requestAnimationFrame para asegurar que el DOM se actualizó
+      requestAnimationFrame(() => {
+        scrollContainer.scrollTop = scrollTop;
+      });
     }
   }
 
@@ -225,12 +265,20 @@ import Icon from '@/components/ui/Icon.astro';
   }
 
   function render(): void {
-    if (!linesEl || !emptyEl || !summaryWrapper) return;
+    if (!linesEl || !emptyEl || !actionsEl) return;
     const cart = getCart();
     const empty = cart.items.length === 0;
     emptyEl.hidden = !empty;
     linesEl.hidden = empty;
-    summaryWrapper.hidden = empty;
+    actionsEl.hidden = empty;
+    
+    // Actualizar estado del botón Continuar
+    const nextBtn = document.querySelector<HTMLButtonElement>('[data-quote-wizard-next]');
+    if (nextBtn) {
+      nextBtn.disabled = empty;
+      nextBtn.setAttribute('aria-disabled', String(empty));
+    }
+    
     const topbarClear = document.querySelector<HTMLButtonElement>('[data-quote-clear-top]');
     if (topbarClear) topbarClear.hidden = empty;
     if (empty) {
@@ -347,6 +395,27 @@ import Icon from '@/components/ui/Icon.astro';
     render();
     subscribe(render);
 
+    // Botón limpiar cotizador
+    const clearBtn = document.querySelector<HTMLButtonElement>('[data-quote-action="clear"]');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!confirm('¿Vaciar todo el cotizador? Esta acción no se puede deshacer.')) return;
+        clearCart();
+      });
+    }
+
+    // Botón continuar (wizard next)
+    const nextBtn = document.querySelector<HTMLButtonElement>('[data-quote-wizard-next]');
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        window.dispatchEvent(
+          new CustomEvent('quote-wizard-navigate', { detail: { direction: 'next' } })
+        );
+      });
+    }
+
+    // Botón limpiar del topbar (si existe)
     const topbarClear = document.querySelector<HTMLButtonElement>('[data-quote-clear-top]');
     if (topbarClear) {
       topbarClear.addEventListener('click', (e) => {
@@ -460,6 +529,41 @@ import Icon from '@/components/ui/Icon.astro';
     flex-direction: column;
     gap: 1rem;
     margin-bottom: 1.5rem;
+  }
+
+  /* Barra de acciones: Limpiar + Continuar */
+  .quote-page__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3, 0.75rem);
+    padding: var(--space-4, 1rem);
+    background-color: var(--theme-surface);
+    border: 1px solid var(--theme-border);
+    border-radius: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+
+  .quote-page__actions[hidden] {
+    display: none;
+  }
+
+  /* En mobile: botón limpiar muestra solo ícono */
+  @media (max-width: 479.98px) {
+    .quote-page__actions {
+      justify-content: flex-end;
+    }
+
+    .quote-page__clear-btn :global(.btn__label) {
+      display: none;
+    }
+
+    .quote-page__clear-btn :global(.btn) {
+      padding: 12px;
+    }
   }
 
   .quote-page__summary {
