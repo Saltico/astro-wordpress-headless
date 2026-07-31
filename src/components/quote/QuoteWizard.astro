@@ -268,7 +268,7 @@ const steps = [step1Label, step2Label, step3Label];
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-lg, 1.25rem);
     border: 1px solid var(--theme-border);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-sm);
   }
 
   .quote-wizard__stepper {
@@ -299,7 +299,7 @@ const steps = [step1Label, step2Label, step3Label];
     color: var(--theme-text-muted);
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: var(--text-small);
     line-height: 1;
     cursor: pointer;
     transition:
@@ -336,7 +336,7 @@ const steps = [step1Label, step2Label, step3Label];
     border-radius: var(--radius-pill);
     background-color: var(--theme-bg-alt);
     color: var(--theme-text-muted);
-    font-size: 0.8rem;
+    font-size: var(--text-small);
     flex-shrink: 0;
     transition:
       background-color var(--motion-base) var(--ease-out),
@@ -399,13 +399,13 @@ const steps = [step1Label, step2Label, step3Label];
       gap: var(--space-1);
       min-height: 3.25rem;
       padding: var(--space-2);
-      font-size: 0.75rem;
+      font-size: var(--text-small);
     }
 
     .quote-wizard__step-indicator {
       width: 1.5rem;
       height: 1.5rem;
-      font-size: 0.75rem;
+      font-size: var(--text-small);
     }
 
     .quote-wizard__step-divider {

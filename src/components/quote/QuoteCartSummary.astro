@@ -165,7 +165,7 @@ const isWizard = variant === 'wizard';
   .quote-summary {
     background-color: var(--theme-surface);
     border: 1px solid var(--theme-border);
-    border-radius: 16px;
+    border-radius: var(--radius-md);
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
@@ -175,8 +175,8 @@ const isWizard = variant === 'wizard';
   .quote-summary__title {
     margin: 0;
     font-family: var(--font-heading);
-    font-size: 1.25rem;
-    font-weight: 800;
+    font-size: var(--text-h4);
+    font-weight: 700;
     color: var(--theme-text);
   }
 
@@ -201,7 +201,7 @@ const isWizard = variant === 'wizard';
   }
 
   .quote-summary__row dt {
-    font-size: 0.9rem;
+    font-size: var(--text-small);
     color: var(--theme-text-muted);
     margin: 0;
   }
@@ -210,7 +210,7 @@ const isWizard = variant === 'wizard';
     margin: 0;
     font-weight: 700;
     color: var(--theme-text);
-    font-size: 0.95rem;
+    font-size: var(--text-body);
   }
 
   .quote-summary__notes {
@@ -220,7 +220,7 @@ const isWizard = variant === 'wizard';
   }
 
   .quote-summary__notes label {
-    font-size: 0.8rem;
+    font-size: var(--text-small);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -229,9 +229,9 @@ const isWizard = variant === 'wizard';
 
   .quote-summary__notes textarea {
     font-family: var(--font-body);
-    font-size: 0.95rem;
+    font-size: var(--text-body);
     border: 1px solid var(--theme-border);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     padding: 0.625rem;
     color: var(--theme-text);
     background-color: var(--theme-bg-elevated);
@@ -243,8 +243,8 @@ const isWizard = variant === 'wizard';
   }
 
   .quote-summary__notes textarea:focus {
-    outline: 2px solid var(--color-brand, #348f41);
-    border-color: var(--color-brand, #348f41);
+    outline: 2px solid var(--color-brand, #308f40);
+    border-color: var(--color-brand, #308f40);
   }
 
   .quote-summary__actions {

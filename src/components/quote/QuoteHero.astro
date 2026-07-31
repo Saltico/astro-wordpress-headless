@@ -77,7 +77,7 @@ const {
     /* Sube el hero bajo el topbar + header (transparentes) para que el
        texto blanco del header quede superpuesto al fondo oscuro. */
     margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
-    color: #ffffff;
+    color: var(--color-on-dark);
     isolation: isolate;
     overflow: hidden;
   }
@@ -130,7 +130,7 @@ const {
     color: var(--color-brand-300, #62bb74);
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: var(--text-small);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     margin: 0 0 var(--space-3);
@@ -140,12 +140,12 @@ const {
     content: '';
     width: 32px;
     height: 2px;
-    background: var(--color-brand, #348f41);
+    background: var(--color-brand, #308f40);
   }
 
   .quote-hero__title {
     margin: 0;
-    color: #ffffff;
+    color: var(--color-on-dark);
     font-family: var(--font-heading);
     font-weight: 900;
     line-height: 1.05;
@@ -158,7 +158,7 @@ const {
     margin: var(--space-2) 0 0;
     color: rgba(255, 255, 255, 0.88);
     font-size: var(--text-small);
-    line-height: 1.5;
+    line-height: 1.6;
     max-width: 56ch;
   }
 

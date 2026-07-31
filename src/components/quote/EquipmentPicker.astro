@@ -574,7 +574,7 @@ export type Props = Record<string, never>;
   .picker {
     background-color: var(--theme-surface);
     border: 1px solid var(--theme-border);
-    border-radius: 16px;
+    border-radius: var(--radius-md);
   }
 
   /* En desktop el picker crece naturalmente con su contenido: cabecera,
@@ -599,8 +599,8 @@ export type Props = Record<string, never>;
     padding: 1rem 1.25rem;
     background-color: var(--theme-bg-elevated);
     border-bottom: 1px solid var(--theme-border);
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
+    border-top-left-radius: var(--radius-md);
+    border-top-right-radius: var(--radius-md);
     flex-shrink: 0;
   }
 
@@ -619,8 +619,8 @@ export type Props = Record<string, never>;
   .picker__head-title {
     margin: 0;
     font-family: var(--font-heading);
-    font-weight: 800;
-    font-size: 1.125rem;
+    font-weight: 700;
+    font-size: var(--text-h4);
     color: var(--theme-text);
   }
 
@@ -628,7 +628,7 @@ export type Props = Record<string, never>;
     font-weight: 500;
     color: var(--theme-text-muted);
     margin-left: 0.4rem;
-    font-size: 0.875rem;
+    font-size: var(--text-small);
   }
 
   .picker__body {
@@ -666,7 +666,7 @@ export type Props = Record<string, never>;
 
   .picker__label {
     display: block;
-    font-size: 0.75rem;
+    font-size: var(--text-small);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -678,9 +678,9 @@ export type Props = Record<string, never>;
     width: 100%;
     padding: 0.625rem 0.75rem;
     border: 1px solid var(--theme-border);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-family: var(--font-body);
-    font-size: 0.95rem;
+    font-size: var(--text-body);
     background-color: var(--theme-bg-elevated);
     color: var(--theme-text);
   }
@@ -690,13 +690,13 @@ export type Props = Record<string, never>;
   }
 
   .picker__input:focus {
-    outline: 2px solid var(--color-brand, #348f41);
-    border-color: var(--color-brand, #348f41);
+    outline: 2px solid var(--color-brand, #308f40);
+    border-color: var(--color-brand, #308f40);
   }
 
   .picker__hint {
     margin: 0.375rem 0 0;
-    font-size: 0.8rem;
+    font-size: var(--text-small);
     color: var(--theme-text-muted);
   }
 
@@ -704,16 +704,16 @@ export type Props = Record<string, never>;
     width: 100%;
     padding: 0.625rem 0.75rem;
     border: 1px solid var(--theme-border);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-family: var(--font-body);
-    font-size: 0.95rem;
+    font-size: var(--text-body);
     background-color: var(--theme-bg-elevated);
     color: var(--theme-text);
   }
 
   .picker__select:focus {
-    outline: 2px solid var(--color-brand, #348f41);
-    border-color: var(--color-brand, #348f41);
+    outline: 2px solid var(--color-brand, #308f40);
+    border-color: var(--color-brand, #308f40);
   }
 
   .picker__select:disabled {
@@ -733,18 +733,18 @@ export type Props = Record<string, never>;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.9rem;
+    font-size: var(--text-small);
     color: var(--theme-text);
     cursor: pointer;
   }
 
   .picker__toggle-input {
-    accent-color: var(--color-brand, #348f41);
+    accent-color: var(--color-brand, #308f40);
   }
 
   .picker__live {
     margin: 0;
-    font-size: 0.85rem;
+    font-size: var(--text-small);
     color: var(--theme-text-muted);
   }
 
@@ -776,7 +776,7 @@ export type Props = Record<string, never>;
     text-align: center;
     background-color: var(--theme-bg-alt);
     border: 1px dashed var(--theme-border);
-    border-radius: 16px;
+    border-radius: var(--radius-md);
   }
 
   .picker__empty p {

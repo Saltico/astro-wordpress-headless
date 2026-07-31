@@ -347,7 +347,7 @@ import Button from '@/components/ui/Button.astro';
   .quote-company {
     background-color: var(--theme-surface);
     border: 1px solid var(--theme-border);
-    border-radius: 16px;
+    border-radius: var(--radius-md);
     padding: 1.5rem;
   }
 
@@ -358,16 +358,16 @@ import Button from '@/components/ui/Button.astro';
   .quote-company__title {
     margin: 0 0 0.5rem;
     font-family: var(--font-heading);
-    font-size: 1.25rem;
-    font-weight: 800;
+    font-size: var(--text-h4);
+    font-weight: 700;
     color: var(--theme-heading);
   }
 
   .quote-company__lead {
     margin: 0;
     color: var(--theme-text-muted);
-    font-size: 0.95rem;
-    line-height: 1.5;
+    font-size: var(--text-body);
+    line-height: 1.6;
   }
 
   .quote-company__form {
@@ -389,7 +389,7 @@ import Button from '@/components/ui/Button.astro';
   }
 
   .quote-company__field label {
-    font-size: 0.78rem;
+    font-size: var(--text-small);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -398,25 +398,25 @@ import Button from '@/components/ui/Button.astro';
 
   .quote-company__field input {
     font-family: var(--font-body);
-    font-size: 0.95rem;
+    font-size: var(--text-body);
     color: var(--theme-text);
     background-color: var(--theme-bg-elevated);
     border: 1px solid var(--theme-border);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     padding: 0.625rem 0.75rem;
     transition: border-color 0.15s var(--ease-out, ease),
       box-shadow 0.15s var(--ease-out, ease);
   }
 
   .quote-company__field input:focus {
-    outline: 2px solid var(--color-brand, #348f41);
+    outline: 2px solid var(--color-brand, #308f40);
     outline-offset: 2px;
-    border-color: var(--color-brand, #348f41);
+    border-color: var(--color-brand, #308f40);
   }
 
   .quote-company__field input.is-invalid {
     border-color: var(--color-danger, #c0392b);
-    background-color: rgba(192, 57, 43, 0.04);
+    background-color: color-mix(in srgb, var(--color-danger) 4%, transparent);
   }
 
   .quote-company__field input.is-invalid:focus {
@@ -425,7 +425,7 @@ import Button from '@/components/ui/Button.astro';
 
   .quote-company__error {
     margin: 0;
-    font-size: 0.8rem;
+    font-size: var(--text-small);
     color: var(--color-danger, #c0392b);
     min-height: 1.2em;
   }
@@ -434,11 +434,11 @@ import Button from '@/components/ui/Button.astro';
     grid-column: 1 / -1;
     margin: 0;
     padding: 0.75rem;
-    background-color: rgba(192, 57, 43, 0.08);
+    background-color: color-mix(in srgb, var(--color-danger) 8%, transparent);
     border: 1px solid var(--color-danger, #c0392b);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     color: var(--color-danger, #c0392b);
-    font-size: 0.9rem;
+    font-size: var(--text-small);
     font-weight: 700;
   }
 

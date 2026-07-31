@@ -131,11 +131,11 @@ const { item, sourceUrl } = Astro.props;
     gap: 0.5rem;
     margin-top: 8px;
     padding: 12px 18px;
-    background-color: var(--color-brand, #348f41);
+    background-color: var(--color-brand, #308f40);
     color: var(--color-on-brand, #fff);
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: var(--text-small);
     border: 1.5px solid transparent;
     border-radius: 999px;
     cursor: pointer;
@@ -157,8 +157,8 @@ const { item, sourceUrl } = Astro.props;
 
   .quote-add-btn.is-added {
     background-color: transparent;
-    color: var(--color-brand, #348f41);
-    border-color: var(--color-brand, #348f41);
+    color: var(--color-brand, #308f40);
+    border-color: var(--color-brand, #308f40);
   }
 
   .quote-add-btn.is-added:hover,
@@ -168,7 +168,7 @@ const { item, sourceUrl } = Astro.props;
 
   .quote-add-btn.is-error {
     background-color: var(--color-danger, #c0392b);
-    color: #fff;
+    color: var(--color-on-brand);
   }
 
   .quote-add-btn__icon,
