@@ -17,7 +17,7 @@ const title = 'Seguridad | HSEC — IP Proyectos Industriales';
 const description = 'Seguridad, salud y medio ambiente. El cuidado de las personas es nuestro primer estándar.';
 
 const miniStats: StatItem[] = [
-  { value: '460.000', label: 'Horas hombre trabajadas' },
+  { value: 460000, label: 'Horas hombre trabajadas', prefix: '+', prefixPosition: 'before' },
   { value: '0,93%', label: 'Tasa de cotización (R12)' },
   { value: 'Bajo', label: 'Riesgo psicosocial' },
 ];
@@ -82,7 +82,7 @@ const breadcrumbs = [
     variant="dark"
     layout="horizontal"
     columns={3}
-    animated={false}
+    animated={true}
     showDividers={true}
   />
 
@@ -223,7 +223,7 @@ const breadcrumbs = [
 
   /* Pillars */
   .safety-pillars {
-    background-color: var(--color-graphite, #0d1611);
+    background-color: var(--theme-bg);
     padding-block: clamp(60px, 8vw, 100px);
   }
 
@@ -237,7 +237,7 @@ const breadcrumbs = [
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    color: var(--color-brand-300, #4ade80);
+    color: var(--theme-eyebrow);
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.8rem;
@@ -255,7 +255,7 @@ const breadcrumbs = [
   }
 
   .safety-pillars__title {
-    color: #fff;
+    color: var(--theme-heading);
     font-family: var(--font-heading);
     font-weight: 800;
     font-size: clamp(1.8rem, 3.4vw, 2.8rem);
@@ -264,7 +264,7 @@ const breadcrumbs = [
   }
 
   .safety-pillars__subtitle {
-    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+    color: var(--theme-text-muted);
     font-size: 1.05rem;
     line-height: 1.6;
     margin: 0;
@@ -289,8 +289,8 @@ const breadcrumbs = [
   }
 
   .pillar-card {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
     border-radius: 12px;
     padding: 30px 24px;
     text-align: center;
@@ -308,14 +308,14 @@ const breadcrumbs = [
     justify-content: center;
     width: 60px;
     height: 60px;
-    background: var(--color-brand-050, rgba(26, 156, 74, 0.1));
+    background: var(--theme-bg-alt);
     border-radius: 50%;
-    color: var(--color-brand-300, #4ade80);
+    color: var(--theme-eyebrow);
     margin-bottom: 20px;
   }
 
   .pillar-card__title {
-    color: #fff;
+    color: var(--theme-text);
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: 1.2rem;
@@ -323,7 +323,7 @@ const breadcrumbs = [
   }
 
   .pillar-card__description {
-    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+    color: var(--theme-text-muted);
     font-size: 0.95rem;
     line-height: 1.5;
     margin: 0;

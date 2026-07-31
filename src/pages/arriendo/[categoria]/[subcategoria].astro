@@ -100,7 +100,7 @@ const faqItems = [
     slot="catalog"
     items={subcategory.catalog}
     columns={catalogColumns}
-    background="light"
+    background="dark"
     title={`Modelos disponibles de ${subcategory.name.toLowerCase()}`}
     subtitle={`${subcategory.catalog.length} ${subcategory.catalog.length === 1 ? 'equipo' : 'equipos'} en arriendo con operador certificado y mantenimiento incluido.`}
   />
@@ -110,6 +110,6 @@ const faqItems = [
   </Fragment>
 
   <Fragment slot="faq">
-    <FAQSection items={faqItems} background="light" />
+    <FAQSection items={faqItems} background="dark" />
   </Fragment>
 </RentalLayout>

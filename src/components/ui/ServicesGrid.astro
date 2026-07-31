@@ -86,12 +86,12 @@ const layoutClass = `services-grid--${layout}`;
   }
 
   .services-grid--light {
-    background-color: var(--color-surface, #fff);
+    background-color: var(--theme-bg-alt);
   }
 
   .services-grid--dark {
-    background-color: var(--section-bg, var(--color-graphite, #0d1611));
-    border-block: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+    background-color: var(--theme-bg);
+    border-block: 1px solid var(--theme-border);
   }
 
   .services-grid__container {
@@ -118,11 +118,11 @@ const layoutClass = `services-grid--${layout}`;
   }
 
   .services-grid--light .services-grid__eyebrow {
-    color: var(--color-brand, #1a9c4a);
+    color: var(--theme-eyebrow);
   }
 
   .services-grid--dark .services-grid__eyebrow {
-    color: var(--color-brand-300, #4ade80);
+    color: var(--theme-eyebrow);
   }
 
   .services-grid__eyebrow::before {
@@ -141,11 +141,11 @@ const layoutClass = `services-grid--${layout}`;
   }
 
   .services-grid--light .services-grid__title {
-    color: var(--color-ink, #1a1a1a);
+    color: var(--theme-heading);
   }
 
   .services-grid--dark .services-grid__title {
-    color: var(--section-heading-color, #fff);
+    color: var(--theme-heading);
   }
 
   .services-grid__subtitle {
@@ -156,11 +156,11 @@ const layoutClass = `services-grid--${layout}`;
   }
 
   .services-grid--light .services-grid__subtitle {
-    color: var(--color-ink-500, #6b7280);
+    color: var(--theme-text-muted);
   }
 
   .services-grid--dark .services-grid__subtitle {
-    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+    color: var(--theme-text-muted);
   }
 
   /* Grid layout */

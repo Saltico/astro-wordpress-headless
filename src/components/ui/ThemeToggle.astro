@@ -1,0 +1,127 @@
+---
+// src/components/ui/ThemeToggle.astro
+// Botón de toggle entre modo dark y light.
+// Lee la preferencia de localStorage o del sistema.
+// Aplica data-theme al <html> para activar los tokens CSS.
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  aria-label="Cambiar tema de color"
+>
+  <span class="theme-toggle__icon" data-theme-icon="dark" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </span>
+  <span class="theme-toggle__icon" data-theme-icon="light" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  </span>
+</button>
+
+<script>
+  (function () {
+    if (typeof window === 'undefined') return;
+
+    const STORAGE_KEY = 'theme-preference';
+    const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+    if (!toggle) return;
+
+    // Leer tema actual del DOM (ya aplicado por el script anti-FOUC en <head>)
+    function getCurrentTheme(): 'dark' | 'light' {
+      const t = document.documentElement.getAttribute('data-theme');
+      return t === 'light' ? 'light' : 'dark';
+    }
+
+    // Actualizar UI del toggle según el tema activo
+    function syncUI(theme: 'dark' | 'light'): void {
+      toggle.setAttribute('aria-label', `Cambiar a modo ${theme === 'dark' ? 'claro' : 'oscuro'}`);
+      // Mostrar icono del tema opuesto (el que verás al hacer clic)
+      toggle.querySelectorAll<HTMLElement>('[data-theme-icon]').forEach((icon) => {
+        const iconTheme = icon.getAttribute('data-theme-icon');
+        icon.hidden = iconTheme !== theme;
+      });
+    }
+
+    // Toggle y guardar preferencia
+    toggle.addEventListener('click', () => {
+      const current = getCurrentTheme();
+      const next = current === 'light' ? 'dark' : 'light';
+      localStorage.setItem(STORAGE_KEY, next);
+      document.documentElement.setAttribute('data-theme', next);
+      syncUI(next);
+    });
+
+    // Sincronizar UI inicial (el tema ya está aplicado por anti-FOUC)
+    syncUI(getCurrentTheme());
+
+    // Escuchar cambios en preferencia del sistema (solo si no hay preferencia manual)
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+      if (!localStorage.getItem(STORAGE_KEY)) {
+        const next = e.matches ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        syncUI(next);
+      }
+    });
+  })();
+</script>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease-out, ease),
+      border-color 0.2s var(--ease-out, ease),
+      transform 0.2s var(--ease-out, ease);
+  }
+
+  .theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--color-brand, #348f41);
+    outline-offset: 2px;
+  }
+
+  .theme-toggle:active {
+    transform: scale(0.95);
+  }
+
+  .theme-toggle__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .theme-toggle__icon[hidden] {
+    display: none;
+  }
+
+  .theme-toggle__icon svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+</style>

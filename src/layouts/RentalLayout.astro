@@ -130,7 +130,7 @@ const hasFaqSlot = Astro.slots.has('faq');
   {hasCatalogSlot ? (
     <slot name="catalog" />
   ) : catalogItems && catalogItems.length > 0 ? (
-    <EquipmentCatalog items={catalogItems} columns={catalogColumns} />
+    <EquipmentCatalog items={catalogItems} columns={catalogColumns} background="dark" />
   ) : null}
 
   <!-- Specs/stats (slot) — antes "Especificaciones técnicas", ahora un StatsCounter -->
@@ -276,7 +276,8 @@ const hasFaqSlot = Astro.slots.has('faq');
   /* Content */
   .rental-content {
     padding-block: clamp(60px, 8vw, 100px);
-    background-color: var(--color-surface, #fff);
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
   }
 
   .rental-content__grid {
@@ -318,7 +319,7 @@ const hasFaqSlot = Astro.slots.has('faq');
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    color: var(--color-brand, #1a9c4a);
+    color: var(--theme-eyebrow);
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.8rem;
@@ -340,7 +341,7 @@ const hasFaqSlot = Astro.slots.has('faq');
     font-size: clamp(1.6rem, 3vw, 2.2rem);
     letter-spacing: -0.02em;
     line-height: 1.15;
-    color: var(--color-ink, #1a1a1a);
+    color: var(--theme-heading);
     margin: 0 0 24px;
   }
 
@@ -359,12 +360,12 @@ const hasFaqSlot = Astro.slots.has('faq');
     gap: 12px;
     font-size: 1.05rem;
     line-height: 1.5;
-    color: var(--color-ink-700, #374151);
+    color: var(--theme-text-muted);
   }
 
   .rental-content__list-item :global(svg) {
     flex-shrink: 0;
-    color: var(--color-brand, #1a9c4a);
+    color: var(--theme-eyebrow);
     margin-top: 2px;
   }
 
@@ -374,11 +375,12 @@ const hasFaqSlot = Astro.slots.has('faq');
   }
 
   .rental-slot-section--light {
-    background-color: var(--color-surface, #fff);
+    background-color: var(--theme-bg-alt);
+    color: var(--theme-text);
   }
 
   .rental-slot-section--dark {
-    background-color: var(--color-graphite, #0d1611);
-    color: #fff;
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
   }
 </style>

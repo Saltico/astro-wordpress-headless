@@ -257,19 +257,18 @@ const steps = [step1Label, step2Label, step3Label];
   }
 
   /* ── Stepper sticky.
-     Fondo opaco: sin él, el nav (z-index 30) deja ver las columnas
-     sticky de los pasos (z-index 10) cuando el usuario hace scroll y
-     el contenido pasa por debajo. El fondo iguala la superficie del
-     section--alt para integrarse visualmente. ── */
+     Fondo elevado que se adapta al tema (blanco en light, grafito en dark).
+     Contraste consistente en ambos modos. ── */
   .quote-wizard__nav {
     position: sticky;
     top: calc(var(--header-height, 5rem) + var(--space-2));
     /* Por encima de las columnas sticky de los pasos (z-index 10). */
     z-index: 30;
-    background-color: var(--color-surface-alt, #f6f7f8);
+    background-color: var(--theme-bg-elevated);
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-lg, 1.25rem);
-    border: 1px solid var(--color-line, #e2e4e5);
+    border: 1px solid var(--theme-border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
 
   .quote-wizard__stepper {
@@ -297,7 +296,7 @@ const steps = [step1Label, step2Label, step3Label];
     background-color: transparent;
     border: 0;
     border-radius: var(--radius-pill);
-    color: var(--color-ink-500);
+    color: var(--theme-text-muted);
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.9rem;
@@ -335,8 +334,8 @@ const steps = [step1Label, step2Label, step3Label];
     width: 1.75rem;
     height: 1.75rem;
     border-radius: var(--radius-pill);
-    background-color: var(--color-surface-alt);
-    color: var(--color-ink-500);
+    background-color: var(--theme-bg-alt);
+    color: var(--theme-text-muted);
     font-size: 0.8rem;
     flex-shrink: 0;
     transition:
@@ -366,7 +365,7 @@ const steps = [step1Label, step2Label, step3Label];
     height: 1px;
     min-width: 0.75rem;
     max-width: 2rem;
-    background-color: var(--color-line);
+    background-color: var(--theme-border);
   }
 
   /* ── Paneles ── */

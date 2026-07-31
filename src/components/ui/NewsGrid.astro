@@ -114,11 +114,11 @@ function formatDate(iso: string): string {
   }
 
   .news-grid--light {
-    background-color: var(--color-surface, #fff);
+    background-color: var(--theme-bg-alt);
   }
 
   .news-grid--dark {
-    background-color: var(--section-bg, var(--color-graphite, #0d1611));
+    background-color: var(--theme-bg);
   }
 
   .news-grid__container {
@@ -162,11 +162,11 @@ function formatDate(iso: string): string {
   }
 
   .news-grid--light .news-grid__eyebrow {
-    color: var(--color-brand, #348f41);
+    color: var(--theme-eyebrow);
   }
 
   .news-grid--dark .news-grid__eyebrow {
-    color: var(--color-brand-300, #62bb74);
+    color: var(--theme-eyebrow);
   }
 
   .news-grid__eyebrow::before {
@@ -186,20 +186,16 @@ function formatDate(iso: string): string {
     text-wrap: balance;
   }
 
-  .news-grid--light .news-grid__title { color: var(--color-ink, #242627); }
-  .news-grid--dark .news-grid__title { color: var(--section-heading-color, #fff); }
+  .news-grid--light .news-grid__title { color: var(--theme-heading); }
+  .news-grid--dark .news-grid__title { color: var(--theme-heading); }
 
   .news-grid__subtitle {
     margin: 0;
     font-family: var(--font-body);
     font-size: 1rem;
     line-height: 1.55;
-    color: var(--color-ink-500, #6b7072);
+    color: var(--theme-text-muted);
     max-width: 46ch;
-  }
-
-  .news-grid--dark .news-grid__subtitle {
-    color: var(--color-on-dark-muted, #9bab9f);
   }
 
   .news-grid__items {
@@ -231,8 +227,8 @@ function formatDate(iso: string): string {
 
   /* ── Card ────────────────────────────────────────────────────── */
   .news-card {
-    background: var(--color-graphite, #0d1611);
-    border: 1px solid var(--color-line-dark, rgba(255, 255, 255, 0.1));
+    background: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
     border-radius: 14px;
     overflow: hidden;
     height: 100%;
@@ -240,17 +236,8 @@ function formatDate(iso: string): string {
       border-color 0.25s var(--ease-out, ease);
   }
 
-  .news-grid--light .news-card {
-    background: var(--color-surface, #fff);
-    border-color: var(--color-line, #e2e4e5);
-  }
-
   .news-card:hover {
     transform: translateY(-4px);
-    border-color: var(--color-brand, #348f41);
-  }
-
-  .news-grid--light .news-card:hover {
     border-color: var(--color-brand, #348f41);
   }
 
@@ -272,7 +259,7 @@ function formatDate(iso: string): string {
     display: block;
     aspect-ratio: 16 / 10;
     overflow: hidden;
-    background-color: var(--color-graphite, #0d1611);
+    background-color: var(--theme-bg);
   }
 
   .news-card__image img {
@@ -296,7 +283,7 @@ function formatDate(iso: string): string {
 
   /* Fecha: verde claro, mayúscula, tracking — patrón del card IP-Sitio-Web */
   .news-card__date {
-    color: var(--color-brand-300, #62bb74);
+    color: var(--theme-eyebrow);
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.72rem;
@@ -304,9 +291,9 @@ function formatDate(iso: string): string {
     text-transform: uppercase;
   }
 
-  /* Título: blanco sobre grafito, ink sobre light */
+  /* Título */
   .news-card__title {
-    color: var(--color-ink, #242627);
+    color: var(--theme-text);
     font-family: var(--font-heading);
     font-size: 1.06rem;
     line-height: 1.25;
@@ -314,8 +301,6 @@ function formatDate(iso: string): string {
     margin: 4px 0 12px;
     letter-spacing: -0.005em;
   }
-
-  .news-grid--dark .news-card__title { color: #fff; }
 
   /* CTA inline: verde claro, con flecha que se desplaza en hover */
   .news-card__link-cta {
@@ -326,12 +311,8 @@ function formatDate(iso: string): string {
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.9rem;
-    color: var(--color-brand-300, #62bb74);
+    color: var(--theme-eyebrow);
     transition: color 0.2s var(--ease-out, ease);
-  }
-
-  .news-grid--light .news-card__link-cta {
-    color: var(--color-brand, #348f41);
   }
 
   .news-card__link-cta svg {

@@ -35,12 +35,12 @@ const { specs, background = 'light', title = 'Especificaciones técnicas' } = As
   }
 
   .specs-grid--light {
-    background-color: var(--color-surface-alt, #f7f9f7);
+    background-color: var(--theme-bg-alt);
   }
 
   .specs-grid--dark {
-    background-color: var(--color-graphite, #0d1611);
-    color: #fff;
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
   }
 
   .specs-grid__header {
@@ -54,11 +54,7 @@ const { specs, background = 'light', title = 'Especificaciones técnicas' } = As
     letter-spacing: -0.02em;
     margin: 0;
     line-height: 1.2;
-    color: var(--color-ink, #1a1a1a);
-  }
-
-  .specs-grid--dark .specs-grid__title {
-    color: #fff;
+    color: var(--theme-heading);
   }
 
   .specs-grid__items {
@@ -68,16 +64,11 @@ const { specs, background = 'light', title = 'Especificaciones técnicas' } = As
   }
 
   .specs-grid__item {
-    background-color: var(--color-surface, #fff);
-    border: 1px solid var(--color-line, #e5e7eb);
+    background-color: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
     border-radius: 12px;
     padding: 20px 24px;
     transition: border-color 0.2s ease, transform 0.2s ease;
-  }
-
-  .specs-grid--dark .specs-grid__item {
-    background-color: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.1);
   }
 
   .specs-grid__item:hover {
@@ -89,13 +80,9 @@ const { specs, background = 'light', title = 'Especificaciones técnicas' } = As
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--color-ink-500, #6b7280);
+    color: var(--theme-text-muted);
     margin: 0 0 8px;
     font-weight: 600;
-  }
-
-  .specs-grid--dark .specs-grid__label {
-    color: rgba(255, 255, 255, 0.6);
   }
 
   .specs-grid__value {
@@ -104,10 +91,6 @@ const { specs, background = 'light', title = 'Especificaciones técnicas' } = As
     font-size: 1.4rem;
     line-height: 1.1;
     margin: 0;
-    color: var(--color-ink, #1a1a1a);
-  }
-
-  .specs-grid--dark .specs-grid__value {
-    color: #fff;
+    color: var(--theme-text);
   }
 </style>

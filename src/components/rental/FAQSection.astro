@@ -50,12 +50,12 @@ const jsonLd = faqPageSchema(items);
   }
 
   .faq-section--light {
-    background-color: var(--color-surface, #fff);
+    background-color: var(--theme-bg-alt);
   }
 
   .faq-section--dark {
-    background-color: var(--color-graphite, #0d1611);
-    color: #fff;
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
   }
 
   .faq-section__header {
@@ -82,16 +82,11 @@ const jsonLd = faqPageSchema(items);
   }
 
   .faq-item__details {
-    background-color: var(--color-surface-alt, #f7f9f7);
-    border: 1px solid var(--color-line, #e5e7eb);
+    background-color: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
     border-radius: 12px;
     padding: 20px 24px;
     transition: border-color 0.2s ease;
-  }
-
-  .faq-section--dark .faq-item__details {
-    background-color: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.1);
   }
 
   .faq-item__details[open] {
@@ -126,10 +121,6 @@ const jsonLd = faqPageSchema(items);
   .faq-item__answer {
     margin: 16px 0 0;
     line-height: 1.6;
-    color: var(--color-ink-700, #374151);
-  }
-
-  .faq-section--dark .faq-item__answer {
-    color: rgba(255, 255, 255, 0.75);
+    color: var(--theme-text-muted);
   }
 </style>

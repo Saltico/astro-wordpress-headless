@@ -110,7 +110,7 @@ const hasHeader = Boolean(eyebrow || title || subtitle);
 <style>
   .logo-carousel {
     padding: clamp(48px, 6vw, 80px) 0;
-    border-block: 1px solid var(--color-line, rgba(0, 0, 0, 0.08));
+    border-block: 1px solid var(--theme-border);
     /* El track tiene width: max-content para que la animación translateX(-50%)
        funcione con los 2 grupos. Sin overflow: hidden acá, el track desborda
        el viewport y genera scroll horizontal en toda la página. */
@@ -118,19 +118,19 @@ const hasHeader = Boolean(eyebrow || title || subtitle);
   }
 
   .logo-carousel--bg-white {
-    background-color: var(--color-surface, #fff);
+    background-color: var(--theme-bg-alt);
   }
 
   .logo-carousel--bg-muted {
-    background-color: var(--section-bg-alt, var(--color-graphite-2, #15201a));
-    color: var(--section-heading-color, #fff);
-    border-color: var(--color-line-dark, rgba(255, 255, 255, 0.1));
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+    border-color: var(--theme-border);
   }
 
   .logo-carousel--bg-dark {
-    background-color: var(--section-bg, var(--color-graphite, #0d1611));
-    color: var(--section-heading-color, #fff);
-    border-color: var(--color-line-dark, rgba(255, 255, 255, 0.1));
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+    border-color: var(--theme-border);
   }
 
   .logo-carousel__header {
@@ -154,15 +154,7 @@ const hasHeader = Boolean(eyebrow || title || subtitle);
     letter-spacing: 0.16em;
     text-transform: uppercase;
     margin: 0 0 14px;
-  }
-
-  .logo-carousel--bg-white .logo-carousel__eyebrow,
-  .logo-carousel--bg-muted .logo-carousel__eyebrow {
-    color: var(--color-brand, #348f41);
-  }
-
-  .logo-carousel--bg-dark .logo-carousel__eyebrow {
-    color: var(--color-brand-300, #62bb74);
+    color: var(--theme-eyebrow);
   }
 
   .logo-carousel__eyebrow::before {
@@ -180,16 +172,7 @@ const hasHeader = Boolean(eyebrow || title || subtitle);
     line-height: 1.12;
     margin: 0 0 12px;
     text-wrap: balance;
-  }
-
-  .logo-carousel--bg-white .logo-carousel__title,
-  .logo-carousel--bg-muted .logo-carousel__title {
-    color: var(--color-ink, #242627);
-  }
-
-  .logo-carousel--bg-dark .logo-carousel__title,
-  .logo-carousel--bg-muted .logo-carousel__title {
-    color: var(--section-heading-color, #fff);
+    color: var(--theme-heading);
   }
 
   .logo-carousel__subtitle {
@@ -197,12 +180,8 @@ const hasHeader = Boolean(eyebrow || title || subtitle);
     font-family: var(--font-body);
     font-size: 1rem;
     line-height: 1.55;
-    color: var(--color-ink-500, #6b7072);
+    color: var(--theme-text-muted);
     max-width: 60ch;
-  }
-
-  .logo-carousel--bg-dark .logo-carousel__subtitle {
-    color: var(--color-on-dark-muted, #9bab9f);
   }
 
   .logo-carousel__track {
@@ -246,9 +225,11 @@ const hasHeader = Boolean(eyebrow || title || subtitle);
     object-fit: contain;
     filter: grayscale(100%);
     opacity: 0.75;
+    mix-blend-mode: normal;
     transition: filter 0.3s var(--ease-out, ease),
       opacity 0.3s var(--ease-out, ease),
-      transform 0.3s var(--ease-out, ease);
+      transform 0.3s var(--ease-out, ease),
+      mix-blend-mode 0.3s var(--ease-out, ease);
   }
 
   .logo-carousel__item:hover .logo-carousel__img,
@@ -256,14 +237,19 @@ const hasHeader = Boolean(eyebrow || title || subtitle);
     filter: grayscale(0%);
     opacity: 1;
     transform: scale(1.05);
+    mix-blend-mode: normal;
   }
 
   /* Logos en escala de blancos sobre fondo oscuro:
-     brightness(0) invert(1) convierte a siluetas blancas.
-     En hover se revelan los colores originales. */
+     grayscale(100%) invert(1) convierte el fondo blanco a negro
+     y el logo oscuro a blanco. Con mix-blend-mode: screen el negro
+     se fusiona con el fondo oscuro (transparente) y el blanco del
+     logo queda visible como silueta clara. En hover se revelan
+     los colores originales. */
   .logo-carousel--bg-dark .logo-carousel__img,
   .logo-carousel--bg-muted .logo-carousel__img {
-    filter: brightness(0) invert(1);
+    filter: grayscale(100%) invert(1);
+    mix-blend-mode: screen;
     opacity: 0.6;
   }
 
@@ -272,6 +258,7 @@ const hasHeader = Boolean(eyebrow || title || subtitle);
   .logo-carousel--bg-muted .logo-carousel__item:hover .logo-carousel__img,
   .logo-carousel--bg-muted .logo-carousel__item:focus-within .logo-carousel__img {
     filter: none;
+    mix-blend-mode: normal;
     opacity: 1;
     transform: scale(1.05);
   }

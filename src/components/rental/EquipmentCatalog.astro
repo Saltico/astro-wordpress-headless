@@ -56,12 +56,12 @@ const itemListJsonLd = itemListSchema({
   }
 
   .equipment-catalog--light {
-    background-color: var(--color-surface, #fff);
+    background-color: var(--theme-bg-alt);
   }
 
   .equipment-catalog--dark {
-    background-color: var(--color-graphite, #0d1611);
-    color: #fff;
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
   }
 
   .equipment-catalog__header {
@@ -76,22 +76,14 @@ const itemListJsonLd = itemListSchema({
     letter-spacing: -0.02em;
     margin: 0 0 12px;
     line-height: 1.15;
-    color: var(--color-ink, #1a1a1a);
-  }
-
-  .equipment-catalog--dark .equipment-catalog__title {
-    color: #fff;
+    color: var(--theme-heading);
   }
 
   .equipment-catalog__subtitle {
     margin: 0;
-    color: var(--color-ink-700, #374151);
+    color: var(--theme-text-muted);
     font-size: 1.05rem;
     line-height: 1.5;
-  }
-
-  .equipment-catalog--dark .equipment-catalog__subtitle {
-    color: rgba(255, 255, 255, 0.75);
   }
 
   .equipment-catalog__grid {

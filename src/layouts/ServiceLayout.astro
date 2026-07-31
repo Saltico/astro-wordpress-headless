@@ -200,7 +200,8 @@ const {
   /* Content */
   .service-content {
     padding-block: clamp(60px, 8vw, 100px);
-    background-color: var(--color-surface, #fff);
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
   }
 
   .service-content__grid {
@@ -242,7 +243,7 @@ const {
     display: inline-flex;
     align-items: center;
     gap: 12px;
-    color: var(--color-brand, #1a9c4a);
+    color: var(--theme-eyebrow);
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.8rem;
@@ -264,7 +265,7 @@ const {
     font-size: clamp(1.6rem, 3vw, 2.2rem);
     letter-spacing: -0.02em;
     line-height: 1.15;
-    color: var(--color-ink, #1a1a1a);
+    color: var(--theme-heading);
     margin: 0 0 24px;
   }
 
@@ -283,12 +284,12 @@ const {
     gap: 12px;
     font-size: 1.05rem;
     line-height: 1.5;
-    color: var(--color-ink-700, #374151);
+    color: var(--theme-text-muted);
   }
 
   .service-content__list-item :global(svg) {
     flex-shrink: 0;
-    color: var(--color-brand, #1a9c4a);
+    color: var(--theme-eyebrow);
     margin-top: 2px;
   }
 </style>

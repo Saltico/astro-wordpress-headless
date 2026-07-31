@@ -50,13 +50,13 @@ const { items, background = 'dark', title = 'Equipos relacionados' } = Astro.pro
   }
 
   .related-equipment--dark {
-    background-color: var(--color-graphite, #0d1611);
-    color: #fff;
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
   }
 
   .related-equipment--light {
-    background-color: var(--color-surface, #fff);
-    color: var(--color-ink, #1a1a1a);
+    background-color: var(--theme-bg-alt);
+    color: var(--theme-text);
   }
 
   .related-equipment__header {
@@ -82,27 +82,18 @@ const { items, background = 'dark', title = 'Equipos relacionados' } = Astro.pro
     flex-direction: column;
     gap: 12px;
     padding: 24px;
-    background-color: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
     border-radius: 12px;
     text-decoration: none;
     color: inherit;
     transition: border-color 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
   }
 
-  .related-equipment--light .related-card {
-    background-color: var(--color-surface-alt, #f7f9f7);
-    border-color: var(--color-line, #e5e7eb);
-  }
-
   .related-card:hover {
     border-color: var(--color-brand, #1a9c4a);
-    background-color: rgba(26, 156, 74, 0.08);
+    background-color: var(--theme-bg-alt);
     transform: translateY(-2px);
-  }
-
-  .related-equipment--light .related-card:hover {
-    background-color: rgba(26, 156, 74, 0.05);
   }
 
   .related-card__header {
@@ -134,12 +125,8 @@ const { items, background = 'dark', title = 'Equipos relacionados' } = Astro.pro
     margin: 0;
     font-size: 0.9rem;
     line-height: 1.5;
-    color: rgba(255, 255, 255, 0.75);
+    color: var(--theme-text-muted);
     flex: 1;
-  }
-
-  .related-equipment--light .related-card__desc {
-    color: var(--color-ink-700, #374151);
   }
 
   .related-card__cta {

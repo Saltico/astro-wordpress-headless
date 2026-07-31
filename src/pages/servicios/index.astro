@@ -128,7 +128,7 @@ const services = [
 <style>
   /* Services List */
   .services-list {
-    background-color: var(--color-graphite, #0d1611);
+    background-color: var(--theme-bg);
     padding-block: clamp(40px, 6vw, 80px);
   }
 
@@ -142,7 +142,7 @@ const services = [
     display: grid;
     gap: 20px;
     padding-block: clamp(30px, 4vw, 50px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--theme-border);
   }
 
   .service-item:last-child {
@@ -163,7 +163,7 @@ const services = [
     font-size: 0.85rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-brand-300, #4ade80);
+    color: var(--theme-eyebrow);
   }
 
   .service-item__content {
@@ -177,13 +177,13 @@ const services = [
     font-weight: 800;
     font-size: clamp(1.4rem, 2.5vw, 1.8rem);
     letter-spacing: -0.02em;
-    color: #fff;
+    color: var(--theme-text);
     margin: 0;
     line-height: 1.2;
   }
 
   .service-item__description {
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--theme-text-muted);
     font-size: 1rem;
     line-height: 1.6;
     margin: 0;
@@ -197,7 +197,7 @@ const services = [
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.9rem;
-    color: var(--color-brand-300, #4ade80);
+    color: var(--theme-eyebrow);
     text-decoration: none;
     margin-top: 8px;
     transition: gap 0.2s ease;

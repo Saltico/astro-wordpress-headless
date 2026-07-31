@@ -163,8 +163,8 @@ const isWizard = variant === 'wizard';
 
 <style>
   .quote-summary {
-    background-color: var(--color-surface, #fff);
-    border: 1px solid var(--color-line, #e2e4e5);
+    background-color: var(--theme-surface);
+    border: 1px solid var(--theme-border);
     border-radius: 16px;
     padding: 1.5rem;
     display: flex;
@@ -177,7 +177,7 @@ const isWizard = variant === 'wizard';
     font-family: var(--font-heading);
     font-size: 1.25rem;
     font-weight: 800;
-    color: var(--color-ink, #242627);
+    color: var(--theme-text);
   }
 
   .quote-summary__list {
@@ -193,7 +193,7 @@ const isWizard = variant === 'wizard';
     justify-content: space-between;
     gap: 1rem;
     padding-block: 0.25rem;
-    border-bottom: 1px dashed var(--color-line, #e2e4e5);
+    border-bottom: 1px dashed var(--theme-border);
   }
 
   .quote-summary__row:last-child {
@@ -202,14 +202,14 @@ const isWizard = variant === 'wizard';
 
   .quote-summary__row dt {
     font-size: 0.9rem;
-    color: var(--color-ink-700, #3a3d3e);
+    color: var(--theme-text-muted);
     margin: 0;
   }
 
   .quote-summary__row dd {
     margin: 0;
     font-weight: 700;
-    color: var(--color-ink, #242627);
+    color: var(--theme-text);
     font-size: 0.95rem;
   }
 
@@ -224,18 +224,22 @@ const isWizard = variant === 'wizard';
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: var(--color-ink-700, #3a3d3e);
+    color: var(--theme-text-muted);
   }
 
   .quote-summary__notes textarea {
     font-family: var(--font-body);
     font-size: 0.95rem;
-    border: 1px solid var(--color-line, #e2e4e5);
+    border: 1px solid var(--theme-border);
     border-radius: 8px;
     padding: 0.625rem;
-    color: var(--color-ink, #242627);
-    background-color: var(--color-surface, #fff);
+    color: var(--theme-text);
+    background-color: var(--theme-bg-elevated);
     resize: vertical;
+  }
+
+  .quote-summary__notes textarea::placeholder {
+    color: var(--theme-text-subtle);
   }
 
   .quote-summary__notes textarea:focus {

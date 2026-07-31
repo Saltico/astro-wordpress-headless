@@ -161,6 +161,45 @@
   --section-bg: var(--color-graphite);
   --section-bg-alt: var(--color-graphite-2);
   --section-heading-color: var(--color-on-dark);
+
+  /* ══════════════════════════════════════════════════════════════
+     THEME TOKENS — Sistema de tema dark/light
+     ══════════════════════════════════════════════════════════════
+     Estos tokens semánticos controlan los colores de fondo y texto
+     de los layouts y la página. Por defecto son dark (grafito).
+     Para activar light mode, agregar data-theme="light" al <html>.
+     Un futuro botón de toggle solo necesita cambiar este atributo.
+     ══════════════════════════════════════════════════════════════ */
+
+  /* Tema activo: dark (por defecto) */
+  --theme-bg: var(--color-graphite);
+  --theme-bg-alt: var(--color-graphite-2);
+  --theme-bg-elevated: var(--color-graphite-3);
+  --theme-text: var(--color-on-dark);
+  --theme-text-muted: var(--color-on-dark-muted);
+  --theme-text-subtle: rgba(255, 255, 255, 0.6);
+  --theme-heading: var(--color-on-dark);
+  --theme-border: var(--color-line-dark);
+  --theme-surface: var(--color-graphite);
+  --theme-surface-alt: var(--color-graphite-2);
+  --theme-eyebrow: var(--color-brand-300);
+}
+
+/* ── Light mode override ──
+   Para activar: <html data-theme="light">.
+   Los layouts que consumen --theme-* se adaptan automáticamente. */
+[data-theme="light"] {
+  --theme-bg: var(--color-surface);
+  --theme-bg-alt: #f5f5f5;
+  --theme-bg-elevated: #ffffff;
+  --theme-text: var(--color-ink);
+  --theme-text-muted: var(--color-ink-500);
+  --theme-text-subtle: var(--color-ink-500);
+  --theme-heading: var(--color-ink);
+  --theme-border: var(--color-line);
+  --theme-surface: #ffffff;
+  --theme-surface-alt: #f5f5f5;
+  --theme-eyebrow: var(--color-brand);
 }
 
 /* ========================================

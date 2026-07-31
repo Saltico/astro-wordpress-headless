@@ -229,24 +229,24 @@ const columnsClass = `stats--cols-${columns}`;
   }
 
   .stats--light {
-    background-color: var(--color-surface, #fff);
+    background-color: var(--theme-bg-alt);
   }
   .stats--light .stats__number {
-    color: var(--color-ink, #1a1a1a);
+    color: var(--theme-heading);
   }
   .stats--light .stats__label {
-    color: var(--color-ink-500, #6b7280);
+    color: var(--theme-text-muted);
   }
 
   .stats--dark {
-    background-color: var(--section-bg, var(--color-graphite, #0d1611));
-    border-top: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+    background-color: var(--theme-bg);
+    border-top: 1px solid var(--theme-border);
   }
   .stats--dark .stats__number {
-    color: #fff;
+    color: var(--theme-text);
   }
   .stats--dark .stats__label {
-    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+    color: var(--theme-text-muted);
   }
 
   .stats--brand {
@@ -268,7 +268,7 @@ const columnsClass = `stats--cols-${columns}`;
   }
 
   .stats--dividers .stats__item {
-    border-right: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+    border-right: 1px solid var(--theme-border);
   }
 
   .stats--dividers .stats__item:last-child {

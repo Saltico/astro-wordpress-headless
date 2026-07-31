@@ -140,15 +140,15 @@ const backgroundClasses = {
   }
 
   .split-section--light {
-    background-color: var(--color-surface, #fff);
+    background-color: var(--theme-bg-alt);
   }
 
   .split-section--alt {
-    background-color: var(--color-surface-alt, #f5f5f5);
+    background-color: var(--theme-bg-alt);
   }
 
   .split-section--dark {
-    background-color: var(--section-bg, var(--color-graphite, #0d1611));
+    background-color: var(--theme-bg);
   }
 
   /* Ghost text */
@@ -210,11 +210,11 @@ const backgroundClasses = {
 
   .split-section--light .split-section__eyebrow,
   .split-section--alt .split-section__eyebrow {
-    color: var(--color-brand, #1a9c4a);
+    color: var(--theme-eyebrow);
   }
 
   .split-section--dark .split-section__eyebrow {
-    color: var(--color-brand-300, #4ade80);
+    color: var(--theme-eyebrow);
   }
 
   .split-section__eyebrow::before {
@@ -236,11 +236,11 @@ const backgroundClasses = {
 
   .split-section--light .split-section__title,
   .split-section--alt .split-section__title {
-    color: var(--color-ink, #1a1a1a);
+    color: var(--theme-heading);
   }
 
   .split-section--dark .split-section__title {
-    color: var(--section-heading-color, #fff);
+    color: var(--theme-heading);
   }
 
   /* Description */
@@ -253,11 +253,11 @@ const backgroundClasses = {
 
   .split-section--light .split-section__description,
   .split-section--alt .split-section__description {
-    color: var(--color-ink-500, #6b7280);
+    color: var(--theme-text-muted);
   }
 
   .split-section--dark .split-section__description {
-    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+    color: var(--theme-text-muted);
   }
 
   /* Features */
@@ -285,13 +285,13 @@ const backgroundClasses = {
 
   .split-section--light .split-section__feature-icon,
   .split-section--alt .split-section__feature-icon {
-    background-color: var(--color-brand-050, rgba(26, 156, 74, 0.1));
-    color: var(--color-brand, #1a9c4a);
+    background-color: var(--theme-bg-elevated);
+    color: var(--theme-eyebrow);
   }
 
   .split-section--dark .split-section__feature-icon {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: var(--color-brand-300, #4ade80);
+    background-color: var(--theme-bg-elevated);
+    color: var(--theme-eyebrow);
   }
 
   .split-section__feature-title {
@@ -302,11 +302,11 @@ const backgroundClasses = {
 
   .split-section--light .split-section__feature-title,
   .split-section--alt .split-section__feature-title {
-    color: var(--color-ink, #1a1a1a);
+    color: var(--theme-text);
   }
 
   .split-section--dark .split-section__feature-title {
-    color: #fff;
+    color: var(--theme-text);
   }
 
   .split-section__feature-description {
@@ -316,11 +316,11 @@ const backgroundClasses = {
 
   .split-section--light .split-section__feature-description,
   .split-section--alt .split-section__feature-description {
-    color: var(--color-ink-500, #6b7280);
+    color: var(--theme-text-muted);
   }
 
   .split-section--dark .split-section__feature-description {
-    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+    color: var(--theme-text-muted);
   }
 
   /* Mini Stats */
@@ -345,16 +345,16 @@ const backgroundClasses = {
   }
 
   .split-section--dark .split-section__mini-stat b {
-    color: #fff;
+    color: var(--theme-text);
   }
 
   .split-section--light .split-section__mini-stat b,
   .split-section--alt .split-section__mini-stat b {
-    color: var(--color-ink, #1a1a1a);
+    color: var(--theme-heading);
   }
 
   .split-section__mini-stat b span {
-    color: var(--color-brand-300, #4ade80);
+    color: var(--theme-eyebrow);
   }
 
   .split-section__mini-stat small {
@@ -362,12 +362,12 @@ const backgroundClasses = {
   }
 
   .split-section--dark .split-section__mini-stat small {
-    color: var(--color-ink-400, rgba(255, 255, 255, 0.6));
+    color: var(--theme-text-muted);
   }
 
   .split-section--light .split-section__mini-stat small,
   .split-section--alt .split-section__mini-stat small {
-    color: var(--color-ink-500, #6b7280);
+    color: var(--theme-text-muted);
   }
 
   /* CTA Button */

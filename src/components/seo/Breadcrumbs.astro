@@ -56,7 +56,7 @@ const variantClass = variant === 'hero' ? 'breadcrumbs--hero' : '';
     align-items: center;
     gap: var(--space-2);
     font-size: var(--text-small);
-    color: var(--color-ink-500);
+    color: var(--theme-text-muted);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -70,11 +70,11 @@ const variantClass = variant === 'hero' ? 'breadcrumbs--hero' : '';
 
   .breadcrumbs__item:not(:last-child)::after {
     content: '/';
-    color: var(--color-line);
+    color: var(--theme-border);
   }
 
   .breadcrumbs__link {
-    color: var(--color-ink-700);
+    color: var(--theme-text-subtle);
     text-decoration: none;
     transition: color var(--motion-base) var(--ease-out);
   }
@@ -85,7 +85,7 @@ const variantClass = variant === 'hero' ? 'breadcrumbs--hero' : '';
   }
 
   .breadcrumbs__current {
-    color: var(--color-ink);
+    color: var(--theme-text);
     font-weight: 500;
   }
 

@@ -30,6 +30,8 @@ export const ICON_NAMES = [
   'map-pin',
   'cart',
   'search',
+  'sun',
+  'moon',
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];

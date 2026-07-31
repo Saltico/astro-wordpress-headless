@@ -18,7 +18,7 @@ import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import JsonLd from '@/components/seo/JsonLd.astro';
 import QuoteCartBadge from '@/components/quote/QuoteCartBadge.astro';
 import QuoteCartFloatingButton from '@/components/quote/QuoteCartFloatingButton.astro';
-import Button from '@/components/ui/Button.astro';
+import ThemeToggle from '@/components/ui/ThemeToggle.astro';
 import { organizationSchema, websiteSchema, getSiteUrl } from '@/lib/seo';
 import { siteBrand, siteContact, topbarData, navigationData, footerData } from '@/data/site';
 import logoImg from '@/assets/logos/logo_ipproyectosindustriales.png';
@@ -138,6 +138,15 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
     <link rel="preload" href="/fonts/archivo-var-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin />
 
+    <!-- Anti-FOUC: aplicar tema antes del primer paint -->
+    <script>
+      (function() {
+        const s = localStorage.getItem('theme-preference');
+        const t = s === 'dark' || s === 'light' ? s : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
+
     <slot name="head" />
 
     <JsonLd data={allSchemas} />
@@ -163,17 +172,8 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
           </a>
           <Navigation slot="navigation" items={navItems} aria-label={navigation?.ariaLabel} variant="brand" />
           <Fragment slot="cta">
+            <ThemeToggle />
             <QuoteCartBadge />
-            <Button
-              href="/contacto"
-              variant="primary"
-              icon="arrow-right"
-              iconPosition="right"
-              ariaLabel="Solicitar cotización"
-            >
-              <span class="header-cta__text">Solicitar cotización</span>
-              <span class="header-cta__text-short">Cotizar</span>
-            </Button>
           </Fragment>
         </Header>
       )
@@ -264,27 +264,5 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
     }
   }
 
-  /* ── Header CTA: label responsive.
-     El botón es el componente unificado <Button variant="primary"> (ver
-     src/components/ui/Button.astro); aquí solo se controla qué etiqueta se
-     muestra según el ancho: "Cotizar" en mobile, "Solicitar cotización" en
-     desktop. El contenido del slot lo define este layout, por lo que el
-     scope de estos estilos sí alcanza a los spans. ── */
-  .header-cta__text {
-    display: none;
-  }
 
-  .header-cta__text-short {
-    display: inline;
-  }
-
-  @media (min-width: 640px) {
-    .header-cta__text {
-      display: inline;
-    }
-
-    .header-cta__text-short {
-      display: none;
-    }
-  }
 </style>
