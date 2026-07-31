@@ -97,7 +97,7 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
     <!-- Izaje -->
     <div class="qdivcard" data-collapse data-div="izaje">
       <label class="qdivcard__head">
-        <input type="checkbox" class="js-collapse" name="servicio_izaje" {isIzaje || preselectedServices.includes('izaje') ? 'checked' : ''}>
+        <input type="checkbox" class="js-collapse" name="servicio_izaje" checked={isIzaje || preselectedServices.includes('izaje')}>
         <span class="qbox"><Icon name="check" size={16} /></span>
         <b>Izaje</b>
         <span class="qtag">Grúas y altura</span>
@@ -196,7 +196,7 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
     <!-- Movimiento de Tierra -->
     <div class="qdivcard" data-collapse data-div="tierra">
       <label class="qdivcard__head">
-        <input type="checkbox" class="js-collapse" name="servicio_tierra" {isMovimientoTierra || preselectedServices.includes('tierra') ? 'checked' : ''}>
+        <input type="checkbox" class="js-collapse" name="servicio_tierra" checked={isMovimientoTierra || preselectedServices.includes('tierra')}>
         <span class="qbox"><Icon name="check" size={16} /></span>
         <b>Movimiento de Tierra</b>
         <span class="qtag">Maquinaria pesada</span>
@@ -217,7 +217,7 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
     <!-- Transporte -->
     <div class="qdivcard" data-collapse data-div="transporte">
       <label class="qdivcard__head">
-        <input type="checkbox" class="js-collapse" name="servicio_transporte" {isTransporte || preselectedServices.includes('transporte') ? 'checked' : ''}>
+        <input type="checkbox" class="js-collapse" name="servicio_transporte" checked={isTransporte || preselectedServices.includes('transporte')}>
         <span class="qbox"><Icon name="check" size={16} /></span>
         <b>Transporte</b>
         <span class="qtag">Punto a punto</span>
@@ -276,7 +276,7 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
     <!-- Equipos Especiales -->
     <div class="qdivcard" data-collapse data-div="especiales">
       <label class="qdivcard__head">
-        <input type="checkbox" class="js-collapse" name="servicio_especiales" {isEquiposEspeciales || preselectedServices.includes('especiales') ? 'checked' : ''}>
+        <input type="checkbox" class="js-collapse" name="servicio_especiales" checked={isEquiposEspeciales || preselectedServices.includes('especiales')}/>
         <span class="qbox"><Icon name="check" size={16} /></span>
         <b>Equipos Especiales</b>
         <span class="qtag">Apoyo a faena</span>
@@ -301,7 +301,7 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
     <!-- Ingeniería -->
     <div class="qdivcard" data-collapse data-div="ingenieria">
       <label class="qdivcard__head">
-        <input type="checkbox" class="js-collapse" name="servicio_ingenieria" {isIngenieria || preselectedServices.includes('ingenieria') ? 'checked' : ''}>
+        <input type="checkbox" class="js-collapse" name="servicio_ingenieria" checked={isIngenieria || preselectedServices.includes('ingenieria')}>
         <span class="qbox"><Icon name="check" size={16} /></span>
         <b>Ingeniería</b>
         <span class="qtag">Diseño y gestión</span>
@@ -319,7 +319,7 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
     <!-- Construcción -->
     <div class="qdivcard" data-collapse data-div="construccion">
       <label class="qdivcard__head">
-        <input type="checkbox" class="js-collapse" name="servicio_construccion" {isConstruccion || preselectedServices.includes('construccion') ? 'checked' : ''}>
+        <input type="checkbox" class="js-collapse" name="servicio_construccion" checked={isConstruccion || preselectedServices.includes('construccion')}>
         <span class="qbox"><Icon name="check" size={16} /></span>
         <b>Construcción</b>
         <span class="qtag">Obras civiles</span>
@@ -338,7 +338,7 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
     <!-- Montajes -->
     <div class="qdivcard" data-collapse data-div="montajes">
       <label class="qdivcard__head">
-        <input type="checkbox" class="js-collapse" name="servicio_montajes" {isMontajes || preselectedServices.includes('montajes') ? 'checked' : ''}>
+        <input type="checkbox" class="js-collapse" name="servicio_montajes" checked={isMontajes || preselectedServices.includes('montajes')}>
         <span class="qbox"><Icon name="check" size={16} /></span>
         <b>Montajes</b>
         <span class="qtag">Electromecánico</span>
@@ -357,7 +357,7 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
     <!-- Infraestructura Portuaria -->
     <div class="qdivcard" data-collapse data-div="portuaria">
       <label class="qdivcard__head">
-        <input type="checkbox" class="js-collapse" name="servicio_portuaria" {isPortuaria || preselectedServices.includes('portuaria') ? 'checked' : ''}>
+        <input type="checkbox" class="js-collapse" name="servicio_portuaria" checked={isPortuaria || preselectedServices.includes('portuaria')}>
         <span class="qbox"><Icon name="check" size={16} /></span>
         <b>Infraestructura Portuaria</b>
         <span class="qtag">Obras marítimas</span>
@@ -508,21 +508,21 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: var(--space-8);
   }
 
   .qsection {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 24px;
+    background: var(--theme-surface);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
   }
 
   .qsection__head {
     display: flex;
     align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
   }
 
   .qsection__num {
@@ -531,31 +531,31 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
     justify-content: center;
     width: 32px;
     height: 32px;
-    background: var(--color-brand, #1a9c4a);
-    color: #fff;
+    background: var(--color-brand);
+    color: var(--color-on-brand);
     border-radius: 50%;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: var(--text-small);
     flex-shrink: 0;
   }
 
   .qsection__head h3 {
-    margin: 0 0 4px;
-    font-size: 1.1rem;
+    margin: 0 0 var(--space-1);
+    font-size: var(--text-h5);
     font-weight: 700;
-    color: #fff;
+    color: var(--theme-text);
   }
 
   .qsub {
     margin: 0;
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.6);
+    font-size: var(--text-small);
+    color: var(--theme-text-muted);
   }
 
   .qgrid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: var(--space-4);
   }
 
   @media (min-width: 640px) {
@@ -567,7 +567,7 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
   .qgrid-2 {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: var(--space-4);
   }
 
   @media (min-width: 640px) {
@@ -579,7 +579,7 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
   .qgrid-3 {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: var(--space-4);
   }
 
   @media (min-width: 640px) {
@@ -591,80 +591,81 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
   .qfield {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: var(--space-1);
   }
 
   .qfield label {
-    font-size: 0.8rem;
+    font-size: var(--text-small);
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--theme-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
 
   .qfield input,
   .qfield select {
-    padding: 12px 16px;
-    font-size: 0.95rem;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1.5px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    color: #fff;
-    transition: border-color 0.2s ease, background 0.2s ease;
+    padding: 0.75rem 1rem;
+    font-size: var(--text-body);
+    background: var(--theme-bg-elevated);
+    border: 1.5px solid var(--theme-border);
+    border-radius: var(--radius-sm);
+    color: var(--theme-text);
+    transition: border-color var(--motion-base) var(--ease-out),
+      background var(--motion-base) var(--ease-out);
   }
 
   .qfield input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--theme-text-subtle);
   }
 
   .qfield input:focus,
   .qfield select:focus {
     outline: none;
-    border-color: var(--color-brand-300, #4ade80);
-    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--color-brand);
+    background: var(--theme-bg-alt);
   }
 
   .qfield select {
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 40px;
+    background-position: right 0.75rem center;
+    padding-right: 2.5rem;
   }
 
   /* Divisiones colapsables */
   .qdivcard {
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 10px;
-    margin-bottom: 12px;
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-3);
     overflow: hidden;
   }
 
   .qdivcard__head {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 16px;
+    gap: var(--space-3);
+    padding: var(--space-4);
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background var(--motion-base) var(--ease-out);
   }
 
   .qdivcard__head:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--theme-bg-alt);
   }
 
   .qdivcard__head b {
-    font-size: 1rem;
-    color: #fff;
+    font-size: var(--text-body);
+    color: var(--theme-text);
   }
 
   .qtag {
     margin-left: auto;
-    padding: 4px 10px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 999px;
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.7);
+    padding: var(--space-1) var(--space-2);
+    background: var(--theme-bg-alt);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-small);
+    color: var(--theme-text-muted);
   }
 
   .qbox {
@@ -673,16 +674,16 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
     justify-content: center;
     width: 24px;
     height: 24px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid var(--theme-border);
     border-radius: 6px;
     flex-shrink: 0;
-    transition: all 0.2s ease;
+    transition: all var(--motion-base) var(--ease-out);
   }
 
   .qbox svg {
     opacity: 0;
-    color: #fff;
-    transition: opacity 0.2s ease;
+    color: var(--color-on-brand);
+    transition: opacity var(--motion-base) var(--ease-out);
   }
 
   input[type="checkbox"] {
@@ -693,8 +694,8 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
 
   /* Selector corregido: el checkbox y el qbox son hermanos dentro del label */
   input[type="checkbox"]:checked ~ .qbox {
-    background: var(--color-brand, #1a9c4a);
-    border-color: var(--color-brand, #1a9c4a);
+    background: var(--color-brand);
+    border-color: var(--color-brand);
   }
 
   input[type="checkbox"]:checked ~ .qbox svg {
@@ -713,74 +714,74 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
   }
 
   .qdivcard__body {
-    padding: 0 16px 16px;
+    padding: 0 var(--space-4) var(--space-4);
   }
 
   .qhint {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.6);
-    margin: 0 0 16px;
+    font-size: var(--text-small);
+    color: var(--theme-text-muted);
+    margin: 0 0 var(--space-4);
   }
 
   .qeqitem {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    margin-bottom: 12px;
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-3);
     overflow: hidden;
   }
 
   .qeqitem__head {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background var(--motion-base) var(--ease-out);
   }
 
   .qeqitem__head:hover {
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--theme-bg-alt);
   }
 
   .qeqitem__head b {
-    font-size: 0.95rem;
-    color: #fff;
+    font-size: var(--text-body);
+    color: var(--theme-text);
   }
 
   .qeqitem__sub {
-    padding: 0 16px 16px;
+    padding: 0 var(--space-4) var(--space-4);
   }
 
   .qsublabel {
-    font-size: 0.8rem;
+    font-size: var(--text-small);
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--theme-text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin: 16px 0 12px;
+    margin: var(--space-4) 0 var(--space-3);
   }
 
   .qchips {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: var(--space-2);
   }
 
   .qchip {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 999px;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--theme-bg-alt);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-pill);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all var(--motion-base) var(--ease-out);
   }
 
   .qchip:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.25);
+    background: var(--theme-bg-elevated);
+    border-color: var(--theme-text-subtle);
   }
 
   .qchip .qbox {
@@ -790,24 +791,20 @@ const isPortuaria = currentPath.includes('/servicios/infraestructura-portuaria')
   }
 
   .qlbl {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.9);
+    font-size: var(--text-small);
+    color: var(--theme-text);
   }
 
   .qdivider {
     border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin: 20px 0;
+    border-top: 1px solid var(--theme-border);
+    margin: var(--space-5) 0;
   }
 
-  /* El formulario vive sobre fondo oscuro: el color de contexto blanco
-     permite que la variante secondary del Button (basada en currentColor)
-     se vea correcta sin estilos extra. */
   .qactions {
     display: flex;
     flex-wrap: wrap;
-    gap: 14px;
+    gap: var(--space-4);
     justify-content: flex-start;
-    color: #fff;
   }
 </style>

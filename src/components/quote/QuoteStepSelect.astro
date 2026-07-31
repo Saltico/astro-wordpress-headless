@@ -491,7 +491,7 @@ import Icon from '@/components/ui/Icon.astro';
 
   .quote-page__empty {
     text-align: center;
-    padding: 2rem 1rem;
+    padding: var(--space-8) var(--space-4);
     background-color: var(--theme-surface);
     border: 1px solid var(--theme-border);
     border-radius: var(--radius-md);
@@ -527,8 +527,8 @@ import Icon from '@/components/ui/Icon.astro';
   .quote-page__lines {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
   }
 
   /* Barra de acciones: Limpiar + Continuar */
@@ -567,7 +567,7 @@ import Icon from '@/components/ui/Icon.astro';
   }
 
   .quote-page__summary {
-    margin-top: 1.5rem;
+    margin-top: var(--space-6);
   }
 
   :global(.quote-line) {
@@ -588,8 +588,8 @@ import Icon from '@/components/ui/Icon.astro';
   :global(.quote-line__head) {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 12px 10px 14px;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
   }
 
   :global(.quote-line__thumb) {
@@ -695,7 +695,7 @@ import Icon from '@/components/ui/Icon.astro';
   }
 
   :global(.quote-line__panel-inner) {
-    padding: 4px 16px 18px;
+    padding: var(--space-1) var(--space-4) var(--space-4);
     border-top: 1px solid var(--theme-border);
     background-color: var(--theme-bg-alt);
   }
@@ -703,8 +703,8 @@ import Icon from '@/components/ui/Icon.astro';
   :global(.quote-line__grid) {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.875rem;
-    padding-top: 14px;
+    gap: var(--space-3);
+    padding-top: var(--space-3);
   }
 
   @media (min-width: 640px) {
@@ -716,7 +716,7 @@ import Icon from '@/components/ui/Icon.astro';
   :global(.quote-line__field) {
     display: flex;
     flex-direction: column;
-    gap: 0.375rem;
+    gap: var(--space-1);
   }
 
   :global(.quote-line__field--full) {

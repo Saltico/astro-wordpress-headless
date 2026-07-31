@@ -3,12 +3,13 @@
 export interface Props {
   class?: string;
   as?: 'div' | 'section' | 'header' | 'footer' | 'article' | 'main';
+  wide?: boolean;
 }
 
-const { as: Tag = 'div', class: className } = Astro.props;
+const { as: Tag = 'div', class: className, wide = false } = Astro.props;
 ---
 
-<Tag class:list={['app-container', className]}>
+<Tag class:list={['app-container', wide && 'app-container--wide', className]}>
   <slot />
 </Tag>
 
@@ -20,7 +21,12 @@ const { as: Tag = 'div', class: className } = Astro.props;
     padding-inline: var(--container-padding);
   }
 
-  @media (min-width: 768px) {
+  .app-container--wide {
+    max-width: 1360px;
+  }
+
+/*  TODO: VERIFICAR TAMAÑOS EN MOBILE 
+    @media (min-width: 768px) {
     .app-container {
       padding-inline: 1.5rem;
     }
@@ -30,5 +36,5 @@ const { as: Tag = 'div', class: className } = Astro.props;
     .app-container {
       padding-inline: 2rem;
     }
-  }
+  } */
 </style>
