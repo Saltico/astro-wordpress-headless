@@ -315,7 +315,7 @@ const newsItems = await getLatestNews(3);
   .d-hero__container {
     position: relative;
     z-index: 2;
-    max-width: 1360px;
+    max-width: var(--container-max-width);
     width: 100%;
     margin-inline: auto;
     padding: 60px var(--container-padding, 20px) clamp(40px, 7vh, 90px);
@@ -342,7 +342,7 @@ const newsItems = await getLatestNews(3);
   }
 
   .d-hero__title {
-    color: #fff;
+    color: var(--color-on-dark);
     font-family: var(--font-heading);
     font-weight: 900;
     line-height: 0.98;

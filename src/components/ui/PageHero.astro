@@ -77,7 +77,7 @@ const hasActionsSlot = Astro.slots.has('actions');
     display: flex;
     align-items: flex-end;
     overflow: hidden;
-    color: #ffffff;
+    color: var(--color-on-dark);
     isolation: isolate;
   }
 
@@ -118,7 +118,7 @@ const hasActionsSlot = Astro.slots.has('actions');
     position: relative;
     z-index: 2;
     width: 100%;
-    max-width: 1360px;
+    max-width: var(--container-max-width);
     margin-inline: auto;
     padding: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 60px)
       var(--container-padding, 20px) clamp(40px, 5vh, 64px);
@@ -145,11 +145,11 @@ const hasActionsSlot = Astro.slots.has('actions');
     content: '';
     width: 42px;
     height: 2px;
-    background: var(--color-brand, #348f41);
+    background: var(--color-brand, #308f40);
   }
 
   .page-hero__title {
-    color: #ffffff;
+    color: var(--color-on-dark);
     font-family: var(--font-heading);
     font-weight: 900;
     line-height: 1.05;
@@ -160,7 +160,7 @@ const hasActionsSlot = Astro.slots.has('actions');
   }
 
   .page-hero__subtitle {
-    color: rgba(255, 255, 255, 0.85);
+    color: color-mix(in srgb, var(--color-on-dark) 85%, transparent);
     font-size: clamp(1rem, 1.5vw, 1.2rem);
     max-width: 60ch;
     margin: 0;

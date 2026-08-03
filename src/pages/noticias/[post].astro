@@ -182,7 +182,7 @@ const dateFormatted = new Date(article.date).toLocaleDateString('es-CL', {
 <style>
   .news-article__header {
     background-color: var(--color-graphite, #0d1611);
-    color: #fff;
+    color: var(--color-on-dark);
     margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
     padding-block: calc(clamp(60px, 8vw, 100px) + var(--topbar-height, 40px) + var(--header-height, 80px)) clamp(40px, 6vw, 60px);
   }
@@ -207,7 +207,7 @@ const dateFormatted = new Date(article.date).toLocaleDateString('es-CL', {
     font-size: clamp(2rem, 4.5vw, 3.4rem);
     line-height: 1.1;
     letter-spacing: -0.02em;
-    color: #fff;
+    color: var(--color-on-dark);
     margin: 0 0 24px;
     max-width: 22ch;
     text-wrap: balance;

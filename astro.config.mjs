@@ -3,8 +3,8 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
-// TODO: reemplazar por dominio final antes de produccion
-const SITE_URL = 'https://orangered-deer-742907.hostingersite.com';
+// Dominio canónico de producción
+const SITE_URL = 'https://ipproyectosindustriales.cl';
 
 // https://astro.build/config
 export default defineConfig({

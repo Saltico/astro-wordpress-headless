@@ -22,7 +22,7 @@ const { as: Tag = 'div', class: className, wide = false } = Astro.props;
   }
 
   .app-container--wide {
-    max-width: 1360px;
+    max-width: var(--container-max-width);
   }
 
 /*  TODO: VERIFICAR TAMAÑOS EN MOBILE 

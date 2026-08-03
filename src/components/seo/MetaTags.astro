@@ -27,10 +27,12 @@ const {
   ogVideo,
 } = Astro.props;
 
-const finalRobots = noindex ? 'noindex, nofollow' : robots;
+const finalRobots = noindex ? 'noindex, follow' : robots;
 const ogImageUrl = ogImage ?? new URL('/og-default.jpg', canonical).toString();
 ---
 
+<title>{title}</title>
+<meta name="description" content={description} />
 <meta name="robots" content={finalRobots} />
 <link rel="canonical" href={canonical} />
 

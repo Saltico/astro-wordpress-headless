@@ -123,7 +123,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
     top: 0;
     background-color: var(--color-brand, #348f41);
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-    color: #ffffff;
+    color: var(--color-on-dark);
     font-family: var(--font-body);
     font-size: 0.8125rem;
     line-height: 1.4;
@@ -174,18 +174,18 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
 
   .topbar__link:hover,
   .topbar__link:focus-visible {
-    color: #ffffff;
+    color: var(--color-on-dark);
     text-decoration: underline;
     text-underline-offset: 3px;
   }
 
   .topbar__link--highlight {
-    color: #ffffff;
+    color: var(--color-on-dark);
     font-weight: 600;
   }
 
   .topbar__icon {
-    color: #ffffff;
+    color: var(--color-on-dark);
     flex-shrink: 0;
   }
 
@@ -204,7 +204,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
     justify-content: center;
     width: 28px;
     height: 28px;
-    color: #ffffff;
+    color: var(--color-on-dark);
     border-radius: 50%;
     transition: background-color 0.15s var(--ease-out, ease),
       transform 0.15s var(--ease-out, ease);

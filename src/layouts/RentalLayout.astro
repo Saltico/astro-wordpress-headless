@@ -212,7 +212,7 @@ const hasFaqSlot = Astro.slots.has('faq');
   .rental-hero__container {
     position: relative;
     z-index: 2;
-    max-width: 1360px;
+    max-width: var(--container-max-width);
     width: 100%;
     margin-inline: auto;
     padding: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 60px)
@@ -233,7 +233,7 @@ const hasFaqSlot = Astro.slots.has('faq');
   }
 
   .rental-hero__title {
-    color: #fff;
+    color: var(--color-on-dark);
     font-family: var(--font-heading);
     font-weight: 900;
     line-height: 1.05;
@@ -259,7 +259,7 @@ const hasFaqSlot = Astro.slots.has('faq');
     flex-wrap: wrap;
     gap: 12px;
     margin-top: 28px;
-    color: #fff;
+    color: var(--color-on-dark);
   }
 
   @media (max-width: 480px) {

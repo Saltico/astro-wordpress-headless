@@ -1,0 +1,61 @@
+---
+// src/components/ui/Eyebrow.astro
+// Componente Eyebrow unificado del design system.
+//
+// Reemplaza las implementaciones duplicadas en:
+// - ServicesGrid, ClientsGrid, NewsGrid, SplitSection, CTABand
+// - PageHero, HeroSection, QuoteHero
+// - ServiceLayout, RentalLayout
+// - EquipmentPicker, QuoteReview
+//
+// Patrón visual: texto uppercase con línea decorativa a la izquierda.
+// Usa el token --theme-eyebrow para el color, que se adapta al tema activo.
+//
+// Ejemplos:
+//   <Eyebrow text="Nuestros servicios" />
+//   <Eyebrow text="Confían en nosotros" class="custom-class" />
+//   <Eyebrow text="Blog" align="center" />
+
+export interface Props {
+  text: string;
+  align?: 'left' | 'center' | 'right';
+  class?: string;
+}
+
+const { text, align = 'left', class: className } = Astro.props;
+---
+
+<p class:list={['eyebrow', `eyebrow--${align}`, className]}>
+  {text}
+</p>
+
+<style>
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-3, 12px);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--theme-eyebrow);
+    margin-bottom: var(--spacing-4, 16px);
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background-color: var(--theme-eyebrow);
+    flex-shrink: 0;
+  }
+
+  .eyebrow--center {
+    justify-content: center;
+  }
+
+  .eyebrow--right {
+    justify-content: flex-end;
+  }
+</style>

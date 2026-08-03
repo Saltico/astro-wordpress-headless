@@ -28,3 +28,12 @@ pnpm-debug.log*
 .vscode/
 .agents/
 
+# Documentacion generada por agente
+agent-docs/
+mermaid-diagrams/
+
+# Build artifacts temporales
+dist_*.zip
+build.log
+deploy.log
+

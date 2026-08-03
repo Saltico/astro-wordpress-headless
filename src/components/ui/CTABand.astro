@@ -161,7 +161,7 @@ const alignClasses = {
   .cta-band__container {
     position: relative;
     z-index: 2;
-    max-width: 1360px;
+    max-width: var(--container-max-width);
     width: 100%;
     margin-inline: auto;
     padding-inline: var(--container-padding, 20px);
@@ -232,7 +232,7 @@ const alignClasses = {
     font-size: clamp(2rem, 5vw, 3.6rem);
     letter-spacing: -0.03em;
     line-height: 1.02;
-    color: #fff;
+    color: var(--color-on-dark);
     max-width: 20ch;
     margin: 0 auto 26px;
   }
@@ -273,7 +273,7 @@ const alignClasses = {
     flex-wrap: wrap;
     gap: 14px;
     margin-top: 26px;
-    color: #fff;
+    color: var(--color-on-dark);
   }
 
   @media (max-width: 640px) {

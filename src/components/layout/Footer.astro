@@ -156,7 +156,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
   }
 
   .footer__main {
-    max-width: 1360px;
+    max-width: var(--container-max-width);
     margin-inline: auto;
     padding: var(--space-12) var(--container-padding, 20px);
   }
@@ -193,7 +193,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
   .footer__logo {
     font-size: 1.25rem;
     font-weight: 700;
-    color: #fff;
+    color: var(--color-on-dark);
     margin-bottom: var(--space-3);
   }
 
@@ -238,7 +238,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
   .footer__title {
     font-weight: 700;
     font-size: 0.9rem;
-    color: #fff;
+    color: var(--color-on-dark);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     margin: 0 0 var(--space-2);
@@ -315,7 +315,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    max-width: 1360px;
+    max-width: var(--container-max-width);
     margin-inline: auto;
     padding: var(--space-4) var(--container-padding, 20px);
     font-size: 0.8rem;

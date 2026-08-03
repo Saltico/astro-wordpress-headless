@@ -95,7 +95,7 @@ const layoutClass = `services-grid--${layout}`;
   }
 
   .services-grid__container {
-    max-width: 1360px;
+    max-width: var(--container-max-width);
     margin-inline: auto;
     padding-inline: var(--container-padding, 20px);
   }
@@ -276,7 +276,7 @@ const layoutClass = `services-grid--${layout}`;
     padding: 4px 12px;
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
-    color: #fff;
+    color: var(--color-on-dark);
     font-size: 0.75rem;
     font-weight: 600;
     border-radius: 999px;
@@ -289,7 +289,7 @@ const layoutClass = `services-grid--${layout}`;
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: 1.4rem;
-    color: #fff;
+    color: var(--color-on-dark);
     margin: 0 0 8px;
     line-height: 1.2;
   }
@@ -320,7 +320,7 @@ const layoutClass = `services-grid--${layout}`;
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.9rem;
-    color: #fff;
+    color: var(--color-on-dark);
     text-decoration: none;
     transition: gap 0.2s ease;
   }
@@ -333,37 +333,4 @@ const layoutClass = `services-grid--${layout}`;
     width: 18px;
     height: 18px;
   }
-
-  /* Animación reveal */
-  .reveal {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-
-  .reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
 </style>
-
-<script>
-  // Intersection Observer para animación reveal
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    document.querySelectorAll('.service-card.reveal').forEach((el) => {
-      observer.observe(el);
-    });
-  }
-</script>

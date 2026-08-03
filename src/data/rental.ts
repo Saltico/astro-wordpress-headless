@@ -3,7 +3,31 @@
 // Fuente única de verdad para todas las páginas del catálogo /arriendo/*.
 
 import heroImg from '@/assets/imgs/hero.jpg';
-
+import gruaGrove60t from '@/assets/imgs/rental/izaje/grua/grua-grove-rt-765-e/grua-grove-rt-765-e.avif';
+import gruaTerex80t from '@/assets/imgs/rental/izaje/grua/grua-terex-rt-780-e/grua-terex-rt-780-e.avif';
+import gruaGrove100t from '@/assets/imgs/rental/izaje/grua/grua-grove-gmk-4100/grua-grove-gmk-4100.avif';
+import gruaGrove250t from '@/assets/imgs/rental/izaje/grua/grua-grove-gmk-5250l/grua-grove-gmk-5250l.avif';
+import camionPluma5t from '@/assets/imgs/rental/izaje/camion-pluma/camion-pluma-5-toneladas/camion-pluma-5-toneladas.avif';
+import camionPluma6t from '@/assets/imgs/rental/izaje/camion-pluma/camion-pluma-6-toneladas/camion-pluma-6-toneladas.avif';
+import camionPluma7t from '@/assets/imgs/rental/izaje/camion-pluma/camion-pluma-7-toneladas/camion-pluma-7-toneladas.avif';
+import camionPluma8t from '@/assets/imgs/rental/izaje/camion-pluma/camion-pluma-8-toneladas/camion-pluma-8-toneladas.avif';
+import camionPluma15t from '@/assets/imgs/rental/izaje/camion-pluma/camion-pluma-15-toneladas/camion-pluma-15-toneladas.avif';
+import alzaHombre20m from '@/assets/imgs/rental/izaje/alza-hombre/alza-hombre-20-metros/alza-hombre-20-metros.avif';
+import gruaHorquilla3t from '@/assets/imgs/rental/izaje/grua-horquilla/grua-horquilla-3-toneladas/grua-horquilla-3-toneladas.avif';
+import gruaHorquilla7t from '@/assets/imgs/rental/izaje/grua-horquilla/grua-horquilla-7-toneladas/grua-horquilla-7-toneladas.avif';
+import camionTolva12m3 from '@/assets/imgs/rental/movimiento-de-tierra/camion-tolva/camion-tolva-12-m3/camion-tolva-12-m3.avif';
+import retroexcavadoraJohnDeere320d from '@/assets/imgs/rental/movimiento-de-tierra/retroexcavadora/retroexcavadora-john-deere-320d/retroexcavadora-john-deere-320d.avif';
+import minicargadorVolvoMc90b from '@/assets/imgs/rental/movimiento-de-tierra/minicargador/minicargador-volvo-mc-90b/minicargador-volvo-mc-90b.avif';
+import tractoCamionRenaultPremiumLander460 from '@/assets/imgs/rental/transporte/tracto-camion/tracto-camion-renault-premium-lander-460/tracto-camion-renault-premium-lander-460.avif';
+import tractoCamionRenaultC520 from '@/assets/imgs/rental/transporte/tracto-camion/tracto-camion-renault-c-520/tracto-camion-renault-c-520.avif';
+import tractoCamionRenaultT460 from '@/assets/imgs/rental/transporte/tracto-camion/tracto-camion-renault-t-460/tracto-camion-renault-t-460.avif';
+import camaBajaEagerBeaver70t from '@/assets/imgs/rental/transporte/cama-baja/cama-baja-eager-beaver-70t/cama-baja-eager-beaver-70t.avif';
+import semiremolqueRandon from '@/assets/imgs/rental/transporte/semiremolque/semiremolque-30-toneladas-randon/semiremolque-30-toneladas-randon.avif';
+import semiremolqueGoren from '@/assets/imgs/rental/transporte/semiremolque/semiremolque-30-toneladas-goren/semiremolque-30-toneladas-goren.avif';
+import torreIluminacion9mWackerNeuson from '@/assets/imgs/rental/equipos-especiales/torres-iluminacion/torre-iluminacion-9m-wacker-neuson/torre-iluminacion-9m-wacker-neuson.avif';
+import torreIluminacion9mPramac from '@/assets/imgs/rental/equipos-especiales/torres-iluminacion/torre-iluminacion-9m-pramac/torre-iluminacion-9m-pramac.avif';
+import torreIluminacion9mTerex from '@/assets/imgs/rental/equipos-especiales/torres-iluminacion/torre-iluminacion-9m-terex/torre-iluminacion-9m-terex.avif';
+import bombaDeHormigonTruemaxTm50d from '@/assets/imgs/rental/equipos-especiales/bomba-de-hormigon/bomba-hormigon-truemax-tm50d/bomba-hormigon-truemax-tm50d.avif';
 export interface Equipment {
   /** Slug único del modelo, kebab-case, lowercase */
   slug: string;
@@ -68,6 +92,32 @@ export interface RentalCategory {
 }
 
 const HERO = heroImg.src;
+const GRUA_GROVE_60T = gruaGrove60t.src;
+const GRUA_TEREX_80T = gruaTerex80t.src;
+const GRUA_GROVE_100T = gruaGrove100t.src;
+const GRUA_GROVE_250T = gruaGrove250t.src;
+const CAMION_PLUMA_5T = camionPluma5t.src;
+const CAMION_PLUMA_6T = camionPluma6t.src;
+const CAMION_PLUMA_7T = camionPluma7t.src;
+const CAMION_PLUMA_8T = camionPluma8t.src;
+const CAMION_PLUMA_15T = camionPluma15t.src;
+const ALZA_HOMBRE_20M = alzaHombre20m.src;
+const GRUA_HORQUILLA_3T = gruaHorquilla3t.src;
+const GRUA_HORQUILLA_7T = gruaHorquilla7t.src;
+const CAMION_TOLVA_12M3 = camionTolva12m3.src;
+const RETROEXCAVADORA_JOHN_DEERE_320D = retroexcavadoraJohnDeere320d.src;
+const MINICARGADOR_VOLVO_MC_90B = minicargadorVolvoMc90b.src;
+const TRACTO_CAMION_RENAULT_PREMIUM_LANDER_460 = tractoCamionRenaultPremiumLander460.src;
+const TRACTO_CAMION_RENAULT_C_520 = tractoCamionRenaultC520.src;
+const TRACTO_CAMION_RENAULT_T_460 = tractoCamionRenaultT460.src;
+const CAMA_BAJA_EAGER_BEAVER_70T = camaBajaEagerBeaver70t.src;
+const SEMIREMOLQUE_RANDON = semiremolqueRandon.src;
+const SEMIREMOLQUE_GOREN = semiremolqueGoren.src;
+const TORRE_ILUMINACION_9M_WACKER_NEUSON = torreIluminacion9mWackerNeuson.src;
+const TORRE_ILUMINACION_9M_PRAMAC = torreIluminacion9mPramac.src;
+const TORRE_ILUMINACION_9M_TEREX = torreIluminacion9mTerex.src;
+const BOMBA_HORMIGON_TRUEMAX_TM50D = bombaDeHormigonTruemaxTm50d.src;
+
 
 // ─────────────────────────────────────────────────────────────
 // 1. IZAJE
@@ -98,17 +148,17 @@ const IZAJE_GRUAS_60: RentalSubcategory = {
     'Arriendo de grúas de 60 toneladas con operador certificado en Chile. Equipos Grove, Tadano y Liebherr. Hasta 50 m de altura. Cotiza online.',
   catalog: [
     {
-      slug: 'grua-grove-gmk-3060',
-      name: 'Grove GMK 3060',
+      slug: 'grua-grove-rt-765-e',
+      name: 'Grove RT 765 E',
       capacity: '60 t',
-      height: '44 m',
-      shortDesc: 'Grúa hidráulica AT de 60 t con plumín telescópico y 4 ejes direccionales.',
+      height: '43 m',
+      shortDesc: 'Grúa compacta para montaje industrial y apoyo a obras civiles, capacidad de 60 toneladas con plumín telescópico y 4 ejes direccionales.',
       features: ['Motor Tier 4 Final', 'Plumín de 15 m', '4 ejes direccionales'],
-      image: 'https://www.gruasyequiposgarcia.com/wp-content/uploads/2020/01/Grove-GMK-3050.jpg',
+      image: GRUA_GROVE_60T,
       whatsappMessage:
-        'Hola IP, quisiera cotizar arriendo de Grúa Grove GMK 3060 (60 t).',
+        'Hola IP, quisiera cotizar arriendo de Grúa Grove RT 765 E (60 t).',
     },
-    {
+/*     {
       slug: 'grua-tadano-gr-600xl',
       name: 'Tadano GR-600XL',
       capacity: '60 t',
@@ -127,7 +177,7 @@ const IZAJE_GRUAS_60: RentalSubcategory = {
       features: ['VarioBase', 'Plumín telescópico', 'Modo eco'],
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Liebherr LTM 1060 (60 t).',
-    },
+    }, */
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de grúas de 60 toneladas.',
 };
@@ -157,16 +207,16 @@ const IZAJE_GRUAS_80: RentalSubcategory = {
     'Arriendo de grúas de 80 toneladas con operador certificado en Chile. Equipos Grove, Tadano y Liebherr. Hasta 60 m de altura. Cotiza online.',
   catalog: [
     {
-      slug: 'grua-grove-gmk-4080',
-      name: 'Grove GMK 4080',
+      slug: 'grua-terex-rt-780-e',
+      name: 'Grúa Terex RT 780 E',
       capacity: '80 t',
-      height: '60 m',
-      shortDesc: 'Grúa hidráulica AT de 80 t con plumín de 18 m y 4 ejes direccionales.',
-      features: ['Motor Tier 4 Final', 'Plumín de 18 m', '4 ejes direccionales'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Grove GMK 4080 (80 t).',
+      height: '47 m',
+      shortDesc: 'Grúa Rough Terrain especialmente diseñada para trabajos dentro de faenas mineras y terrenos irregulares, capacidad de 80 toneladas con plumín de 18 m y 4 ejes direccionales.',
+      features: ['Tracción 4x4', 'Excelente estabilidad', 'Ideal para terrenos difíciles'],
+      image: GRUA_TEREX_80T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Terex RT 780 E (80 t).',
     },
-    {
+/*     {
       slug: 'grua-tadano-gr-800xl',
       name: 'Tadano GR-800XL',
       capacity: '80 t',
@@ -185,7 +235,7 @@ const IZAJE_GRUAS_80: RentalSubcategory = {
       features: ['VarioBase', 'Plumín telescópico', 'Modo eco'],
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Liebherr LTM 1080 (80 t).',
-    },
+    }, */
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de grúas de 80 toneladas.',
 };
@@ -218,12 +268,12 @@ const IZAJE_GRUAS_100: RentalSubcategory = {
       slug: 'grua-grove-gmk-4100',
       name: 'Grove GMK 4100',
       capacity: '100 t',
-      height: '88 m',
-      shortDesc: 'Grúa hidráulica AT de 100 t con plumín telescópico de 17 m.',
-      features: ['Motor Tier 4 Final', 'Plumín de 17 m', '4 ejes direccionales'],
-      image: HERO,
+      height: '60 m',
+      shortDesc: 'Grúa todo terreno versátil para montajes estructurales, mantenimiento industrial y construcción. Capacidad de 100 toneladas con plumín telescópico de 17 m.',
+      features: ['Bajo tiempo de instalación', 'Rápido traslado', 'Gran maniobrabilidad'],
+      image: GRUA_GROVE_100T,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Grove GMK 4100 (100 t).',
-    },
+    },/* 
     {
       slug: 'grua-liebherr-ltm-1100',
       name: 'Liebherr LTM 1100',
@@ -243,7 +293,7 @@ const IZAJE_GRUAS_100: RentalSubcategory = {
       features: ['Plumín de 19 m', 'Sistema AML', 'Modo eco'],
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Tadano GR-1000XL (100 t).',
-    },
+    }, */
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de grúas de 100 toneladas.',
 };
@@ -277,12 +327,12 @@ const IZAJE_GRUAS_250: RentalSubcategory = {
       name: 'Grove GMK 5250L',
       capacity: '250 t',
       height: '120 m',
-      shortDesc: 'Grúa hidráulica AT de 250 t con plumín telescópico de 33 m.',
-      features: ['Motor Tier 4 Final', 'Plumín de 33 m', '7 ejes direccionales'],
-      image: HERO,
+      shortDesc: 'Grúa todo terreno de alta capacidad diseñada para montajes industriales, minería, energía e infraestructura pesada. Capacidad de 250 toneladas con plumín telescópico de 33 m.',
+      features: ['deal para izajes críticos', 'Alta capacidad en espacios reducidos', 'Pluma telescópica de gran alcance'],
+      image: GRUA_GROVE_250T,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Grove GMK 5250L (250 t).',
     },
-    {
+   /*  {
       slug: 'grua-liebherr-ltm-1250',
       name: 'Liebherr LTM 1250-5.1',
       capacity: '250 t',
@@ -301,7 +351,7 @@ const IZAJE_GRUAS_250: RentalSubcategory = {
       features: ['Plumín de 36 m', 'Sistema AML', '6 ejes'],
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Tadano ATF 400G-6 (400 t).',
-    },
+    }, */
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de grúas de 250 toneladas.',
 };
@@ -332,32 +382,52 @@ const IZAJE_CAMIONES_PLUMA: RentalSubcategory = {
   catalog: [
     {
       slug: 'camion-pluma-5-toneladas',
-      name: 'Camión Pluma 5 t',
-      capacity: '5 t',
-      height: '14 m',
-      shortDesc: 'Camión pluma compacto de 5 t ideal para faenas urbanas e industriales.',
-      features: ['Brazo articulado', 'Estabilizadores hidráulicos', 'Radio comando'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma 5 t.',
+      name: 'Camión Pluma Freightliner M2 106',
+      capacity: '4,7 t',
+      height: '18 m',
+      shortDesc: 'Camión pluma ideal para transporte e instalación de materiales livianos y medianos. Capacidad de 4,7 toneladas ideal para faenas urbanas e industriales.',
+      features: ['Brazo articulado', 'Effer 255 6S', 'Gran movilidad'],
+      image: CAMION_PLUMA_5T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma 4,7 t.',
     },
     {
-      slug: 'camion-pluma-10-toneladas',
-      name: 'Camión Pluma 10 t',
-      capacity: '10 t',
-      height: '18 m',
-      shortDesc: 'Camión pluma de 10 t con brazo telescópico para faenas mineras.',
-      features: ['Brazo telescópico', 'Estabilizadores extendidos', 'Cabina certificada'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma 10 t.',
+      slug: 'camion-pluma-6-toneladas',
+      name: 'Camión Pluma International 7600',
+      capacity: '6,4 t',
+      height: '22 m',
+      shortDesc: 'Camión pluma de gran alcance para montaje industrial y movimiento de equipos. Capacidad de 6,4 toneladas ideal para faenas urbanas e industriales.',
+      features: ['Excelente alcance hidráulico', 'Effer 375 8S', 'Ideal para mantenimiento industrial'],
+      image: CAMION_PLUMA_6T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma 6,4 t.',
+    },
+    {
+      slug: 'camion-pluma-7-toneladas',
+      name: 'Camión Pluma Man TGS 41.440 8x8',
+      capacity: '7,6 t',
+      height: '24 m',
+      shortDesc: 'Camión pluma para trabajos pesados en minería y construcción. Capacidad de 7,6 toneladas con gran estabilidad',
+      features: ['Tracción 8x8', 'Effer 455 8S', 'Excelente desempeño fuera de carretera'],
+      image: CAMION_PLUMA_7T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma 7,6 t.',
+    },
+    {
+      slug: 'camion-pluma-8-toneladas',
+      name: 'Camión Pluma Kenworth T 470',
+      capacity: '8,1 t',
+      height: '25 m',
+      shortDesc: 'Camión pluma de alto rendimiento para montaje industrial y transporte especializado. Capacidad de 8,1 toneladas con brazo telescópico para faenas mineras.',
+      features: ['Brazo telescópico', 'Effer 470 8S', 'Maniobrabilidad'],
+      image: CAMION_PLUMA_8T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma 8,1 t.',
     },
     {
       slug: 'camion-pluma-15-toneladas',
-      name: 'Camión Pluma 15 t',
+      name: 'Camión Pluma Man TGS 41.400 8x4',
       capacity: '15 t',
-      height: '22 m',
-      shortDesc: 'Camión pluma de 15 t con alcance extendido y alta capacidad.',
-      features: ['Alcance 22 m', 'Estabilizadores extra', 'Cabina climatizada'],
-      image: HERO,
+      height: '30 m',
+      shortDesc: 'Camión pluma de gran capacidad para montaje de estructuras, equipos industriales y minería. Capacidad de 15 toneladas con brazo articulado y estabilizadores hidráulicos.',
+      features: ['Gran alcance', 'Effer 855 8S', 'Elevada capacidad de levante'],
+      image: CAMION_PLUMA_15T,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma 15 t.',
     },
   ],
@@ -389,16 +459,16 @@ const IZAJE_ALZA_HOMBRE: RentalSubcategory = {
     'Arriendo de alza-hombre y plataformas aéreas en Chile. Equipos articulados y telescópicos, altura de 8 a 40 m. Operador certificado. Cotiza online.',
   catalog: [
     {
-      slug: 'plataforma-articulada-18m',
-      name: 'Plataforma Articulada 18 m',
-      capacity: '200 kg',
-      height: '18 m',
-      shortDesc: 'Plataforma articulada de 18 m para trabajo en altura con obstáculos.',
+      slug: 'alza-hombre-20-metros',
+      name: 'Alza-hombre Manitou 200 ATJ',
+      capacity: '230 kg',
+      height: '20 m',
+      shortDesc: 'Plataforma articulada para trabajos seguros en altura. Alcance de 20 metros para trabajo en altura con obstáculos.',
       features: ['Brazo articulado', 'Tracción 4x4', 'Operador certificado'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Plataforma Articulada 18 m.',
+      image: ALZA_HOMBRE_20M,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Alza-hombre 20 m.',
     },
-    {
+/*     {
       slug: 'plataforma-telescopica-25m',
       name: 'Plataforma Telescópica 25 m',
       capacity: '230 kg',
@@ -417,7 +487,7 @@ const IZAJE_ALZA_HOMBRE: RentalSubcategory = {
       features: ['Brazo telescópico largo', 'Estabilizadores extra', 'Operador certificado'],
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Plataforma Telescópica 40 m.',
-    },
+    }, */
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de alza-hombre.',
 };
@@ -444,27 +514,29 @@ const IZAJE_GRUAS_HORQUILLA: RentalSubcategory = {
   heroImage: HERO,
   seoTitle: 'Arriendo de Grúas Horquilla en Chile',
   seoDescription:
-    'Arriendo de grúas horquilla diésel y eléctricas en Chile. Capacidad de 2 a 25 toneladas. Mantenimiento y seguros incluidos. Cotiza online.',
+    'Arriendo de grúas horquilla diésel y eléctricas en Chile. Capacidad de 3 a 7 toneladas. Mantenimiento y seguros incluidos. Cotiza online.',
   catalog: [
     {
-      slug: 'grua-horquilla-diesel-5t',
-      name: 'Grúa Horquilla Diésel 5 t',
-      capacity: '5 t',
-      shortDesc: 'Grúa horquilla diésel de 5 t para faenas exteriores e industriales.',
-      features: ['Motor diésel', 'Mástil triple', 'Cabina abierta'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Horquilla Diésel 5 t.',
-    },
-    {
-      slug: 'grua-horquilla-electrica-3t',
-      name: 'Grúa Horquilla Eléctrica 3 t',
+      slug: 'grua-horquilla-3-toneladas',
+      name: 'Grúa Horquilla Doosan D30 S-5',
       capacity: '3 t',
-      shortDesc: 'Grúa horquilla eléctrica de 3 t para faenas indoor y bodegas.',
-      features: ['Motor eléctrico', 'Cero emisiones', 'Mástil triple'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Horquilla Eléctrica 3 t.',
+      height: '3 m',
+      shortDesc: 'Grúa horquilla para carga, descarga y logística industrial. Capacidad de 3 toneladas para faenas exteriores e industriales.',
+      features: ['Excelente radio de giro', 'Bajo consumo', 'Fácil operación'],
+      image: GRUA_HORQUILLA_3T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Horquilla de 3 t.',
     },
     {
+      slug: 'grua-horquilla-7-toneladas',
+      name: 'Grúa Horquilla Doosan D70 S-5',
+      capacity: '7 t',
+      height: '3 m',
+      shortDesc: 'Grúa horquilla de gran capacidad para cargas pesadas. Capacidad de 7 toneladas para faenas indoor y bodegas.',
+      features: ['Alta estabilidad', 'Excelente potencia', 'Bajo costo operativo'],
+      image: GRUA_HORQUILLA_7T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Horquilla de 7 t.',
+    },
+/*     {
       slug: 'grua-horquilla-diesel-10t',
       name: 'Grúa Horquilla Diésel 10 t',
       capacity: '10 t',
@@ -472,7 +544,7 @@ const IZAJE_GRUAS_HORQUILLA: RentalSubcategory = {
       features: ['Motor diésel', 'Mástil pesado', 'Cabina cerrada'],
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Horquilla Diésel 10 t.',
-    },
+    }, */
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de grúas horquilla.',
 };
@@ -488,7 +560,7 @@ const MT_CAMIONES_TOLVA: RentalSubcategory = {
   description:
     'Arriendo de camiones tolva en Chile para movimiento de tierra, transporte de material y faenas mineras. Equipos con capacidad entre 15 y 40 metros cúbicos, motor diésel de alto torque y tolva reforzadas para trabajo pesado. Choferes con licencia A4 vigente y experiencia en faena. Mantenimiento, combustibles y seguros incluidos. Servicio disponible en zona norte (Atacama, Coquimbo) y centro de Chile con respuesta operativa en menos de 48 horas. Solución ideal para transporte de áridos, mineral y material de construcción en proyectos de gran envergadura.',
   features: [
-    'Camiones tolva de 15 a 40 m³ de capacidad.',
+    'Camiones tolva de alta capacidad capacidad.',
     'Choferes con licencia A4 y experiencia en faena.',
     'Mantenimiento, combustibles y seguros incluidos.',
     'Disponibilidad 24/7 según requerimiento del proyecto.',
@@ -503,18 +575,18 @@ const MT_CAMIONES_TOLVA: RentalSubcategory = {
   heroImage: HERO,
   seoTitle: 'Arriendo de Camiones Tolva en Chile',
   seoDescription:
-    'Arriendo de camiones tolva de 15 a 40 m³ con chofer en Chile. Ideal para movimiento de tierra y transporte de material. Cotiza online.',
+    'Arriendo de camiones tolva con chofer certificado en Chile. Ideal para movimiento de tierra y transporte de material. Cotiza online.',
   catalog: [
     {
-      slug: 'camion-tolva-20m3',
-      name: 'Camión Tolva 20 m³',
-      capacity: '20 m³',
-      shortDesc: 'Camión tolva de 20 m³ para transporte de material en faena.',
-      features: ['Tolva reforzada', 'Motor diésel', 'Chofer certificado'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Tolva 20 m³.',
+      slug: 'camion-tolva-12-m3',
+      name: 'Camión Tolva Volkswagen Constellation 31330',
+      capacity: '12 m³',
+      shortDesc: 'Camión tolva de 12 m³ para transporte de material en faena.',
+      features: ['Tolva reforzada', 'Alta capacidad de carga', 'Chofer certificado'],
+      image: CAMION_TOLVA_12M3,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Tolva 12 m³.',
     },
-    {
+/*     {
       slug: 'camion-tolva-30m3',
       name: 'Camión Tolva 30 m³',
       capacity: '30 m³',
@@ -522,7 +594,7 @@ const MT_CAMIONES_TOLVA: RentalSubcategory = {
       features: ['Tolva extra reforzada', 'Alta capacidad', 'Chofer con experiencia'],
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Tolva 30 m³.',
-    },
+    }, */
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de camiones tolva.',
 };
@@ -552,15 +624,16 @@ const MT_RETROEXCAVADORAS: RentalSubcategory = {
     'Arriendo de retroexcavadoras hidráulicas con operador en Chile. Equipos de 8 a 25 toneladas, profundidad hasta 6 m. Cotiza online.',
   catalog: [
     {
-      slug: 'retroexcavadora-cat-416f',
-      name: 'Caterpillar 416F',
-      capacity: '8 t',
-      shortDesc: 'Retroexcavadora Caterpillar 416F de 8 t para faenas urbanas y construcción.',
-      features: ['Cucharón dual', 'Tracción 4x4', 'Cabina ROPS'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Retroexcavadora Caterpillar 416F.',
+      slug: 'retroexcavadora-john-deere-320d',
+      name: 'Retroexcavadora John Deere 320D',
+      capacity: '1 m³',
+      height: '4,3 m',
+      shortDesc: 'Retroexcavadora John Deere 320D con capacidad de 1 m³ para faenas urbanas y construcción.',
+      features: ['Balde cargador frontal de 1,0 m³', 'Profundidad máxima de excavación de 4,3 m', 'Capacidad de levante del cargador de hasta 3.540 kg'],
+      image: RETROEXCAVADORA_JOHN_DEERE_320D,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Retroexcavadora John Deere 320D.',
     },
-    {
+/*     {
       slug: 'retroexcavadora-komatsu-pc200',
       name: 'Komatsu PC200',
       capacity: '20 t',
@@ -568,7 +641,7 @@ const MT_RETROEXCAVADORAS: RentalSubcategory = {
       features: ['Motor Tier 4', 'Cucharón reforzado', 'Operador certificado'],
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Retroexcavadora Komatsu PC200.',
-    },
+    }, */
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de retroexcavadoras.',
 };
@@ -598,15 +671,16 @@ const MT_MINICARGADORES: RentalSubcategory = {
     'Arriendo de minicargadores con operador en Chile. Equipos Bobcat, Caterpillar y Case. Ideales para espacios reducidos. Cotiza online.',
   catalog: [
     {
-      slug: 'minicargador-bobcat-s650',
-      name: 'Bobcat S650',
-      capacity: '1.1 t',
-      shortDesc: 'Minicargador Bobcat S650 de 1.1 t para faenas urbanas y construcción.',
+      slug: 'minicargador-volvo-mc-90b',
+      name: 'Volvo MC 90B',
+      capacity: '907 kg',
+      height: '2,3 m',
+      shortDesc: 'Volvo MC 90B con 907 kg de capacidad operativa para faenas urbanas y construcción.',
       features: ['Motor diésel', 'Cucharón estándar', 'Cabina cerrada'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Minicargador Bobcat S650.',
+      image: MINICARGADOR_VOLVO_MC_90B,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Volvo MC 90B.',
     },
-    {
+/*     {
       slug: 'minicargador-cat-226d',
       name: 'Caterpillar 226D',
       capacity: '1.2 t',
@@ -614,7 +688,7 @@ const MT_MINICARGADORES: RentalSubcategory = {
       features: ['Motor Tier 4', 'Tracción alta', 'Operador certificado'],
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Minicargador Caterpillar 226D.',
-    },
+    }, */
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de minicargadores.',
 };
@@ -648,22 +722,31 @@ const TR_TRACTO_CAMIONES: RentalSubcategory = {
     'Arriendo de tracto camiones con chofer en Chile. Capacidad de tiro hasta 60 toneladas. Ideal para transporte de carga pesada. Cotiza online.',
   catalog: [
     {
-      slug: 'tracto-camion-mercedes-actros',
-      name: 'Mercedes-Benz Actros',
+      slug: 'tracto-camion-renault-premium-lander-460',
+      name: 'Renault Premium Lander 460',
       capacity: '50 t',
-      shortDesc: 'Tracto camión Mercedes-Benz Actros de 50 t de tiro.',
+      shortDesc: 'Tracto camión Renault Premium Lander 460 de 50 t de tiro.',
       features: ['Motor V6', 'Cabina MegaSpace', 'Frenos ABS'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Tracto Camión Mercedes-Benz Actros.',
+      image: TRACTO_CAMION_RENAULT_PREMIUM_LANDER_460,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Tracto Camión Renault Premium Lander 460.',
     },
     {
-      slug: 'tracto-camion-volvo-fh16',
-      name: 'Volvo FH16',
+      slug: 'tracto-camion-renault-c-520',
+      name: 'Renault C-520',
       capacity: '60 t',
-      shortDesc: 'Tracto camión Volvo FH16 de 60 t de tiro para faenas mineras.',
-      features: ['Motor 16L', 'I-Shift', 'Cabina Globetrotter'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Tracto Camión Volvo FH16.',
+      shortDesc: 'Tracto camión Renault C-520 de 60 t de tiro para faenas mineras.',
+      features: ['Motor de alta potencia', 'Excelente capacidad de arrastre', 'Cabina Globetrotter'],
+      image: TRACTO_CAMION_RENAULT_C_520,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Tracto Camión Renault C-520.',
+    },
+    {
+      slug: 'tracto-camion-renault-t-460',
+      name: 'Renault T-460',
+      capacity: '60 t',
+      shortDesc: 'Tracto camión Renault T-460 de 60 t de tiro para faenas mineras.',
+      features: ['Excelente eficiencia', 'Bajo consumo', 'Cabina confortable'],
+      image: TRACTO_CAMION_RENAULT_T_460,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Tracto Camión Renault T-460.',
     },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de tracto camiones.',
@@ -694,15 +777,16 @@ const TR_CAMA_BAJA: RentalSubcategory = {
     'Arriendo de camas-baja Eager Beaver de 25 a 80 t en Chile. Permisos de tránsito incluidos. Ideal para transporte de maquinaria pesada. Cotiza online.',
   catalog: [
     {
-      slug: 'cama-baja-eager-beaver-50t',
-      name: 'Eager Beaver 50 t',
-      capacity: '50 t',
-      shortDesc: 'Cama-baja Eager Beaver de 50 t para transporte de maquinaria.',
-      features: ['Largo útil 12 m', 'Eje extensible', 'Rampas hidráulicas'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Cama-baja Eager Beaver 50 t.',
+      slug: 'cama-baja-eager-beaver-70t',
+      name: 'Cama Baja Eager Beaver 60 GSL',
+      capacity: '70 t',
+      height: '0,6 m',
+      shortDesc: 'Cama-baja Eager Beaver de 70 t para transporte de maquinaria. Plataforma útil: 7,92 m largo x 3 m ancho.',
+      features: ['Largo 17 metros', 'Ancho 3 metros', 'Rampas hidráulicas'],
+      image: CAMA_BAJA_EAGER_BEAVER_70T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Cama-baja Eager Beaver 70 t.',
     },
-    {
+/*     {
       slug: 'cama-baja-80t',
       name: 'Cama-baja 80 t',
       capacity: '80 t',
@@ -710,7 +794,7 @@ const TR_CAMA_BAJA: RentalSubcategory = {
       features: ['Largo útil 14 m', 'Múltiples ejes', 'Permisos especiales'],
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Cama-baja 80 t.',
-    },
+    }, */
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de cama-baja Eager Beaver.',
 };
@@ -740,22 +824,24 @@ const TR_SEMIREMOLQUES: RentalSubcategory = {
     'Arriendo de semiremolques de 25 a 40 t en Chile. Compatibles con contenedores de 20 y 40 pies. Mantenimiento y seguros incluidos. Cotiza online.',
   catalog: [
     {
-      slug: 'semiremolque-carga-general',
-      name: 'Semiremolque Carga General',
-      capacity: '32 t',
-      shortDesc: 'Semiremolque de carga general de 32 t para transporte interurbano.',
-      features: ['Lona lateral', 'Piso de madera', 'Capacidad 32 t'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Semiremolque Carga General.',
+      slug: 'semiremolque-30-toneladas-randon',
+      name: 'Semiremolque Randon',
+      capacity: '30 t',
+      height: '1,4 m',
+      shortDesc: 'Semiremolque de carga general de 30 toneladas para transporte interurbano.',
+      features: ['Largo: 12 metros', 'Ancho: 2,5 metros', 'Alta resistencia'],
+      image: SEMIREMOLQUE_RANDON,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Semiremolque Randon.',
     },
     {
-      slug: 'semiremolque-container-40',
-      name: 'Semiremolque Container 40 pies',
-      capacity: '34 t',
-      shortDesc: 'Semiremolque para contenedores de 40 pies, alta capacidad.',
-      features: ['Tubo contenedor', 'King pin', 'Eje retráctil'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Semiremolque Container 40 pies.',
+      slug: 'semiremolque-30-toneladas-goren',
+      name: 'Semiremolque Goren CB 3M',
+      capacity: '30 t',
+      height: '0,9 m',
+      shortDesc: 'Semirremolque para transporte de maquinaria y carga general. Alta capacidad.',
+      features: ['Largo: 12 metros', 'Ancho: 2,5 metros', 'Eje retráctil'],
+      image: SEMIREMOLQUE_GOREN,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Semiremolque Goren CB 3M.',
     },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de semiremolques.',
@@ -790,22 +876,34 @@ const EE_TORRES_ILUMINACION: RentalSubcategory = {
     'Arriendo de torres de iluminación portátil en Chile. Cobertura hasta 4.000 m². Combustible y mantenimiento incluidos. Cotiza online.',
   catalog: [
     {
-      slug: 'torre-iluminacion-led-9m',
-      name: 'Torre de Iluminación LED 9 m',
+      slug: 'torre-iluminacion-9m-wacker-neuson',
+      name: 'Torre de Iluminación Wacler Neuson LTN 9 m',
       capacity: '4.000 m²',
-      shortDesc: 'Torre de iluminación LED con mástil de 9 m y generador diésel.',
-      features: ['Mástil telescópico 9 m', 'Lámparas LED', 'Generador diésel'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Torre de Iluminación LED 9 m.',
+      height: '9 m',
+      shortDesc: 'Torre de iluminación diésel de alto rendimiento para faenas mineras, construcción, obras viales y montajes industriales, diseñada para entregar una amplia cobertura lumínica durante trabajos nocturnos.',
+      features: ['Mástil telescópico 9 m', '4 focos de haluro metálico de alta intensidad', 'Motor diésel de bajo consumo'],
+      image: TORRE_ILUMINACION_9M_WACKER_NEUSON,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Torre de Iluminación Wacler Neuson LTN LED 9 m.',
     },
     {
-      slug: 'torre-iluminacion-solar',
-      name: 'Torre de Iluminación Solar',
+      slug: 'torre-iluminacion-9m-pramac',
+      name: 'Torre de Iluminación Pramac LSW4T 9 m',
       capacity: '3.000 m²',
-      shortDesc: 'Torre de iluminación solar autónoma, cero emisiones.',
-      features: ['Energía solar', 'Cero emisiones', 'Baterías de litio'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Torre de Iluminación Solar.',
+      height: '9 m',
+      shortDesc: 'Torre de iluminación Pramac LSW4T con tecnología LED, diseñada para ofrecer máxima eficiencia energética, mayor autonomía y excelente cobertura lumínica en faenas de minería, construcción y eventos industriales.',
+      features: ['4 focos LED de alta potencia y encendido instantáneo', 'Funcionamiento silencioso', 'Ideal para trabajos continuos durante la noche y operaciones 24/7'],
+      image: TORRE_ILUMINACION_9M_PRAMAC,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Torre de Iluminación Pramac LSW4T 9 m.',
+    },
+    {
+      slug: 'torre-iluminacion-9m-terex',
+      name: 'Torre de Iluminación Terex RL4 9 m',
+      capacity: '3.000 m²',
+      height: '9 m',
+      shortDesc: 'Torre de iluminación Terex RL4 con tecnología LED, diseñada para ofrecer máxima eficiencia energética, mayor autonomía y excelente cobertura lumínica en faenas de minería, construcción y eventos industriales.',
+      features: ['Mástil telescópico de hasta 9 metros', 'Amplia cobertura de iluminación para grandes superficies', '4 focos de haluro metálico de alta intensidad'],
+      image: TORRE_ILUMINACION_9M_TEREX,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Torre de Iluminación Terex RL4 9 m.',
     },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de torres de iluminación.',
@@ -836,15 +934,15 @@ const EE_BOMBAS_HORMIGON: RentalSubcategory = {
     'Arriendo de bombas de hormigón estacionarias y telescópicas en Chile. Capacidad hasta 150 m³/h. Operador certificado. Cotiza online.',
   catalog: [
     {
-      slug: 'bomba-hormigon-estacionaria',
-      name: 'Bomba de Hormigón Estacionaria',
-      capacity: '70 m³/h',
-      shortDesc: 'Bomba de hormigón estacionaria de 70 m³/h para vaciado continuo.',
-      features: ['Capacidad 70 m³/h', 'Presión 70 bar', 'Operador certificado'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Bomba de Hormigón Estacionaria.',
+      slug: 'bomba-hormigon-truemax-tm50d',
+      name: 'Bomba de Hormigón Truemax TM50D',
+      capacity: '50 m³/h',
+      shortDesc: 'Bomba de hormigón Truemax TM50D de 50 m³/h para vaciado continuo.',
+      features: ['Capacidad 50 m³/h', 'Presión 50 bar', 'Operador certificado'],
+      image: BOMBA_HORMIGON_TRUEMAX_TM50D,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Bomba de Hormigón Truemax TM50D.',
     },
-    {
+/*     {
       slug: 'bomba-hormigon-telescopica',
       name: 'Bomba de Hormigón Telescópica',
       capacity: '150 m³/h',
@@ -852,7 +950,7 @@ const EE_BOMBAS_HORMIGON: RentalSubcategory = {
       features: ['Pluma 62 m', 'Capacidad 150 m³/h', 'Operador con experiencia'],
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Bomba de Hormigón Telescópica.',
-    },
+    }, */
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de bombas de hormigón.',
 };

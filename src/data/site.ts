@@ -16,7 +16,7 @@ export const siteBrand = {
   description:
     'Especialistas en obras civiles, montaje industrial y arriendo de maquinaria de alto tonelaje para la gran minería.',
   logoUrl: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/logo.png',
-  siteUrl: 'orangered-deer-742907.hostingersite.com',
+  siteUrl: 'https://ipproyectosindustriales.cl',
 };
 
 // ─── Contacto ───────────────────────────────────────────────────────────
@@ -84,7 +84,8 @@ export const navigationData: NavItem[] = [
   },
   { label: 'Seguridad', url: '/seguridad' },
   { label: 'Compliance', url: '/compliance' },
-  { label: 'Contacto', url: '/contacto' },
+/* TODO: DEFINIR SI SE DEBE MANTENER EL LINK DE CONTACTO EN LA NAVEGACIÓN PRINCIPAL   
+ label: 'Contacto', url: '/contacto' }, */
 ];
 
 // ─── Footer ──────────────────────────────────────────────────────────────
@@ -121,7 +122,7 @@ export const footerData: {
     {
       title: 'Empresa',
       links: [
-        { label: 'Nuestra empresa', url: '/' },
+        { label: 'Nuestra empresa', url: '/nosotros' },
         { label: 'Seguridad y medio ambiente', url: '/seguridad' },
         { label: 'Compliance', url: '/compliance' },
         { label: 'Canal de denuncias', url: '/canal-integridad' },

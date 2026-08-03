@@ -4,7 +4,7 @@
 import type { SiteConfig } from '@/types/seo';
 
 const DEFAULT_CONFIG: SiteConfig = {
-  siteUrl: 'https://orangered-deer-742907.hostingersite.com',
+  siteUrl: 'https://ipproyectosindustriales.cl',
   siteName: 'IP Proyectos Industriales',
   defaultLocale: 'es',
   phone: '+56 9 0000 0000',
