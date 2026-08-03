@@ -11,10 +11,8 @@ import PageHero from '@/components/ui/PageHero.astro';
 import Icon from '@/components/ui/Icon.astro';
 import Button from '@/components/ui/Button.astro';
 import type { StatItem } from '@/components/ui/StatsCounter.astro';
-import servIzaje from '@/assets/imgs/serv-izaje.jpg';
-import gruasImg from '@/assets/imgs/gruas.jpg';
-import izajeImg from '@/assets/imgs/izaje.jpg';
-import apoyoImg from '@/assets/imgs/apoyo.jpg';
+import gruasImg from '@/assets/imgs/hero/arriendo/izaje/gruas/gruas.avif';
+import rentalImg from '@/assets/imgs/hero/arriendo/arriendo.avif';
 import { RENTAL_CATEGORIES } from '@/data/rental';
 import { collectionPageSchema, breadcrumbSchema, combineSchemas } from '@/lib/seo';
 
@@ -46,10 +44,10 @@ const stats: StatItem[] = [
   jsonLd={jsonLd}
 >
   <PageHero
-    image={servIzaje.src}
+    image={rentalImg.src}
     imageAlt="Grúa de alto tonelaje de la flota de arriendo de IP Proyectos Industriales"
-    imageWidth={servIzaje.width}
-    imageHeight={servIzaje.height}
+    imageWidth={rentalImg.width}
+    imageHeight={rentalImg.height}
     eyebrow="Rental de equipos"
     title="Arriendo de maquinaria pesada para minería e industria"
     subtitle="Grúas, izaje, movimiento de tierra, transporte y equipos especiales con operadores certificados. Disponibilidad 24/7 en zona norte de Chile."

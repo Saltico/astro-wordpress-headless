@@ -3,6 +3,8 @@
 // Fuente única de verdad para todas las páginas del catálogo /arriendo/*.
 
 import heroImg from '@/assets/imgs/hero.jpg';
+import izajeHero from '@/assets/imgs/hero/arriendo/izaje/izaje.avif';
+import gruasHero from '@/assets/imgs/hero/arriendo/izaje/gruas/gruas.avif';
 import gruaGrove60t from '@/assets/imgs/rental/izaje/grua/grua-grove-rt-765-e/grua-grove-rt-765-e.avif';
 import gruaTerex80t from '@/assets/imgs/rental/izaje/grua/grua-terex-rt-780-e/grua-terex-rt-780-e.avif';
 import gruaGrove100t from '@/assets/imgs/rental/izaje/grua/grua-grove-gmk-4100/grua-grove-gmk-4100.avif';
@@ -107,6 +109,8 @@ export interface RentalCategory {
 }
 
 const HERO = heroImg.src;
+const IZAJE_HERO = izajeHero.src;
+const GRUAS_HERO = gruasHero.src;
 const GRUA_GROVE_60T = gruaGrove60t.src;
 const GRUA_TEREX_80T = gruaTerex80t.src;
 const GRUA_GROVE_100T = gruaGrove100t.src;
@@ -170,7 +174,7 @@ const IZAJE_GRUAS_60: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: GRUAS_HERO,
   seoTitle: 'Arriendo de Grúas de 60 Toneladas',
   seoDescription:
     'Arriendo de grúas de 60 toneladas con operador certificado en Chile. Equipos Grove, Tadano y Liebherr. Hasta 50 m de altura. Cotiza online.',
@@ -229,7 +233,7 @@ const IZAJE_GRUAS_80: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: GRUAS_HERO,
   seoTitle: 'Arriendo de Grúas de 80 Toneladas',
   seoDescription:
     'Arriendo de grúas de 80 toneladas con operador certificado en Chile. Equipos Grove, Tadano y Liebherr. Hasta 60 m de altura. Cotiza online.',
@@ -287,7 +291,7 @@ const IZAJE_GRUAS_100: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: GRUAS_HERO,
   seoTitle: 'Arriendo de Grúas de 100 Toneladas',
   seoDescription:
     'Arriendo de grúas de 100 toneladas con operador certificado en Chile. Equipos Grove, Liebherr y Tadano. Hasta 88 m de altura. Cotiza online.',
@@ -345,7 +349,7 @@ const IZAJE_GRUAS_250: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: GRUAS_HERO,
   seoTitle: 'Arriendo de Grúas de 250 Toneladas',
   seoDescription:
     'Arriendo de grúas de 250 toneladas con operador certificado en Chile. Equipos Grove, Liebherr y Tadano. Hasta 130 m de altura. Cotiza online.',
@@ -1422,8 +1426,8 @@ export const RENTAL_CATEGORIES: RentalCategory[] = [
     name: 'Izaje',
     shortDesc: 'Grúas, alza-hombre y equipos para izaje de carga.',
     description:
-      'Arriendo de equipos de izaje y alto tonelaje para la gran minería e industria en Chile. Grúas hidráulicas todo terreno (AT) y rough terrain (RT) desde 60 hasta 400 toneladas, camiones pluma, alza-hombre, plataformas aéreas y grúas horquilla con operadores certificados. Servicio 24/7 con planes de izaje, permisos de trabajo y supervisión técnica incluidos. Disponibilidad en zona norte (Atacama, Coquimbo, Antofagasta) y centro del país con respuesta operativa en menos de 48 horas.',
-    heroImage: HERO,
+      'Arriendo de equipos de izaje para minería, construcción e industria en Chile. Contamos con grúas hidráulicas AT y RT de 60 a 400 toneladas, camiones pluma, alza hombre, plataformas aéreas y grúas horquilla, operados por personal certificado. Ofrecemos soluciones seguras y eficientes para proyectos de alto tonelaje en la zona norte y centro del país.',
+    heroImage: IZAJE_HERO,
     seoTitle: 'Arriendo de Equipos de Izaje en Chile',
     seoDescription:
       'Arriendo de grúas, alza-hombre y equipos de izaje en Chile. Hasta 400 toneladas. Operador certificado, 24/7. Cotiza online o por WhatsApp.',
