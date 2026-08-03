@@ -28,6 +28,21 @@ import torreIluminacion9mWackerNeuson from '@/assets/imgs/rental/equipos-especia
 import torreIluminacion9mPramac from '@/assets/imgs/rental/equipos-especiales/torres-iluminacion/torre-iluminacion-9m-pramac/torre-iluminacion-9m-pramac.avif';
 import torreIluminacion9mTerex from '@/assets/imgs/rental/equipos-especiales/torres-iluminacion/torre-iluminacion-9m-terex/torre-iluminacion-9m-terex.avif';
 import bombaDeHormigonTruemaxTm50d from '@/assets/imgs/rental/equipos-especiales/bomba-de-hormigon/bomba-hormigon-truemax-tm50d/bomba-hormigon-truemax-tm50d.avif';
+import compresorAireAirmanPds390s4B1 from '@/assets/imgs/rental/equipos-especiales/compresor-de-aire/compresor-aire-airman-pds390s-4b1/compresor-aire-airman-pds390s-4b1.avif';
+import generadorElectrico6kvaEuropArdHdy from '@/assets/imgs/rental/equipos-especiales/generador-electrico/generador-electrico-europ-ard-hdy/generador-electrico-europ-ard-hdy.avif';
+import generadorElectrico43kvaWackerNeuson from '@/assets/imgs/rental/equipos-especiales/generador-electrico/generador-electrico-43kva-wacker-neuson/generador-electrico-43kva-wacker-neuson.avif';
+import generadorElectrico7kvaPromac from '@/assets/imgs/rental/equipos-especiales/generador-electrico/generador-electrico-7kva-promac/generador-electrico-7kva-promac.avif';
+import generadorElectrico3kvaLoncinEmaresa from '@/assets/imgs/rental/equipos-especiales/generador-electrico/generador-electrico-3kva-loncin-emaresa/generador-electrico-3kva-loncin-emaresa.avif';
+import termofusionadoraElectricaRitmo360mm from '@/assets/imgs/rental/equipos-especiales/termofusionadora-electrica/termofusionadora-electrica-360mm/termofusionadora-electrica-360mm.avif';
+import termofusionadoraElectricaRitmo160mm from '@/assets/imgs/rental/equipos-especiales/termofusionadora-electrica/termofusionadora-electrica-160mm/termofusionadora-electrica-160mm.avif';
+import rodilloCompactador from '@/assets/imgs/rental/equipos-especiales/rodillos/rodillo-compactador/rodillo-compactador.avif';
+import placaCompactadora15kn from '@/assets/imgs/rental/equipos-especiales/placa-compactadora/placa-compactadora-15kn/placa-compactadora-15kn.avif';
+import alisadoraPavimento915mm from '@/assets/imgs/rental/equipos-especiales/alisadora-de-pavimento/alisadora-de-pavimento-915mm/alisadora-de-pavimento-915mm.avif';
+import vibropison21kn from '@/assets/imgs/rental/equipos-especiales/vibropison/vibropison-21kn/vibropison-21kn.avif';
+import mezcladoraElectrica400lEmaresaHv400 from '@/assets/imgs/rental/equipos-especiales/mezcladora-electrica/mezcladora-electrica-400l/mezcladora-electrica-400l.avif';
+import canastillaAlzaHombreMetalicoOrmet2MF from '@/assets/imgs/rental/equipos-especiales/canastillo-alza-hombre/canastillo-alza-hombre-metalico/canastillo-alza-hombre-metalico.avif';
+import canastillaAlzaHombreFibraOrmet2VE from '@/assets/imgs/rental/equipos-especiales/canastillo-alza-hombre/canastillo-alza-hombre-fibra/canastillo-alza-hombre-fibra.avif';
+
 export interface Equipment {
   /** Slug único del modelo, kebab-case, lowercase */
   slug: string;
@@ -117,7 +132,20 @@ const TORRE_ILUMINACION_9M_WACKER_NEUSON = torreIluminacion9mWackerNeuson.src;
 const TORRE_ILUMINACION_9M_PRAMAC = torreIluminacion9mPramac.src;
 const TORRE_ILUMINACION_9M_TEREX = torreIluminacion9mTerex.src;
 const BOMBA_HORMIGON_TRUEMAX_TM50D = bombaDeHormigonTruemaxTm50d.src;
-
+const COMPRESOR_AIRE_AIRMAN_PDS390S_4B1 = compresorAireAirmanPds390s4B1.src;
+const GENERADOR_ELECTRICO_6KVA_EUROP_ARD_HDY = generadorElectrico6kvaEuropArdHdy.src;
+const GENERADOR_ELECTRICO_43KVA_WACKER_NEUSON = generadorElectrico43kvaWackerNeuson.src;
+const GENERADOR_ELECTRICO_7KVA_PROMAC = generadorElectrico7kvaPromac.src;
+const GENERADOR_ELECTRICO_3KVA_LONCIN_EMARESA = generadorElectrico3kvaLoncinEmaresa.src;
+const TERMOFUSIONADORA_ELECTRICA_RITMO_360MM = termofusionadoraElectricaRitmo360mm.src;
+const TERMOFUSIONADORA_ELECTRICA_RITMO_160MM = termofusionadoraElectricaRitmo160mm.src;
+const RODILLO_COMPACTADOR = rodilloCompactador.src;
+const PLACA_COMPACTADORA_15KN = placaCompactadora15kn.src;
+const ALISADORA_PAVIMENTO_915MM = alisadoraPavimento915mm.src;
+const VIBROPISON_21KN = vibropison21kn.src;
+const MEZCLADORA_ELECTRICA_400L_EMARESA_HV_400 = mezcladoraElectrica400lEmaresaHv400.src;
+const CANASTILLO_ALZA_HOMBRE_METALICO_ORMET_2MF = canastillaAlzaHombreMetalicoOrmet2MF.src;
+const CANASTILLO_ALZA_HOMBRE_FIBRA_ORMET_2VE = canastillaAlzaHombreFibraOrmet2VE.src;
 
 // ─────────────────────────────────────────────────────────────
 // 1. IZAJE
@@ -980,15 +1008,16 @@ const EE_COMPRESORES_AIRE: RentalSubcategory = {
     'Arriendo de compresores de aire portátiles diésel en Chile. Capacidad 185 a 1.500 CFM. Combustible y mantenimiento incluidos. Cotiza online.',
   catalog: [
     {
-      slug: 'compresor-aire-375cfm',
-      name: 'Compresor de Aire 375 CFM',
-      capacity: '375 CFM',
-      shortDesc: 'Compresor diésel de 375 CFM, ideal para faenas medianas.',
-      features: ['Motor diésel', 'Presión 12 bar', 'Remolcable'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Compresor de Aire 375 CFM.',
+      slug: 'compresor-aire-airman-pds390s-4b1',
+      name: 'Compresor de Aire Airman PDS390S-4B1',
+      capacity: '1 MPa - 11 m³/min',
+      height: '1,87 m',
+      shortDesc: 'Compresor diésel de Airman PDS390S-4B1, ideal para faenas medianas.',
+      features: ['Motor diésel de bajo consumo y alta confiabilidad', 'Presión 10 bar', 'Remolcable'],
+      image: COMPRESOR_AIRE_AIRMAN_PDS390S_4B1,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Compresor de Aire Airman PDS390S-4B1.',
     },
-    {
+/*     {
       slug: 'compresor-aire-900cfm',
       name: 'Compresor de Aire 900 CFM',
       capacity: '900 CFM',
@@ -996,7 +1025,7 @@ const EE_COMPRESORES_AIRE: RentalSubcategory = {
       features: ['Alta capacidad', 'Presión 14 bar', 'Remolcable'],
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Compresor de Aire 900 CFM.',
-    },
+    }, */
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de compresores de aire.',
 };
@@ -1026,22 +1055,44 @@ const EE_GENERADORES_ELECTRICOS: RentalSubcategory = {
     'Arriendo de generadores eléctricos diésel de 20 a 1.500 kVA en Chile. Combustible y mantenimiento incluidos. Disponibilidad 24/7. Cotiza online.',
   catalog: [
     {
-      slug: 'generador-electrico-250kva',
-      name: 'Generador Eléctrico 250 kVA',
-      capacity: '250 kVA',
-      shortDesc: 'Generador diésel de 250 kVA para faenas industriales.',
-      features: ['Capacidad 250 kVA', 'Cabina insonorizada', 'ATS opcional'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Generador Eléctrico 250 kVA.',
+      slug: 'generador-electrico-6kva-europ-ard-hdy',
+      name: 'Generador Eléctrico Europ ARD HDY 6000 LDE 6kVA',
+      capacity: '6 kVA',
+      height: '0,56 m',
+      shortDesc: 'Generador diésel de 6 kVA para faenas industriales.',
+      features: ['Potencia máxima de 6 kVA', 'Cabina insonorizada', 'ATS opcional'],
+      image: GENERADOR_ELECTRICO_6KVA_EUROP_ARD_HDY,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Generador Eléctrico 6kVA.',
     },
     {
-      slug: 'generador-electrico-500kva',
-      name: 'Generador Eléctrico 500 kVA',
-      capacity: '500 kVA',
-      shortDesc: 'Generador diésel de 500 kVA para respaldo y faenas grandes.',
-      features: ['Alta capacidad', 'Cabina insonorizada', 'Tablero digital'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Generador Eléctrico 500 kVA.',
+      slug: 'generador-electrico-43kva-wacker-neuson',
+      name: 'Generador Eléctrico Wacker Neuson G43 43 kVA',
+      capacity: '43 kVA',
+      height: '1,65 m',
+      shortDesc: 'Generador diésel de 43 kVA, de alta potencia diseñado para abastecer energía continua en proyectos de minería, construcción, plantas industriales y campamentos.',
+      features: ['Motor diésel de alta eficiencia', 'Cabina insonorizada para reducir el nivel de ruido', 'Ideal para alimentar grúas, bombas, oficinas de faena, torres de iluminación y equipos eléctricos de mayor demanda'],
+      image: GENERADOR_ELECTRICO_43KVA_WACKER_NEUSON,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Generador Eléctrico Wacker Neuson 43kVA.',
+    },
+    {
+      slug: 'generador-electrico-3kva-loncin-emaresa',
+      name: 'Generador Eléctrico Loncin Emaresa LC3800DC 3 kVA',
+      capacity: '3 kVA',
+      height: '0,47 m',
+      shortDesc: 'Generador portátil a gasolina para respaldo eléctrico, herramientas eléctricas, iluminación y trabajos de mantención en terreno.',
+      features: ['Potencia continua de 3,0 kW', 'Motor bencinero de fácil puesta en marcha', 'Regulación automática de voltaje (AVR)'],
+      image: GENERADOR_ELECTRICO_3KVA_LONCIN_EMARESA,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Generador Eléctrico Loncin Emaresa LC3800DC 3kVA.',
+    },
+    {
+      slug: 'generador-electrico-7kva-promac',
+      name: 'Generador Eléctrico Promac 7 kVA',
+      capacity: '7 kVA',
+      height: '0,6 m',
+      shortDesc: 'Generador portátil a gasolina para respaldo de energía en obras menores, mantenimiento industrial y faenas de construcción.',
+      features: ['Motor bencinero de bajo consumo', 'Regulación automática de voltaje para una alimentación estable', 'Ideal para iluminación, herramientas eléctricas, oficinas de obra y equipos de baja demanda'],
+      image: GENERADOR_ELECTRICO_7KVA_PROMAC,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Generador Eléctrico Promac 7kVA.',
     },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de generadores eléctricos.',
@@ -1072,63 +1123,293 @@ const EE_TERMOFUSIONADORAS: RentalSubcategory = {
     'Arriendo de equipos de termofusión eléctrica en Chile. Para tuberías HDPE de 20 a 1.200 mm. Operador certificado. Cotiza online.',
   catalog: [
     {
-      slug: 'termofusionadora-630mm',
-      name: 'Termofusionadora 630 mm',
-      capacity: '630 mm',
-      shortDesc: 'Equipo de termofusión eléctrica para tuberías HDPE hasta 630 mm.',
-      features: ['Diámetro hasta 630 mm', 'Registro automático', 'Operador certificado'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Termofusionadora 630 mm.',
+      slug: 'termofusionadora-electrica-360mm',
+      name: 'Termofusionadora Electrica Ritmo 360 mm',
+      capacity: '360 mm',
+      shortDesc: 'Termofusionadora hidráulica diseñada para la unión de tuberías y accesorios de HDPE, PP y otros materiales termoplásticos, ideal para proyectos de minería, conducción de agua, gas, relaves y obras civiles.',
+      features: ['Diámetro hasta 360 mm', 'Placa calefactora con control electrónico de temperatura', 'Ideal para instalación de redes de agua, impulsión, relaves, gas y procesos industriales'],
+      image: TERMOFUSIONADORA_ELECTRICA_RITMO_360MM,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Termofusionadora 360 mm.',
     },
     {
-      slug: 'termofusionadora-1200mm',
-      name: 'Termofusionadora 1.200 mm',
-      capacity: '1.200 mm',
-      shortDesc: 'Equipo de termofusión eléctrica de alta capacidad.',
-      features: ['Diámetro hasta 1.200 mm', 'Sistema hidráulico', 'Registro digital'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Termofusionadora 1.200 mm.',
+      slug: 'termofusionadora-electrica-160mm',
+      name: 'Termofusionadora Electrica Ritmo 160 mm',
+      capacity: '160 mm',
+      shortDesc: 'Termofusionadora hidráulica compacta para la unión de tuberías de HDPE, PP, PP-R y PVDF, ideal para instalaciones de redes hidráulicas, minería, construcción e industria.',
+      features: ['Rango de trabajo de 40 a 160 mm', 'Placa calefactora con recubrimiento de PTFE (teflón) y control digital de temperatura', 'Ideal para proyectos de agua potable, gas, minería, plantas industriales y obras civiles.'],
+      image: TERMOFUSIONADORA_ELECTRICA_RITMO_160MM,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Termofusionadora 160 mm.',
     },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de termofusión eléctrica.',
 };
 
-const EE_MEZCLADORAS_CANASTILLO: RentalSubcategory = {
-  slug: 'mezcladoras-electricas-canastillo',
-  name: 'Mezcladora eléctrica con canastillo',
-  shortDesc: 'Mezcladora eléctrica con canastillo para trabajo en altura.',
+const EE_RODILLOS: RentalSubcategory = {
+  slug: 'rodillos',
+  name: 'Rodillos Compactadores',
+  shortDesc: 'Equipos de compactación y terminación de pavimentos',
   description:
-    'Arriendo de mezcladora eléctrica con canastillo en Chile para faenas de construcción y minería. Equipo que combina una mezcladora de hormigón con un canastillo aéreo, ideal para vaciado y mezclado en altura sin necesidad de equipos auxiliares. Capacidad de mezclado entre 250 y 500 litros y altura de trabajo hasta 18 metros. Operador certificado y mantenimiento incluidos. Servicio disponible en zona norte y centro de Chile con respuesta operativa en menos de 48 horas. Solución especializada para faenas de difícil acceso y vaciado en altura.',
+    'Arriendo de rodillo vibratorio de doble tambor diseñado para la compactación de asfalto, bases granulares y suelos en obras de construcción, urbanización y mantenimiento vial.',
   features: [
-    'Mezcladora eléctrica con canastillo aéreo integrado.',
+    'Motor diésel de bajo consumo.',
+    'Alto rendimiento con bajo costo de operación.',
+    'Arranque eléctrico.',
+    'Excelente maniobrabilidad en espacios reducidos.',
+    'Disponibilidad según requerimiento del proyecto.',
+  ],
+  specs: [
+    { label: 'Capacidad', value: '830kg' },
+    { label: 'Rodillo', value: 'Vibratorio doble tambor' },
+    { label: 'Motor', value: 'Diésel' },
+    { label: 'Disponibilidad', value: '24/7' },
+  ],
+  heroImage: HERO,
+  seoTitle: 'Arriendo de Rodillos compactadores',
+  seoDescription:
+    'Arriendo de equipos de Rodillos compactadores. Cotiza online.',
+  catalog: [
+    {
+      slug: 'rodillo-compactador',
+      name: 'Rodillo Compactador Wacker Neuson RD7H-ES',
+      capacity: '830kg',
+      shortDesc: 'Rodillo vibratorio de doble tambor diseñado para la compactación de asfalto, bases granulares y suelos en obras de construcción, urbanización y mantenimiento vial.',
+      features: ['Peso operativo de 830 kg', 'Excelente maniobrabilidad en espacios reducidos', 'Ideal para instalación de redes de agua, Doble tambor vibratorio para una compactación uniforme'],
+      image: RODILLO_COMPACTADOR,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Rodillo Compactador.',
+    },
+/*     {
+      slug: 'termofusionadora-electrica-160mm',
+      name: 'Termofusionadora Electrica Ritmo 160 mm',
+      capacity: '160 mm',
+      shortDesc: 'Termofusionadora hidráulica compacta para la unión de tuberías de HDPE, PP, PP-R y PVDF, ideal para instalaciones de redes hidráulicas, minería, construcción e industria.',
+      features: ['Rango de trabajo de 40 a 160 mm', 'Placa calefactora con recubrimiento de PTFE (teflón) y control digital de temperatura', 'Ideal para proyectos de agua potable, gas, minería, plantas industriales y obras civiles.'],
+      image: TERMOFUSIONADORA_ELECTRICA_RITMO_160MM,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Termofusionadora 160 mm.',
+    }, */
+  ],
+  whatsappMessage: 'Hola IP, quisiera cotizar arriendo de rodillo compactador.',
+};
+
+const EE_PLACAS_COMPACTADORAS: RentalSubcategory = {
+  slug: 'placas-compactadoras',
+  name: 'Placas Compactadores',
+  shortDesc: 'Equipos de compactación y terminación de pavimentos',
+  description:
+    'Arriendo de placa compactadora diseñado para la compactación de asfalto, bases granulares y suelos en obras de construcción, urbanización y mantenimiento vial.',
+  features: [
+    'Motor Bencinero de bajo consumo.',
+    'Alto rendimiento con bajo costo de operación.',
+    'Arranque eléctrico.',
+    'Excelente maniobrabilidad en espacios reducidos.',
+    'Disponibilidad según requerimiento del proyecto.',
+  ],
+  specs: [
+    { label: 'Fuerza centrifuga', value: '15kN' },
+    { label: 'Diseño', value: 'Compacto' },
+    { label: 'Motor', value: 'Bencinero' },
+    { label: 'Disponibilidad', value: '24/7' },
+  ],
+  heroImage: HERO,
+  seoTitle: 'Arriendo de Placas Compactadoras',
+  seoDescription:
+    'Arriendo de equipos de Placas compactadoras. Cotiza online.',
+  catalog: [
+    {
+      slug: 'placa-compactadora-15kn',
+      name: 'Placa Compactadora Wacker Neuson WP1550 LOW V/B',
+      capacity: '15kN',
+      shortDesc: 'Placa compactadora unidireccional para compactación de suelos granulares, arena, gravilla y adoquines en proyectos de construcción y obras civiles.',
+      features: ['Fuerza de compactación de 15 kN', 'Motor a gasolina de alta confiabilidad', 'Ideal para veredas, zanjas, pavimentos intertrabados y trabajos de paisajismo'],
+      image: PLACA_COMPACTADORA_15KN,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Placa Compactadora.',
+    },
+/*     {
+      slug: 'termofusionadora-electrica-160mm',
+      name: 'Termofusionadora Electrica Ritmo 160 mm',
+      capacity: '160 mm',
+      shortDesc: 'Termofusionadora hidráulica compacta para la unión de tuberías de HDPE, PP, PP-R y PVDF, ideal para instalaciones de redes hidráulicas, minería, construcción e industria.',
+      features: ['Rango de trabajo de 40 a 160 mm', 'Placa calefactora con recubrimiento de PTFE (teflón) y control digital de temperatura', 'Ideal para proyectos de agua potable, gas, minería, plantas industriales y obras civiles.'],
+      image: TERMOFUSIONADORA_ELECTRICA_RITMO_160MM,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Termofusionadora 160 mm.',
+    }, */
+  ],
+  whatsappMessage: 'Hola IP, quisiera cotizar arriendo de rodillo compactador.',
+};
+
+const EE_ALISADORA_PAVIMENTO: RentalSubcategory = {
+  slug: 'alisadora-de-pavimento',
+  name: 'Alisadora de Pavimentos',
+  shortDesc: 'Equipos de compactación y terminación de pavimentos',
+  description:
+    'Arriendo de alisadora de pavimentos para acabado profesional. Cotiza online.',
+  features: [
+    'Motor Bencinero de bajo consumo.',
+    'Alto rendimiento con bajo costo de operación.',
+    'Arranque eléctrico.',
+    'Excelente maniobrabilidad en espacios reducidos.',
+    'Disponibilidad según requerimiento del proyecto.',
+  ],
+  specs: [
+    { label: 'Diámetro', value: '915mm' },
+    { label: 'Diseño', value: 'Compacto' },
+    { label: 'Motor', value: 'Bencinero' },
+    { label: 'Disponibilidad', value: '24/7' },
+  ],
+  heroImage: HERO,
+  seoTitle: 'Arriendo de Alisadora de Pavimentos',
+  seoDescription:
+    'Arriendo de Alisadora de Pavimentos. Cotiza online.',
+  catalog: [
+    {
+      slug: 'alisadora-de-pavimento-915mm',
+      name: 'Alisadora de Pavimento 915mm Wacker Neuson CT 36-9',
+      capacity: '915mm',
+      shortDesc: 'Alisadora de pavimentos para el acabado profesional de superficies de hormigón, proporcionando un terminado uniforme y de alta calidad en obras civiles e industriales.',
+      features: ['Diámetro de trabajo de 36 pulgadas', 'Diseño robusto para uso intensivo', 'Ideal para losas industriales, pavimentos, radieres y fundaciones'],
+      image: ALISADORA_PAVIMENTO_915MM,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Alisadora de Pavimentos 915mm Wacker Neuson CT 36-9.',
+    },
+/*     {
+      slug: 'termofusionadora-electrica-160mm',
+      name: 'Termofusionadora Electrica Ritmo 160 mm',
+      capacity: '160 mm',
+      shortDesc: 'Termofusionadora hidráulica compacta para la unión de tuberías de HDPE, PP, PP-R y PVDF, ideal para instalaciones de redes hidráulicas, minería, construcción e industria.',
+      features: ['Rango de trabajo de 40 a 160 mm', 'Placa calefactora con recubrimiento de PTFE (teflón) y control digital de temperatura', 'Ideal para proyectos de agua potable, gas, minería, plantas industriales y obras civiles.'],
+      image: TERMOFUSIONADORA_ELECTRICA_RITMO_160MM,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Termofusionadora 160 mm.',
+    }, */
+  ],
+  whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Alisadora de Pavimentos.',
+};
+
+const EE_VIBROPISON: RentalSubcategory = {
+  slug: 'vibropison',
+  name: 'Vibropisón',
+  shortDesc: 'Equipos de compactación y terminación de pavimentos',
+  description:
+    'Arriendo de equipo compactador de suelos para acabado profesional. Cotiza online.',
+  features: [
+    'Motor diésel Yanmar de bajo consumo.',
+    'Alto rendimiento con bajo costo de operación.',
+    'Construcción robusta para uso intensivo en faena.',
+    'Excelente maniobrabilidad en espacios reducidos.',
+    'Disponibilidad según requerimiento del proyecto.',
+  ],
+  specs: [
+    { label: 'Fuerza', value: '21kN' },
+    { label: 'Diseño', value: 'Compacto' },
+    { label: 'Motor', value: 'Diésel' },
+    { label: 'Disponibilidad', value: '24/7' },
+  ],
+  heroImage: HERO,
+  seoTitle: 'Arriendo de Vibropisón',
+  seoDescription:
+    'Arriendo de Alisadora de Vibropisón. Cotiza online.',
+  catalog: [
+    {
+      slug: 'vibropison-21kn',
+      name: 'Vibropisón 21kN Wacker Neuson DS70',
+      capacity: '21kN',
+      shortDesc: 'Vibropisón diésel de alto rendimiento diseñado para la compactación de suelos cohesivos, zanjas, rellenos y áreas de difícil acceso en proyectos de construcción, minería y obras civiles.',
+      features: ['Fuerza de impacto de 21 kN', 'Alta eficiencia para compactación de suelos arcillosos y mixtos', 'Ideal para obras sanitarias, fundaciones, canalizaciones y trabajos de compactación localizada'],
+      image: VIBROPISON_21KN,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Vibropisón 21kN Wacker Neuson DS70.',
+    },
+/*     {
+      slug: 'termofusionadora-electrica-160mm',
+      name: 'Termofusionadora Electrica Ritmo 160 mm',
+      capacity: '160 mm',
+      shortDesc: 'Termofusionadora hidráulica compacta para la unión de tuberías de HDPE, PP, PP-R y PVDF, ideal para instalaciones de redes hidráulicas, minería, construcción e industria.',
+      features: ['Rango de trabajo de 40 a 160 mm', 'Placa calefactora con recubrimiento de PTFE (teflón) y control digital de temperatura', 'Ideal para proyectos de agua potable, gas, minería, plantas industriales y obras civiles.'],
+      image: TERMOFUSIONADORA_ELECTRICA_RITMO_160MM,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Termofusionadora 160 mm.',
+    }, */
+  ],
+  whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Vibropisón.',
+};
+
+const EE_MEZCLADORAS_ELECTRICAS: RentalSubcategory = {
+  slug: 'mezcladoras-electricas',
+  name: 'Mezcladora eléctrica',
+  shortDesc: 'Mezcladora eléctrica.',
+  description:
+    'Mezcladora eléctrica de hormigón de uso profesional, diseñada para la preparación eficiente de concreto en proyectos de construcción, minería y obras civiles. Su gran capacidad y sistema de volteo lateral permiten una operación rápida, segura y de alto rendimiento.',
+  features: [
+    'Tambor fabricado en acero de alta resistencia para trabajos intensivos.',
     'Capacidad de mezclado de 250 a 500 litros.',
-    'Altura de trabajo hasta 18 metros.',
-    'Operador certificado en trabajo en altura.',
-    'Mantenimiento y seguros incluidos.',
+    'Corona de fundición resistente al desgaste y de larga vida útil.',
+    'Chasis robusto con ruedas para facilitar el traslado dentro de la faena.',
+    'Sistema de volteo lateral que facilita la descarga del hormigón.',
   ],
   specs: [
     { label: 'Capacidad', value: '250 – 500 L' },
-    { label: 'Altura', value: 'Hasta 18 m' },
-    { label: 'Operador', value: 'Incluido' },
+    { label: 'Rendimiento', value: '4,0 a 4,5m³ por hora' },
+    { label: 'Sistema', value: 'Volteo lateral' },
     { label: 'Disponibilidad', value: 'Bajo pedido' },
   ],
   heroImage: HERO,
-  seoTitle: 'Arriendo de Mezcladora Eléctrica con Canastillo',
+  seoTitle: 'Arriendo de Mezcladora Eléctrica',
   seoDescription:
-    'Arriendo de mezcladora eléctrica con canastillo en Chile. Capacidad 250 a 500 L, altura hasta 18 m. Operador certificado. Cotiza online.',
+    'Arriendo de mezcladora eléctrica en Chile. Capacidad 250 a 500 L, altura hasta 18 m. Operador certificado. Cotiza online.',
   catalog: [
     {
-      slug: 'mezcladora-canastillo-350l',
-      name: 'Mezcladora con Canastillo 350 L',
-      capacity: '350 L',
-      height: '14 m',
-      shortDesc: 'Mezcladora eléctrica con canastillo de 350 L y altura 14 m.',
-      features: ['Capacidad 350 L', 'Altura 14 m', 'Operador certificado'],
-      image: HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Mezcladora con Canastillo 350 L.',
+      slug: 'mezcladora-electrica-400l',
+      name: 'Mezcladora Eléctrica 400L Emaresa HV-400',
+      capacity: '400 L',
+      height: '1,65 m',
+      shortDesc: 'Mezcladora eléctrica de hormigón de uso profesional, diseñada para la preparación eficiente de concreto en proyectos de construcción, minería y obras civiles.',
+      features: ['Capacidad 400 L', 'Motor eléctrico de 3 HP (2,2 kW) con alimentación monofásica de 220 V', 'Producción aproximada de 4 m³/h, ideal para obras de mediana y gran envergadura'],
+      image: MEZCLADORA_ELECTRICA_400L_EMARESA_HV_400,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Mezcladora Eléctrica 400L Emaresa HV-400.',
     },
   ],
-  whatsappMessage: 'Hola IP, quisiera cotizar arriendo de mezcladora eléctrica con canastillo.',
+  whatsappMessage: 'Hola IP, quisiera cotizar Arriendo de Mezcladora Eléctrica 400L Emaresa HV-400.',
+};
+
+const EE_CANASTILLOS_ALZA_HOMBRE: RentalSubcategory = {
+  slug: 'canastillos-alza-hombre',
+  name: 'Canastilos Alza Hombre',
+  shortDesc: 'Canastilos Alza Hombre.',
+  description:
+    'Canastillo certificado para trabajos en altura mediante camión pluma o grúa articulada. Diseñado para realizar labores de montaje, mantenimiento e inspección con altos estándares de seguridad.',
+  features: [
+    'Piso antideslizante para mayor seguridad del operador.',
+    'Compatible con camiones pluma, grúas articuladas y otros equipos de izaje autorizados.',
+    'Puntos de anclaje para arnés de seguridad.',
+    'Construcción robusta para uso en minería, construcción, electricidad y mantenimiento industrial.',
+  ],
+  specs: [
+    { label: 'Capacidad', value: '200kg' },
+    { label: 'Cantidad', value: '2 personas' },
+    { label: 'Disponibilidad', value: 'Bajo pedido' },
+  ],
+  heroImage: HERO,
+  seoTitle: 'Arriendo de Canastilos Alza Hombre',
+  seoDescription:
+    'Arriendo de Canastilos Alza Hombre en Chile. Capacidad 200 Kg. Cotiza online.',
+  catalog: [
+    {
+      slug: 'canastillo-alza-hombre-metalico',
+      name: 'Canastillo Alza Hombre Metálico Ormet 2MF',
+      capacity: '200kg',
+      height: '1,11m',
+      shortDesc: 'Canastillo metálico certificado para trabajos en altura mediante camión pluma o grúa articulada. Diseñado para realizar labores de montaje, mantenimiento e inspección con altos estándares de seguridad.',
+      features: ['Capacidad para 2 personas o hasta 200 kg de carga', 'Fabricado en acero de alta resistencia para trabajos exigentes', 'Cumple con estándares europeos para trabajos en altura'],
+      image: CANASTILLO_ALZA_HOMBRE_METALICO_ORMET_2MF,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Canastillo Alza Hombre Metálico Ormet 2MF.',
+    },
+    {
+      slug: 'canastillo-alza-hombre-fibra',
+      name: 'Canastillo Alza Hombre de Fibra Ormet 2VE',
+      capacity: '200kg',
+      height: '1,11m',
+      shortDesc: 'Canastillo de fibra de vidrio reforzada para trabajos en altura con camión pluma o grúa articulada. Su material no conductor lo hace especialmente adecuado para labores cercanas a instalaciones eléctricas, además de aplicaciones industriales y mineras.',
+      features: ['Capacidad para 2 personas o hasta 200 kg de carga', 'Material no conductor, ideal para trabajos próximos a redes eléctricas', 'Peso aproximado de 99 kg y dimensiones cercanas a 1.400 × 1.110 × 700 mm'],
+      image: CANASTILLO_ALZA_HOMBRE_FIBRA_ORMET_2VE,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Canastillo Alza Hombre Metálico Ormet 2MF.',
+    },
+  ],
+  whatsappMessage: 'Hola IP, quisiera cotizar Arriendo de Canastillo Alza Hombre Metálico Ormet 2MF.',
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -1196,7 +1477,12 @@ export const RENTAL_CATEGORIES: RentalCategory[] = [
       EE_COMPRESORES_AIRE,
       EE_GENERADORES_ELECTRICOS,
       EE_TERMOFUSIONADORAS,
-      EE_MEZCLADORAS_CANASTILLO,
+      EE_RODILLOS,
+      EE_PLACAS_COMPACTADORAS,
+      EE_ALISADORA_PAVIMENTO,
+      EE_VIBROPISON,
+      EE_MEZCLADORAS_ELECTRICAS,
+      EE_CANASTILLOS_ALZA_HOMBRE,
     ],
   },
 ];
