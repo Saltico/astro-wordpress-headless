@@ -10,11 +10,12 @@ import type { Equipment } from '@/data/rental';
 // ─────────────────────────────────────────────────────────────
 
 /** Tipos de periodo de arriendo aceptados en v1. */
-export const PERIOD_TYPES = ['diario', 'semanal', 'mensual'] as const;
+export const PERIOD_TYPES = ['horario', 'diario', 'semanal', 'mensual'] as const;
 export type PeriodType = (typeof PERIOD_TYPES)[number];
 
 /** Etiqueta visible por periodo (para UI). */
 export const PERIOD_TYPE_LABELS: Record<PeriodType, string> = {
+  horario: 'Horario',
   diario: 'Diario',
   semanal: 'Semanal',
   mensual: 'Mensual',
@@ -57,6 +58,10 @@ export interface QuoteCartItemCustomization {
   notes?: string;
   /** Traslado a la faena. */
   transport: 'si' | 'no';
+  /** Región de entrega (requerida si `transport = 'si'`). */
+  transportRegion?: string;
+  /** Comuna de entrega (requerida si `transport = 'si'`). */
+  transportCommune?: string;
   /** Dirección de entrega (requerida si `transport = 'si'`). */
   transportAddress?: string;
 }
@@ -160,14 +165,29 @@ export function validateCustomization(c: QuoteCartItemCustomization): Customizat
   if (c.transport !== 'si' && c.transport !== 'no') {
     errors.transport = 'Opción de traslado no válida.';
   }
-  if (c.transport === 'si' && (!c.transportAddress || !c.transportAddress.trim())) {
-    errors.transportAddress = 'Indica la dirección de traslado.';
+  if (c.transport === 'si') {
+    if (!c.transportRegion || !c.transportRegion.trim()) {
+      errors.transportRegion = 'Selecciona una región.';
+    }
+    if (!c.transportCommune || !c.transportCommune.trim()) {
+      errors.transportCommune = 'Selecciona una comuna.';
+    }
+    if (!c.transportAddress || !c.transportAddress.trim()) {
+      errors.transportAddress = 'Indica el link de Google Maps de la ubicación.';
+    }
   }
   return { valid: Object.keys(errors).length === 0, errors };
 }
 
 /** Convierte un periodo a días calendario aproximados. */
 export function customizationToDays(c: QuoteCartItemCustomization): number {
-  const unit = c.periodType === 'diario' ? 1 : c.periodType === 'semanal' ? 7 : 30;
+  const unit =
+    c.periodType === 'horario'
+      ? 1 / 24
+      : c.periodType === 'diario'
+        ? 1
+        : c.periodType === 'semanal'
+          ? 7
+          : 30;
   return Math.max(0, unit * c.periodCount);
 }

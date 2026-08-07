@@ -65,6 +65,7 @@ import Icon from '@/components/ui/Icon.astro';
   import { getCart, subscribe, updateItem, removeItem, clearCart, initStorageSync } from '@/lib/quoteCart';
   import { QUOTE_ITEM_MAX_QUANTITY, QUOTE_PERIOD_MAX_COUNT, type QuoteCartItem } from '@/types/quote';
   import { RENTAL_CATEGORIES } from '@/data/rental';
+  import { CHILEAN_REGIONS, getCommunesByRegionCode } from '@/data/chile';
 
   const linesEl = document.querySelector<HTMLElement>('[data-quote-lines]');
   const emptyEl = document.querySelector<HTMLElement>('[data-quote-empty]');
@@ -72,6 +73,9 @@ import Icon from '@/components/ui/Icon.astro';
 
   const CHEVRON_DOWN_SVG =
     '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+
+  const MAP_PIN_SVG =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>';
 
   const SHORT_DESC_BY_SLUG = new Map<string, string>();
   for (const cat of RENTAL_CATEGORIES) {
@@ -174,13 +178,14 @@ import Icon from '@/components/ui/Icon.astro';
               <div class="quote-line__field">
                 <label>Tipo de periodo</label>
                 <select data-line-action="periodType" data-line-id="${safeId}">
+                  <option value="horario" ${c.periodType === 'horario' ? 'selected' : ''}>Horario</option>
                   <option value="diario" ${c.periodType === 'diario' ? 'selected' : ''}>Diario</option>
                   <option value="semanal" ${c.periodType === 'semanal' ? 'selected' : ''}>Semanal</option>
                   <option value="mensual" ${c.periodType === 'mensual' ? 'selected' : ''}>Mensual</option>
                 </select>
               </div>
               <div class="quote-line__field">
-                <label>Cantidad de periodos</label>
+                <label>N° periodos</label>
                 <input type="number" min="1" max="365" step="1" value="${c.periodCount}" data-line-action="periodCount" data-line-id="${safeId}" inputmode="numeric" />
               </div>
               <div class="quote-line__field">
@@ -205,7 +210,29 @@ import Icon from '@/components/ui/Icon.astro';
                     </label>
                   </div>
                 </fieldset>
-                <input type="text" placeholder="Dirección de entrega" value="${safeAddress}" data-line-action="transportAddress" data-line-id="${safeId}" ${c.transport === 'si' ? '' : 'disabled'} />
+                <div class="quote-line__location-grid" ${c.transport === 'si' ? '' : 'hidden'}>
+                  <div class="quote-line__field">
+                    <label>Región</label>
+                    <select data-line-action="transportRegion" data-line-id="${safeId}" ${c.transport === 'si' ? '' : 'disabled'}>
+                      <option value="">Selecciona una región</option>
+                      ${CHILEAN_REGIONS.map((r) => `<option value="${r.code}" ${c.transportRegion === r.code ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join('')}
+                    </select>
+                  </div>
+                  <div class="quote-line__field">
+                    <label>Comuna</label>
+                    <select data-line-action="transportCommune" data-line-id="${safeId}" ${c.transport === 'si' ? '' : 'disabled'}>
+                      <option value="">Selecciona una comuna</option>
+                      ${(c.transportRegion ? getCommunesByRegionCode(c.transportRegion) : []).map((comuna) => `<option value="${escapeHtml(comuna)}" ${c.transportCommune === comuna ? 'selected' : ''}>${escapeHtml(comuna)}</option>`).join('')}
+                    </select>
+                  </div>
+                  <div class="quote-line__field quote-line__field--full">
+                    <label>Link de Google Maps</label>
+                    <div class="quote-line__input-icon">
+                      <span class="quote-line__input-icon-leading">${MAP_PIN_SVG}</span>
+                      <input type="url" placeholder="https://maps.google.com/..." value="${safeAddress}" data-line-action="transportAddress" data-line-id="${safeId}" ${c.transport === 'si' ? '' : 'disabled'} />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -343,7 +370,7 @@ import Icon from '@/components/ui/Icon.astro';
     if (periodType) {
       periodType.addEventListener('change', () => {
         const v = periodType.value;
-        if (v === 'diario' || v === 'semanal' || v === 'mensual') {
+        if (v === 'horario' || v === 'diario' || v === 'semanal' || v === 'mensual') {
           updateItem(lineId, { periodType: v });
         }
       });
@@ -376,12 +403,44 @@ import Icon from '@/components/ui/Icon.astro';
       radio.addEventListener('change', () => {
         const v = radio.value;
         if (v === 'si' || v === 'no') {
+          const locationGrid = article.querySelector<HTMLElement>('.quote-line__location-grid');
+          const regionSelect = article.querySelector<HTMLSelectElement>('[data-line-action="transportRegion"]');
+          const communeSelect = article.querySelector<HTMLSelectElement>('[data-line-action="transportCommune"]');
           const addressInput = article.querySelector<HTMLInputElement>('[data-line-action="transportAddress"]');
+          if (locationGrid) locationGrid.hidden = v !== 'si';
+          if (regionSelect) regionSelect.disabled = v !== 'si';
+          if (communeSelect) communeSelect.disabled = v !== 'si';
           if (addressInput) addressInput.disabled = v !== 'si';
-          updateItem(lineId, { transport: v });
+          if (v === 'no') {
+            updateItem(lineId, { transport: v, transportRegion: undefined, transportCommune: undefined, transportAddress: undefined });
+          } else {
+            updateItem(lineId, { transport: v });
+          }
         }
       });
     });
+
+    const transportRegion = article.querySelector<HTMLSelectElement>('[data-line-action="transportRegion"]');
+    const transportCommune = article.querySelector<HTMLSelectElement>('[data-line-action="transportCommune"]');
+
+    if (transportRegion) {
+      transportRegion.addEventListener('change', () => {
+        const regionCode = transportRegion.value;
+        updateItem(lineId, { transportRegion: regionCode || undefined, transportCommune: undefined });
+        // Repoblar comunas según la región seleccionada
+        if (transportCommune) {
+          const communes = regionCode ? getCommunesByRegionCode(regionCode) : [];
+          transportCommune.innerHTML = '<option value="">Selecciona una comuna</option>' +
+            communes.map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+        }
+      });
+    }
+
+    if (transportCommune) {
+      transportCommune.addEventListener('change', () => {
+        updateItem(lineId, { transportCommune: transportCommune.value || undefined });
+      });
+    }
 
     const transportAddress = article.querySelector<HTMLInputElement>('[data-line-action="transportAddress"]');
     if (transportAddress) {
@@ -698,6 +757,7 @@ import Icon from '@/components/ui/Icon.astro';
     padding: var(--space-1) var(--space-4) var(--space-4);
     border-top: 1px solid var(--theme-border);
     background-color: var(--theme-bg-alt);
+    overflow: hidden;
   }
 
   :global(.quote-line__grid) {
@@ -705,6 +765,7 @@ import Icon from '@/components/ui/Icon.astro';
     grid-template-columns: 1fr;
     gap: var(--space-3);
     padding-top: var(--space-3);
+    max-width: 100%;
   }
 
   @media (min-width: 640px) {
@@ -717,6 +778,7 @@ import Icon from '@/components/ui/Icon.astro';
     display: flex;
     flex-direction: column;
     gap: var(--space-1);
+    min-width: 0;
   }
 
   :global(.quote-line__field--full) {
@@ -742,6 +804,9 @@ import Icon from '@/components/ui/Icon.astro';
     border: 1px solid var(--theme-border);
     border-radius: var(--radius-sm);
     padding: 0.55rem 0.625rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   :global(.quote-line__field input:focus),
@@ -808,6 +873,8 @@ import Icon from '@/components/ui/Icon.astro';
     display: flex;
     flex-direction: column;
     gap: 0.375rem;
+    max-width: 100%;
+    min-width: 0;
   }
 
   :global(.quote-line__radio-row) {
@@ -826,5 +893,41 @@ import Icon from '@/components/ui/Icon.astro';
 
   :global(.quote-line__radio input) {
     accent-color: var(--color-brand, #308f40);
+  }
+
+  :global(.quote-line__location-grid) {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    margin-top: 0.5rem;
+    max-width: 100%;
+  }
+
+  :global(.quote-line__location-grid[hidden]) {
+    display: none;
+  }
+
+  :global(.quote-line__input-icon) {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  :global(.quote-line__input-icon-leading) {
+    position: absolute;
+    left: 0.625rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--theme-text-muted);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  :global(.quote-line__input-icon input) {
+    padding-left: 2.25rem;
+    width: 100%;
   }
 </style>

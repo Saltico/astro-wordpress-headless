@@ -263,6 +263,8 @@ export function updateItem(
     ...existing.customization,
     ...patch,
     transport: patch.transport ?? existing.customization.transport,
+    transportRegion: patch.transportRegion ?? existing.customization.transportRegion,
+    transportCommune: patch.transportCommune ?? existing.customization.transportCommune,
     transportAddress: patch.transportAddress ?? existing.customization.transportAddress,
     notes:
       patch.notes !== undefined
@@ -272,7 +274,11 @@ export function updateItem(
   // Clamp de rangos.
   if (merged.quantity > QUOTE_ITEM_MAX_QUANTITY) merged.quantity = QUOTE_ITEM_MAX_QUANTITY;
   if (merged.periodCount > QUOTE_PERIOD_MAX_COUNT) merged.periodCount = QUOTE_PERIOD_MAX_COUNT;
-  if (merged.transport === 'no') merged.transportAddress = undefined;
+  if (merged.transport === 'no') {
+    merged.transportAddress = undefined;
+    merged.transportRegion = undefined;
+    merged.transportCommune = undefined;
+  }
 
   const updatedItem: QuoteCartItem = { ...existing, customization: merged };
   const nextItems = [...current.items];
