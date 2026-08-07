@@ -1,0 +1,733 @@
+---
+// src/components/quote/AddressAutocomplete.astro
+// Autocompletado de direcciones con Google Maps Places API.
+//
+// SRP: solo gestiona la carga del script, el input con autocomplete
+// y la extracción de datos de la Place. Emite eventos custom para
+// que el componente padre (QuoteCompanyForm) maneje la persistencia.
+//
+// Contratos de eventos:
+// - 'address-selected': { detail: DeliveryAddress }
+// - 'address-cleared': {}
+// - 'address-error': { detail: { message: string } }
+
+import type { DeliveryAddress } from '@/types/quoteCompany';
+
+export interface Props {
+  /** API key de Google Maps (solo pública, restringida por dominio). */
+  apiKey: string;
+  /** Valor inicial para restaurar desde localStorage. */
+  initialValue?: DeliveryAddress;
+  /** Placeholder del input. */
+  placeholder?: string;
+  /** Países a restringir (default: Chile). */
+  country?: string;
+}
+
+const {
+  apiKey,
+  initialValue,
+  placeholder = 'Busca la dirección, calle, número y comuna',
+  country = 'cl',
+} = Astro.props;
+
+const hasInitialValue = initialValue?.confirmed && initialValue?.formattedAddress;
+---
+
+<div class="address-autocomplete" data-address-autocomplete>
+  <label for="delivery-address-input" class="address-autocomplete__label">
+    Dirección de entrega
+    <span class="address-autocomplete__required" aria-hidden="true">*</span>
+  </label>
+
+  <div class="address-autocomplete__input-wrapper">
+    <input
+      id="delivery-address-input"
+      type="text"
+      class="address-autocomplete__input"
+      data-address-input
+      placeholder={placeholder}
+      autocomplete="off"
+      aria-describedby="address-autocomplete-status address-autocomplete-error"
+      aria-autocomplete="list"
+      value={hasInitialValue ? initialValue.formattedAddress : ''}
+    />
+    <button
+      type="button"
+      class="address-autocomplete__clear"
+      data-address-clear
+      aria-label="Limpiar dirección"
+      hidden
+    >
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  {/* Confirmación visual cuando ya se seleccionó una dirección. */}
+  <div
+    class="address-autocomplete__confirmed"
+    data-address-confirmed
+    hidden={!hasInitialValue}
+    aria-live="polite"
+  >
+    {hasInitialValue ? (
+      <div class="address-autocomplete__summary">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" class="address-autocomplete__check-icon">
+          <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div>
+          <p class="address-autocomplete__summary-address">{initialValue.formattedAddress}</p>
+          {initialValue.commune || initialValue.region ? (
+            <p class="address-autocomplete__summary-location">
+              {[initialValue.commune, initialValue.region].filter(Boolean).join(', ')}
+            </p>
+          ) : ''}
+          {initialValue.source === 'manual' ? (
+            <p class="address-autocomplete__manual-notice">
+              Dirección ingresada manualmente. Un ejecutivo podrá confirmar la ubicación.
+            </p>
+          ) : ''}
+        </div>
+      </div>
+    ) : ''}
+  </div>
+
+  {/* Fallback manual cuando Google no carga. */}
+  <div class="address-autocomplete__fallback" data-address-fallback hidden>
+    <p class="address-autocomplete__fallback-message" data-fallback-message>
+      No pudimos cargar el buscador de direcciones. Puedes ingresar la dirección manualmente.
+    </p>
+    <div class="address-autocomplete__manual-fields">
+      <label class="address-autocomplete__field">
+        <span>Dirección o referencia</span>
+        <input
+          type="text"
+          data-manual-address
+          placeholder="Ej: Ruta 5 Norte, km 45, sector Faena Minera"
+          autocomplete="off"
+        />
+      </label>
+      <label class="address-autocomplete__field">
+        <span>Comuna</span>
+        <input type="text" data-manual-commune placeholder="Ej: Copiapó" autocomplete="off" />
+      </label>
+      <label class="address-autocomplete__field">
+        <span>Región</span>
+        <input type="text" data-manual-region placeholder="Ej: Atacama" autocomplete="off" />
+      </label>
+      <label class="address-autocomplete__field">
+        <span>Referencia adicional (opcional)</span>
+        <input
+          type="text"
+          data-manual-reference
+          placeholder="Ej: Junto a la bodega principal"
+          autocomplete="off"
+        />
+      </label>
+      <button type="button" class="address-autocomplete__manual-submit" data-manual-submit>
+        Usar esta dirección
+      </button>
+    </div>
+  </div>
+
+  {/* Estado accesible para lectores de pantalla. */}
+  <div
+    id="address-autocomplete-status"
+    class="sr-only"
+    data-address-status
+    aria-live="polite"
+    aria-atomic="true"
+  ></div>
+
+  {/* Error accesible. */}
+  <p
+    id="address-autocomplete-error"
+    class="address-autocomplete__error"
+    data-address-error
+    role="alert"
+    aria-live="assertive"
+    hidden
+  ></p>
+</div>
+
+<script define:vars={{ apiKey, country }}>
+  (function () {
+    'use strict';
+
+    const SCRIPT_ID = 'google-maps-places-script';
+    const COMPANY_STORAGE_KEY = 'ip_quote_company_v1';
+
+    const container = document.querySelector<HTMLElement>('[data-address-autocomplete]');
+    if (!container) return;
+
+    const input = container.querySelector<HTMLInputElement>('[data-address-input]');
+    const clearBtn = container.querySelector<HTMLButtonElement>('[data-address-clear]');
+    const confirmedEl = container.querySelector<HTMLElement>('[data-address-confirmed]');
+    const fallbackEl = container.querySelector<HTMLElement>('[data-address-fallback]');
+    const fallbackMsg = container.querySelector<HTMLElement>('[data-fallback-message]');
+    const statusEl = container.querySelector<HTMLElement>('[data-address-status]');
+    const errorEl = container.querySelector<HTMLElement>('[data-address-error]');
+
+    // Campos de fallback manual.
+    const manualAddress = container.querySelector<HTMLInputElement>('[data-manual-address]');
+    const manualCommune = container.querySelector<HTMLInputElement>('[data-manual-commune]');
+    const manualRegion = container.querySelector<HTMLInputElement>('[data-manual-region]');
+    const manualReference = container.querySelector<HTMLInputElement>('[data-manual-reference]');
+    const manualSubmit = container.querySelector<HTMLButtonElement>('[data-manual-submit]');
+
+    let autocomplete = null;
+    let selectedPlace = null;
+    let userTyped = false;
+
+    // ─── Restaurar desde localStorage ──────────────────────
+
+    function restoreFromStorage(): void {
+      try {
+        const raw = window.localStorage.getItem(COMPANY_STORAGE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (!data?.deliveryAddress?.confirmed || !data?.deliveryAddress?.formattedAddress) return;
+
+        const addr = data.deliveryAddress;
+        if (input) input.value = addr.formattedAddress;
+
+        selectedPlace = {
+          formattedAddress: addr.formattedAddress,
+          placeId: addr.placeId ?? '',
+          latitude: addr.latitude ?? 0,
+          longitude: addr.longitude ?? 0,
+          commune: addr.commune,
+          region: addr.region,
+        };
+
+        showConfirmed({
+          formattedAddress: addr.formattedAddress,
+          commune: addr.commune,
+          region: addr.region,
+          source: addr.source,
+        });
+
+        // Restaurar campos manuales si source es manual.
+        if (addr.source === 'manual' && manualAddress) {
+          const parts = addr.formattedAddress.split(',').map((s) => s.trim());
+          manualAddress.value = parts[0] ?? '';
+          if (manualCommune && addr.commune) manualCommune.value = addr.commune;
+          if (manualRegion && addr.region) manualRegion.value = addr.region;
+        }
+
+        updateClearButton();
+        setStatus(`Dirección restaurada: ${addr.formattedAddress}`);
+      } catch {
+        // Ignorar errores de parseo.
+      }
+    }
+
+    // ─── Helpers ─────────────────────────────────────────────
+
+    function setStatus(msg: string): void {
+      if (statusEl) statusEl.textContent = msg;
+    }
+
+    function showError(msg: string): void {
+      if (errorEl) {
+        errorEl.textContent = msg;
+        errorEl.hidden = false;
+      }
+    }
+
+    function hideError(): void {
+      if (errorEl) {
+        errorEl.textContent = '';
+        errorEl.hidden = true;
+      }
+    }
+
+    function updateClearButton(): void {
+      if (!clearBtn) return;
+      clearBtn.hidden = !input?.value && !selectedPlace;
+    }
+
+    function emitEvent(name: string, detail?: unknown): void {
+      container.dispatchEvent(new CustomEvent(name, { bubbles: true, detail }));
+    }
+
+    function showConfirmed(data: {
+      formattedAddress: string;
+      commune?: string;
+      region?: string;
+      source: 'google' | 'manual';
+    }): void {
+      if (!confirmedEl) return;
+
+      const isManual = data.source === 'manual';
+      const locationParts = [data.commune, data.region].filter(Boolean).join(', ');
+
+      confirmedEl.innerHTML = `
+        <div class="address-autocomplete__summary">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" class="address-autocomplete__check-icon">
+            <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div>
+            <p class="address-autocomplete__summary-address">${escapeHtml(data.formattedAddress)}</p>
+            ${locationParts ? `<p class="address-autocomplete__summary-location">${escapeHtml(locationParts)}</p>` : ''}
+            ${isManual ? '<p class="address-autocomplete__manual-notice">Dirección ingresada manualmente. Un ejecutivo podrá confirmar la ubicación.</p>' : ''}
+          </div>
+        </div>
+      `;
+      confirmedEl.hidden = false;
+    }
+
+    function hideConfirmed(): void {
+      if (confirmedEl) confirmedEl.hidden = true;
+    }
+
+    function showFallback(message?: string): void {
+      if (fallbackMsg && message) fallbackMsg.textContent = message;
+      if (fallbackEl) fallbackEl.hidden = false;
+    }
+
+    function hideFallback(): void {
+      if (fallbackEl) fallbackEl.hidden = true;
+    }
+
+    function escapeHtml(s: string): string {
+      const div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+
+    // ─── Extracción de componentes de dirección ────────────
+
+    function extractComponent(
+      components: google.maps.GeocoderAddressComponent[],
+      type: string
+    ): string | undefined {
+      const comp = components.find((c) => c.types.includes(type));
+      return comp?.long_name;
+    }
+
+    // ─── Google Maps ───────────────────────────────────────
+
+    function loadGoogleMapsScript(): Promise<void> {
+      return new Promise((resolve, reject) => {
+        if (document.getElementById(SCRIPT_ID)) {
+          // Ya existe el script, esperar a que cargue.
+          const existingScript = document.getElementById(SCRIPT_ID) as HTMLScriptElement;
+          if (window.google?.maps?.places) {
+            resolve();
+            return;
+          }
+          existingScript.addEventListener('load', () => resolve(), { once: true });
+          existingScript.addEventListener('error', () => reject(new Error('Script load failed')), { once: true });
+          return;
+        }
+
+        if (!apiKey || apiKey === 'YOUR_GOOGLE_MAPS_API_KEY') {
+          reject(new Error('API key not configured'));
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.id = SCRIPT_ID;
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&libraries=places&language=es`;
+        script.async = true;
+        script.defer = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Script load failed'));
+        document.head.appendChild(script);
+      });
+    }
+
+    function initAutocomplete(): void {
+      if (!input || !window.google?.maps?.places) return;
+
+      try {
+        autocomplete = new google.maps.places.Autocomplete(input, {
+          types: ['address'],
+          componentRestrictions: { country: country },
+          fields: ['place_id', 'formatted_address', 'geometry', 'address_components'],
+        });
+
+        autocomplete.addListener('place_changed', () => {
+          const place = autocomplete?.getPlace();
+          if (!place || !place.place_id) {
+            showError('Selecciona una sugerencia válida de la lista.');
+            setStatus('No se seleccionó una dirección válida.');
+            selectedPlace = null;
+            hideConfirmed();
+            emitEvent('address-cleared');
+            return;
+          }
+
+          const geometry = place.geometry;
+          if (!geometry?.location) {
+            showError('La dirección seleccionada no tiene ubicación válida.');
+            return;
+          }
+
+          const components = place.address_components ?? [];
+          const commune = extractComponent(components, 'locality')
+            ?? extractComponent(components, 'administrative_area_level_3')
+            ?? extractComponent(components, 'administrative_area_level_2');
+          const region = extractComponent(components, 'administrative_area_level_1');
+
+          selectedPlace = {
+            formattedAddress: place.formatted_address ?? input.value,
+            placeId: place.place_id,
+            latitude: geometry.location.lat(),
+            longitude: geometry.location.lng(),
+            commune,
+            region,
+          };
+
+          hideError();
+          setStatus(`Dirección seleccionada: ${selectedPlace.formattedAddress}`);
+          showConfirmed({
+            formattedAddress: selectedPlace.formattedAddress,
+            commune: selectedPlace.commune,
+            region: selectedPlace.region,
+            source: 'google',
+          });
+          hideFallback();
+          updateClearButton();
+
+          emitEvent('address-selected', {
+            formattedAddress: selectedPlace.formattedAddress,
+            placeId: selectedPlace.placeId,
+            latitude: selectedPlace.latitude,
+            longitude: selectedPlace.longitude,
+            commune: selectedPlace.commune,
+            region: selectedPlace.region,
+            source: 'google',
+            confirmed: true,
+          });
+        });
+
+        setStatus('Buscador de direcciones listo. Escribe para buscar.');
+      } catch (err) {
+        console.warn('AddressAutocomplete: init error', err);
+        showFallback('No pudimos cargar el buscador de direcciones. Puedes ingresar la dirección manualmente.');
+      }
+    }
+
+    // ─── Clear ─────────────────────────────────────────────
+
+    function clearSelection(): void {
+      if (input) input.value = '';
+      selectedPlace = null;
+      userTyped = false;
+      hideConfirmed();
+      hideError();
+      updateClearButton();
+      emitEvent('address-cleared');
+      input?.focus();
+    }
+
+    // ─── Fallback manual ───────────────────────────────────
+
+    function handleManualSubmit(): void {
+      const address = manualAddress?.value.trim() ?? '';
+      const commune = manualCommune?.value.trim() ?? '';
+      const region = manualRegion?.value.trim() ?? '';
+
+      if (!address) {
+        showError('Ingresa al menos una dirección o referencia.');
+        manualAddress?.focus();
+        return;
+      }
+
+      const formatted = [address, commune, region].filter(Boolean).join(', ');
+
+      hideError();
+      setStatus(`Dirección manual confirmada: ${formatted}`);
+      showConfirmed({ formattedAddress: formatted, commune, region, source: 'manual' });
+      hideFallback();
+      updateClearButton();
+
+      if (input) input.value = formatted;
+
+      emitEvent('address-selected', {
+        formattedAddress: formatted,
+        commune: commune || undefined,
+        region: region || undefined,
+        source: 'manual',
+        confirmed: true,
+      });
+    }
+
+    // ─── Event listeners ───────────────────────────────────
+
+    input?.addEventListener('input', () => {
+      userTyped = true;
+      // Si el usuario borra o modifica manualmente después de una selección,
+      // limpiar la selección confirmada.
+      if (selectedPlace && input.value !== selectedPlace.formattedAddress) {
+        selectedPlace = null;
+        hideConfirmed();
+        emitEvent('address-cleared');
+      }
+      updateClearButton();
+    });
+
+    clearBtn?.addEventListener('click', clearSelection);
+    manualSubmit?.addEventListener('click', handleManualSubmit);
+
+    // ─── Initialize ────────────────────────────────────────
+
+    loadGoogleMapsScript()
+      .then(() => {
+        if (window.google?.maps?.places) {
+          initAutocomplete();
+          restoreFromStorage();
+        } else {
+          showFallback();
+          restoreFromStorage();
+        }
+      })
+      .catch((err) => {
+        console.warn('AddressAutocomplete: Google Maps load failed', err);
+        showFallback();
+        restoreFromStorage();
+      });
+  })();
+</script>
+
+<style>
+  .address-autocomplete {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .address-autocomplete__label {
+    font-size: var(--text-small);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--theme-text-muted);
+  }
+
+  .address-autocomplete__required {
+    color: var(--color-danger, #c0392b);
+  }
+
+  .address-autocomplete__input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .address-autocomplete__input {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    color: var(--theme-text);
+    background-color: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-sm);
+    padding: 0.625rem 2.5rem 0.625rem 0.75rem;
+    transition:
+      border-color 0.15s var(--ease-out, ease),
+      box-shadow 0.15s var(--ease-out, ease);
+  }
+
+  .address-autocomplete__input:focus {
+    outline: 2px solid var(--color-brand, #308f40);
+    outline-offset: 2px;
+    border-color: var(--color-brand, #308f40);
+  }
+
+  .address-autocomplete__clear {
+    position: absolute;
+    right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-pill);
+    color: var(--theme-text-muted);
+    cursor: pointer;
+    transition: color 0.15s, background-color 0.15s;
+  }
+
+  .address-autocomplete__clear:hover {
+    background-color: var(--theme-bg-alt);
+    color: var(--theme-text);
+  }
+
+  .address-autocomplete__clear:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  .address-autocomplete__clear[hidden] {
+    display: none;
+  }
+
+  /* ── Confirmed summary ── */
+  .address-autocomplete__confirmed[hidden] {
+    display: none;
+  }
+
+  .address-autocomplete__summary {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background-color: color-mix(in srgb, var(--color-brand) 6%, var(--theme-bg-alt));
+    border: 1px solid color-mix(in srgb, var(--color-brand) 20%, var(--theme-border));
+    border-radius: var(--radius-sm);
+  }
+
+  .address-autocomplete__check-icon {
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+    color: var(--color-brand);
+  }
+
+  .address-autocomplete__summary-address {
+    margin: 0;
+    font-size: var(--text-body);
+    font-weight: 600;
+    color: var(--theme-text);
+    line-height: 1.4;
+  }
+
+  .address-autocomplete__summary-location {
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-small);
+    color: var(--theme-text-muted);
+  }
+
+  .address-autocomplete__manual-notice {
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-small);
+    color: var(--color-warning, #f39c12);
+    font-style: italic;
+  }
+
+  /* ── Fallback ── */
+  .address-autocomplete__fallback[hidden] {
+    display: none;
+  }
+
+  .address-autocomplete__fallback-message {
+    margin: 0 0 var(--space-3);
+    padding: var(--space-3);
+    background-color: color-mix(in srgb, var(--color-warning) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-warning) 20%, var(--theme-border));
+    border-radius: var(--radius-sm);
+    font-size: var(--text-small);
+    color: var(--theme-text-muted);
+    line-height: 1.5;
+  }
+
+  .address-autocomplete__manual-fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .address-autocomplete__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--theme-text-muted);
+  }
+
+  .address-autocomplete__field input {
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    color: var(--theme-text);
+    background-color: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.75rem;
+  }
+
+  .address-autocomplete__field input:focus {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-color: var(--color-brand);
+  }
+
+  .address-autocomplete__manual-submit {
+    align-self: flex-start;
+    padding: var(--space-2) var(--space-4);
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 700;
+    color: var(--color-on-brand);
+    background-color: var(--color-brand);
+    border: 0;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color 0.15s;
+  }
+
+  .address-autocomplete__manual-submit:hover {
+    background-color: var(--color-brand-600, #256d2e);
+  }
+
+  .address-autocomplete__manual-submit:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  /* ── Error ── */
+  .address-autocomplete__error[hidden] {
+    display: none;
+  }
+
+  .address-autocomplete__error {
+    margin: 0;
+    font-size: var(--text-small);
+    color: var(--color-danger, #c0392b);
+  }
+
+  /* ── Google Autocomplete overrides ── */
+  :global(.pac-container) {
+    font-family: var(--font-body);
+    border-radius: var(--radius-sm);
+    border-color: var(--theme-border);
+    box-shadow: var(--shadow-md);
+    z-index: 60;
+  }
+
+  :global(.pac-item) {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-small);
+    border-top-color: var(--theme-border);
+    cursor: pointer;
+  }
+
+  :global(.pac-item:hover) {
+    background-color: var(--theme-bg-alt);
+  }
+
+  :global(.pac-item-query) {
+    font-size: var(--text-body);
+    font-weight: 600;
+    color: var(--theme-text);
+  }
+
+  @media (max-width: 639.98px) {
+    .address-autocomplete__manual-fields {
+      gap: var(--space-2);
+    }
+
+    .address-autocomplete__manual-submit {
+      width: 100%;
+    }
+  }
+</style>

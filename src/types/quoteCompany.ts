@@ -15,7 +15,34 @@ export const PHONE_MIN_LENGTH = 8;
 export const PHONE_MAX_LENGTH = 15;
 
 // ─────────────────────────────────────────────────────────────
-// Tipos
+// Dirección de entrega
+// ─────────────────────────────────────────────────────────────
+
+/** Origen de la dirección de entrega. */
+export type DeliveryAddressSource = 'google' | 'manual';
+
+/** Datos geocodificados de la dirección de entrega (faena). */
+export interface DeliveryAddress {
+  /** Dirección formateada (ej: "Av. Apoquindo 1234, Las Condes"). */
+  formattedAddress: string;
+  /** ID de Google Places (solo cuando source = 'google'). */
+  placeId?: string;
+  /** Latitud (solo cuando source = 'google'). */
+  latitude?: number;
+  /** Longitud (solo cuando source = 'google'). */
+  longitude?: number;
+  /** Comuna extraída del address_components. */
+  commune?: string;
+  /** Región extraída del address_components. */
+  region?: string;
+  /** Origen de la dirección. */
+  source: DeliveryAddressSource;
+  /** True si el usuario confirmó explícitamente la selección. */
+  confirmed: boolean;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Datos de empresa
 // ─────────────────────────────────────────────────────────────
 
 export interface QuoteCompanyData {
@@ -29,6 +56,10 @@ export interface QuoteCompanyData {
   nombreContacto: string;
   email: string;
   telefono: string;
+  /** Si requiere envío a faena. */
+  requiresSiteDelivery: boolean;
+  /** Dirección de entrega a la faena (solo si requiresSiteDelivery = true). */
+  deliveryAddress?: DeliveryAddress;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -141,6 +172,7 @@ export interface CompanyValidationResult {
  * Obligatorios: rut, giro, razonSocial, nombreFantasia, direccion, ciudad,
  * comuna, email, telefono.
  * Opcional: nombreContacto.
+ * Condicional: deliveryAddress (requerido si requiresSiteDelivery = true).
  */
 export function validateCompanyData(data: Partial<QuoteCompanyData>): CompanyValidationResult {
   const errors: Record<string, string> = {};
@@ -173,6 +205,25 @@ export function validateCompanyData(data: Partial<QuoteCompanyData>): CompanyVal
 
   if (data.telefono && !validatePhone(data.telefono)) {
     errors.telefono = `El teléfono debe tener entre ${PHONE_MIN_LENGTH} y ${PHONE_MAX_LENGTH} dígitos.`;
+  }
+
+  // Validar dirección de entrega condicional.
+  if (data.requiresSiteDelivery === true) {
+    const addr = data.deliveryAddress;
+    if (!addr || !addr.confirmed || !addr.formattedAddress || !addr.formattedAddress.trim()) {
+      errors.deliveryAddress = 'Debes seleccionar una dirección de entrega.';
+    } else if (addr.source === 'google') {
+      // Si es Google, debe tener place_id y coordenadas válidas.
+      if (!addr.placeId) {
+        errors.deliveryAddress = 'Selecciona una sugerencia válida.';
+      }
+      if (typeof addr.latitude !== 'number' || !Number.isFinite(addr.latitude)) {
+        errors.deliveryAddress = 'La ubicación seleccionada no tiene coordenadas válidas.';
+      }
+      if (typeof addr.longitude !== 'number' || !Number.isFinite(addr.longitude)) {
+        errors.deliveryAddress = 'La ubicación seleccionada no tiene coordenadas válidas.';
+      }
+    }
   }
 
   return {

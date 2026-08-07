@@ -65,7 +65,6 @@ import Icon from '@/components/ui/Icon.astro';
   import { getCart, subscribe, updateItem, removeItem, clearCart, initStorageSync } from '@/lib/quoteCart';
   import { QUOTE_ITEM_MAX_QUANTITY, QUOTE_PERIOD_MAX_COUNT, type QuoteCartItem } from '@/types/quote';
   import { RENTAL_CATEGORIES } from '@/data/rental';
-  import { CHILEAN_REGIONS, getCommunesByRegionCode } from '@/data/chile';
 
   const linesEl = document.querySelector<HTMLElement>('[data-quote-lines]');
   const emptyEl = document.querySelector<HTMLElement>('[data-quote-empty]');
@@ -74,20 +73,27 @@ import Icon from '@/components/ui/Icon.astro';
   const CHEVRON_DOWN_SVG =
     '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
 
-  const MAP_PIN_SVG =
-    '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>';
-
   const SHORT_DESC_BY_SLUG = new Map<string, string>();
+  const CRANE_EQUIPMENT_SLUGS = new Set<string>();
   for (const cat of RENTAL_CATEGORIES) {
     for (const sub of cat.subcategories) {
+      // Solo las subcategorías de Grúas (no camiones pluma, ni grúas horquilla, ni alza-hombre)
+      const isCraneSubcategory = sub.slug.startsWith('gruas-') && sub.slug !== 'gruas-horquilla';
       for (const eq of sub.catalog) {
         SHORT_DESC_BY_SLUG.set(eq.slug, eq.shortDesc);
+        if (isCraneSubcategory) {
+          CRANE_EQUIPMENT_SLUGS.add(eq.slug);
+        }
       }
     }
   }
 
   function findShortDesc(slug: string, fallback: string): string {
     return SHORT_DESC_BY_SLUG.get(slug) ?? fallback;
+  }
+
+  function isCraneEquipment(slug: string): boolean {
+    return CRANE_EQUIPMENT_SLUGS.has(slug);
   }
 
   function todayIso(): string {
@@ -132,10 +138,38 @@ import Icon from '@/components/ui/Icon.astro';
     const meta = [item.capacity, item.height].filter(Boolean).join(' · ');
     const safeDesc = escapeHtml(findShortDesc(item.equipmentSlug, meta));
     const safeNotes = escapeHtml(c.notes ?? '');
-    const safeAddress = escapeHtml(c.transportAddress ?? '');
     const minStart = todayIso();
     const panelId = `line-panel-${safeId}`;
     const toggleId = `line-toggle-${safeId}`;
+    const isCrane = isCraneEquipment(item.equipmentSlug);
+    
+    // Generar checkboxes de personal solo para grúas
+    const crewSection = isCrane ? `
+              <div class="quote-line__field quote-line__field--full">
+                <fieldset class="quote-line__crew-group">
+                  <legend>Personal del servicio</legend>
+                  <div class="quote-line__checkbox-grid">
+                    <label class="quote-line__checkbox">
+                      <input type="checkbox" data-line-action="crewOperator" data-line-id="${safeId}" ${c.crewOperator ? 'checked' : ''} />
+                      <span>Operador</span>
+                    </label>
+                    <label class="quote-line__checkbox">
+                      <input type="checkbox" data-line-action="crewRigger" data-line-id="${safeId}" ${c.crewRigger ? 'checked' : ''} />
+                      <span>Rigger</span>
+                    </label>
+                    <label class="quote-line__checkbox">
+                      <input type="checkbox" data-line-action="crewAPR" data-line-id="${safeId}" ${c.crewAPR ? 'checked' : ''} />
+                      <span>APR (prevencionista)</span>
+                    </label>
+                    <label class="quote-line__checkbox">
+                      <input type="checkbox" data-line-action="crewSupervisor" data-line-id="${safeId}" ${c.crewSupervisor ? 'checked' : ''} />
+                      <span>Supervisor</span>
+                    </label>
+                  </div>
+                </fieldset>
+              </div>
+    ` : '';
+    
     return `
       <article class="quote-line" data-line-id="${safeId}">
         <header class="quote-line__head">
@@ -196,44 +230,7 @@ import Icon from '@/components/ui/Icon.astro';
                 <label>Notas del equipo (opcional)</label>
                 <textarea rows="2" maxlength="280" placeholder="Información específica de este equipo…" data-line-action="notes" data-line-id="${safeId}">${safeNotes}</textarea>
               </div>
-              <div class="quote-line__field quote-line__field--full">
-                <fieldset class="quote-line__transport-group">
-                  <legend>Traslado a la faena</legend>
-                  <div class="quote-line__radio-row">
-                    <label class="quote-line__radio">
-                      <input type="radio" name="transport-${safeId}" value="no" ${c.transport === 'no' ? 'checked' : ''} data-line-action="transport" data-line-id="${safeId}" />
-                      <span>No</span>
-                    </label>
-                    <label class="quote-line__radio">
-                      <input type="radio" name="transport-${safeId}" value="si" ${c.transport === 'si' ? 'checked' : ''} data-line-action="transport" data-line-id="${safeId}" />
-                      <span>Sí</span>
-                    </label>
-                  </div>
-                </fieldset>
-                <div class="quote-line__location-grid" ${c.transport === 'si' ? '' : 'hidden'}>
-                  <div class="quote-line__field">
-                    <label>Región</label>
-                    <select data-line-action="transportRegion" data-line-id="${safeId}" ${c.transport === 'si' ? '' : 'disabled'}>
-                      <option value="">Selecciona una región</option>
-                      ${CHILEAN_REGIONS.map((r) => `<option value="${r.code}" ${c.transportRegion === r.code ? 'selected' : ''}>${escapeHtml(r.name)}</option>`).join('')}
-                    </select>
-                  </div>
-                  <div class="quote-line__field">
-                    <label>Comuna</label>
-                    <select data-line-action="transportCommune" data-line-id="${safeId}" ${c.transport === 'si' ? '' : 'disabled'}>
-                      <option value="">Selecciona una comuna</option>
-                      ${(c.transportRegion ? getCommunesByRegionCode(c.transportRegion) : []).map((comuna) => `<option value="${escapeHtml(comuna)}" ${c.transportCommune === comuna ? 'selected' : ''}>${escapeHtml(comuna)}</option>`).join('')}
-                    </select>
-                  </div>
-                  <div class="quote-line__field quote-line__field--full">
-                    <label>Link de Google Maps</label>
-                    <div class="quote-line__input-icon">
-                      <span class="quote-line__input-icon-leading">${MAP_PIN_SVG}</span>
-                      <input type="url" placeholder="https://maps.google.com/..." value="${safeAddress}" data-line-action="transportAddress" data-line-id="${safeId}" ${c.transport === 'si' ? '' : 'disabled'} />
-                    </div>
-                  </div>
-                </div>
-              </div>
+              ${crewSection}
             </div>
           </div>
         </div>
@@ -399,54 +396,18 @@ import Icon from '@/components/ui/Icon.astro';
       notes.addEventListener('input', () => apply(notes.value));
     }
 
-    article.querySelectorAll<HTMLInputElement>('[data-line-action="transport"]').forEach((radio) => {
-      radio.addEventListener('change', () => {
-        const v = radio.value;
-        if (v === 'si' || v === 'no') {
-          const locationGrid = article.querySelector<HTMLElement>('.quote-line__location-grid');
-          const regionSelect = article.querySelector<HTMLSelectElement>('[data-line-action="transportRegion"]');
-          const communeSelect = article.querySelector<HTMLSelectElement>('[data-line-action="transportCommune"]');
-          const addressInput = article.querySelector<HTMLInputElement>('[data-line-action="transportAddress"]');
-          if (locationGrid) locationGrid.hidden = v !== 'si';
-          if (regionSelect) regionSelect.disabled = v !== 'si';
-          if (communeSelect) communeSelect.disabled = v !== 'si';
-          if (addressInput) addressInput.disabled = v !== 'si';
-          if (v === 'no') {
-            updateItem(lineId, { transport: v, transportRegion: undefined, transportCommune: undefined, transportAddress: undefined });
-          } else {
-            updateItem(lineId, { transport: v });
-          }
-        }
+    // Handlers para checkboxes de personal del servicio (solo grúas)
+    const crewCheckboxes = article.querySelectorAll<HTMLInputElement>('[data-line-action^="crew"]');
+    crewCheckboxes.forEach((checkbox) => {
+      checkbox.addEventListener('change', () => {
+        const action = checkbox.dataset.lineAction;
+        const checked = checkbox.checked;
+        if (action === 'crewOperator') updateItem(lineId, { crewOperator: checked });
+        else if (action === 'crewRigger') updateItem(lineId, { crewRigger: checked });
+        else if (action === 'crewAPR') updateItem(lineId, { crewAPR: checked });
+        else if (action === 'crewSupervisor') updateItem(lineId, { crewSupervisor: checked });
       });
     });
-
-    const transportRegion = article.querySelector<HTMLSelectElement>('[data-line-action="transportRegion"]');
-    const transportCommune = article.querySelector<HTMLSelectElement>('[data-line-action="transportCommune"]');
-
-    if (transportRegion) {
-      transportRegion.addEventListener('change', () => {
-        const regionCode = transportRegion.value;
-        updateItem(lineId, { transportRegion: regionCode || undefined, transportCommune: undefined });
-        // Repoblar comunas según la región seleccionada
-        if (transportCommune) {
-          const communes = regionCode ? getCommunesByRegionCode(regionCode) : [];
-          transportCommune.innerHTML = '<option value="">Selecciona una comuna</option>' +
-            communes.map((c) => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
-        }
-      });
-    }
-
-    if (transportCommune) {
-      transportCommune.addEventListener('change', () => {
-        updateItem(lineId, { transportCommune: transportCommune.value || undefined });
-      });
-    }
-
-    const transportAddress = article.querySelector<HTMLInputElement>('[data-line-action="transportAddress"]');
-    if (transportAddress) {
-      const apply = debounce((v: string) => updateItem(lineId, { transportAddress: v }), 200);
-      transportAddress.addEventListener('input', () => apply(transportAddress.value));
-    }
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -785,8 +746,7 @@ import Icon from '@/components/ui/Icon.astro';
     grid-column: 1 / -1;
   }
 
-  :global(.quote-line__field label),
-  :global(.quote-line__transport-group legend) {
+  :global(.quote-line__field label) {
     font-size: var(--text-small);
     font-weight: 700;
     text-transform: uppercase;
@@ -866,68 +826,53 @@ import Icon from '@/components/ui/Icon.astro';
     border-radius: var(--radius-xs);
   }
 
-  :global(.quote-line__transport-group) {
+  :global(.quote-line__crew-group) {
     border: none;
     padding: 0;
-    margin: 0 0 0.5rem;
+    margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.375rem;
+    gap: 0.5rem;
     max-width: 100%;
     min-width: 0;
   }
 
-  :global(.quote-line__radio-row) {
-    display: inline-flex;
-    gap: 0.75rem;
+  :global(.quote-line__checkbox-grid) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem 1rem;
   }
 
-  :global(.quote-line__radio) {
+  @media (max-width: 479.98px) {
+    :global(.quote-line__checkbox-grid) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  :global(.quote-line__checkbox) {
     display: inline-flex;
     align-items: center;
-    gap: 0.375rem;
+    gap: 0.5rem;
     cursor: pointer;
     font-size: var(--text-body);
     color: var(--theme-text);
+    padding: 0.375rem 0.5rem;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.15s var(--ease-out, ease);
   }
 
-  :global(.quote-line__radio input) {
+  :global(.quote-line__checkbox:hover) {
+    background-color: var(--theme-bg-elevated);
+  }
+
+  :global(.quote-line__checkbox input) {
     accent-color: var(--color-brand, #308f40);
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
   }
 
-  :global(.quote-line__location-grid) {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-3);
-    margin-top: 0.5rem;
-    max-width: 100%;
-  }
-
-  :global(.quote-line__location-grid[hidden]) {
-    display: none;
-  }
-
-  :global(.quote-line__input-icon) {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  :global(.quote-line__input-icon-leading) {
-    position: absolute;
-    left: 0.625rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--theme-text-muted);
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  :global(.quote-line__input-icon input) {
-    padding-left: 2.25rem;
-    width: 100%;
+  :global(.quote-line__checkbox span) {
+    user-select: none;
   }
 </style>

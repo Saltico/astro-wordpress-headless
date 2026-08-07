@@ -56,14 +56,19 @@ export interface QuoteCartItemCustomization {
   startDate: string;
   /** Notas libres del item. Opcional, max 280 chars. */
   notes?: string;
-  /** Traslado a la faena. */
-  transport: 'si' | 'no';
-  /** Región de entrega (requerida si `transport = 'si'`). */
+  /** @deprecated Movido a QuoteCompanyData.requiresSiteDelivery */
+  transport?: 'si' | 'no';
+  /** @deprecated Movido a QuoteCompanyData.deliveryAddress */
   transportRegion?: string;
-  /** Comuna de entrega (requerida si `transport = 'si'`). */
+  /** @deprecated Movido a QuoteCompanyData.deliveryAddress */
   transportCommune?: string;
-  /** Dirección de entrega (requerida si `transport = 'si'`). */
+  /** @deprecated Movido a QuoteCompanyData.deliveryAddress */
   transportAddress?: string;
+  /** Personal del servicio (solo para subcategoría Grúas). */
+  crewOperator?: boolean;
+  crewRigger?: boolean;
+  crewAPR?: boolean;
+  crewSupervisor?: boolean;
 }
 
 /** Item completo del cotizador. */
@@ -161,20 +166,6 @@ export function validateCustomization(c: QuoteCartItemCustomization): Customizat
   }
   if (c.notes && c.notes.length > QUOTE_NOTES_MAX_LENGTH) {
     errors.notes = `Las notas no pueden superar ${QUOTE_NOTES_MAX_LENGTH} caracteres.`;
-  }
-  if (c.transport !== 'si' && c.transport !== 'no') {
-    errors.transport = 'Opción de traslado no válida.';
-  }
-  if (c.transport === 'si') {
-    if (!c.transportRegion || !c.transportRegion.trim()) {
-      errors.transportRegion = 'Selecciona una región.';
-    }
-    if (!c.transportCommune || !c.transportCommune.trim()) {
-      errors.transportCommune = 'Selecciona una comuna.';
-    }
-    if (!c.transportAddress || !c.transportAddress.trim()) {
-      errors.transportAddress = 'Indica el link de Google Maps de la ubicación.';
-    }
   }
   return { valid: Object.keys(errors).length === 0, errors };
 }

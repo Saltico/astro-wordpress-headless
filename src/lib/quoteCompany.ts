@@ -2,7 +2,7 @@
 // Persistencia y suscripción de los datos de empresa del cotizador.
 // SSR-safe: retorna datos vacíos si no hay window.
 
-import type { QuoteCompanyData } from '@/types/quoteCompany';
+import type { QuoteCompanyData, DeliveryAddress } from '@/types/quoteCompany';
 import { QUOTE_COMPANY_STORAGE_KEY } from '@/types/quoteCompany';
 
 const EVENT_NAME = 'ip-quote-company-change';
@@ -18,6 +18,7 @@ const EMPTY_DATA: QuoteCompanyData = {
   nombreContacto: '',
   email: '',
   telefono: '',
+  requiresSiteDelivery: false,
 };
 
 /** Verifica si localStorage está disponible. */
@@ -33,11 +34,22 @@ function isStorageAvailable(): boolean {
   }
 }
 
+/** Verifica si el valor es una DeliveryAddress válida. */
+function isValidDeliveryAddress(value: unknown): value is DeliveryAddress {
+  if (typeof value !== 'object' || value === null) return false;
+  const v = value as Partial<DeliveryAddress>;
+  return (
+    typeof v.formattedAddress === 'string' &&
+    (v.source === 'google' || v.source === 'manual') &&
+    typeof v.confirmed === 'boolean'
+  );
+}
+
 /** Verifica la forma mínima de los datos de empresa. */
 function isValidCompanyShape(value: unknown): value is QuoteCompanyData {
   if (typeof value !== 'object' || value === null) return false;
   const v = value as Partial<QuoteCompanyData>;
-  return (
+  const baseValid =
     typeof v.rut === 'string' &&
     typeof v.giro === 'string' &&
     typeof v.razonSocial === 'string' &&
@@ -47,8 +59,17 @@ function isValidCompanyShape(value: unknown): value is QuoteCompanyData {
     typeof v.comuna === 'string' &&
     typeof v.nombreContacto === 'string' &&
     typeof v.email === 'string' &&
-    typeof v.telefono === 'string'
-  );
+    typeof v.telefono === 'string' &&
+    typeof v.requiresSiteDelivery === 'boolean';
+
+  if (!baseValid) return false;
+
+  // Si tiene deliveryAddress, validar forma.
+  if (v.deliveryAddress !== undefined && !isValidDeliveryAddress(v.deliveryAddress)) {
+    return false;
+  }
+
+  return true;
 }
 
 /** Parsea un string JSON de storage. */
@@ -100,6 +121,7 @@ export function getCompanyData(): QuoteCompanyData {
 
 /** Persiste nuevos datos y emite el evento de cambio. */
 export function setCompanyData(data: QuoteCompanyData): void {
+  const requiresSiteDelivery = data.requiresSiteDelivery === true;
   const sanitized: QuoteCompanyData = {
     rut: data.rut?.trim() ?? '',
     giro: data.giro?.trim() ?? '',
@@ -111,7 +133,23 @@ export function setCompanyData(data: QuoteCompanyData): void {
     nombreContacto: data.nombreContacto?.trim() ?? '',
     email: data.email?.trim() ?? '',
     telefono: data.telefono?.trim() ?? '',
+    requiresSiteDelivery,
   };
+
+  // Solo incluir deliveryAddress si requiresSiteDelivery es true y la dirección es válida.
+  if (requiresSiteDelivery && data.deliveryAddress?.confirmed && data.deliveryAddress.formattedAddress?.trim()) {
+    sanitized.deliveryAddress = {
+      formattedAddress: data.deliveryAddress.formattedAddress.trim(),
+      placeId: data.deliveryAddress.placeId,
+      latitude: data.deliveryAddress.latitude,
+      longitude: data.deliveryAddress.longitude,
+      commune: data.deliveryAddress.commune?.trim(),
+      region: data.deliveryAddress.region?.trim(),
+      source: data.deliveryAddress.source === 'google' ? 'google' : 'manual',
+      confirmed: true,
+    };
+  }
+
   writeToStorage(sanitized);
   emitChange(sanitized);
 }

@@ -1,9 +1,14 @@
 ---
 // src/components/quote/QuoteCompanyForm.astro
-// Paso 2 del wizard: formulario de datos de la empresa.
+// Paso 2 del wizard: formulario de datos de la empresa + dirección de
+// entrega condicional (solo cuando el usuario indica envío a faena).
 
 import Button from '@/components/ui/Button.astro';
 import Input from '@/components/ui/Input.astro';
+import AddressAutocomplete from './AddressAutocomplete.astro';
+import { CHILEAN_REGIONS, getCommunesByRegionCode } from '@/data/chile';
+
+const apiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY ?? 'YOUR_GOOGLE_MAPS_API_KEY';
 ---
 
 <section class="quote-company" aria-labelledby="quote-company-title">
@@ -142,6 +147,64 @@ import Input from '@/components/ui/Input.astro';
       <p class="quote-company__error" data-error="telefono" role="alert" aria-live="polite"></p>
     </Input>
 
+    {/* ── Sección de envío a faena (condicional) ── */}
+    <fieldset class="quote-company__delivery-section" data-delivery-section>
+      <legend class="quote-company__delivery-legend">Envío a faena</legend>
+      <p class="quote-company__delivery-hint">
+        ¿Los equipos deben enviarse directamente a una faena o sitio de obra?
+      </p>
+      <div class="quote-company__delivery-options">
+        <label class="quote-company__radio-label">
+          <input
+            type="radio"
+            name="requiresSiteDelivery"
+            value="si"
+            data-field="requiresSiteDelivery-yes"
+          />
+          <span>Sí, enviar a faena</span>
+        </label>
+        <label class="quote-company__radio-label">
+          <input
+            type="radio"
+            name="requiresSiteDelivery"
+            value="no"
+            data-field="requiresSiteDelivery-no"
+            checked
+          />
+          <span>No, retiro en bodega</span>
+        </label>
+      </div>
+      <p class="quote-company__error" data-error="deliveryAddress" role="alert" aria-live="polite"></p>
+    </fieldset>
+
+    <div class="quote-company__delivery-address" data-delivery-address-container hidden>
+      <div class="quote-company__location-grid">
+        <label class="quote-company__field">
+          <span>Región</span>
+          <select name="deliveryRegion" data-field="deliveryRegion">
+            <option value="">Selecciona una región</option>
+            {CHILEAN_REGIONS.map((r) => (
+              <option value={r.code}>{r.name}</option>
+            ))}
+          </select>
+          <p class="quote-company__error" data-error="deliveryRegion" role="alert" aria-live="polite"></p>
+        </label>
+
+        <label class="quote-company__field">
+          <span>Comuna</span>
+          <select name="deliveryCommune" data-field="deliveryCommune">
+            <option value="">Selecciona una comuna</option>
+          </select>
+          <p class="quote-company__error" data-error="deliveryCommune" role="alert" aria-live="polite"></p>
+        </label>
+      </div>
+
+      <AddressAutocomplete
+        apiKey={apiKey}
+        placeholder="Busca la dirección de la faena"
+      />
+    </div>
+
     <p class="quote-company__form-error" data-form-error role="alert" aria-live="assertive"></p>
 
     <div class="quote-company__actions">
@@ -169,9 +232,11 @@ import Input from '@/components/ui/Input.astro';
   } from '@/lib/quoteCompany';
   import {
     type QuoteCompanyData,
+    type DeliveryAddress,
     validateCompanyData,
     formatRut,
   } from '@/types/quoteCompany';
+  import { CHILEAN_REGIONS, getCommunesByRegionCode } from '@/data/chile';
 
   const FIELD_NAMES: Array<keyof QuoteCompanyData> = [
     'rut',
@@ -192,13 +257,84 @@ import Input from '@/components/ui/Input.astro';
       const input = form.querySelector<HTMLInputElement>(`[name="${name}"]`);
       data[name] = input?.value ?? '';
     }
+    // Radio de envío a faena.
+    const radioYes = form.querySelector<HTMLInputElement>('[data-field="requiresSiteDelivery-yes"]');
+    data.requiresSiteDelivery = radioYes?.checked ?? false;
+    // deliveryAddress se maneja por el componente AddressAutocomplete y los selects.
+    const existing = getCompanyData();
+    if (data.requiresSiteDelivery) {
+      // Leer región y comuna de los selects.
+      const regionSelect = form.querySelector<HTMLSelectElement>('[data-field="deliveryRegion"]');
+      const communeSelect = form.querySelector<HTMLSelectElement>('[data-field="deliveryCommune"]');
+      const selectedRegion = regionSelect?.value ?? '';
+      const selectedCommune = communeSelect?.value ?? '';
+
+      // Si ya existe un deliveryAddress confirmado, actualizarlo con los selects.
+      if (existing.deliveryAddress?.confirmed) {
+        data.deliveryAddress = {
+          ...existing.deliveryAddress,
+          region: getRegionNameByCode(selectedRegion) || existing.deliveryAddress.region,
+          commune: selectedCommune || existing.deliveryAddress.commune,
+        };
+      } else if (selectedRegion || selectedCommune) {
+        // Si no hay deliveryAddress pero hay región/comuna seleccionada, crear uno manual.
+        data.deliveryAddress = {
+          formattedAddress: '',
+          region: getRegionNameByCode(selectedRegion),
+          commune: selectedCommune,
+          source: 'manual',
+          confirmed: false,
+        };
+      }
+    }
     return data;
+  }
+
+  function getRegionNameByCode(code: string): string {
+    const region = CHILEAN_REGIONS.find((r) => r.code === code);
+    return region?.name ?? '';
+  }
+
+  function getRegionCodeByName(name: string): string {
+    const region = CHILEAN_REGIONS.find((r) => r.name === name);
+    return region?.code ?? '';
   }
 
   function setFormData(form: HTMLFormElement, data: QuoteCompanyData): void {
     for (const name of FIELD_NAMES) {
       const input = form.querySelector<HTMLInputElement>(`[name="${name}"]`);
       if (input) input.value = data[name] ?? '';
+    }
+    // Radio de envío a faena.
+    const radioYes = form.querySelector<HTMLInputElement>('[data-field="requiresSiteDelivery-yes"]');
+    const radioNo = form.querySelector<HTMLInputElement>('[data-field="requiresSiteDelivery-no"]');
+    if (radioYes && radioNo) {
+      if (data.requiresSiteDelivery) {
+        radioYes.checked = true;
+        radioNo.checked = false;
+      } else {
+        radioYes.checked = false;
+        radioNo.checked = true;
+      }
+    }
+
+    // Restaurar región y comuna de la dirección de entrega.
+    const regionSelect = form.querySelector<HTMLSelectElement>('[data-field="deliveryRegion"]');
+    const communeSelect = form.querySelector<HTMLSelectElement>('[data-field="deliveryCommune"]');
+    if (regionSelect && data.deliveryAddress?.region) {
+      const regionCode = getRegionCodeByName(data.deliveryAddress.region);
+      if (regionCode) {
+        regionSelect.value = regionCode;
+        // Repoblar comunas según la región.
+        const communes = getCommunesByRegionCode(regionCode);
+        if (communeSelect) {
+          communeSelect.innerHTML =
+            '<option value="">Selecciona una comuna</option>' +
+            communes.map((c) => `<option value="${c}"${c === data.deliveryAddress?.commune ? ' selected' : ''}>${c}</option>`).join('');
+        }
+      }
+    } else if (communeSelect) {
+      communeSelect.innerHTML = '<option value="">Selecciona una comuna</option>';
     }
   }
 
@@ -224,6 +360,7 @@ import Input from '@/components/ui/Input.astro';
 
   function clearAllErrors(form: HTMLFormElement): void {
     for (const name of FIELD_NAMES) clearFieldError(form, name);
+    clearFieldError(form, 'deliveryAddress');
     const formError = form.querySelector<HTMLElement>('[data-form-error]');
     if (formError) formError.textContent = '';
   }
@@ -238,7 +375,6 @@ import Input from '@/components/ui/Input.astro';
       }
     } else {
       // En validación en tiempo real solo mostramos/ocultamos el campo que cambió.
-      // Llamamos a validateCompanyData para actualizar el estado sin mostrar todos.
     }
     return result.valid;
   }
@@ -253,8 +389,18 @@ import Input from '@/components/ui/Input.astro';
     const form = document.querySelector<HTMLFormElement>('[data-quote-company-form]');
     if (!form) return;
 
+    const deliveryContainer = form.querySelector<HTMLElement>('[data-delivery-address-container]');
+    const radioYes = form.querySelector<HTMLInputElement>('[data-field="requiresSiteDelivery-yes"]');
+    const radioNo = form.querySelector<HTMLInputElement>('[data-field="requiresSiteDelivery-no"]');
+
     // Poblar formulario desde localStorage.
-    setFormData(form, getCompanyData());
+    const savedData = getCompanyData();
+    setFormData(form, savedData);
+
+    // Mostrar/ocultar la sección de dirección según el valor guardado.
+    if (deliveryContainer) {
+      deliveryContainer.hidden = !savedData.requiresSiteDelivery;
+    }
 
     // Formatear RUT al perder el foco.
     const rutInput = form.querySelector<HTMLInputElement>('[data-field="rut"]');
@@ -280,6 +426,94 @@ import Input from '@/components/ui/Input.astro';
       });
     });
 
+    // Toggle de la sección de dirección de entrega.
+    function handleDeliveryToggle(): void {
+      const isYes = radioYes?.checked ?? false;
+      if (deliveryContainer) deliveryContainer.hidden = !isYes;
+
+      // Si cambia a "No", limpiar la dirección guardada.
+      if (!isYes) {
+        const data = getFormData(form);
+        data.requiresSiteDelivery = false;
+        delete data.deliveryAddress;
+        setCompanyData(data);
+        clearFieldError(form, 'deliveryAddress');
+      } else {
+        const data = getFormData(form);
+        data.requiresSiteDelivery = true;
+        setCompanyData(data);
+      }
+    }
+
+    radioYes?.addEventListener('change', handleDeliveryToggle);
+    radioNo?.addEventListener('change', handleDeliveryToggle);
+
+    // Event listeners para región y comuna de entrega.
+    const deliveryRegion = form.querySelector<HTMLSelectElement>('[data-field="deliveryRegion"]');
+    const deliveryCommune = form.querySelector<HTMLSelectElement>('[data-field="deliveryCommune"]');
+
+    if (deliveryRegion) {
+      deliveryRegion.addEventListener('change', () => {
+        const regionCode = deliveryRegion.value;
+        // Repoblar comunas según la región seleccionada.
+        if (deliveryCommune) {
+          const communes = regionCode ? getCommunesByRegionCode(regionCode) : [];
+          deliveryCommune.innerHTML =
+            '<option value="">Selecciona una comuna</option>' +
+            communes.map((c) => `<option value="${c}">${c}</option>`).join('');
+        }
+        // Actualizar datos.
+        const data = getFormData(form);
+        setCompanyData(data);
+        clearFieldError(form, 'deliveryRegion');
+        clearFieldError(form, 'deliveryCommune');
+      });
+    }
+
+    if (deliveryCommune) {
+      deliveryCommune.addEventListener('change', () => {
+        const data = getFormData(form);
+        setCompanyData(data);
+        clearFieldError(form, 'deliveryCommune');
+      });
+    }
+
+    // Escuchar eventos del AddressAutocomplete.
+    deliveryContainer?.addEventListener('address-selected', ((event: Event) => {
+      const e = event as CustomEvent<DeliveryAddress>;
+      const data = getFormData(form);
+      data.requiresSiteDelivery = true;
+      data.deliveryAddress = e.detail;
+      setCompanyData(data);
+      clearFieldError(form, 'deliveryAddress');
+      clearFieldError(form, 'deliveryRegion');
+      clearFieldError(form, 'deliveryCommune');
+
+      // Auto-popular selects de región y comuna si Google extrajo esos datos.
+      const deliveryRegion = form.querySelector<HTMLSelectElement>('[data-field="deliveryRegion"]');
+      const deliveryCommune = form.querySelector<HTMLSelectElement>('[data-field="deliveryCommune"]');
+      if (e.detail.region && deliveryRegion) {
+        const regionCode = getRegionCodeByName(e.detail.region);
+        if (regionCode) {
+          deliveryRegion.value = regionCode;
+          // Repoblar comunas.
+          if (deliveryCommune) {
+            const communes = getCommunesByRegionCode(regionCode);
+            deliveryCommune.innerHTML =
+              '<option value="">Selecciona una comuna</option>' +
+              communes.map((c) => `<option value="${c}"${c === e.detail.commune ? ' selected' : ''}>${c}</option>`).join('');
+          }
+        }
+      }
+    }) as EventListener);
+
+    deliveryContainer?.addEventListener('address-cleared', () => {
+      const data = getFormData(form);
+      data.requiresSiteDelivery = true;
+      delete data.deliveryAddress;
+      setCompanyData(data);
+    });
+
     // Sincronizar cambios de otras pestañas.
     subscribeCompanyData((data) => {
       if (document.activeElement?.closest('[data-quote-company-form]')) {
@@ -287,6 +521,7 @@ import Input from '@/components/ui/Input.astro';
         return;
       }
       setFormData(form, data);
+      if (deliveryContainer) deliveryContainer.hidden = !data.requiresSiteDelivery;
     });
 
     form.addEventListener('submit', (e) => {
@@ -303,7 +538,15 @@ import Input from '@/components/ui/Input.astro';
         }
         // Focus al primer campo con error.
         const firstInvalid = form.querySelector<HTMLInputElement>('[aria-invalid="true"]');
-        firstInvalid?.focus();
+        if (firstInvalid) {
+          firstInvalid.focus();
+        } else {
+          // Si el error está en deliveryAddress, hacer scroll a la sección.
+          const deliveryError = form.querySelector<HTMLElement>('[data-error="deliveryAddress"]');
+          if (deliveryError?.textContent) {
+            deliveryError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
       }
     });
 
@@ -428,6 +671,136 @@ import Input from '@/components/ui/Input.astro';
   @media (max-width: 639.98px) {
     .quote-company__actions :global(.btn) {
       width: 100%;
+    }
+  }
+
+  /* ── Sección de envío a faena ── */
+  .quote-company__delivery-section {
+    grid-column: 1 / -1;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--theme-border);
+  }
+
+  .quote-company__delivery-legend {
+    font-size: var(--text-small);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--theme-text-muted);
+    padding: 0;
+    margin-bottom: var(--space-1);
+  }
+
+  .quote-company__delivery-hint {
+    margin: 0;
+    font-size: var(--text-body);
+    color: var(--theme-text);
+    line-height: 1.5;
+  }
+
+  .quote-company__delivery-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-1);
+  }
+
+  .quote-company__radio-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-body);
+    color: var(--theme-text);
+    cursor: pointer;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-sm);
+    transition:
+      border-color 0.15s var(--ease-out, ease),
+      background-color 0.15s var(--ease-out, ease);
+  }
+
+  .quote-company__radio-label:hover {
+    border-color: var(--color-brand);
+    background-color: color-mix(in srgb, var(--color-brand) 4%, transparent);
+  }
+
+  .quote-company__radio-label:has(input:checked) {
+    border-color: var(--color-brand);
+    background-color: color-mix(in srgb, var(--color-brand) 6%, transparent);
+    font-weight: 600;
+  }
+
+  .quote-company__radio-label input[type="radio"] {
+    accent-color: var(--color-brand);
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+  }
+
+  .quote-company__radio-label input[type="radio"]:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  /* ── Contenedor de dirección de entrega ── */
+  .quote-company__delivery-address {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    animation: quote-delivery-slide-in 0.25s var(--ease-out, ease);
+  }
+
+  .quote-company__delivery-address[hidden] {
+    display: none;
+  }
+
+  .quote-company__location-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  @media (min-width: 640px) {
+    .quote-company__location-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .quote-company__location-grid select {
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    color: var(--theme-text);
+    background-color: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-sm);
+    padding: 0.625rem 0.75rem;
+    width: 100%;
+    transition: border-color 0.15s var(--ease-out, ease),
+      box-shadow 0.15s var(--ease-out, ease);
+  }
+
+  .quote-company__location-grid select:focus {
+    outline: 2px solid var(--color-brand, #308f40);
+    outline-offset: 2px;
+    border-color: var(--color-brand, #308f40);
+  }
+
+  @keyframes quote-delivery-slide-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 </style>

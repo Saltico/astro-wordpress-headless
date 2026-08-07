@@ -75,7 +75,6 @@ interface ItemLine {
   periodLabel: string;
   startDate: string;
   notes: string;
-  transport: string;
 }
 
 function renderItemLine(item: ItemLine): string {
@@ -84,8 +83,7 @@ function renderItemLine(item: ItemLine): string {
     `• ${item.quantity} × ${item.name}${cap}\n` +
     `  Período: ${item.periodLabel}\n` +
     `  Inicio: ${item.startDate}\n` +
-    `  Notas: ${item.notes || '—'}\n` +
-    `  Traslado: ${item.transport}`
+    `  Notas: ${item.notes || '—'}`
   );
 }
 
@@ -98,12 +96,6 @@ function renderItemLineForBuild(item: import('@/types/quote').QuoteCartItem): It
     periodLabel: formatPeriodLabel(c.periodType, c.periodCount),
     startDate: c.startDate,
     notes: sanitizePlainText(c.notes, 280),
-    transport:
-      c.transport === 'si'
-        ? c.transportAddress
-          ? `Sí — ${sanitizePlainText(c.transportAddress, 160)}`
-          : 'Sí'
-        : 'No',
   };
 }
 
@@ -219,6 +211,22 @@ export function buildWhatsAppMessage(
     }
     if (company.telefono) {
       lines.push(`• Teléfono: ${sanitizePlainText(company.telefono, 30)}`);
+    }
+
+    // Dirección de entrega a faena (condicional).
+    if (company.requiresSiteDelivery && company.deliveryAddress?.confirmed) {
+      const addr = company.deliveryAddress;
+      lines.push('', 'Dirección de entrega:');
+      lines.push(`• Dirección: ${sanitizePlainText(addr.formattedAddress, 200)}`);
+      if (addr.commune || addr.region) {
+        const loc = [addr.commune, addr.region].filter(Boolean).join(', ');
+        lines.push(`• Ubicación: ${sanitizePlainText(loc, 120)}`);
+      }
+      if (addr.source === 'manual') {
+        lines.push('  (Dirección referencial — un ejecutivo confirmará la ubicación)');
+      }
+    } else {
+      lines.push('', 'Entrega: Retiro en bodega');
     }
   }
 

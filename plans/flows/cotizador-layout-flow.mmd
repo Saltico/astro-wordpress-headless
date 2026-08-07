@@ -1,0 +1,31 @@
+flowchart TD
+    Entry[Usuario entra a /cotizador] --> Header[Navbar sobre fondo sólido]
+    Header --> FirstView[Primer paso visible sin hero fotográfico]
+    FirstView --> HasItems{¿Hay equipos seleccionados?}
+
+    HasItems -->|No| SearchFirst[Buscar equipo como acción inicial]
+    HasItems -->|Sí| SelectionFirst[Mostrar selección con mayor jerarquía]
+
+    SearchFirst --> Search[Escribir búsqueda]
+    Search --> Filters[Aplicar categoría o subcategoría]
+    Filters --> Results[Resultados: una card por fila]
+    Search --> Results
+    Results --> Add[Agregar equipo]
+    Add --> SelectionFirst
+
+    SelectionFirst --> Edit[Editar cantidad, período, fecha o notas]
+    SelectionFirst --> Remove[Eliminar equipo]
+    SelectionFirst --> Catalog[Descargar catálogo desde header de búsqueda]
+    Edit --> SelectionFirst
+    Remove --> HasItems
+
+    SelectionFirst --> Continue[Continuar]
+    Continue --> Company[Datos de empresa]
+
+    Results --> Empty{¿Sin resultados?}
+    Empty -->|Sí| Reset[Limpiar filtros]
+    Reset --> Search
+    Empty -->|No| Add
+
+    FirstView --> Scroll[Scroll]
+    Scroll --> HeaderScrolled[Navbar/header con contraste estable]

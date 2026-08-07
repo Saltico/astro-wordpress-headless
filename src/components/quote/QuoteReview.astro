@@ -132,12 +132,6 @@ import Button from '@/components/ui/Button.astro';
 
   function renderLine(item: QuoteCartItem): string {
     const c = item.customization;
-    const transport =
-      c.transport === 'si'
-        ? c.transportAddress
-          ? `Sí — ${escapeHtml(c.transportAddress)}`
-          : 'Sí'
-        : 'No';
     return `
       <article class="quote-review__line">
         <div class="quote-review__line-thumb-wrapper">
@@ -160,10 +154,6 @@ import Button from '@/components/ui/Button.astro';
             <div class="quote-review__line-detail">
               <span class="quote-review__line-detail-label">Inicio</span>
               <span class="quote-review__line-detail-value">${c.startDate}</span>
-            </div>
-            <div class="quote-review__line-detail">
-              <span class="quote-review__line-detail-label">Traslado</span>
-              <span class="quote-review__line-detail-value">${transport}</span>
             </div>
           </div>
           ${c.notes ? `<p class="quote-review__line-notes">${escapeHtml(c.notes)}</p>` : ''}
@@ -191,7 +181,7 @@ import Button from '@/components/ui/Button.astro';
       sections.push({ title: 'Identificación', fields: fiscalFields });
     }
 
-    // Ubicación
+    // Ubicación fiscal
     const locationFields: { label: string; value: string }[] = [];
     if (data.direccion) locationFields.push({ label: 'Dirección', value: escapeHtml(data.direccion) });
     if (data.ciudad || data.comuna) {
@@ -199,7 +189,27 @@ import Button from '@/components/ui/Button.astro';
       locationFields.push({ label: 'Ciudad / Comuna', value: escapeHtml(location) });
     }
     if (locationFields.length > 0) {
-      sections.push({ title: 'Ubicación', fields: locationFields });
+      sections.push({ title: 'Ubicación fiscal', fields: locationFields });
+    }
+
+    // Dirección de entrega a faena (condicional).
+    if (data.requiresSiteDelivery && data.deliveryAddress?.confirmed) {
+      const addr = data.deliveryAddress;
+      const deliveryFields: { label: string; value: string }[] = [];
+      deliveryFields.push({ label: 'Dirección', value: escapeHtml(addr.formattedAddress) });
+      if (addr.commune || addr.region) {
+        const loc = [addr.commune, addr.region].filter(Boolean).join(', ');
+        deliveryFields.push({ label: 'Ubicación', value: escapeHtml(loc) });
+      }
+      if (addr.source === 'manual') {
+        deliveryFields.push({ label: 'Origen', value: 'Referencial (manual)' });
+      }
+      sections.push({ title: 'Dirección de entrega', fields: deliveryFields });
+    } else {
+      sections.push({
+        title: 'Entrega',
+        fields: [{ label: 'Modalidad', value: 'Retiro en bodega' }],
+      });
     }
 
     // Contacto
