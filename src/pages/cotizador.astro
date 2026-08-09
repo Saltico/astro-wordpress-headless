@@ -1,18 +1,17 @@
 ---
 // src/pages/cotizador.astro
 // Página del cotizador convertida en wizard de 3 pasos.
+// El hero se retiró: la superficie compacta del wizard + header brand
+// estabilizan el navbar sin competir visualmente con el contenido.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import SectionLayout from '@/components/ui/SectionLayout.astro';
-import QuoteHero from '@/components/quote/QuoteHero.astro';
 import QuoteWizard from '@/components/quote/QuoteWizard.astro';
 import QuoteStepSelect from '@/components/quote/QuoteStepSelect.astro';
 import QuoteCompanyForm from '@/components/quote/QuoteCompanyForm.astro';
 import QuoteReview from '@/components/quote/QuoteReview.astro';
 import { getSiteUrl } from '@/lib/seo';
-import { siteContact } from '@/data/site';
-import heroImg from '@/assets/imgs/hero.jpg';
 
 const title = 'Cotizador en línea | IP Proyectos Industriales';
 const description =
@@ -25,15 +24,8 @@ const canonical = getSiteUrl('/cotizador');
   description={description}
   canonical={canonical}
   noindex={true}
+  headerVariant="brand"
 >
-  <QuoteHero
-    image={heroImg.src}
-    imageAlt="Operador revisando maquinaria en faena minera"
-    title="Cotiza tu próximo proyecto"
-    note="Selecciona equipos, completa tus datos y tu cotización llega directo a un ejecutivo."
-    cta={{ href: siteContact.catalogUrl, label: 'Descargar catálogo', download: true }}
-  />
-
   <SectionLayout spacing="md" alt>
     <Container wide>
       <QuoteWizard>

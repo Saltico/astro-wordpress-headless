@@ -115,6 +115,13 @@ const headerClassList = ['header', variant === 'brand' && 'header--brand'];
     align-items: center;
     gap: 0.5rem;
   }
+
+  /* Ocultar ThemeToggle del header en mobile (está dentro del menú expandido) */
+  @media (max-width: 1023px) {
+    .header__cta :global([data-theme-toggle]) {
+      display: none;
+    }
+  }
 </style>
 
 <script>

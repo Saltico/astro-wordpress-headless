@@ -8,6 +8,7 @@ import Icon from '@/components/ui/Icon.astro';
 import Button from '@/components/ui/Button.astro';
 import EquipmentPickerCard from '@/components/quote/EquipmentPickerCard.astro';
 import { RENTAL_CATEGORIES } from '@/data/rental';
+import { siteContact } from '@/data/site';
 import type { Equipment } from '@/data/rental';
 
 interface PickerEntry {
@@ -35,7 +36,7 @@ const ALL_EQUIPMENT: PickerEntry[] = RENTAL_CATEGORIES.flatMap((category) =>
 const totalEquipment = ALL_EQUIPMENT.length;
 const categories = RENTAL_CATEGORIES.map((c) => ({ slug: c.slug, name: c.name }));
 
-// El picker ahora vive en la columna derecha del cotizador y está
+// El picker vive en la columna izquierda del cotizador (estrecha) y está
 // siempre expandido. No requiere props.
 export type Props = Record<string, never>;
 ---
@@ -56,6 +57,16 @@ export type Props = Record<string, never>;
         ({totalEquipment} disponibles)
       </span>
     </h2>
+    <a
+      href={siteContact.catalogUrl}
+      class="picker__catalog-link"
+      download
+      target="_blank"
+      aria-label="Descargar catálogo de equipos"
+    >
+      <Icon name="download" size={16} />
+      <span>Catálogo</span>
+    </a>
   </header>
 
   <div class="picker__body">
@@ -602,6 +613,7 @@ export type Props = Record<string, never>;
     border-top-left-radius: var(--radius-md);
     border-top-right-radius: var(--radius-md);
     flex-shrink: 0;
+    flex-wrap: wrap;
   }
 
   .picker__head-icon {
@@ -622,6 +634,7 @@ export type Props = Record<string, never>;
     font-weight: 700;
     font-size: var(--text-h4);
     color: var(--theme-text);
+    flex: 1;
   }
 
   .picker__head-count {
@@ -629,6 +642,35 @@ export type Props = Record<string, never>;
     color: var(--theme-text-muted);
     margin-left: 0.4rem;
     font-size: var(--text-small);
+  }
+
+  .picker__catalog-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 1rem;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: var(--text-small);
+    color: var(--theme-text);
+    background-color: transparent;
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: background-color 0.15s var(--ease-out, ease),
+      border-color 0.15s var(--ease-out, ease);
+    flex-shrink: 0;
+  }
+
+  .picker__catalog-link:hover,
+  .picker__catalog-link:focus-visible {
+    background-color: var(--theme-bg-alt);
+    border-color: var(--color-brand);
+  }
+
+  .picker__catalog-link:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
   }
 
   .picker__body {
@@ -654,14 +696,12 @@ export type Props = Record<string, never>;
 
   .picker__filters {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: var(--space-3);
   }
 
-  @media (min-width: 640px) {
-    .picker__filters {
-      grid-template-columns: 1fr 1fr 1fr;
-    }
+  .picker__search {
+    grid-column: 1 / -1;
   }
 
   .picker__label {
@@ -756,19 +796,6 @@ export type Props = Record<string, never>;
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
-  }
-
-  @media (min-width: 640px) {
-    .picker__results {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .picker__results {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1.25rem;
-    }
   }
 
   .picker__empty {

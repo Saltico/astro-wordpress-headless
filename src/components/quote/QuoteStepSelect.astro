@@ -51,13 +51,6 @@ import Icon from '@/components/ui/Icon.astro';
     <div class="quote-page__lines" data-quote-lines hidden>
       {/* Hydrated from localStorage on the client */}
     </div>
-
-    <!-- Resumen comentado (mantenido por si se necesita reactivar) -->
-    <!--
-    <div class="quote-page__summary" data-quote-summary-wrapper hidden>
-      <QuoteCartSummary variant="wizard" />
-    </div>
-    -->
   </div>
 </div>
 
@@ -296,6 +289,12 @@ import Icon from '@/components/ui/Icon.astro';
     linesEl.hidden = empty;
     actionsEl.hidden = empty;
     
+    // Aplicar clase para orden dinámico en mobile
+    const columnsEl = linesEl.closest<HTMLElement>('.quote-page__columns');
+    if (columnsEl) {
+      columnsEl.classList.toggle('is-cart-empty', empty);
+    }
+    
     // Actualizar estado del botón Continuar
     const nextBtn = document.querySelector<HTMLButtonElement>('[data-quote-wizard-next]');
     if (nextBtn) {
@@ -316,8 +315,16 @@ import Icon from '@/components/ui/Icon.astro';
       newLineIds.length !== lastRenderedLineIds.length ||
       newLineIds.some((id, idx) => lastRenderedLineIds[idx] !== id);
     if (structureChanged) {
+      // Detectar nuevos items para abrirlos automáticamente
+      const previousIds = new Set(lastRenderedLineIds);
+      const newItems = newLineIds.filter((id) => !previousIds.has(id));
+      
       linesEl.innerHTML = cart.items.map((item) => renderLine(item)).join('');
       linesEl.querySelectorAll<HTMLElement>('[data-line-id]').forEach(attachLineHandlers);
+      
+      // Agregar nuevos items al set de abiertos
+      newItems.forEach((id) => openLineIds.add(id));
+      
       lastRenderedLineIds = newLineIds;
     }
     restoreOpenState();
@@ -465,7 +472,7 @@ import Icon from '@/components/ui/Icon.astro';
 
   @media (min-width: 1024px) {
     .quote-page__columns {
-      grid-template-columns: minmax(0, 1fr) clamp(320px, 32vw, 420px);
+      grid-template-columns: clamp(500px, 28vw, 380px) minmax(0, 1fr);
       gap: var(--space-8);
     }
   }
@@ -475,6 +482,27 @@ import Icon from '@/components/ui/Icon.astro';
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
+  }
+
+  /* Orden dinámico en mobile: cuando el carrito está vacío, el picker
+     aparece primero; cuando hay equipos, el carrito tiene prioridad visual. */
+  @media (max-width: 1023.98px) {
+    .quote-page__col--cart {
+      order: 1;
+    }
+    
+    .quote-page__col--picker {
+      order: 2;
+    }
+    
+    /* Cuando el carrito está vacío, invertir el orden */
+    .quote-page__columns.is-cart-empty .quote-page__col--picker {
+      order: 1;
+    }
+    
+    .quote-page__columns.is-cart-empty .quote-page__col--cart {
+      order: 2;
+    }
   }
 
   /* En desktop el carrito es sticky bajo el stepper para que quede visible

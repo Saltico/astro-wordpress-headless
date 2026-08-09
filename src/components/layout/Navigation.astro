@@ -64,9 +64,12 @@ function isActive(item: NavItem): boolean {
   <dialog id="nav-dialog" class="nav__dialog" aria-label={ariaLabel}>
     <div class="nav__dialog-header">
       <span class="nav__dialog-title">Menú</span>
-      <button type="button" class="nav__close" aria-label="Cerrar menú">
-        <span aria-hidden="true">×</span>
-      </button>
+      <div class="nav__dialog-actions">
+        <slot name="mobile-actions" />
+        <button type="button" class="nav__close" aria-label="Cerrar menú">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
     </div>
 
     <ul class="nav__list nav__list--mobile">
@@ -317,6 +320,23 @@ function isActive(item: NavItem): boolean {
     font-size: 1.125rem;
   }
 
+  .nav__dialog-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  /* ThemeToggle dentro del menú móvil necesita estilos adaptados al fondo claro */
+  .nav__dialog-actions :global([data-theme-toggle]) {
+    color: var(--color-ink);
+    border-color: var(--color-line);
+  }
+
+  .nav__dialog-actions :global([data-theme-toggle]:hover) {
+    background: var(--color-surface-alt);
+    border-color: var(--color-ink-500);
+  }
+
   .nav__close {
     display: inline-flex;
     align-items: center;
@@ -363,6 +383,15 @@ function isActive(item: NavItem): boolean {
 
   .nav__mobile-sublink[aria-current='page'] {
     color: var(--color-brand);
+  }
+
+  .nav__mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    border-top: 1px solid var(--color-line);
+    margin-top: auto;
   }
 
   /* Variant: brand (header verde) */

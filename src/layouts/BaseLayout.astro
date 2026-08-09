@@ -170,7 +170,9 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
               decoding="async"
             />
           </a>
-          <Navigation slot="navigation" items={navItems} aria-label={navigation?.ariaLabel} variant="brand" />
+          <Navigation slot="navigation" items={navItems} aria-label={navigation?.ariaLabel} variant="brand">
+            <ThemeToggle slot="mobile-actions" />
+          </Navigation>
           <Fragment slot="cta">
             <ThemeToggle />
             <QuoteCartBadge />

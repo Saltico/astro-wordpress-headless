@@ -36,8 +36,8 @@
     if (typeof window === 'undefined') return;
 
     const STORAGE_KEY = 'theme-preference';
-    const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
-    if (!toggle) return;
+    const toggles = document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]');
+    if (toggles.length === 0) return;
 
     // Leer tema actual del DOM (ya aplicado por el script anti-FOUC en <head>)
     function getCurrentTheme(): 'dark' | 'light' {
@@ -45,23 +45,27 @@
       return t === 'light' ? 'light' : 'dark';
     }
 
-    // Actualizar UI del toggle según el tema activo
+    // Actualizar UI de todos los toggles según el tema activo
     function syncUI(theme: 'dark' | 'light'): void {
-      toggle.setAttribute('aria-label', `Cambiar a modo ${theme === 'dark' ? 'claro' : 'oscuro'}`);
-      // Mostrar icono del tema opuesto (el que verás al hacer clic)
-      toggle.querySelectorAll<HTMLElement>('[data-theme-icon]').forEach((icon) => {
-        const iconTheme = icon.getAttribute('data-theme-icon');
-        icon.hidden = iconTheme !== theme;
+      toggles.forEach((toggle) => {
+        toggle.setAttribute('aria-label', `Cambiar a modo ${theme === 'dark' ? 'claro' : 'oscuro'}`);
+        // Mostrar icono del tema opuesto (el que verás al hacer clic)
+        toggle.querySelectorAll<HTMLElement>('[data-theme-icon]').forEach((icon) => {
+          const iconTheme = icon.getAttribute('data-theme-icon');
+          icon.hidden = iconTheme !== theme;
+        });
       });
     }
 
     // Toggle y guardar preferencia
-    toggle.addEventListener('click', () => {
-      const current = getCurrentTheme();
-      const next = current === 'light' ? 'dark' : 'light';
-      localStorage.setItem(STORAGE_KEY, next);
-      document.documentElement.setAttribute('data-theme', next);
-      syncUI(next);
+    toggles.forEach((toggle) => {
+      toggle.addEventListener('click', () => {
+        const current = getCurrentTheme();
+        const next = current === 'light' ? 'dark' : 'light';
+        localStorage.setItem(STORAGE_KEY, next);
+        document.documentElement.setAttribute('data-theme', next);
+        syncUI(next);
+      });
     });
 
     // Sincronizar UI inicial (el tema ya está aplicado por anti-FOUC)

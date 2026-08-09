@@ -1,0 +1,133 @@
+---
+feature: Implementation Flow
+effort: Medium
+dependencies: [overview.md]
+status: Planned
+---
+
+# Implementation Flow — Rental-First Homepage Remake
+
+## High-Level Implementation Sequence
+
+```mermaid
+graph TD
+    A[Phase 1: Data & Config] --> B[Phase 2: Navigation]
+    B --> C[Phase 3: New Components]
+    C --> D[Phase 4: Homepage Assembly]
+    D --> E[Phase 5: QA & SEO]
+
+    subgraph Phase 1 - Data & Config
+        A1[Update siteBrand tagline]
+        A2[Add featuredEquipment data]
+        A3[Add category images to rental.ts]
+    end
+
+    subgraph Phase 2 - Navigation
+        B1[Reorder navigationData]
+        B2[Reorder footerData columns]
+        B3[Add Cotizador to topbarData]
+        B4[Add header CTA button]
+    end
+
+    subgraph Phase 3 - New Components
+        C1[EquipmentSearch.astro]
+        C2[CategoryShowcase.astro]
+        C3[FeaturedEquipment.astro]
+        C4[ServicesCompact.astro]
+    end
+
+    subgraph Phase 4 - Homepage Assembly
+        D1[Rewrite index.astro sections]
+        D2[Update hero content + search]
+        D3[Update meta tags + JSON-LD]
+        D4[Responsive QA all breakpoints]
+    end
+
+    subgraph Phase 5 - QA & SEO
+        E1[Build test - astro build]
+        E2[Visual regression check]
+        E3[SEO meta validation]
+        E4[Lighthouse audit]
+    end
+```
+
+## Component Build Order (Phase 3 Detail)
+
+```mermaid
+graph LR
+    C1[EquipmentSearch] --> |depends on| DATA[rental.ts data]
+    C2[CategoryShowcase] --> |depends on| DATA
+    C3[FeaturedEquipment] --> |depends on| EC[EquipmentCard existing]
+    C3 --> |depends on| FEAT[featuredEquipment data]
+    C4[ServicesCompact] --> |no deps| C4
+
+    C1 --> |test| T1[Search: type grúa → shows results]
+    C2 --> |test| T2[Grid: 4 categories render]
+    C3 --> |test| T3[Carousel: scrolls, badges show]
+    C4 --> |test| T4[Links: all 4 services work]
+```
+
+## Homepage Section Assembly (Phase 4 Detail)
+
+```mermaid
+graph TD
+    OLD[Current index.astro] --> |remove| R1[Corporate hero video]
+    OLD --> |remove| R2[Quiénes somos SplitSection]
+    OLD --> |remove| R3[ServicesGrid bento]
+    OLD --> |remove| R4[HSEC SplitSection]
+
+    NEW[New index.astro] --> |add| N1[Rental hero + EquipmentSearch]
+    NEW --> |add| N2[CategoryShowcase]
+    NEW --> |add| N3[FeaturedEquipment]
+    NEW --> |keep| K1[StatsCounter - updated stats]
+    NEW --> |keep| K2[LogoCarousel]
+    NEW --> |add| N4[ServicesCompact]
+    NEW --> |keep| K3[CTABand - updated text]
+    NEW --> |keep| K4[NewsGrid]
+```
+
+## User Flow: Visitor Journey (New Homepage)
+
+```mermaid
+graph TD
+    V[Visitor lands on homepage] --> H[Hero: Rental messaging + Search]
+
+    H --> |searches equipment| S[EquipmentSearch results]
+    S --> |clicks result| SUB[Subcategory page]
+    SUB --> |adds to cart| Q[Cotizador]
+
+    H --> |browses categories| CG[CategoryShowcase grid]
+    CG --> |clicks subcategory pill| SUB
+    CG --> |clicks Ver categoría| CAT[Category page]
+    CAT --> |browses equipment| SUB
+
+    H --> |scrolls down| FE[FeaturedEquipment carousel]
+    FE --> |clicks Cotizar| Q
+
+    H --> |scrolls more| TR[Trust signals: stats + logos]
+    TR --> SC[Services compact links]
+    SC --> |clicks service| SP[Service detail page]
+
+    H --> |scrolls to bottom| CTA[CTA Band: Cotiza tu equipo]
+    CTA --> |Ir al cotizador| Q
+    CTA --> |WhatsApp| WA[WhatsApp chat]
+
+    Q --> |submits quote| DONE[Quote sent via WhatsApp]
+```
+
+## Data Flow
+
+```mermaid
+graph LR
+    RT[rental.ts] --> |RENTAL_CATEGORIES| CS[CategoryShowcase]
+    RT --> |flat search index| ES[EquipmentSearch]
+    RT --> |equipment models| FE[FeaturedEquipment]
+
+    ST[site.ts] --> |navigationData| NAV[Navigation]
+    ST --> |footerData| FTR[Footer]
+    ST --> |featuredEquipment| FE
+    ST --> |siteBrand| META[Meta tags]
+
+    EC[EquipmentCard] --> |rendered by| FE
+    HC[HeroMedia] --> |rendered by| HERO[Hero section]
+```
