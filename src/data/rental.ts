@@ -5,6 +5,10 @@
 import heroImg from '@/assets/imgs/hero.jpg';
 import izajeHero from '@/assets/imgs/hero/arriendo/izaje/izaje.avif';
 import gruasHero from '@/assets/imgs/hero/arriendo/izaje/gruas/gruas.avif';
+// Hero images for categories (using representative equipment images)
+import movimientoTierraHero from '@/assets/imgs/rental/movimiento-de-tierra/camion-tolva/camion-tolva-12-m3/camion-tolva-12-m3.avif';
+import transporteHero from '@/assets/imgs/rental/transporte/tracto-camion/tracto-camion-renault-t-460/tracto-camion-renault-t-460.avif';
+import equiposEspecialesHero from '@/assets/imgs/rental/equipos-especiales/torres-iluminacion/torre-iluminacion-9m-wacker-neuson/torre-iluminacion-9m-wacker-neuson.avif';
 import gruaGrove60t from '@/assets/imgs/rental/izaje/grua/grua-grove-rt-765-e/grua-grove-rt-765-e.avif';
 import gruaTerex80t from '@/assets/imgs/rental/izaje/grua/grua-terex-rt-780-e/grua-terex-rt-780-e.avif';
 import gruaGrove100t from '@/assets/imgs/rental/izaje/grua/grua-grove-gmk-4100/grua-grove-gmk-4100.avif';
@@ -111,6 +115,9 @@ export interface RentalCategory {
 const HERO = heroImg.src;
 const IZAJE_HERO = izajeHero.src;
 const GRUAS_HERO = gruasHero.src;
+const MOVIMIENTO_TIERRA_HERO = movimientoTierraHero.src;
+const TRANSPORTE_HERO = transporteHero.src;
+const EQUIPOS_ESPECIALES_HERO = equiposEspecialesHero.src;
 const GRUA_GROVE_60T = gruaGrove60t.src;
 const GRUA_TEREX_80T = gruaTerex80t.src;
 const GRUA_GROVE_100T = gruaGrove100t.src;
@@ -1447,7 +1454,7 @@ export const RENTAL_CATEGORIES: RentalCategory[] = [
     shortDesc: 'Camiones tolva, retroexcavadoras y minicargadores.',
     description:
       'Arriendo de equipos para movimiento de tierra en Chile. Camiones tolva, retroexcavadoras hidráulicas y minicargadores compactos para proyectos de construcción, minería y obras civiles. Equipos con operadores certificados, combustibles y mantenimiento incluidos. Disponibilidad en zona norte y centro del país con respuesta operativa en menos de 48 horas. Solución completa para proyectos de excavación, nivelación, transporte de material y faenas urbanas.',
-    heroImage: HERO,
+    heroImage: MOVIMIENTO_TIERRA_HERO,
     seoTitle: 'Arriendo de Equipos de Movimiento de Tierra',
     seoDescription:
       'Arriendo de camiones tolva, retroexcavadoras y minicargadores en Chile. Operador certificado, combustibles incluidos. Cotiza online o por WhatsApp.',
@@ -1459,7 +1466,7 @@ export const RENTAL_CATEGORIES: RentalCategory[] = [
     shortDesc: 'Tracto camiones, camas-baja y semiremolques.',
     description:
       'Arriendo de equipos de transporte de carga pesada en Chile. Tracto camiones, camas-baja tipo Eager Beaver y semiremolques para transporte de maquinaria, contenedores y cargas sobredimensionadas en faenas mineras e industriales. Choferes con licencia A5, mantenimiento y seguros incluidos. Disponibilidad en zona norte y centro de Chile con respuesta operativa en menos de 48 horas. Solución completa para proyectos de transporte entre faenas y rutas mineras.',
-    heroImage: HERO,
+    heroImage: TRANSPORTE_HERO,
     seoTitle: 'Arriendo de Equipos de Transporte en Chile',
     seoDescription:
       'Arriendo de tracto camiones, camas-baja y semiremolques en Chile. Chofer con licencia A5, seguros incluidos. Cotiza online o por WhatsApp.',
@@ -1471,7 +1478,7 @@ export const RENTAL_CATEGORIES: RentalCategory[] = [
     shortDesc: 'Torres de iluminación, bombas, compresores, generadores.',
     description:
       'Arriendo de equipos especiales en Chile para faenas mineras, construcción e industria. Torres de iluminación portátil, bombas de hormigón, compresores de aire, generadores eléctricos, termofusión eléctrica y mezcladoras con canastillo. Equipos con mantenimiento, combustibles y seguros incluidos. Disponibilidad en zona norte y centro de Chile con respuesta operativa en menos de 24-48 horas. Solución completa para faenas con necesidades específicas de soporte operacional.',
-    heroImage: HERO,
+    heroImage: EQUIPOS_ESPECIALES_HERO,
     seoTitle: 'Arriendo de Equipos Especiales en Chile',
     seoDescription:
       'Arriendo de torres de iluminación, bombas de hormigón, compresores y generadores en Chile. Mantenimiento y combustibles incluidos. Cotiza online.',
