@@ -18,7 +18,8 @@ This document specifies each new component needed for the rental-first homepage 
 | 1 | `EquipmentSearch` | `src/components/rental/EquipmentSearch.astro` | Medium | Nothing (new) |
 | 2 | `CategoryShowcase` | `src/components/rental/CategoryShowcase.astro` | Medium | `ServicesGrid` on homepage |
 | 3 | `FeaturedEquipment` | `src/components/rental/FeaturedEquipment.astro` | Medium | Nothing (new) |
-| 4 | `ServicesCompact` | `src/components/ui/ServicesCompact.astro` | Low | `ServicesGrid` + `SplitSection` on homepage |
+| 4 | `CoverageSection` | `src/components/ui/CoverageSection.astro` | Low | Nothing (new) |
+| 5 | `ServicesCompact` | `src/components/ui/ServicesCompact.astro` | Low | `ServicesGrid` + `SplitSection` on homepage |
 
 ---
 
@@ -211,7 +212,65 @@ A new `featuredEquipment` array in `src/data/site.ts` or a dedicated `src/data/f
 
 ---
 
-## 4. ServicesCompact
+## 4. CoverageSection
+
+### Purpose
+Display geographic coverage zones in northern Chile for SEO purposes. Reinforces availability messaging with location-specific keywords.
+
+### File
+`src/components/ui/CoverageSection.astro`
+
+### Props
+```typescript
+interface CoverageSectionProps {
+  eyebrow?: string;           // Default: "Cobertura"
+  title?: string;             // Default: "Disponibilidad en el norte de Chile"
+  zones: CoverageZone[];
+  class?: string;
+}
+
+interface CoverageZone {
+  region: string;             // e.g., "Atacama"
+  cities: string[];           // e.g., ["Copiapó", "Caldera", "Vallenar"]
+}
+```
+
+### Layout
+```
+┌─────────────────────────────────────────────────────────┐
+│  Eyebrow: "Cobertura"                                    │
+│  Title: "Disponibilidad en el norte de Chile"            │
+├─────────────────────────────────────────────────────────┤
+│  ┌──────────────────────────────────────────────────┐   │
+│  │  • Arriendo de grúas y equipos en Atacama        │   │
+│  │    (Copiapó, Caldera, Vallenar)                  │   │
+│  │  • Arriendo de maquinaria en Coquimbo            │   │
+│  │    (La Serena, Coquimbo, Ovalle)                 │   │
+│  │  • Arriendo de equipos pesados en Antofagasta    │   │
+│  │    (Antofagasta, Calama, Tocopilla)              │   │
+│  └──────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Coverage Data
+```typescript
+const coverageZones = [
+  { region: 'Atacama', cities: ['Copiapó', 'Caldera', 'Vallenar'] },
+  { region: 'Coquimbo', cities: ['La Serena', 'Coquimbo', 'Ovalle'] },
+  { region: 'Antofagasta', cities: ['Antofagasta', 'Calama', 'Tocopilla'] },
+];
+```
+
+### Styling
+- Simple list layout
+- Region names in bold (brand color optional)
+- Cities in muted text
+- Compact section (minimal vertical padding)
+- Dark background variant
+
+---
+
+## 5. ServicesCompact
 
 ### Purpose
 Compact, single-row section that acknowledges the company also offers engineering/construction services without competing with the rental focus.
@@ -284,10 +343,10 @@ index.astro (homepage)
 ├── FeaturedEquipment (NEW) — promoted equipment
 │   └── EquipmentCard (existing) — individual cards
 ├── StatsCounter (existing) — rental stats
+├── CoverageSection (NEW) — geographic coverage zones
 ├── LogoCarousel (existing) — client logos
 ├── ServicesCompact (NEW) — compact services links
-├── CTABand (existing) — conversion CTA
-└── NewsGrid (existing) — blog articles
+└── CTABand (existing) — conversion CTA
 ```
 
 ---
@@ -298,9 +357,8 @@ index.astro (homepage)
 |-----------|---------|-------|
 | `HeroMedia` | §1 Hero | May swap video for image, but component supports both |
 | `StatsCounter` | §4 Stats | Just update stat values |
-| `LogoCarousel` | §5 Logos | No changes |
-| `CTABand` | §7 CTA | Just update text props |
-| `NewsGrid` | §8 News | No changes |
+| `LogoCarousel` | §6 Logos | No changes |
+| `CTABand` | §8 CTA | Just update text props |
 | `Button` | Various | No changes |
 | `Icon` | Various | May need new icons: `search`, `blueprint`, `building`, `anchor` |
 | `EquipmentCard` | §3 Featured | Reused inside FeaturedEquipment |

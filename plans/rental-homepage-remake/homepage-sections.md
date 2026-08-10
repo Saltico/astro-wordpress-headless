@@ -25,11 +25,9 @@ This document describes each section of the proposed rental-first homepage, top 
 ├─────────────────────────────────────────────────┤
 │  §5  CLIENT LOGOS (Trust Signals)               │
 ├─────────────────────────────────────────────────┤
-│  §6  SERVICES SUMMARY (Compact)                 │
+│  §6  SERVICES COMPACT                           │
 ├─────────────────────────────────────────────────┤
 │  §7  CTA BAND — Cotizador                       │
-├─────────────────────────────────────────────────┤
-│  §8  NEWS / BLOG                                │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -175,10 +173,10 @@ Same client logos as current homepage (Barrick, CMP, Aura Minerals, etc.)
 
 ---
 
-## §6 — Services Summary (Compact)
+## §6 — Services Compact
 
 ### Purpose
-Acknowledge that IP Proyectos Industriales also offers engineering/construction services, without competing with the rental focus.
+Acknowledge that IP Proyectos Industriales also offers engineering/construction services, without competing with the rental focus. Provides a quick bridge to the corporate site for visitors interested in those services.
 
 ### Content
 A compact, single-row section with:
@@ -219,20 +217,6 @@ Final conversion push — direct visitors to the quote system.
 
 ---
 
-## §8 — News / Blog
-
-### Purpose
-SEO content freshness, show company activity.
-
-### Content
-Same as current: latest 3 news articles.
-
-### Component Mapping
-- **Reuse**: `NewsGrid.astro` — no changes needed
-- **Position**: Last section before footer (same as current)
-
----
-
 ## Section Comparison: Before vs. After
 
 | # | Current Section | Proposed Section | Action |
@@ -242,14 +226,15 @@ Same as current: latest 3 news articles.
 | 3 | Quiénes somos (SplitSection) | Featured equipment | **Replace** |
 | 4 | Client logos | Stats counter (rental) | **Move + Update** |
 | 5 | Services bento grid | Client logos | **Move** |
-| 6 | HSEC/Safety (SplitSection) | Services summary (compact) | **Replace** |
+| 6 | HSEC/Safety (SplitSection) | Services compact | **Replace** |
 | 7 | CTA band | CTA band (rental-focused) | **Update** |
-| 8 | News grid | News grid | **Keep** |
+| 8 | News grid | *(removed)* | **Remove** |
 
 ### Sections Removed from Homepage (Still Exist on Their Pages)
 - "Quiénes somos" SplitSection → `/nosotros`
 - HSEC/Safety SplitSection → `/seguridad`
 - Full Services bento grid → `/servicios`
+- News grid → `/noticias` (page remains, just not on homepage)
 
 ---
 

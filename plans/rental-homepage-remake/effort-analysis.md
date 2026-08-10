@@ -47,10 +47,11 @@ status: Planned
 | 3.5 | Build `CategoryShowcase` — subcategory pills + links | Same | Low | 1 hour | 3.4 |
 | 3.6 | Build `FeaturedEquipment.astro` — carousel + scroll snap | `src/components/rental/FeaturedEquipment.astro` | Medium | 2 hours | 1.5 |
 | 3.7 | Build `FeaturedEquipment` — badge + EquipmentCard integration | Same | Low | 1 hour | 3.6 |
-| 3.8 | Build `ServicesCompact.astro` — markup + responsive grid | `src/components/ui/ServicesCompact.astro` | Low | 1.5 hours | None |
-| 3.9 | Add missing icons to `icons.ts` (search, blueprint, building, anchor) | `src/lib/icons.ts` | Low | 30 min | None |
+| 3.8 | Build `CoverageSection.astro` — geographic zones list | `src/components/ui/CoverageSection.astro` | Low | 1 hour | None |
+| 3.9 | Build `ServicesCompact.astro` — markup + responsive grid | `src/components/ui/ServicesCompact.astro` | Low | 1.5 hours | None |
+| 3.10 | Add missing icons to `icons.ts` (search, blueprint, building, anchor) | `src/lib/icons.ts` | Low | 30 min | None |
 
-**Phase 3 Total: ~13.5 hours (~2 days) | Effort: Medium-High**
+**Phase 3 Total: ~14.5 hours (~2 days) | Effort: Medium-High**
 
 ---
 
@@ -58,35 +59,48 @@ status: Planned
 
 | # | Task | File(s) | Effort | Duration | Dependencies |
 |---|------|---------|--------|----------|--------------|
-| 4.1 | Rewrite `index.astro` — remove old sections (hero, SplitSections, ServicesGrid) | `src/pages/index.astro` | Medium | 1 hour | Phase 3 |
+| 4.1 | Rewrite `index.astro` — remove old sections (hero, SplitSections, ServicesGrid, NewsGrid) | `src/pages/index.astro` | Medium | 1 hour | Phase 3 |
 | 4.2 | Rewrite `index.astro` — add new hero with EquipmentSearch | Same | Medium | 1.5 hours | 3.3 |
 | 4.3 | Rewrite `index.astro` — add CategoryShowcase section | Same | Low | 30 min | 3.5 |
 | 4.4 | Rewrite `index.astro` — add FeaturedEquipment section | Same | Low | 30 min | 3.7 |
 | 4.5 | Rewrite `index.astro` — update StatsCounter props | Same | Low | 15 min | None |
-| 4.6 | Rewrite `index.astro` — add ServicesCompact section | Same | Low | 15 min | 3.8 |
-| 4.7 | Rewrite `index.astro` — update CTABand props | Same | Low | 15 min | None |
-| 4.8 | Update page title, meta description, JSON-LD | Same | Low | 30 min | 1.1 |
-| 4.9 | Update hero image/video assets (new rental-focused image) | `src/assets/` | Medium | 1 hour | None |
-| 4.10 | Responsive QA — mobile, tablet, desktop | All | Medium | 2 hours | 4.1-4.8 |
+| 4.6 | Rewrite `index.astro` — add CoverageSection | Same | Low | 15 min | 3.8 |
+| 4.7 | Rewrite `index.astro` — add ServicesCompact section | Same | Low | 15 min | 3.9 |
+| 4.8 | Rewrite `index.astro` — update CTABand props | Same | Low | 15 min | None |
+| 4.9 | Update page title, meta description, JSON-LD | Same | Low | 30 min | 1.1 |
+| 4.10 | Update hero image/video assets (new rental-focused image) | `src/assets/` | Medium | 1 hour | None |
+| 4.11 | Responsive QA — mobile, tablet, desktop | All | Medium | 2 hours | 4.1-4.9 |
 
-**Phase 4 Total: ~7.5 hours (~1 day) | Effort: Medium**
+**Phase 4 Total: ~8 hours (~1 day) | Effort: Medium**
 
 ---
 
-### Phase 5: QA & SEO Validation
+### Phase 5: Category Hub Improvement
 
 | # | Task | File(s) | Effort | Duration | Dependencies |
 |---|------|---------|--------|----------|--------------|
-| 5.1 | Run `astro build` — verify no errors | Terminal | Low | 15 min | Phase 4 |
-| 5.2 | Validate all internal links work | Browser | Low | 30 min | 5.1 |
-| 5.3 | Validate SEO meta tags (title, description, OG) | Browser devtools | Low | 30 min | 4.8 |
-| 5.4 | Validate JSON-LD schemas render correctly | Google Rich Results Test | Low | 20 min | 4.8 |
-| 5.5 | Lighthouse audit — target 90+ Performance, 95+ SEO | Lighthouse | Low | 30 min | 5.1 |
-| 5.6 | Test EquipmentSearch with various queries | Browser | Low | 30 min | 3.3 |
-| 5.7 | Test quote cart flow end-to-end (homepage → cotizador) | Browser | Low | 30 min | Phase 4 |
-| 5.8 | Cross-browser check (Chrome, Firefox, Safari) | Browser | Low | 30 min | Phase 4 |
+| 5.1 | Redesign `/arriendo/index.astro` — add category images | `src/pages/arriendo/index.astro` | Medium | 2 hours | 1.6 |
+| 5.2 | Redesign `/arriendo/index.astro` — improve card layout (currently text-only) | Same | Medium | 2 hours | 5.1 |
+| 5.3 | Redesign `/arriendo/index.astro` — responsive QA | Same | Low | 1 hour | 5.2 |
 
-**Phase 5 Total: ~3.5 hours | Effort: Low**
+**Phase 5 Total: ~5 hours | Effort: Medium**
+
+---
+
+### Phase 6: QA & SEO Validation
+
+| # | Task | File(s) | Effort | Duration | Dependencies |
+|---|------|---------|--------|----------|--------------|
+| 6.1 | Run `astro build` — verify no errors | Terminal | Low | 15 min | Phase 4, 5 |
+| 6.2 | Validate all internal links work | Browser | Low | 30 min | 6.1 |
+| 6.3 | Validate SEO meta tags (title, description, OG) | Browser devtools | Low | 30 min | 4.9 |
+| 6.4 | Validate JSON-LD schemas render correctly | Google Rich Results Test | Low | 20 min | 4.9 |
+| 6.5 | Lighthouse audit — target 90+ Performance, 95+ SEO | Lighthouse | Low | 30 min | 6.1 |
+| 6.6 | Test EquipmentSearch with various queries | Browser | Low | 30 min | 3.3 |
+| 6.7 | Test quote cart flow end-to-end (homepage → cotizador) | Browser | Low | 30 min | Phase 4 |
+| 6.8 | Cross-browser check (Chrome, Firefox, Safari) | Browser | Low | 30 min | Phase 4 |
+
+**Phase 6 Total: ~3.5 hours | Effort: Low**
 
 ---
 
@@ -96,15 +110,16 @@ status: Planned
 |-------|-------|---------------|--------------|
 | **Phase 1**: Data & Config | 6 tasks | ~1.5 hours | Low |
 | **Phase 2**: Navigation | 3 tasks | ~1 hour | Low |
-| **Phase 3**: New Components | 9 tasks | ~13.5 hours | Medium-High |
-| **Phase 4**: Homepage Assembly | 10 tasks | ~7.5 hours | Medium |
-| **Phase 5**: QA & SEO | 8 tasks | ~3.5 hours | Low |
-| **TOTAL** | **36 tasks** | **~27 hours** | **Medium-High** |
+| **Phase 3**: New Components | 10 tasks | ~14.5 hours | Medium-High |
+| **Phase 4**: Homepage Assembly | 11 tasks | ~8 hours | Medium |
+| **Phase 5**: Category Hub | 3 tasks | ~5 hours | Medium |
+| **Phase 6**: QA & SEO | 8 tasks | ~3.5 hours | Low |
+| **TOTAL** | **41 tasks** | **~33.5 hours** | **Medium-High** |
 
 ### Estimated Calendar Time
-- **Solo developer, focused**: 4-5 working days
-- **Solo developer, part-time**: 7-10 working days
-- **With parallel work** (Phase 1+2 can run parallel with Phase 3): 3-4 working days
+- **Solo developer, focused**: 5-6 working days
+- **Solo developer, part-time**: 8-12 working days
+- **With parallel work** (Phase 1+2 can run parallel with Phase 3): 4-5 working days
 
 ---
 

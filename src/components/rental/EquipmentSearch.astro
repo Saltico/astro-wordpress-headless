@@ -103,11 +103,12 @@ const searchIndexJson = JSON.stringify(searchIndex);
     align-items: center;
   }
 
-  .equipment-search__icon {
+  .equipment-search__input-container :global(.equipment-search__icon) {
     position: absolute;
     left: 16px;
     color: var(--theme-text-muted);
     pointer-events: none;
+    z-index: 1;
   }
 
   .equipment-search__input {
