@@ -44,7 +44,7 @@ const {
             <h3 class="category-card__title">{category.name}</h3>
             <p class="category-card__desc">{category.shortDesc}</p>
             <div class="category-card__pills">
-              {category.subcategories.map((sub) => (
+              {category.subcategories.slice(0, 3).map((sub) => (
                 <a
                   href={`/arriendo/${category.slug}/${sub.slug}`}
                   class="category-card__pill"
@@ -52,6 +52,14 @@ const {
                   {sub.name}
                 </a>
               ))}
+              {category.subcategories.length > 3 && (
+                <a
+                  href={`/arriendo/${category.slug}`}
+                  class="category-card__pill category-card__pill--more"
+                >
+                  +{category.subcategories.length - 3}
+                </a>
+              )}
             </div>
             <a href={`/arriendo/${category.slug}`} class="category-card__link">
               Ver categoría
@@ -213,6 +221,19 @@ const {
     background-color: var(--color-brand, #1a9c4a);
     border-color: var(--color-brand, #1a9c4a);
     color: var(--color-on-dark);
+  }
+
+  .category-card__pill--more {
+    background-color: var(--color-brand, #1a9c4a);
+    border-color: var(--color-brand, #1a9c4a);
+    color: var(--color-on-dark);
+    font-weight: 700;
+  }
+
+  .category-card__pill--more:hover,
+  .category-card__pill--more:focus {
+    background-color: var(--color-brand-dark, #157a3a);
+    border-color: var(--color-brand-dark, #157a3a);
   }
 
   .category-card__link {

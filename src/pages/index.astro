@@ -65,24 +65,28 @@ const services = [
   {
     title: 'Ingeniería',
     description: 'Diseño y gestión de proyectos',
+    seoText: 'Diseño, planificación y gestión integral de proyectos de ingeniería industrial y minera. Soluciones técnicas a medida con estándares de seguridad y eficiencia para la gran minería del norte de Chile.',
     image: servIngenieria.src,
     url: '/servicios/ingenieria',
   },
   {
     title: 'Construcción',
     description: 'Obras civiles e industriales',
+    seoText: 'Ejecución de obras civiles e industriales para los sectores minero, energético e infraestructura. Desde cimentaciones hasta estructuras complejas con altos estándares de calidad y plazos garantizados.',
     image: servConstruccion.src,
     url: '/servicios/construccion',
   },
   {
     title: 'Montajes',
     description: 'Electromecánico y estructural',
+    seoText: 'Montajes electromecánicos y estructurales para plantas industriales y faenas mineras. Instalación de equipos pesados, tuberías y estructuras de acero con personal certificado.',
     image: servMontajes.src,
     url: '/servicios/montajes',
   },
   {
     title: 'Infraestructura portuaria',
     description: 'Obras marítimas y muelles',
+    seoText: 'Construcción y mantención de infraestructura portuaria, muelles y obras marítimas. Experiencia en terminales de embarque, amarres y obras costeras en el norte de Chile.',
     image: portuaria.src,
     url: '/servicios/infraestructura-portuaria',
   },
@@ -182,6 +186,7 @@ const clientLogos = [
             </div>
             <div class="service-card__body">
               <h3 class="service-card__title">{service.title}</h3>
+              <p class="service-card__seo-text">{service.seoText}</p>
               <span class="service-card__link-cta" aria-hidden="true">
                 Conocer más
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -545,6 +550,17 @@ const clientLogos = [
     font-weight: 700;
     margin: 0;
     letter-spacing: -0.005em;
+  }
+
+  .service-card__seo-text {
+    color: var(--theme-text-muted, var(--color-ink-600));
+    font-size: 0.85rem;
+    line-height: 1.55;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .service-card__link-cta {

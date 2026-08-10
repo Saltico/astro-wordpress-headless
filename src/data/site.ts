@@ -52,9 +52,8 @@ export const topbarData = {
     },
   ] satisfies SocialLink[],
   links: [
-    { label: 'Canal de Integridad', url: '/canal-integridad' },
+    { label: 'Compliance', url: '/compliance' },
     { label: 'Noticias', url: '/noticias' },
-    { label: 'Cotizador', url: '/cotizador' },
   ],
 };
 
@@ -84,7 +83,6 @@ export const navigationData: NavItem[] = [
     ],
   },
   { label: 'Seguridad', url: '/seguridad' },
-  { label: 'Compliance', url: '/compliance' },
 /* TODO: DEFINIR SI SE DEBE MANTENER EL LINK DE CONTACTO EN LA NAVEGACIÓN PRINCIPAL   
  label: 'Contacto', url: '/contacto' }, */
 ];
