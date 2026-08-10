@@ -1,22 +1,25 @@
 ---
 // src/pages/index.astro
-// Homepage rental-first con search, categorías, featured equipment y cobertura geográfica.
+// Homepage rental-first con hero split, stats, servicios con imágenes, catálogo y CTA.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import StatsCounter from '@/components/ui/StatsCounter.astro';
 import LogoCarousel from '@/components/ui/LogoCarousel.astro';
 import CTABand from '@/components/ui/CTABand.astro';
-import HeroMedia from '@/components/ui/HeroMedia.astro';
 import EquipmentSearch from '@/components/rental/EquipmentSearch.astro';
 import CategoryShowcase from '@/components/rental/CategoryShowcase.astro';
-import FeaturedEquipment from '@/components/rental/FeaturedEquipment.astro';
-import CoverageSection from '@/components/ui/CoverageSection.astro';
-import ServicesCompact from '@/components/ui/ServicesCompact.astro';
+// import FeaturedEquipment from '@/components/rental/FeaturedEquipment.astro';
+// import CoverageSection from '@/components/ui/CoverageSection.astro';
 import type { StatItem } from '@/components/ui/StatsCounter.astro';
 import { localBusinessSchema } from '@/lib/seo';
 import { siteBrand, siteContact } from '@/data/site';
+import Icon from '@/components/ui/Icon.astro';
 
 import rentalHero from '@/assets/imgs/hero/arriendo/arriendo.avif';
+import servIngenieria from '@/assets/imgs/serv-ingenieria.jpg';
+import servConstruccion from '@/assets/imgs/serv-construccion.jpg';
+import servMontajes from '@/assets/imgs/serv-montajes.jpg';
+import portuaria from '@/assets/imgs/portuaria.jpg';
 
 const title = 'Arriendo de Maquinaria Pesada en el Norte de Chile | IP Proyectos Industriales';
 const description = 'Arriendo de grúas, movimiento de tierra, transporte y equipos especiales para minería e industria. Disponibilidad 24/7 en Atacama, Coquimbo y Antofagasta. Cotiza online.';
@@ -57,6 +60,34 @@ const stats: StatItem[] = [
   },
 ];
 
+// Servicios con imágenes (estilo news cards)
+const services = [
+  {
+    title: 'Ingeniería',
+    description: 'Diseño y gestión de proyectos',
+    image: servIngenieria.src,
+    url: '/servicios/ingenieria',
+  },
+  {
+    title: 'Construcción',
+    description: 'Obras civiles e industriales',
+    image: servConstruccion.src,
+    url: '/servicios/construccion',
+  },
+  {
+    title: 'Montajes',
+    description: 'Electromecánico y estructural',
+    image: servMontajes.src,
+    url: '/servicios/montajes',
+  },
+  {
+    title: 'Infraestructura portuaria',
+    description: 'Obras marítimas y muelles',
+    image: portuaria.src,
+    url: '/servicios/infraestructura-portuaria',
+  },
+];
+
 // Clientes
 const clientLogos = [
   { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/barrick.jpg', alt: 'Barrick' },
@@ -81,32 +112,45 @@ const clientLogos = [
 >
   <link slot="head" rel="preload" as="image" href={rentalHero.src} fetchpriority="high" />
 
-  <!-- §1: HERO + SEARCH -->
+  <!-- §1: HERO SPLIT — full-bleed image, text fades into image -->
   <section class="d-hero">
-    <HeroMedia
-      fallbackImage={rentalHero.src}
-      fallbackAlt="Arriendo de maquinaria pesada para minería e industria en el norte de Chile"
-      fallbackWidth={rentalHero.width}
-      fallbackHeight={rentalHero.height}
-      class="d-hero__media"
+    <!-- Full-bleed background image -->
+    <img
+      src={rentalHero.src}
+      alt="Arriendo de maquinaria pesada para minería e industria en el norte de Chile"
+      class="d-hero__bg"
+      width={rentalHero.width}
+      height={rentalHero.height}
+      fetchpriority="high"
     />
-    <div class="d-hero__overlay"></div>
-    <div class="d-hero__container">
-      <div class="d-hero__content">
+    <!-- Gradient overlay: dark left → transparent right -->
+    <div class="d-hero__overlay" aria-hidden="true"></div>
+    
+    <div class="d-hero__grid">
+      <!-- Lado izquierdo: Texto SEO (se difumina hacia la imagen) -->
+      <div class="d-hero__text">
         <h1 class="d-hero__title">Arriendo de equipos y maquinaria para <span>construcción y minería</span></h1>
         <p class="d-hero__subtitle">Grúas de hasta 400 toneladas, movimiento de tierra, transporte y equipos especiales. Disponibilidad 24/7 en Atacama, Coquimbo y Antofagasta.</p>
-        <EquipmentSearch />
+      </div>
+      
+      <!-- Lado derecho: Panel de búsqueda -->
+      <div class="d-hero__search">
+        <div class="d-hero__search-content">
+          <p class="d-hero__search-title">Encuentra tu máquina</p>
+          <EquipmentSearch />
+          <p class="d-hero__search-cta">
+            ¿Prefieres cotizar directamente? 
+            <a href="/cotizador" class="d-hero__search-link">
+              Ir al cotizador
+              <Icon name="arrow-right" size={14} />
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- §2: CATEGORY SHOWCASE -->
-  <CategoryShowcase />
-
-  <!-- §3: FEATURED EQUIPMENT -->
-  <FeaturedEquipment />
-
-  <!-- §4: STATS COUNTER -->
+  <!-- §2: STATS COUNTER -->
   <StatsCounter
     stats={stats}
     variant="dark"
@@ -116,10 +160,42 @@ const clientLogos = [
     duration={1500}
   />
 
-  <!-- §5: COVERAGE SECTION -->
-  <CoverageSection />
+  <!-- §3: SERVICIOS (con imágenes) -->
+  <section class="services-section">
+    <div class="services-section__container">
+      <header class="services-section__header">
+        <p class="services-section__eyebrow">También hacemos</p>
+        <h2 class="services-section__title">Ingeniería, construcción y montajes industriales</h2>
+      </header>
+      <div class="services-section__grid">
+        {services.map((service) => (
+          <a href={service.url} class="service-card">
+            <div class="service-card__image">
+              <img
+                src={service.image}
+                alt={service.title}
+                loading="lazy"
+                decoding="async"
+                width="800"
+                height="500"
+              />
+            </div>
+            <div class="service-card__body">
+              <h3 class="service-card__title">{service.title}</h3>
+              <span class="service-card__link-cta" aria-hidden="true">
+                Conocer más
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M5 12h14M13 5l7 7-7 7"/>
+                </svg>
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
 
-  <!-- §6: CLIENT LOGOS -->
+  <!-- §4: CLIENT LOGOS -->
   <LogoCarousel
     logos={clientLogos}
     eyebrow="Confían en nosotros"
@@ -129,10 +205,10 @@ const clientLogos = [
     pauseOnHover={true}
   />
 
-  <!-- §7: SERVICES COMPACT -->
-  <ServicesCompact />
+  <!-- §5: CATEGORY SHOWCASE -->
+  <CategoryShowcase />
 
-  <!-- §8: CTA BAND -->
+  <!-- §6: CTA BAND -->
   <CTABand
     eyebrow="Cotiza tu equipo ahora"
     title="¿Necesitas arrendar maquinaria? Cotiza en minutos"
@@ -147,71 +223,104 @@ const clientLogos = [
     contentAlign="center"
     minHeight="md"
   />
+
+  <!-- Secciones comentadas para mantener en el código pero no visibles -->
+  <!-- 
+  <FeaturedEquipment />
+  <CoverageSection />
+  -->
 </BaseLayout>
 
 <style>
-  /* ===== HERO ===== */
+  /* ===== HERO SPLIT — full-bleed image, text fades into image ===== */
   .d-hero {
     position: relative;
-    min-height: calc(65svh + var(--topbar-height, 40px) + var(--header-height, 80px));
+    min-height: calc(70svh + var(--topbar-height, 40px) + var(--header-height, 80px));
     margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     overflow: hidden;
+    background-color: var(--color-graphite, #0d1611);
   }
 
-  @media (max-width: 1180px) {
+  @media (max-width: 1024px) {
     .d-hero {
-      min-height: calc(100svh + var(--topbar-height, 40px) + var(--header-height, 72px));
+      min-height: auto;
+      padding-block: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 40px) 60px;
     }
   }
 
+  /* Full-bleed background image */
+  .d-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  /* Gradient overlay: dark left → transparent right (creates the diffusion) */
   .d-hero__overlay {
     position: absolute;
     inset: 0;
     z-index: 1;
     background: linear-gradient(
-      180deg,
-      rgba(13, 22, 17, 0.5) 0%,
-      rgba(13, 22, 17, 0.12) 30%,
-      rgba(13, 22, 17, 0.5) 60%,
-      rgba(13, 22, 17, 0.96) 100%
+      90deg,
+      rgba(13, 22, 17, 1) 0%,
+      rgba(13, 22, 17, 0.97) 25%,
+      rgba(13, 22, 17, 0.85) 45%,
+      rgba(13, 22, 17, 0.5) 65%,
+      rgba(13, 22, 17, 0.15) 85%,
+      rgba(13, 22, 17, 0) 100%
     );
   }
 
-  .d-hero__container {
+  @media (max-width: 1024px) {
+    .d-hero__overlay {
+      background: linear-gradient(
+        180deg,
+        rgba(13, 22, 17, 0.4) 0%,
+        rgba(13, 22, 17, 0.92) 60%,
+        rgba(13, 22, 17, 1) 100%
+      );
+    }
+  }
+
+  /* Grid container for text + search */
+  .d-hero__grid {
     position: relative;
     z-index: 2;
-    max-width: var(--container-max-width);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    max-width: var(--container-max-width, 1360px);
     width: 100%;
     margin-inline: auto;
-    padding: 60px var(--container-padding, 20px) clamp(40px, 7vh, 90px);
+    min-height: calc(70svh + var(--topbar-height, 40px) + var(--header-height, 80px));
+    align-items: center;
   }
 
-  .d-hero__content {
+  @media (max-width: 1024px) {
+    .d-hero__grid {
+      grid-template-columns: 1fr;
+      min-height: auto;
+      gap: 32px;
+    }
+  }
+
+  /* Left: SEO text - always fully visible */
+  .d-hero__text {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    justify-content: center;
+    padding: 80px 0 80px clamp(20px, 3vw, 60px);
   }
 
-  .d-hero__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--color-brand-300, #4ade80);
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 0.8rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    margin-bottom: 0;
-  }
-
-  .d-hero__eyebrow::before {
-    content: '';
-    width: 42px;
-    height: 2px;
-    background: var(--color-brand, #1a9c4a);
+  @media (max-width: 1024px) {
+    .d-hero__text {
+      padding: 40px 20px 0;
+    }
   }
 
   .d-hero__title {
@@ -220,22 +329,241 @@ const clientLogos = [
     font-weight: 900;
     line-height: 0.98;
     letter-spacing: -0.03em;
-    font-size: clamp(2.4rem, 6vw, 5.4rem);
-    max-width: 16ch;
+    font-size: clamp(2.2rem, 5vw, 4.5rem);
+    max-width: 18ch;
     text-wrap: balance;
-    margin: 0;
+    margin: 0 0 24px;
   }
 
   .d-hero__title span {
-    color: var(--color-brand-300, #4ade80);
+    color: var(--color-brand-300, #62bb74);
     font-weight: 900;
   }
 
   .d-hero__subtitle {
     color: rgba(255, 255, 255, 0.86);
-    font-size: clamp(1.05rem, 1.5vw, 1.3rem);
-    max-width: 54ch;
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+    max-width: 48ch;
     margin: 0;
     line-height: 1.55;
+  }
+
+  /* Right: Search panel floating over image */
+  .d-hero__search {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px clamp(20px, 3vw, 60px) 40px 0;
+  }
+
+  @media (max-width: 1024px) {
+    .d-hero__search {
+      padding: 0 20px 40px;
+    }
+  }
+
+  .d-hero__search-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 32px;
+    max-width: 420px;
+    width: 100%;
+    background: rgba(13, 22, 17, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+  }
+
+  @media (max-width: 1024px) {
+    .d-hero__search-content {
+      padding: 24px 20px;
+      max-width: 100%;
+    }
+  }
+
+  .d-hero__search-title {
+    color: var(--color-on-dark);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: 0.02em;
+    margin: 0;
+    text-align: center;
+  }
+
+  .d-hero__search-cta {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.9rem;
+    margin: 0;
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .d-hero__search-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-brand-300, #62bb74);
+    font-weight: 600;
+    text-decoration: none;
+    transition: gap 0.2s ease;
+  }
+
+  .d-hero__search-link:hover {
+    gap: 10px;
+  }
+
+  /* ===== SERVICIOS (news-card style: image + title + CTA) ===== */
+  .services-section {
+    padding-block: clamp(56px, 8vw, 100px);
+    background-color: var(--theme-bg);
+  }
+
+  .services-section__container {
+    max-width: var(--container-max-width, 1360px);
+    margin-inline: auto;
+    padding-inline: var(--container-padding, 20px);
+  }
+
+  .services-section__header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: clamp(28px, 4vw, 48px);
+  }
+
+  .services-section__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--theme-eyebrow);
+  }
+
+  .services-section__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .services-section__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.7rem, 3.2vw, 2.6rem);
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+    margin: 0;
+    color: var(--theme-heading);
+    text-wrap: balance;
+  }
+
+  .services-section__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  @media (max-width: 1024px) {
+    .services-section__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .services-section__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* News-card style: entire card is clickable link */
+  .service-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
+    border-radius: 14px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s var(--ease-out, ease),
+      border-color 0.25s var(--ease-out, ease),
+      box-shadow 0.25s var(--ease-out, ease);
+  }
+
+  .service-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-brand, #308f40);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  }
+
+  .service-card:focus-visible {
+    outline: 2px solid var(--color-brand, #308f40);
+    outline-offset: 4px;
+  }
+
+  .service-card__image {
+    display: block;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background-color: var(--theme-bg);
+  }
+
+  .service-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s var(--ease-out, ease);
+  }
+
+  .service-card:hover .service-card__image img {
+    transform: scale(1.05);
+  }
+
+  .service-card__body {
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .service-card__title {
+    color: var(--theme-text);
+    font-family: var(--font-heading);
+    font-size: 1.06rem;
+    line-height: 1.25;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+
+  .service-card__link-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--theme-eyebrow);
+    transition: color 0.2s var(--ease-out, ease);
+  }
+
+  .service-card__link-cta svg {
+    transition: transform 0.2s var(--ease-out, ease);
+  }
+
+  .service-card:hover .service-card__link-cta svg {
+    transform: translateX(4px);
   }
 </style>

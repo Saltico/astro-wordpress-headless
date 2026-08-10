@@ -5,10 +5,10 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import SplitSection from '@/components/ui/SplitSection.astro';
-import CTABand from '@/components/ui/CTABand.astro';
 import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import Icon from '@/components/ui/Icon.astro';
 import StatsCounter from '@/components/ui/StatsCounter.astro';
+import Button from '@/components/ui/Button.astro';
 import type { StatItem } from '@/components/ui/StatsCounter.astro';
 import montajesImg from '@/assets/imgs/montajes.jpg';
 import edificioImg from '@/assets/imgs/edificio.jpg';
@@ -122,22 +122,85 @@ const breadcrumbs = [
     background="dark"
   />
 
-  <!-- CTA -->
-  <CTABand
-    eyebrow="¿Quieres saber más?"
-    title="Conoce nuestro sistema de gestión"
-    subtitle="Descarga nuestra política HSEC o contáctanos para más información."
-    showForm={true}
-    buttons={[
-      { label: 'Contactar', href: '/contacto', variant: 'primary' },
-      { label: 'Descargar catálogo', href: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/IPP-2025.pdf', variant: 'outline', external: true },
-    ]}
-    backgroundImage={montajesImg.src}
-    backgroundWidth={montajesImg.width}
-    backgroundHeight={montajesImg.height}
-    contentAlign="center"
-    minHeight="sm"
-  />
+  <!-- Formulario de contacto -->
+  <section class="safety-form-section">
+    <!-- Background image -->
+    <img
+      src={edificioImg.src}
+      alt="Sistema de gestión HSEC de IP Proyectos Industriales"
+      class="safety-form-section__bg"
+      width={edificioImg.width}
+      height={edificioImg.height}
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="safety-form-section__overlay"></div>
+    
+    <Container>
+      <div class="safety-form-wrapper">
+        <!-- Texto informativo -->
+        <div class="safety-form-info">
+          <p class="safety-form-info__eyebrow">¿Quieres saber más?</p>
+          <h2 class="safety-form-info__title">Conoce nuestro sistema de gestión</h2>
+          <p class="safety-form-info__subtitle">
+            Contamos con un Departamento de Prevención de Riesgos y Medio Ambiente propio, y un Sistema de Gestión HSEC que respalda cada faena. Nuestro compromiso es con la seguridad de las personas y el cuidado del medio ambiente.
+          </p>
+          <div class="safety-form-info__features">
+            <div class="safety-info-feature">
+              <Icon name="shield" size={24} />
+              <span>Seguridad certificada</span>
+            </div>
+            <div class="safety-info-feature">
+              <Icon name="check" size={24} />
+              <span>Gestión responsable</span>
+            </div>
+            <div class="safety-info-feature">
+              <Icon name="certificate" size={24} />
+              <span>Cumplimiento normativo</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario en card con animación -->
+        <div class="safety-form-card" data-animate-slide>
+          <form class="safety-contact-form" action="/api/contact" method="POST" id="safetyContactForm">
+            <div class="safety-form-field">
+              <label for="safety-name">Nombre *</label>
+              <input type="text" id="safety-name" name="name" placeholder="Tu nombre completo" required>
+            </div>
+
+            <div class="safety-form-row">
+              <div class="safety-form-field">
+                <label for="safety-email">E-mail *</label>
+                <input type="email" id="safety-email" name="email" placeholder="tu@correo.cl" required>
+              </div>
+
+              <div class="safety-form-field">
+                <label for="safety-phone">Teléfono *</label>
+                <input type="tel" id="safety-phone" name="phone" placeholder="+56 9 ..." required>
+              </div>
+            </div>
+
+            <div class="safety-form-field">
+              <label for="safety-reason">Motivo *</label>
+              <input type="text" id="safety-reason" name="reason" placeholder="Ej: Consulta sobre política HSEC, denuncia, certificación..." required>
+            </div>
+
+            <div class="safety-form-field">
+              <label for="safety-message">Consulta *</label>
+              <textarea id="safety-message" name="message" rows="4" placeholder="Cuéntanos en qué podemos ayudarte..." required></textarea>
+            </div>
+
+            <div class="safety-form-actions">
+              <Button type="submit" variant="primary" size="lg">
+                Enviar mensaje
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Container>
+  </section>
 </BaseLayout>
 
 <style>
@@ -328,4 +391,237 @@ const breadcrumbs = [
     line-height: 1.5;
     margin: 0;
   }
+
+  /* Form Section */
+  .safety-form-section {
+    position: relative;
+    padding-block: clamp(80px, 10vw, 120px);
+    overflow: hidden;
+  }
+
+  .safety-form-section__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .safety-form-section__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      135deg,
+      rgba(13, 22, 17, 0.92) 0%,
+      rgba(13, 22, 17, 0.85) 50%,
+      rgba(13, 22, 17, 0.78) 100%
+    );
+  }
+
+  .safety-form-wrapper {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .safety-form-wrapper {
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+    }
+  }
+
+  /* Info Panel (texto informativo) */
+  .safety-form-info {
+    color: var(--color-on-dark);
+  }
+
+  .safety-form-info__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-brand-300, #62bb74);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .safety-form-info__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .safety-form-info__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    letter-spacing: -0.02em;
+    color: var(--color-on-dark);
+    margin: 0 0 20px;
+    line-height: 1.15;
+  }
+
+  .safety-form-info__subtitle {
+    margin: 0 0 32px;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+  }
+
+  .safety-form-info__features {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .safety-info-feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-on-dark);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .safety-info-feature :global(svg) {
+    color: var(--color-brand-300, #62bb74);
+    flex-shrink: 0;
+  }
+
+  /* Form Card (con animación) */
+  .safety-form-card {
+    background: var(--color-graphite, #0d1611);
+    border: 1px solid var(--theme-border);
+    border-radius: 18px;
+    padding: clamp(28px, 4vw, 44px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    
+    /* Animación inicial: oculto */
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .safety-form-card.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Contact Form */
+  .safety-contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .safety-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .safety-form-field label {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-on-dark);
+  }
+
+  .safety-form-field input,
+  .safety-form-field textarea,
+  .safety-form-field select {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: var(--color-on-dark);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .safety-form-field input::placeholder,
+  .safety-form-field textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .safety-form-field input:focus,
+  .safety-form-field textarea:focus,
+  .safety-form-field select:focus {
+    outline: none;
+    border-color: var(--color-brand, #308f40);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .safety-form-field textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .safety-form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media (min-width: 640px) {
+    .safety-form-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .safety-form-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+  }
 </style>
+
+<script>
+  // Animación de entrada del formulario
+  document.addEventListener('DOMContentLoaded', () => {
+    const formCard = document.querySelector('[data-animate-slide]');
+    if (!formCard) return;
+
+    // Verificar si el usuario prefiere movimiento reducido
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (prefersReducedMotion) {
+      // Si prefiere movimiento reducido, mostrar inmediatamente
+      formCard.classList.add('is-visible');
+      return;
+    }
+
+    // Usar IntersectionObserver para detectar cuando el formulario entra en viewport
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Pequeño delay para que la animación sea más noticeable
+            setTimeout(() => {
+              formCard.classList.add('is-visible');
+            }, 200);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.2, // Activar cuando el 20% del elemento sea visible
+        rootMargin: '0px 0px -100px 0px', // Activar un poco antes de que entre completamente
+      }
+    );
+
+    observer.observe(formCard);
+  });
+</script>

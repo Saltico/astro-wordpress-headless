@@ -119,15 +119,7 @@ export const footerData: {
         },
       ],
     },
-    {
-      title: 'Empresa',
-      links: [
-        { label: 'Nuestra empresa', url: '/nosotros' },
-        { label: 'Seguridad y medio ambiente', url: '/seguridad' },
-        { label: 'Compliance', url: '/compliance' },
-        { label: 'Canal de denuncias', url: '/canal-integridad' },
-      ],
-    },
+    // Columna "Empresa" oculta - Contacto toma su lugar
   ],
   legal: [
     { label: 'Aviso Legal', url: '/aviso-legal' },

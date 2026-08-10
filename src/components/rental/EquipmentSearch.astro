@@ -89,8 +89,7 @@ const searchIndexJson = JSON.stringify(searchIndex);
 <style>
   .equipment-search {
     width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
+    max-width: 400px;
   }
 
   .equipment-search__wrapper {
@@ -105,31 +104,32 @@ const searchIndexJson = JSON.stringify(searchIndex);
 
   .equipment-search__input-container :global(.equipment-search__icon) {
     position: absolute;
-    left: 16px;
-    color: var(--theme-text-muted);
+    left: 14px;
+    color: var(--color-ink-500, #6b7072);
     pointer-events: none;
     z-index: 1;
   }
 
   .equipment-search__input {
     width: 100%;
-    padding: 14px 16px 14px 48px;
-    background-color: var(--theme-bg-elevated);
-    border: 2px solid var(--theme-border);
-    border-radius: 12px;
-    color: var(--theme-text);
-    font-size: 1rem;
+    padding: 12px 14px 12px 44px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 2px solid transparent;
+    border-radius: var(--radius-sm, 0.5rem);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    color: var(--color-graphite, #0d1611);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .equipment-search__input:focus {
     outline: none;
-    border-color: var(--color-brand, #1a9c4a);
-    box-shadow: 0 0 0 3px rgba(26, 156, 74, 0.1);
+    border-color: var(--color-brand, #308f40);
+    box-shadow: 0 0 0 3px rgba(48, 143, 64, 0.2);
   }
 
   .equipment-search__input::placeholder {
-    color: var(--theme-text-muted);
+    color: var(--color-ink-500, #6b7072);
   }
 
   .equipment-search__results {
@@ -137,12 +137,12 @@ const searchIndexJson = JSON.stringify(searchIndex);
     top: calc(100% + 8px);
     left: 0;
     right: 0;
-    max-height: 400px;
+    max-height: 360px;
     overflow-y: auto;
     background-color: var(--theme-bg-elevated);
     border: 1px solid var(--theme-border);
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border-radius: var(--radius-md, 0.75rem);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     z-index: 50;
   }
 
@@ -155,61 +155,69 @@ const searchIndexJson = JSON.stringify(searchIndex);
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 12px 16px;
+    padding: 12px 14px;
     text-decoration: none;
     color: var(--theme-text);
+    font-family: var(--font-body);
     transition: background-color 0.15s ease;
   }
 
   .equipment-search__result-item:hover,
   .equipment-search__result-item:focus {
-    background-color: var(--theme-bg-hover);
+    background-color: var(--theme-bg-alt);
     outline: none;
   }
 
   .equipment-search__result-item[aria-selected="true"] {
-    background-color: var(--theme-bg-hover);
+    background-color: var(--theme-bg-alt);
   }
 
   .equipment-search__result-content {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
     flex: 1;
   }
 
   .equipment-search__result-name {
+    font-family: var(--font-heading);
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    color: var(--theme-text);
   }
 
   .equipment-search__result-meta {
     display: flex;
     gap: 8px;
-    font-size: 0.85rem;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
     color: var(--theme-text-muted);
   }
 
   .equipment-search__result-badge {
     display: inline-block;
     padding: 2px 8px;
-    background-color: var(--color-brand, #1a9c4a);
-    color: var(--color-on-dark);
-    font-size: 0.75rem;
+    background-color: var(--color-brand, #308f40);
+    color: var(--color-on-brand, #ffffff);
+    font-family: var(--font-heading);
+    font-size: 0.7rem;
     font-weight: 600;
     border-radius: 999px;
   }
 
   .equipment-search__empty {
-    padding: 24px 16px;
+    padding: 20px 14px;
     text-align: center;
     color: var(--theme-text-muted);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
   }
 
   .equipment-search__empty-link {
     display: inline-block;
     margin-top: 8px;
-    color: var(--color-brand, #1a9c4a);
+    color: var(--color-brand-300, #62bb74);
+    font-family: var(--font-heading);
     font-weight: 600;
     text-decoration: none;
   }
