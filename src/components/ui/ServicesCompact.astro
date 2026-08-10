@@ -1,0 +1,203 @@
+---
+// src/components/ui/ServicesCompact.astro
+// Sección compacta de servicios que guía a la web corporativa.
+// Muestra 4 servicios en una fila compacta con iconos.
+
+import Icon from '@/components/ui/Icon.astro';
+
+export interface Props {
+  eyebrow?: string;
+  title?: string;
+  class?: string;
+}
+
+const {
+  eyebrow = 'También hacemos',
+  title = 'Ingeniería, construcción y montajes industriales',
+  class: className,
+} = Astro.props;
+
+interface CompactService {
+  name: string;
+  icon: string;
+  url: string;
+  shortDesc: string;
+}
+
+const compactServices: CompactService[] = [
+  {
+    name: 'Ingeniería',
+    icon: 'blueprint',
+    url: '/servicios/ingenieria',
+    shortDesc: 'Diseño y gestión de proyectos',
+  },
+  {
+    name: 'Construcción',
+    icon: 'building',
+    url: '/servicios/construccion',
+    shortDesc: 'Obras civiles e industriales',
+  },
+  {
+    name: 'Montajes',
+    icon: 'wrench',
+    url: '/servicios/montajes',
+    shortDesc: 'Electromecánico y estructural',
+  },
+  {
+    name: 'Infraestructura portuaria',
+    icon: 'anchor',
+    url: '/servicios/infraestructura-portuaria',
+    shortDesc: 'Obras marítimas y muelles',
+  },
+];
+---
+
+<section class:list={['services-compact', className]}>
+  <div class="services-compact__container">
+    <div class="services-compact__header">
+      {eyebrow && <p class="services-compact__eyebrow">{eyebrow}</p>}
+      {title && <h2 class="services-compact__title">{title}</h2>}
+    </div>
+
+    <div class="services-compact__grid">
+      {compactServices.map((service) => (
+        <a href={service.url} class="service-link">
+          <div class="service-link__icon">
+            <Icon name={service.icon} size={32} />
+          </div>
+          <div class="service-link__content">
+            <h3 class="service-link__name">{service.name}</h3>
+            <p class="service-link__desc">{service.shortDesc}</p>
+          </div>
+          <Icon name="arrow-right" size={20} class="service-link__arrow" />
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .services-compact {
+    padding-block: clamp(40px, 6vw, 60px);
+    background-color: var(--theme-bg-alt);
+  }
+
+  .services-compact__container {
+    max-width: var(--container-max-width, 1360px);
+    margin-inline: auto;
+    padding-inline: var(--container-padding, 20px);
+  }
+
+  .services-compact__header {
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  .services-compact__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    color: var(--theme-eyebrow);
+  }
+
+  .services-compact__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .services-compact__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--theme-heading);
+  }
+
+  .services-compact__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  @media (max-width: 1024px) {
+    .services-compact__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .services-compact__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .service-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background-color: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--theme-text);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .service-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-color: var(--color-brand, #1a9c4a);
+  }
+
+  .service-link__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background-color: var(--color-brand, #1a9c4a);
+    color: var(--color-on-dark);
+    border-radius: 12px;
+  }
+
+  .service-link__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .service-link__name {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1rem;
+    margin: 0 0 4px;
+    color: var(--theme-heading);
+  }
+
+  .service-link__desc {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--theme-text-muted);
+  }
+
+  .service-link__arrow {
+    flex-shrink: 0;
+    color: var(--theme-text-muted);
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+
+  .service-link:hover .service-link__arrow {
+    transform: translateX(4px);
+    color: var(--color-brand, #1a9c4a);
+  }
+</style>

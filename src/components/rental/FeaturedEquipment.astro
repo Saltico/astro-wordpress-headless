@@ -1,0 +1,165 @@
+---
+// src/components/rental/FeaturedEquipment.astro
+// Carousel horizontal de equipos destacados curados manualmente.
+// Muestra 3-6 equipos con badges y botón de cotización.
+
+import { findCategory, findSubcategory } from '@/data/rental';
+import { featuredEquipment } from '@/data/site';
+import EquipmentCard from '@/components/rental/EquipmentCard.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+export interface Props {
+  eyebrow?: string;
+  title?: string;
+  class?: string;
+}
+
+const {
+  eyebrow = 'Destacados',
+  title = 'Equipos más solicitados',
+  class: className,
+} = Astro.props;
+
+// Build featured items with full data
+const featuredItems = featuredEquipment
+  .map((item) => {
+    const category = findCategory(item.categorySlug);
+    const subcategory = category ? findSubcategory(item.categorySlug, item.subcategorySlug) : undefined;
+    if (!category || !subcategory || subcategory.catalog.length === 0) return null;
+    
+    // Get first equipment from subcategory
+    const equipment = subcategory.catalog[0];
+    return {
+      ...equipment,
+      badge: item.badge,
+      categorySlug: item.categorySlug,
+      subcategorySlug: item.subcategorySlug,
+    };
+  })
+  .filter((item) => item !== null);
+---
+
+<section class:list={['featured-equipment', className]}>
+  <div class="featured-equipment__container">
+    <div class="featured-equipment__header">
+      {eyebrow && <p class="featured-equipment__eyebrow">{eyebrow}</p>}
+      {title && <h2 class="featured-equipment__title">{title}</h2>}
+    </div>
+
+    <div class="featured-equipment__carousel">
+      {featuredItems.map((item) => (
+        <div class="featured-equipment__card">
+          {item.badge && (
+            <span class="featured-equipment__badge">{item.badge}</span>
+          )}
+          <EquipmentCard item={item} showAddToQuote={true} />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .featured-equipment {
+    padding-block: clamp(56px, 8vw, 100px);
+    background-color: var(--theme-bg-alt);
+  }
+
+  .featured-equipment__container {
+    max-width: var(--container-max-width, 1360px);
+    margin-inline: auto;
+    padding-inline: var(--container-padding, 20px);
+  }
+
+  .featured-equipment__header {
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .featured-equipment__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    color: var(--theme-eyebrow);
+  }
+
+  .featured-equipment__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .featured-equipment__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--theme-heading);
+  }
+
+  .featured-equipment__carousel {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding-bottom: 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .featured-equipment__carousel::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .featured-equipment__carousel::-webkit-scrollbar-track {
+    background: var(--theme-bg);
+    border-radius: 4px;
+  }
+
+  .featured-equipment__carousel::-webkit-scrollbar-thumb {
+    background: var(--color-brand, #1a9c4a);
+    border-radius: 4px;
+  }
+
+  .featured-equipment__card {
+    position: relative;
+    flex: 0 0 calc(33.333% - 16px);
+    scroll-snap-align: start;
+  }
+
+  @media (max-width: 1024px) {
+    .featured-equipment__card {
+      flex: 0 0 calc(50% - 12px);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .featured-equipment__card {
+      flex: 0 0 calc(100% - 0px);
+    }
+  }
+
+  .featured-equipment__badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+    padding: 6px 14px;
+    background-color: var(--color-brand, #1a9c4a);
+    color: var(--color-on-dark);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8125rem;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+</style>

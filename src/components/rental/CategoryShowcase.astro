@@ -1,0 +1,234 @@
+---
+// src/components/rental/CategoryShowcase.astro
+// Grid visual de categorías de rental con imágenes y pills de subcategorías.
+// Pieza central del homepage rental-first.
+
+import { RENTAL_CATEGORIES } from '@/data/rental';
+import Icon from '@/components/ui/Icon.astro';
+
+export interface Props {
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
+  class?: string;
+}
+
+const {
+  eyebrow = 'Nuestro catálogo',
+  title = 'Equipos en arriendo para minería e industria',
+  subtitle = '',
+  class: className,
+} = Astro.props;
+---
+
+<section class:list={['category-showcase', className]}>
+  <div class="category-showcase__container">
+    <div class="category-showcase__header">
+      {eyebrow && <p class="category-showcase__eyebrow">{eyebrow}</p>}
+      {title && <h2 class="category-showcase__title">{title}</h2>}
+      {subtitle && <p class="category-showcase__subtitle">{subtitle}</p>}
+    </div>
+
+    <div class="category-showcase__grid">
+      {RENTAL_CATEGORIES.map((category) => (
+        <article class="category-card">
+          <div class="category-card__image-wrapper">
+            <img
+              src={category.heroImage}
+              alt={category.name}
+              class="category-card__image"
+              loading="lazy"
+            />
+          </div>
+          <div class="category-card__content">
+            <h3 class="category-card__title">{category.name}</h3>
+            <p class="category-card__desc">{category.shortDesc}</p>
+            <div class="category-card__pills">
+              {category.subcategories.map((sub) => (
+                <a
+                  href={`/arriendo/${category.slug}/${sub.slug}`}
+                  class="category-card__pill"
+                >
+                  {sub.name}
+                </a>
+              ))}
+            </div>
+            <a href={`/arriendo/${category.slug}`} class="category-card__link">
+              Ver categoría
+              <Icon name="arrow-right" size={18} />
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .category-showcase {
+    padding-block: clamp(56px, 8vw, 100px);
+    background-color: var(--theme-bg);
+  }
+
+  .category-showcase__container {
+    max-width: var(--container-max-width, 1360px);
+    margin-inline: auto;
+    padding-inline: var(--container-padding, 20px);
+  }
+
+  .category-showcase__header {
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .category-showcase__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    color: var(--theme-eyebrow);
+  }
+
+  .category-showcase__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .category-showcase__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    color: var(--theme-heading);
+  }
+
+  .category-showcase__subtitle {
+    font-size: 1.05rem;
+    line-height: 1.5;
+    max-width: 60ch;
+    margin: 0 auto;
+    color: var(--theme-text-muted);
+  }
+
+  .category-showcase__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 768px) {
+    .category-showcase__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .category-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+
+  .category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+    border-color: var(--color-brand, #1a9c4a);
+  }
+
+  .category-card__image-wrapper {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background-color: var(--color-graphite, #0d1611);
+  }
+
+  .category-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .category-card:hover .category-card__image {
+    transform: scale(1.05);
+  }
+
+  .category-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px 22px 22px;
+    flex: 1;
+  }
+
+  .category-card__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.4rem;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin: 0;
+    color: var(--theme-text);
+  }
+
+  .category-card__desc {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--theme-text-muted);
+  }
+
+  .category-card__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .category-card__pill {
+    display: inline-block;
+    padding: 6px 14px;
+    background-color: var(--theme-bg);
+    border: 1px solid var(--theme-border);
+    border-radius: 999px;
+    color: var(--theme-text-subtle);
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .category-card__pill:hover,
+  .category-card__pill:focus {
+    background-color: var(--color-brand, #1a9c4a);
+    border-color: var(--color-brand, #1a9c4a);
+    color: var(--color-on-dark);
+  }
+
+  .category-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--theme-eyebrow);
+    text-decoration: none;
+    margin-top: 8px;
+    transition: gap 0.2s ease;
+  }
+
+  .category-card__link:hover {
+    gap: 12px;
+  }
+</style>

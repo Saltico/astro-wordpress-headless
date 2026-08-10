@@ -1,0 +1,356 @@
+---
+// src/components/rental/EquipmentSearch.astro
+// Search bar client-side para encontrar equipos por nombre, categoría o subcategoría.
+// Inspirado en "Encuentra tu máquina" de SK Rental.
+
+import Icon from '@/components/ui/Icon.astro';
+import { RENTAL_CATEGORIES } from '@/data/rental';
+
+export interface Props {
+  placeholder?: string;
+  class?: string;
+}
+
+const { placeholder = 'Encuentra tu máquina... (ej: grúa 100 toneladas)', class: className } = Astro.props;
+
+// Build flat search index at build time
+interface SearchItem {
+  name: string;
+  category: string;
+  subcategory: string;
+  url: string;
+  capacity?: string;
+}
+
+const searchIndex: SearchItem[] = [];
+
+// Add categories
+RENTAL_CATEGORIES.forEach((category) => {
+  searchIndex.push({
+    name: category.name,
+    category: category.name,
+    subcategory: '',
+    url: `/arriendo/${category.slug}`,
+    capacity: '',
+  });
+
+  // Add subcategories
+  category.subcategories.forEach((sub) => {
+    searchIndex.push({
+      name: sub.name,
+      category: category.name,
+      subcategory: sub.name,
+      url: `/arriendo/${category.slug}/${sub.slug}`,
+      capacity: '',
+    });
+
+    // Add equipment
+    sub.catalog.forEach((equipment) => {
+      searchIndex.push({
+        name: equipment.name,
+        category: category.name,
+        subcategory: sub.name,
+        url: `/arriendo/${category.slug}/${sub.slug}`,
+        capacity: equipment.capacity,
+      });
+    });
+  });
+});
+
+// Serialize for client-side use
+const searchIndexJson = JSON.stringify(searchIndex);
+---
+
+<div class:list={['equipment-search', className]}>
+  <div class="equipment-search__wrapper">
+    <div class="equipment-search__input-container">
+      <Icon name="search" size={20} class="equipment-search__icon" />
+      <input
+        type="text"
+        class="equipment-search__input"
+        placeholder={placeholder}
+        aria-label="Buscar equipos"
+        role="combobox"
+        aria-expanded="false"
+        aria-controls="equipment-search-results"
+        aria-autocomplete="list"
+      />
+    </div>
+    <div
+      id="equipment-search-results"
+      class="equipment-search__results"
+      role="listbox"
+      aria-label="Resultados de búsqueda"
+      hidden
+    ></div>
+  </div>
+</div>
+
+<style>
+  .equipment-search {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .equipment-search__wrapper {
+    position: relative;
+  }
+
+  .equipment-search__input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .equipment-search__icon {
+    position: absolute;
+    left: 16px;
+    color: var(--theme-text-muted);
+    pointer-events: none;
+  }
+
+  .equipment-search__input {
+    width: 100%;
+    padding: 14px 16px 14px 48px;
+    background-color: var(--theme-bg-elevated);
+    border: 2px solid var(--theme-border);
+    border-radius: 12px;
+    color: var(--theme-text);
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .equipment-search__input:focus {
+    outline: none;
+    border-color: var(--color-brand, #1a9c4a);
+    box-shadow: 0 0 0 3px rgba(26, 156, 74, 0.1);
+  }
+
+  .equipment-search__input::placeholder {
+    color: var(--theme-text-muted);
+  }
+
+  .equipment-search__results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    z-index: 50;
+  }
+
+  .equipment-search__results[hidden] {
+    display: none;
+  }
+
+  .equipment-search__result-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: var(--theme-text);
+    transition: background-color 0.15s ease;
+  }
+
+  .equipment-search__result-item:hover,
+  .equipment-search__result-item:focus {
+    background-color: var(--theme-bg-hover);
+    outline: none;
+  }
+
+  .equipment-search__result-item[aria-selected="true"] {
+    background-color: var(--theme-bg-hover);
+  }
+
+  .equipment-search__result-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+
+  .equipment-search__result-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .equipment-search__result-meta {
+    display: flex;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--theme-text-muted);
+  }
+
+  .equipment-search__result-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background-color: var(--color-brand, #1a9c4a);
+    color: var(--color-on-dark);
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 999px;
+  }
+
+  .equipment-search__empty {
+    padding: 24px 16px;
+    text-align: center;
+    color: var(--theme-text-muted);
+  }
+
+  .equipment-search__empty-link {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--color-brand, #1a9c4a);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .equipment-search__empty-link:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<script define:vars={{ searchIndexJson }}>
+  (function () {
+    const searchIndex = JSON.parse(searchIndexJson);
+    const input = document.querySelector('.equipment-search__input');
+    const resultsContainer = document.querySelector('.equipment-search__results');
+
+    if (!input || !resultsContainer) return;
+
+    let selectedIndex = -1;
+    let currentResults = [];
+
+    // Normalize string for search (remove diacritics)
+    function normalize(str) {
+      return str
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+    }
+
+    // Fuzzy search
+    function search(query) {
+      const normalizedQuery = normalize(query);
+      return searchIndex.filter((item) => {
+        const normalizedName = normalize(item.name);
+        const normalizedCategory = normalize(item.category);
+        const normalizedSubcategory = normalize(item.subcategory);
+        return (
+          normalizedName.includes(normalizedQuery) ||
+          normalizedCategory.includes(normalizedQuery) ||
+          normalizedSubcategory.includes(normalizedQuery)
+        );
+      });
+    }
+
+    // Render results
+    function renderResults(results) {
+      if (results.length === 0) {
+        resultsContainer.innerHTML = `
+          <div class="equipment-search__empty">
+            No se encontraron equipos.
+            <a href="/arriendo" class="equipment-search__empty-link">Ver catálogo completo →</a>
+          </div>
+        `;
+      } else {
+        resultsContainer.innerHTML = results
+          .slice(0, 8)
+          .map((item, index) => `
+            <a
+              href="${item.url}"
+              class="equipment-search__result-item"
+              role="option"
+              aria-selected="${index === selectedIndex}"
+              data-index="${index}"
+            >
+              <div class="equipment-search__result-content">
+                <div class="equipment-search__result-name">${item.name}</div>
+                <div class="equipment-search__result-meta">
+                  <span>${item.category}</span>
+                  ${item.subcategory ? `<span>• ${item.subcategory}</span>` : ''}
+                </div>
+              </div>
+              ${item.capacity ? `<span class="equipment-search__result-badge">${item.capacity}</span>` : ''}
+            </a>
+          `)
+          .join('');
+      }
+      resultsContainer.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+    }
+
+    // Hide results
+    function hideResults() {
+      resultsContainer.hidden = true;
+      input.setAttribute('aria-expanded', 'false');
+      selectedIndex = -1;
+    }
+
+    // Update selected item
+    function updateSelection() {
+      const items = resultsContainer.querySelectorAll('.equipment-search__result-item');
+      items.forEach((item, index) => {
+        item.setAttribute('aria-selected', index === selectedIndex ? 'true' : 'false');
+      });
+    }
+
+    // Debounce
+    let debounceTimer;
+    function debounce(fn, delay) {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(fn, delay);
+    }
+
+    // Event listeners
+    input.addEventListener('input', (e) => {
+      const query = e.target.value.trim();
+      if (query.length < 2) {
+        hideResults();
+        return;
+      }
+      debounce(() => {
+        currentResults = search(query);
+        selectedIndex = -1;
+        renderResults(currentResults);
+      }, 200);
+    });
+
+    input.addEventListener('keydown', (e) => {
+      if (resultsContainer.hidden) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, currentResults.length - 1);
+        updateSelection();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, -1);
+        updateSelection();
+      } else if (e.key === 'Enter' && selectedIndex >= 0) {
+        e.preventDefault();
+        const selectedItem = resultsContainer.querySelector(`[data-index="${selectedIndex}"]`);
+        if (selectedItem) {
+          selectedItem.click();
+        }
+      } else if (e.key === 'Escape') {
+        hideResults();
+      }
+    });
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.equipment-search')) {
+        hideResults();
+      }
+    });
+  })();
+</script>

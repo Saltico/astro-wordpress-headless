@@ -33,6 +33,10 @@ export const ICON_NAMES = [
   'sun',
   'moon',
   'trash',
+  'blueprint',
+  'building',
+  'wrench',
+  'anchor',
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];
