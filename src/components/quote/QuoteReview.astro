@@ -83,7 +83,7 @@ import Button from '@/components/ui/Button.astro';
 
   <footer class="quote-review__actions">
     <p class="quote-review__hint">
-      Al enviar se abre WhatsApp con el detalle completo de tu cotización.
+      Envía tu cotización por WhatsApp o por correo electrónico.
     </p>
     <div class="quote-review__cta-group">
       <Button
@@ -97,14 +97,28 @@ import Button from '@/components/ui/Button.astro';
       </Button>
       <Button
         href="#"
+        variant="secondary"
+        size="lg"
+        icon="email"
+        data-review-action="email"
+        type="button"
+      >
+        Enviar por correo
+      </Button>
+      <Button
+        href="#"
         variant="primary"
         size="lg"
         icon="whatsapp"
         data-review-action="send"
         target="_blank"
       >
-        Enviar cotización
+        Enviar por WhatsApp
       </Button>
+    </div>
+    <div class="quote-review__email-feedback" data-review-email-feedback hidden>
+      <div class="quote-review__email-feedback-icon" data-review-email-feedback-icon></div>
+      <p class="quote-review__email-feedback-message" data-review-email-feedback-message></p>
     </div>
   </footer>
 </section>
@@ -304,6 +318,113 @@ import Button from '@/components/ui/Button.astro';
     window.dispatchEvent(new CustomEvent('quote-wizard-navigate', { detail }));
   }
 
+  // ─────────────────────────────────────────────────────────────
+  // Envío de correo electrónico
+  // ─────────────────────────────────────────────────────────────
+
+  interface EmailFeedback {
+    success: boolean;
+    message: string;
+  }
+
+  function showEmailFeedback(feedback: EmailFeedback): void {
+    const feedbackEl = document.querySelector<HTMLElement>('[data-review-email-feedback]');
+    const iconEl = document.querySelector<HTMLElement>('[data-review-email-feedback-icon]');
+    const messageEl = document.querySelector<HTMLElement>('[data-review-email-feedback-message]');
+
+    if (!feedbackEl || !iconEl || !messageEl) return;
+
+    feedbackEl.hidden = false;
+    feedbackEl.classList.remove('is-success', 'is-error');
+    feedbackEl.classList.add(feedback.success ? 'is-success' : 'is-error');
+
+    iconEl.textContent = feedback.success ? '✓' : '✗';
+    messageEl.textContent = feedback.message;
+
+    // Auto-ocultar después de 5 segundos si fue exitoso
+    if (feedback.success) {
+      setTimeout(() => {
+        feedbackEl.hidden = true;
+      }, 5000);
+    }
+  }
+
+  function hideEmailFeedback(): void {
+    const feedbackEl = document.querySelector<HTMLElement>('[data-review-email-feedback]');
+    if (feedbackEl) feedbackEl.hidden = true;
+  }
+
+  async function sendQuoteEmail(): Promise<void> {
+    const emailBtn = document.querySelector<HTMLButtonElement>('[data-review-action="email"]');
+    if (!emailBtn) return;
+
+    const cart = getCart();
+    const company = getCompanyData();
+    const globalNotes = getGlobalNotes();
+
+    // Validar que haya equipos en el carrito
+    if (cart.items.length === 0) {
+      showEmailFeedback({
+        success: false,
+        message: 'No hay equipos en el cotizador. Agrega al menos un equipo antes de enviar.',
+      });
+      return;
+    }
+
+    // Validar email del cliente
+    if (!company.email || company.email.trim() === '') {
+      showEmailFeedback({
+        success: false,
+        message: 'El email de la empresa es requerido. Ve al paso anterior y completa los datos.',
+      });
+      return;
+    }
+
+    // Mostrar loading
+    const originalText = emailBtn.textContent;
+    emailBtn.disabled = true;
+    emailBtn.textContent = 'Enviando...';
+    hideEmailFeedback();
+
+    try {
+      const response = await fetch('/api/quote-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          cart,
+          company,
+          globalNotes,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        showEmailFeedback({
+          success: true,
+          message: '✓ Cotización enviada exitosamente. Revisa tu correo para confirmar los detalles.',
+        });
+      } else {
+        showEmailFeedback({
+          success: false,
+          message: result.message || 'Error al enviar el correo. Por favor intenta nuevamente.',
+        });
+      }
+    } catch (err) {
+      console.error('Error al enviar correo:', err);
+      showEmailFeedback({
+        success: false,
+        message: 'Error de conexión. Por favor verifica tu conexión a internet e intenta nuevamente.',
+      });
+    } finally {
+      // Restaurar botón
+      emailBtn.disabled = false;
+      emailBtn.textContent = originalText;
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     paint();
     subscribe(paint);
@@ -315,6 +436,12 @@ import Button from '@/components/ui/Button.astro';
     });
     document.querySelector<HTMLButtonElement>('[data-quote-wizard-step1]')?.addEventListener('click', () => {
       dispatchNavigate(1);
+    });
+
+    // Email button
+    document.querySelector<HTMLButtonElement>('[data-review-action="email"]')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      sendQuoteEmail();
     });
   });
 </script>
@@ -777,6 +904,79 @@ import Button from '@/components/ui/Button.astro';
 
     .quote-review__cta-group :global(.btn) {
       width: 100%;
+    }
+  }
+
+  /* ── Email feedback ── */
+  .quote-review__email-feedback {
+    margin-top: var(--space-4);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    animation: quote-review-fade-in 0.3s var(--ease-out);
+  }
+
+  .quote-review__email-feedback[hidden] {
+    display: none;
+  }
+
+  .quote-review__email-feedback.is-success {
+    background-color: color-mix(in srgb, var(--color-success, #10b981) 10%, var(--theme-bg-alt));
+    border: 1px solid color-mix(in srgb, var(--color-success, #10b981) 30%, var(--theme-border));
+  }
+
+  .quote-review__email-feedback.is-error {
+    background-color: color-mix(in srgb, var(--color-error, #ef4444) 10%, var(--theme-bg-alt));
+    border: 1px solid color-mix(in srgb, var(--color-error, #ef4444) 30%, var(--theme-border));
+  }
+
+  .quote-review__email-feedback-icon {
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+    font-size: var(--text-small);
+  }
+
+  .quote-review__email-feedback.is-success .quote-review__email-feedback-icon {
+    background-color: var(--color-success, #10b981);
+    color: white;
+  }
+
+  .quote-review__email-feedback.is-error .quote-review__email-feedback-icon {
+    background-color: var(--color-error, #ef4444);
+    color: white;
+  }
+
+  .quote-review__email-feedback-message {
+    margin: 0;
+    font-size: var(--text-small);
+    line-height: 1.6;
+    color: var(--theme-text);
+  }
+
+  .quote-review__email-feedback.is-success .quote-review__email-feedback-message {
+    color: var(--color-success, #10b981);
+  }
+
+  .quote-review__email-feedback.is-error .quote-review__email-feedback-message {
+    color: var(--color-error, #ef4444);
+  }
+
+  @keyframes quote-review-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 </style>

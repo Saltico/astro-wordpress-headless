@@ -1,0 +1,63 @@
+sequenceDiagram
+    actor User as Usuario
+    participant Browser as Navegador
+    participant Review as QuoteReview.astro
+    participant API as /api/quote-email.ts
+    participant Resend as Resend API
+    participant WhatsApp as WhatsApp
+
+    Note over User, WhatsApp: Flujo de Envío de Cotización por Email
+
+    User->>Review: Clic "Enviar cotización"
+    activate Review
+    
+    Review->>Review: Validar carrito no vacío
+    Review->>Review: Mostrar loading spinner
+    Review->>Review: Deshabilitar botón
+
+    Review->>API: POST /api/quote-email<br/>{cart, company, globalNotes}
+    activate API
+
+    API->>API: Validar datos de entrada
+    API->>API: Construir template HTML
+    
+    alt Datos válidos
+        API->>Resend: resend.emails.send({<br/>  from: 'cotizaciones@tudominio.com',<br/>  to: 'matias.cp@dalt.cl',<br/>  subject: 'Nueva Cotización - [Empresa]',<br/>  html: templateHTML<br/>})
+        activate Resend
+        
+        alt Envío exitoso
+            Resend-->>API: { id: 'email_xxx' }
+            deactivate Resend
+            API-->>Review: 200 OK { success: true, emailId }
+            deactivate API
+            
+            Review->>Review: Mostrar confirmación ✓
+            Review->>WhatsApp: Abrir wa.me con mensaje
+            WhatsApp-->>Browser: Abrir chat de WhatsApp
+            
+        else Error en Resend
+            Resend-->>API: Error
+            deactivate Resend
+            API-->>Review: 500 Error { success: false, error }
+            deactivate API
+            
+            Review->>Review: Mostrar error
+            Review->>Review: Mantener botón habilitado
+            Review->>WhatsApp: Abrir wa.me como fallback
+        end
+        
+    else Datos inválidos
+        API-->>Review: 400 Bad Request { success: false, errors }
+        deactivate API
+        Review->>Review: Mostrar errores de validación
+    end
+    
+    deactivate Review
+
+    Note over User, WhatsApp: Flujo Alternativo: Solo WhatsApp (sin email)
+
+    alt Email deshabilitado
+        User->>Review: Clic "Enviar cotización"
+        Review->>WhatsApp: Abrir wa.me directamente
+        WhatsApp-->>Browser: Abrir chat de WhatsApp
+    end

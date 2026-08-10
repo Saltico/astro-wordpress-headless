@@ -73,3 +73,33 @@ flowchart TD
 - [Esfuerzo](./reports/effort-analysis.md)
 - [Consistencia visual previa](./quote-design-consistency.md)
 - [Selector de equipos](./quote-cart/10-equipment-selector.md)
+
+---
+
+# Integración de Resend Email para Cotizaciones
+
+## Resumen
+
+Nueva feature para enviar correos electrónicos automáticamente después de completar una cotización utilizando la API de Resend. El correo incluirá el resumen completo de equipos seleccionados, datos de la empresa y notas globales.
+
+## Estado
+
+**Status**: Planned | **Esfuerzo**: Medio (2-3 días) | **Prioridad**: Alta
+
+## Arquitectura
+
+```mermaid
+flowchart LR
+    User[Usuario] --> Review[QuoteReview]
+    Review --> API[/api/quote-email]
+    API --> Resend[Resend API]
+    Resend --> Email[Correo enviado]
+    Review --> WhatsApp[WhatsApp]
+```
+
+## Documentos relacionados
+
+- [Plan de feature](./features/resend-email-integration.md)
+- [Flujo de envío](./flows/resend-email-flow.mmd)
+- [Factibilidad](./reports/resend-email-feasibility.md)
+- [Esfuerzo](./reports/resend-email-effort.md)
