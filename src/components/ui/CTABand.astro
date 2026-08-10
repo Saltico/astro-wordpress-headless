@@ -8,6 +8,7 @@
 
 import Button from './Button.astro';
 import QuoteFormAdvanced from './QuoteFormAdvanced.astro';
+import Eyebrow from './Eyebrow.astro';
 import type { IconName } from '@/lib/icons';
 
 export interface CTAButton {
@@ -85,7 +86,7 @@ const alignClasses = {
   <div class="cta-band__overlay" style={`opacity: ${overlayOpacity};`}></div>
 
   <div class="cta-band__container">
-    {eyebrow && <p class="cta-band__eyebrow">{eyebrow}</p>}
+    {eyebrow && <Eyebrow text={eyebrow} align={contentAlign} />}
 
     <h2 class="cta-band__title">{title}</h2>
 
@@ -172,20 +173,12 @@ const alignClasses = {
     text-align: center;
   }
 
-  .cta-band--center .cta-band__eyebrow {
-    justify-content: center;
-  }
-
   .cta-band--center .cta-band__buttons {
     justify-content: center;
   }
 
   .cta-band--left .cta-band__container {
     text-align: left;
-  }
-
-  .cta-band--left .cta-band__eyebrow {
-    justify-content: flex-start;
   }
 
   .cta-band--left .cta-band__buttons {
@@ -196,33 +189,8 @@ const alignClasses = {
     text-align: right;
   }
 
-  .cta-band--right .cta-band__eyebrow {
-    justify-content: flex-end;
-  }
-
   .cta-band--right .cta-band__buttons {
     justify-content: flex-end;
-  }
-
-  /* Eyebrow */
-  .cta-band__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 0.8rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--theme-eyebrow);
-    margin-bottom: 20px;
-  }
-
-  .cta-band__eyebrow::before {
-    content: '';
-    width: 42px;
-    height: 2px;
-    background: currentColor;
   }
 
   /* Title */

@@ -14,6 +14,7 @@ import type { StatItem } from '@/components/ui/StatsCounter.astro';
 import { localBusinessSchema } from '@/lib/seo';
 import { siteBrand, siteContact } from '@/data/site';
 import Icon from '@/components/ui/Icon.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
 
 import rentalHero from '@/assets/imgs/hero/arriendo/arriendo.avif';
 import servIngenieria from '@/assets/imgs/serv-ingenieria.jpg';
@@ -173,7 +174,7 @@ const clientLogos = [
   <section class="services-section">
     <div class="services-section__container">
       <header class="services-section__header">
-        <p class="services-section__eyebrow">También hacemos</p>
+        <Eyebrow text="También hacemos" />
         <h2 class="services-section__title">Ingeniería, construcción y montajes industriales</h2>
       </header>
       <div class="services-section__grid">
@@ -194,9 +195,7 @@ const clientLogos = [
               <p class="service-card__seo-text">{service.seoText}</p>
               <span class="service-card__link-cta" aria-hidden="true">
                 Conocer más
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M5 12h14M13 5l7 7-7 7"/>
-                </svg>
+                <Icon name="arrow-right" size={14} />
               </span>
             </div>
           </a>
@@ -444,26 +443,6 @@ const clientLogos = [
     align-items: flex-start;
     gap: 12px;
     margin-bottom: clamp(28px, 4vw, 48px);
-  }
-
-  .services-section__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 0.8rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    margin: 0;
-    color: var(--theme-eyebrow);
-  }
-
-  .services-section__eyebrow::before {
-    content: '';
-    width: 42px;
-    height: 2px;
-    background: currentColor;
   }
 
   .services-section__title {

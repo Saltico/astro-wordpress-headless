@@ -6,6 +6,7 @@
 import Container from './Container.astro';
 import Button from './Button.astro';
 import StatsCounter from './StatsCounter.astro';
+import Eyebrow from './Eyebrow.astro';
 import type { StatItem } from './StatsCounter.astro';
 
 export interface Props {
@@ -70,7 +71,7 @@ const variantClasses = {
 
   <Container class="hero-section__container">
     <div class="hero-section__content">
-      {eyebrow && <p class="hero-section__eyebrow">{eyebrow}</p>}
+      {eyebrow && <Eyebrow text={eyebrow} decorated={false} />}
       
       <h1 class="hero-section__title">{title}</h1>
       
@@ -193,16 +194,6 @@ const variantClasses = {
 
   .hero-section--centered .hero-section__stats {
     justify-content: center;
-  }
-
-  .hero-section__eyebrow {
-    display: inline-block;
-    margin: 0 0 var(--space-3);
-    font-size: var(--text-small);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--theme-eyebrow);
   }
 
   .hero-section__title {

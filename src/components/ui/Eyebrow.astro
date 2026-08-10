@@ -2,30 +2,32 @@
 // src/components/ui/Eyebrow.astro
 // Componente Eyebrow unificado del design system.
 //
-// Reemplaza las implementaciones duplicadas en:
-// - ServicesGrid, ClientsGrid, NewsGrid, SplitSection, CTABand
-// - PageHero, HeroSection, QuoteHero
-// - ServiceLayout, RentalLayout
-// - EquipmentPicker, QuoteReview
-//
 // Patrón visual: texto uppercase con línea decorativa a la izquierda.
 // Usa el token --theme-eyebrow para el color, que se adapta al tema activo.
+//
+// Props:
+//   - text: texto del eyebrow (requerido)
+//   - align: alineación horizontal (default: 'left')
+//   - decorated: mostrar línea decorativa ::before (default: true)
+//   - class: clase CSS adicional para overrides
 //
 // Ejemplos:
 //   <Eyebrow text="Nuestros servicios" />
 //   <Eyebrow text="Confían en nosotros" class="custom-class" />
 //   <Eyebrow text="Blog" align="center" />
+//   <Eyebrow text="Hero eyebrow" decorated={false} />
 
 export interface Props {
   text: string;
   align?: 'left' | 'center' | 'right';
+  decorated?: boolean;
   class?: string;
 }
 
-const { text, align = 'left', class: className } = Astro.props;
+const { text, align = 'left', decorated = true, class: className } = Astro.props;
 ---
 
-<p class:list={['eyebrow', `eyebrow--${align}`, className]}>
+<p class:list={['eyebrow', `eyebrow--${align}`, !decorated && 'eyebrow--plain', className]}>
   {text}
 </p>
 
@@ -49,6 +51,10 @@ const { text, align = 'left', class: className } = Astro.props;
     height: 2px;
     background-color: var(--theme-eyebrow);
     flex-shrink: 0;
+  }
+
+  .eyebrow--plain::before {
+    display: none;
   }
 
   .eyebrow--center {

@@ -12,6 +12,8 @@
 // .compliance-hero, .contact-hero, .news-hero, etc. con un único componente
 // consistente.
 
+import Eyebrow from './Eyebrow.astro';
+
 export interface Props {
   image: string;
   imageAlt?: string;
@@ -58,7 +60,7 @@ const hasActionsSlot = Astro.slots.has('actions');
       </div>
     )}
 
-    {eyebrow && <p class="page-hero__eyebrow">{eyebrow}</p>}
+    {eyebrow && <Eyebrow text={eyebrow} />}
     <h1 class="page-hero__title">{title}</h1>
     {subtitle && <p class="page-hero__subtitle">{subtitle}</p>}
 
@@ -126,26 +128,6 @@ const hasActionsSlot = Astro.slots.has('actions');
 
   .page-hero__breadcrumbs {
     margin-bottom: 20px;
-  }
-
-  .page-hero__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--theme-eyebrow);
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin: 0 0 16px;
-  }
-
-  .page-hero__eyebrow::before {
-    content: '';
-    width: 42px;
-    height: 2px;
-    background: currentColor;
   }
 
   .page-hero__title {

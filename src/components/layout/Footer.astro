@@ -152,7 +152,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
 <style>
   .footer {
     background-color: var(--color-graphite, #0d1611);
-    color: rgba(255, 255, 255, 0.78);
+    color: var(--theme-text-body-dark);
   }
 
   .footer__main {
@@ -201,7 +201,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
     margin: 0 0 var(--space-5);
     line-height: 1.6;
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.72);
+    color: var(--theme-text-subtle-dark);
   }
 
   .footer__social {
@@ -215,7 +215,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
     justify-content: center;
     width: 2.25rem;
     height: 2.25rem;
-    color: rgba(255, 255, 255, 0.72);
+    color: var(--theme-text-subtle-dark);
     background: rgba(255, 255, 255, 0.08);
     border-radius: 50%;
     transition: color 0.2s ease, background 0.2s ease, transform 0.2s ease;
@@ -255,7 +255,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
 
   .footer__link {
     font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.72);
+    color: var(--theme-text-subtle-dark);
     text-decoration: none;
     transition: color 0.2s ease;
   }
@@ -280,7 +280,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
     align-items: flex-start;
     gap: var(--space-3);
     font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.72);
+    color: var(--theme-text-subtle-dark);
   }
 
   .footer__contact-item :global(svg) {
@@ -290,7 +290,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
   }
 
   .footer__contact-link {
-    color: rgba(255, 255, 255, 0.72);
+    color: var(--theme-text-subtle-dark);
     text-decoration: none;
     transition: color 0.2s ease;
   }
@@ -319,7 +319,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
     margin-inline: auto;
     padding: var(--space-4) var(--container-padding, 20px);
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.52);
+    color: var(--theme-text-legal-dark);
   }
 
   @media (min-width: 768px) {
@@ -335,6 +335,6 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
   }
 
   .footer__site-url {
-    color: rgba(255, 255, 255, 0.52);
+    color: var(--theme-text-legal-dark);
   }
 </style>

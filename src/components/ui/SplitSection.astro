@@ -6,6 +6,7 @@
 import Container from './Container.astro';
 import Icon from './Icon.astro';
 import Button from './Button.astro';
+import Eyebrow from './Eyebrow.astro';
 import type { IconName } from '@/lib/icons';
 
 export interface MiniStat {
@@ -73,7 +74,7 @@ const backgroundClasses = {
   <Container>
     <div class="split-section__grid">
       <div class="split-section__content reveal">
-        {eyebrow && <p class="split-section__eyebrow">{eyebrow}</p>}
+        {eyebrow && <Eyebrow text={eyebrow} />}
         
         <h2 class="split-section__title">{title}</h2>
         
@@ -193,35 +194,6 @@ const backgroundClasses = {
     max-width: 50rem;
     margin-inline: auto;
     text-align: center;
-  }
-
-  /* Eyebrow */
-  .split-section__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 0.8rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-  }
-
-  .split-section--light .split-section__eyebrow,
-  .split-section--alt .split-section__eyebrow {
-    color: var(--theme-eyebrow);
-  }
-
-  .split-section--dark .split-section__eyebrow {
-    color: var(--theme-eyebrow);
-  }
-
-  .split-section__eyebrow::before {
-    content: '';
-    width: 42px;
-    height: 2px;
-    background: currentColor;
   }
 
   /* Title */

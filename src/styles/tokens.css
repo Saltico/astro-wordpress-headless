@@ -178,6 +178,9 @@
   --theme-text: var(--color-on-dark);
   --theme-text-muted: var(--color-on-dark-muted);
   --theme-text-subtle: rgba(255, 255, 255, 0.6);
+  --theme-text-body-dark: rgba(255, 255, 255, 0.78);
+  --theme-text-subtle-dark: rgba(255, 255, 255, 0.72);
+  --theme-text-legal-dark: rgba(255, 255, 255, 0.52);
   --theme-heading: var(--color-on-dark);
   --theme-border: var(--color-line-dark);
   --theme-surface: var(--color-graphite);
@@ -195,6 +198,9 @@
   --theme-text: var(--color-ink);
   --theme-text-muted: var(--color-ink-500);
   --theme-text-subtle: var(--color-ink-500);
+  --theme-text-body-dark: var(--color-ink-500);
+  --theme-text-subtle-dark: var(--color-ink-500);
+  --theme-text-legal-dark: var(--color-ink-500);
   --theme-heading: var(--color-ink);
   --theme-border: var(--color-line);
   --theme-surface: #ffffff;

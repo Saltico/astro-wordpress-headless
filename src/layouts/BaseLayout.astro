@@ -138,12 +138,63 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
     <link rel="preload" href="/fonts/archivo-var-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin />
 
-    <!-- Anti-FOUC: aplicar tema antes del primer paint -->
     <script>
+      // 1. Anti-FOUC: aplicar tema antes del primer paint
       (function() {
         const s = localStorage.getItem('theme-preference');
         const t = s === 'dark' || s === 'light' ? s : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
         document.documentElement.setAttribute('data-theme', t);
+      })();
+
+      // 2. Intersection Observer global para animación reveal
+      if ('IntersectionObserver' in window) {
+        const revealObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                revealObserver.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.1 }
+        );
+
+        document.querySelectorAll('.reveal').forEach((el) => {
+          revealObserver.observe(el);
+        });
+      }
+
+      // 3. Toast layer (notificaciones efímeras del cotizador)
+      (function () {
+        if (typeof window === 'undefined' || typeof document === 'undefined') return;
+        const layer = document.createElement('div');
+        layer.setAttribute('data-toast-layer', '');
+        layer.style.cssText =
+          'position:fixed;bottom:5.5rem;right:1rem;z-index:95;display:flex;flex-direction:column;gap:0.5rem;pointer-events:none;';
+        document.body.appendChild(layer);
+
+        window.addEventListener('quote-cart:toast', (event) => {
+          const e = event as CustomEvent<{ kind: 'info' | 'warning' | 'error'; message: string }>;
+          const toast = document.createElement('div');
+          toast.textContent = e.detail.message;
+          toast.setAttribute('role', 'status');
+          const bg =
+            e.detail.kind === 'warning'
+              ? 'var(--color-warning, #b7791f)'
+              : e.detail.kind === 'error'
+                ? 'var(--color-danger, #c0392b)'
+                : 'var(--color-brand, #308f40)';
+          toast.style.cssText = `padding:0.75rem 1rem;background-color:${bg};color:#fff;font-weight:700;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.2);opacity:0;transition:opacity 0.2s ease;pointer-events:auto;max-width:320px;font-size:0.9rem;`;
+          layer.appendChild(toast);
+          requestAnimationFrame(() => {
+            toast.style.opacity = '1';
+          });
+          window.setTimeout(() => {
+            toast.style.opacity = '0';
+            window.setTimeout(() => toast.remove(), 250);
+          }, 2500);
+        });
       })();
     </script>
 
@@ -207,61 +258,6 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
     }
 
     <QuoteCartFloatingButton />
-
-    <script>
-      // Intersection Observer global para animación reveal
-      if ('IntersectionObserver' in window) {
-        const revealObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-                revealObserver.unobserve(entry.target);
-              }
-            });
-          },
-          { threshold: 0.1 }
-        );
-
-        document.querySelectorAll('.reveal').forEach((el) => {
-          revealObserver.observe(el);
-        });
-      }
-    </script>
-
-    <script>
-      // Toast layer (notificaciones efímeras del cotizador)
-      (function () {
-        if (typeof window === 'undefined' || typeof document === 'undefined') return;
-        const layer = document.createElement('div');
-        layer.setAttribute('data-toast-layer', '');
-        layer.style.cssText =
-          'position:fixed;bottom:5.5rem;right:1rem;z-index:95;display:flex;flex-direction:column;gap:0.5rem;pointer-events:none;';
-        document.body.appendChild(layer);
-
-        window.addEventListener('quote-cart:toast', (event) => {
-          const e = event as CustomEvent<{ kind: 'info' | 'warning' | 'error'; message: string }>;
-          const toast = document.createElement('div');
-          toast.textContent = e.detail.message;
-          toast.setAttribute('role', 'status');
-          const bg =
-            e.detail.kind === 'warning'
-              ? 'var(--color-warning, #b7791f)'
-              : e.detail.kind === 'error'
-                ? 'var(--color-danger, #c0392b)'
-                : 'var(--color-brand, #308f40)';
-          toast.style.cssText = `padding:0.75rem 1rem;background-color:${bg};color:#fff;font-weight:700;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.2);opacity:0;transition:opacity 0.2s ease;pointer-events:auto;max-width:320px;font-size:0.9rem;`;
-          layer.appendChild(toast);
-          requestAnimationFrame(() => {
-            toast.style.opacity = '1';
-          });
-          window.setTimeout(() => {
-            toast.style.opacity = '0';
-            window.setTimeout(() => toast.remove(), 250);
-          }, 2500);
-        });
-      })();
-    </script>
   </body>
 </html>
 

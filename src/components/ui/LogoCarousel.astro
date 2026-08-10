@@ -6,6 +6,8 @@
 // design system, subtítulo en tono medio). Mantiene la animación
 // marquee con 2 grupos duplicados y `pauseOnHover` opcional.
 
+import Eyebrow from './Eyebrow.astro';
+
 export interface LogoItem {
   src: string;
   alt: string;
@@ -56,7 +58,7 @@ const hasHeader = Boolean(eyebrow || title || subtitle);
 >
   {hasHeader && (
     <header class="logo-carousel__header">
-      {eyebrow && <p class="logo-carousel__eyebrow">{eyebrow}</p>}
+      {eyebrow && <Eyebrow text={eyebrow} align="center" />}
       {title && <h2 class="logo-carousel__title">{title}</h2>}
       {subtitle && <p class="logo-carousel__subtitle">{subtitle}</p>}
     </header>
@@ -107,6 +109,27 @@ const hasHeader = Boolean(eyebrow || title || subtitle);
   </div>
 </section>
 
+<script>
+  // Pausar animación del carrusel cuando no está en viewport
+  // para reducir consumo de CPU/GPU
+  (function () {
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return;
+    
+    const tracks = document.querySelectorAll('.logo-carousel__track');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const track = entry.target as HTMLElement;
+          track.style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
+        });
+      },
+      { threshold: 0 }
+    );
+    
+    tracks.forEach((track) => observer.observe(track));
+  })();
+</script>
+
 <style>
   .logo-carousel {
     padding: clamp(48px, 6vw, 80px) 0;
@@ -139,29 +162,6 @@ const hasHeader = Boolean(eyebrow || title || subtitle);
     padding-inline: var(--container-padding, 20px);
     text-align: center;
     margin-bottom: clamp(28px, 4vw, 48px);
-  }
-
-  /* Eyebrow — mismo patrón que en el resto del sitio (ServicesGrid,
-     SplitSection, CTABand, etc.): línea decorativa ::before, color de
-     acento, mayúsculas, tracking amplio, tipografía del design system. */
-  .logo-carousel__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 0.8rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    margin: 0 0 14px;
-    color: var(--theme-eyebrow);
-  }
-
-  .logo-carousel__eyebrow::before {
-    content: '';
-    width: 42px;
-    height: 2px;
-    background: currentColor;
   }
 
   .logo-carousel__title {
