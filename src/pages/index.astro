@@ -13,7 +13,7 @@ import FeaturedEquipment from '@/components/rental/FeaturedEquipment.astro';
 import CoverageSection from '@/components/ui/CoverageSection.astro';
 import ServicesCompact from '@/components/ui/ServicesCompact.astro';
 import type { StatItem } from '@/components/ui/StatsCounter.astro';
-import { localBusinessSchema, combineSchemas, organizationSchema, websiteSchema } from '@/lib/seo';
+import { localBusinessSchema } from '@/lib/seo';
 import { siteBrand, siteContact } from '@/data/site';
 
 import rentalHero from '@/assets/imgs/hero/arriendo/arriendo.avif';
@@ -21,17 +21,13 @@ import rentalHero from '@/assets/imgs/hero/arriendo/arriendo.avif';
 const title = 'Arriendo de Maquinaria Pesada en el Norte de Chile | IP Proyectos Industriales';
 const description = 'Arriendo de grúas, movimiento de tierra, transporte y equipos especiales para minería e industria. Disponibilidad 24/7 en Atacama, Coquimbo y Antofagasta. Cotiza online.';
 
-const jsonLd = combineSchemas(
-  organizationSchema(),
-  websiteSchema(),
-  localBusinessSchema({
-    name: siteBrand.name,
-    address: siteContact.address,
-    phone: siteContact.phoneMobile,
-    email: siteContact.email,
-    areaServed: ['Atacama', 'Coquimbo', 'Antofagasta'],
-  })
-);
+const jsonLd = localBusinessSchema({
+  name: siteBrand.name,
+  address: siteContact.address,
+  phone: siteContact.phoneMobile,
+  email: siteContact.email,
+  areaServed: ['Atacama', 'Coquimbo', 'Antofagasta'],
+});
 
 // Stats rental-focused
 const stats: StatItem[] = [
