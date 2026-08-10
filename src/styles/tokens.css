@@ -90,6 +90,9 @@
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1.25rem;
+  --radius-card: 0.875rem;
+  --radius-panel: 1rem;
+  --radius-toast: 0.625rem;
   --radius-pill: 999px;
 
   /* Sombras */
@@ -177,10 +180,10 @@
   --theme-bg-elevated: var(--color-graphite-3);
   --theme-text: var(--color-on-dark);
   --theme-text-muted: var(--color-on-dark-muted);
-  --theme-text-subtle: rgba(255, 255, 255, 0.6);
-  --theme-text-body-dark: rgba(255, 255, 255, 0.78);
-  --theme-text-subtle-dark: rgba(255, 255, 255, 0.72);
-  --theme-text-legal-dark: rgba(255, 255, 255, 0.52);
+  --theme-text-subtle: rgba(255, 255, 255, 0.65);
+  --theme-text-body-dark: rgba(255, 255, 255, 0.82);
+  --theme-text-subtle-dark: rgba(255, 255, 255, 0.78);
+  --theme-text-legal-dark: rgba(255, 255, 255, 0.6);
   --theme-heading: var(--color-on-dark);
   --theme-border: var(--color-line-dark);
   --theme-surface: var(--color-graphite);

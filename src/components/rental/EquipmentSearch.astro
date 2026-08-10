@@ -11,7 +11,7 @@ export interface Props {
   class?: string;
 }
 
-const { placeholder = 'Encuentra tu máquina... (ej: grúa 100 toneladas)', class: className } = Astro.props;
+const { placeholder = 'Grúa 100 toneladas...', class: className } = Astro.props;
 
 // Build flat search index at build time
 interface SearchItem {
@@ -89,7 +89,7 @@ const searchIndexJson = JSON.stringify(searchIndex);
 <style>
   .equipment-search {
     width: 100%;
-    max-width: 400px;
+    max-width: 480px;
   }
 
   .equipment-search__wrapper {
@@ -246,18 +246,32 @@ const searchIndexJson = JSON.stringify(searchIndex);
         .replace(/[\u0300-\u036f]/g, '');
     }
 
-    // Fuzzy search
+    // Hierarchical search: returns only the most specific level of match
+    // Priority: equipment name > subcategory > category
     function search(query) {
       const normalizedQuery = normalize(query);
+      
+      // Level 1: Search in equipment names (most specific)
+      const equipmentMatches = searchIndex.filter((item) => {
+        return item.name && normalize(item.name).includes(normalizedQuery);
+      });
+      
+      if (equipmentMatches.length > 0) {
+        return equipmentMatches;
+      }
+      
+      // Level 2: Search in subcategory names
+      const subcategoryMatches = searchIndex.filter((item) => {
+        return item.subcategory && normalize(item.subcategory).includes(normalizedQuery);
+      });
+      
+      if (subcategoryMatches.length > 0) {
+        return subcategoryMatches;
+      }
+      
+      // Level 3: Search in category names (least specific)
       return searchIndex.filter((item) => {
-        const normalizedName = normalize(item.name);
-        const normalizedCategory = normalize(item.category);
-        const normalizedSubcategory = normalize(item.subcategory);
-        return (
-          normalizedName.includes(normalizedQuery) ||
-          normalizedCategory.includes(normalizedQuery) ||
-          normalizedSubcategory.includes(normalizedQuery)
-        );
+        return item.category && normalize(item.category).includes(normalizedQuery);
       });
     }
 
@@ -285,7 +299,7 @@ const searchIndexJson = JSON.stringify(searchIndex);
                 <div class="equipment-search__result-name">${item.name}</div>
                 <div class="equipment-search__result-meta">
                   <span>${item.category}</span>
-                  ${item.subcategory ? `<span>• ${item.subcategory}</span>` : ''}
+                  ${item.subcategory ? `<span>› ${item.subcategory}</span>` : ''}
                 </div>
               </div>
               ${item.capacity ? `<span class="equipment-search__result-badge">${item.capacity}</span>` : ''}

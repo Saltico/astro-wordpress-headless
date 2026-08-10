@@ -55,7 +55,10 @@ rounded:
   xs: "0.25rem"
   sm: "0.5rem"
   md: "0.75rem"
+  card: "0.875rem"
   lg: "1.25rem"
+  panel: "1rem"
+  toast: "0.625rem"
   pill: "999px"
 spacing:
   1: "0.25rem"
@@ -186,7 +189,7 @@ The system uses a hybrid approach: subtle shadows for cards on light backgrounds
 
 ## Shapes
 
-The system uses rounded corners consistently: `0.5rem` (8px) for inputs and small elements, `0.75rem` (12px) for cards, `1.25rem` (20px) for large containers, and `999px` (pill) for buttons and tags.
+The system uses rounded corners consistently: `0.5rem` (8px) for inputs and small elements, `0.75rem` (12px) for cards, `0.875rem` (14px) for service cards, `1rem` (16px) for search panels, `1.25rem` (20px) for large containers, and `999px` (pill) for buttons and tags.
 
 **Corner strategy:** All corners are rounded. No sharp edges. The pill radius (999px) for buttons creates a modern, approachable feel that contrasts with the industrial typography.
 

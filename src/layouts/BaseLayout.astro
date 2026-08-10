@@ -185,7 +185,7 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
               : e.detail.kind === 'error'
                 ? 'var(--color-danger, #c0392b)'
                 : 'var(--color-brand, #308f40)';
-          toast.style.cssText = `padding:0.75rem 1rem;background-color:${bg};color:#fff;font-weight:700;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.2);opacity:0;transition:opacity 0.2s ease;pointer-events:auto;max-width:320px;font-size:0.9rem;`;
+          toast.style.cssText = `padding:0.75rem 1rem;background-color:${bg};color:#fff;font-weight:700;border-radius:var(--radius-toast);box-shadow:var(--shadow-md);opacity:0;transition:opacity 0.2s ease;pointer-events:auto;max-width:320px;font-size:var(--text-small);`;
           layer.appendChild(toast);
           requestAnimationFrame(() => {
             toast.style.opacity = '1';
