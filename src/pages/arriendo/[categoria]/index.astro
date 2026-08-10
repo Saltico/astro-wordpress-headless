@@ -23,7 +23,7 @@ export function getStaticPaths() {
 const { category } = Astro.props;
 
 const breadcrumbs = [
-  { label: 'Empresa', url: '/' },
+  { label: 'Inicio', url: '/' },
   { label: 'Arriendo de Equipos', url: '/arriendo' },
   { label: category.name, url: `/arriendo/${category.slug}` },
 ];
