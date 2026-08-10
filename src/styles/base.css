@@ -129,7 +129,9 @@ video {
   transform: translateY(0);
 }
 
-/* Reduced motion */
+/* Reduced motion: remove transform/scroll motion but preserve
+   instantaneous state changes (color, opacity, visibility) so
+   hover/focus feedback is not destroyed. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -138,6 +140,13 @@ video {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* Preserve instantaneous color/opacity state changes */
+  a:hover,
+  button:hover,
+  [role="button"]:hover {
+    transition-duration: 0s !important;
   }
 }
 

@@ -123,12 +123,11 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
     top: 0;
     background-color: var(--color-brand, #348f41);
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-    color: var(--color-on-dark);
+    color: #fff;
     font-family: var(--font-body);
     font-size: 0.8125rem;
     line-height: 1.4;
     transition: transform 0.3s var(--ease-out, ease);
-    will-change: transform;
     z-index: 101; /* sobre el header sticky */
   }
 
@@ -167,25 +166,25 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: rgba(255, 255, 255, 0.92);
+    color: #fff;
     text-decoration: none;
     transition: color 0.15s var(--ease-out, ease);
   }
 
   .topbar__link:hover,
   .topbar__link:focus-visible {
-    color: var(--color-on-dark);
+    color: #fff;
     text-decoration: underline;
     text-underline-offset: 3px;
   }
 
   .topbar__link--highlight {
-    color: var(--color-on-dark);
+    color: #fff;
     font-weight: 600;
   }
 
   .topbar__icon {
-    color: var(--color-on-dark);
+    color: #fff;
     flex-shrink: 0;
   }
 
@@ -204,7 +203,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
     justify-content: center;
     width: 28px;
     height: 28px;
-    color: var(--color-on-dark);
+    color: #fff;
     border-radius: 50%;
     transition: background-color 0.15s var(--ease-out, ease),
       transform 0.15s var(--ease-out, ease);

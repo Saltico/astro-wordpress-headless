@@ -67,6 +67,7 @@ const services = [
     description: 'Diseño y gestión de proyectos',
     seoText: 'Diseño, planificación y gestión integral de proyectos de ingeniería industrial y minera. Soluciones técnicas a medida con estándares de seguridad y eficiencia para la gran minería del norte de Chile.',
     image: servIngenieria.src,
+    imageAlt: 'Equipo de ingeniería industrial en planta minera del norte de Chile',
     url: '/servicios/ingenieria',
   },
   {
@@ -74,6 +75,7 @@ const services = [
     description: 'Obras civiles e industriales',
     seoText: 'Ejecución de obras civiles e industriales para los sectores minero, energético e infraestructura. Desde cimentaciones hasta estructuras complejas con altos estándares de calidad y plazos garantizados.',
     image: servConstruccion.src,
+    imageAlt: 'Obras civiles e industriales en faena minera',
     url: '/servicios/construccion',
   },
   {
@@ -81,6 +83,7 @@ const services = [
     description: 'Electromecánico y estructural',
     seoText: 'Montajes electromecánicos y estructurales para plantas industriales y faenas mineras. Instalación de equipos pesados, tuberías y estructuras de acero con personal certificado.',
     image: servMontajes.src,
+    imageAlt: 'Montaje electromecánico de equipos pesados en faena',
     url: '/servicios/montajes',
   },
   {
@@ -88,6 +91,7 @@ const services = [
     description: 'Obras marítimas y muelles',
     seoText: 'Construcción y mantención de infraestructura portuaria, muelles y obras marítimas. Experiencia en terminales de embarque, amarres y obras costeras en el norte de Chile.',
     image: portuaria.src,
+    imageAlt: 'Infraestructura portuaria y obras marítimas en el norte de Chile',
     url: '/servicios/infraestructura-portuaria',
   },
 ];
@@ -126,6 +130,7 @@ const clientLogos = [
       width={rentalHero.width}
       height={rentalHero.height}
       fetchpriority="high"
+      decoding="async"
     />
     <!-- Gradient overlay: dark left → transparent right -->
     <div class="d-hero__overlay" aria-hidden="true"></div>
@@ -177,7 +182,7 @@ const clientLogos = [
             <div class="service-card__image">
               <img
                 src={service.image}
-                alt={service.title}
+                alt={service.imageAlt}
                 loading="lazy"
                 decoding="async"
                 width="800"

@@ -246,10 +246,10 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
           toast.setAttribute('role', 'status');
           const bg =
             e.detail.kind === 'warning'
-              ? '#f59e0b'
+              ? 'var(--color-warning, #b7791f)'
               : e.detail.kind === 'error'
-                ? '#c0392b'
-                : 'var(--color-brand, #348f41)';
+                ? 'var(--color-danger, #c0392b)'
+                : 'var(--color-brand, #308f40)';
           toast.style.cssText = `padding:0.75rem 1rem;background-color:${bg};color:#fff;font-weight:700;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.2);opacity:0;transition:opacity 0.2s ease;pointer-events:auto;max-width:320px;font-size:0.9rem;`;
           layer.appendChild(toast);
           requestAnimationFrame(() => {

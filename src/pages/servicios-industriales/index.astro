@@ -1,17 +1,38 @@
 ---
 // src/pages/servicios-industriales/index.astro
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import SplitSection from '@/components/ui/SplitSection.astro';
+import CTABand from '@/components/ui/CTABand.astro';
 import Container from '@/components/ui/Container.astro';
 import SectionLayout from '@/components/ui/SectionLayout.astro';
+import Icon from '@/components/ui/Icon.astro';
+import Button from '@/components/ui/Button.astro';
 import { serviceSchema } from '@/lib/seo';
+import heroImg from '@/assets/imgs/serv-montajes.jpg';
 
 const title = 'Servicios Industriales | IP Proyectos Industriales';
 const description =
-  'Servicios industriales para la gran minería: montaje industrial, obras civiles y proyectos llave en mano.';
+  'Servicios industriales para la gran minería: montaje industrial, obras civiles y proyectos llave en mano en el norte de Chile.';
 
 const breadcrumbs = [
   { label: 'Inicio', url: '/' },
   { label: 'Servicios Industriales' },
+];
+
+const servicios = [
+  {
+    title: 'Montaje Industrial',
+    description: 'Montajes electromecánicos y estructurales para plantas industriales y faenas mineras con personal certificado.',
+    url: '/servicios-industriales/montaje-industrial',
+    icon: 'certificate',
+  },
+  {
+    title: 'Obras Civiles',
+    description: 'Ejecución de obras civiles e industriales para los sectores minero, energético e infraestructura.',
+    url: '/servicios-industriales/obras-civiles',
+    icon: 'shield',
+  },
 ];
 ---
 
@@ -21,33 +42,134 @@ const breadcrumbs = [
   breadcrumbs={breadcrumbs}
   jsonLd={serviceSchema('Servicios Industriales', description, Astro.url.pathname)}
 >
+  <PageHero
+    image={heroImg.src}
+    imageAlt="Servicios industriales para la gran minería"
+    eyebrow="Servicios Industriales"
+    title="Soluciones integrales para la gran minería"
+    subtitle="Montaje industrial, obras civiles y proyectos llave en mano con los más altos estándares de seguridad y calidad."
+    minHeight="sm"
+  />
+
   <SectionLayout spacing="lg">
     <Container>
-      <h1>Servicios Industriales</h1>
-      <p>Hub de servicios industriales para minería.</p>
-      <ul>
-        <li><a href="/servicios-industriales/montaje-industrial">Montaje Industrial</a></li>
-        <li><a href="/servicios-industriales/obras-civiles">Obras Civiles</a></li>
-      </ul>
+      <div class="servicios-grid">
+        {servicios.map((servicio) => (
+          <a href={servicio.url} class="servicio-card">
+            <div class="servicio-card__icon">
+              <Icon name={servicio.icon} size={28} />
+            </div>
+            <h2 class="servicio-card__title">{servicio.title}</h2>
+            <p class="servicio-card__desc">{servicio.description}</p>
+            <span class="servicio-card__cta">
+              Conocer más
+              <Icon name="arrow-right" size={14} />
+            </span>
+          </a>
+        ))}
+      </div>
     </Container>
   </SectionLayout>
+
+  <CTABand
+    eyebrow="Cotiza tu proyecto"
+    title="¿Necesitas servicios industriales?"
+    subtitle="Cuéntanos sobre tu faena y te respondemos en menos de 48 horas."
+    buttons={[
+      { label: 'Solicitar cotización', href: '/cotizador', variant: 'primary', icon: 'arrow-right', ariaLabel: 'Ir al cotizador' },
+      { label: 'Contactar por WhatsApp', href: 'https://wa.me/56965593202?text=Hola%20IP%20Proyectos%20Industriales%2C%20necesito%20servicios%20industriales.', variant: 'outline', external: true, icon: 'whatsapp' },
+    ]}
+    contentAlign="center"
+    minHeight="sm"
+  />
 </BaseLayout>
 
 <style>
-  ul {
+  .servicios-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  @media (min-width: 768px) {
+    .servicios-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .servicio-card {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
-    margin-top: var(--space-6);
+    gap: 14px;
+    padding: 32px 28px;
+    background: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
+    border-radius: 14px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s var(--ease-out, ease),
+      border-color 0.25s var(--ease-out, ease),
+      box-shadow 0.25s var(--ease-out, ease);
   }
 
-  a {
+  .servicio-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-brand);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  }
+
+  .servicio-card:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 4px;
+  }
+
+  .servicio-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: var(--radius-md);
+    background: var(--color-brand-050);
     color: var(--color-brand);
-    font-weight: 500;
   }
 
-  a:hover,
-  a:focus {
-    text-decoration: underline;
+  .servicio-card__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: -0.01em;
+    color: var(--theme-heading);
+    margin: 0;
+  }
+
+  .servicio-card__desc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--theme-text-muted);
+    margin: 0;
+  }
+
+  .servicio-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--theme-eyebrow);
+  }
+
+  .servicio-card:hover .servicio-card__cta {
+    gap: 10px;
+  }
+
+  .servicio-card__cta :global(svg) {
+    transition: transform 0.2s var(--ease-out, ease);
+  }
+
+  .servicio-card:hover .servicio-card__cta :global(svg) {
+    transform: translateX(4px);
   }
 </style>

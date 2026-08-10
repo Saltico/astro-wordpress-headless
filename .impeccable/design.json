@@ -1,0 +1,237 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-10T00:00:00.000Z",
+  "title": "Design System: IP Proyectos Industriales",
+  "extensions": {
+    "colorMeta": {
+      "brand": {
+        "role": "primary",
+        "displayName": "Industrial Green",
+        "canonical": "#308f40",
+        "tonalRamp": [
+          "#0f2e14",
+          "#1a4d22",
+          "#226f31",
+          "#308f40",
+          "#3fa84e",
+          "#62bb74",
+          "#8fd39a",
+          "#c2e8c8"
+        ]
+      },
+      "graphite": {
+        "role": "neutral",
+        "displayName": "Graphite Base",
+        "canonical": "#0d1611",
+        "tonalRamp": [
+          "#050907",
+          "#0d1611",
+          "#15201a",
+          "#1e2a23",
+          "#2a3830",
+          "#3a4a40",
+          "#5a6e62",
+          "#8a9e92"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#242627",
+        "tonalRamp": [
+          "#0a0b0b",
+          "#242627",
+          "#3a3d3e",
+          "#52565a",
+          "#6b7072",
+          "#8a8f92",
+          "#b0b5b8",
+          "#d8dcde"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headlines only. Used once per page, max 20 characters."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section titles and page headers. Appears 2-4 times per page."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Card titles, sub-sections, and component headers."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Paragraphs, descriptions, and form labels. Max line length 65-75ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Eyebrows, form labels, navigation items, and metadata. Always uppercase."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-sm",
+        "value": "0 1px 2px rgba(36, 38, 39, 0.06)",
+        "purpose": "Subtle lift for inputs and small elements on light backgrounds."
+      },
+      {
+        "name": "shadow-md",
+        "value": "0 4px 12px rgba(36, 38, 39, 0.08)",
+        "purpose": "Default card shadow at rest on light backgrounds."
+      },
+      {
+        "name": "shadow-lg",
+        "value": "0 8px 24px rgba(36, 38, 39, 0.12)",
+        "purpose": "Hover state for cards and elevated elements."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+        "purpose": "Default easing for all transitions. Creates a snappy, confident feel."
+      },
+      {
+        "name": "motion-fast",
+        "value": "120ms",
+        "purpose": "Micro-interactions: button press, focus ring."
+      },
+      {
+        "name": "motion-base",
+        "value": "200ms",
+        "purpose": "Standard transitions: hover, color changes."
+      },
+      {
+        "name": "motion-slow",
+        "value": "300ms",
+        "purpose": "Larger movements: card lift, panel reveal."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" },
+      { "name": "2xl", "value": "1536px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main CTA button. Brand green fill, white text, pill shape.",
+      "html": "<button class=\"ds-btn-primary\">Cotizar ahora</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.625rem; font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 0.98rem; line-height: 1; padding: 14px 26px; background-color: var(--color-brand, #308f40); color: #fff; border: 1.5px solid transparent; border-radius: 999px; cursor: pointer; transition: transform 200ms cubic-bezier(0.2, 0.7, 0.2, 1), background-color 200ms cubic-bezier(0.2, 0.7, 0.2, 1); } .ds-btn-primary:hover { background-color: var(--color-brand-600, #226f31); transform: translateY(-2px); } .ds-btn-primary:focus-visible { outline: 2px solid var(--color-brand, #308f40); outline-offset: 3px; } .ds-btn-primary:active { transform: translateY(1px) scale(0.99); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Secondary button. Transparent background, ink border, for non-primary actions.",
+      "html": "<button class=\"ds-btn-ghost\">Ver servicios</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 0.625rem; font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 0.98rem; line-height: 1; padding: 14px 26px; background-color: transparent; color: var(--color-ink, #242627); border: 1.5px solid var(--color-line, #e2e4e5); border-radius: 999px; cursor: pointer; transition: transform 200ms cubic-bezier(0.2, 0.7, 0.2, 1), border-color 200ms cubic-bezier(0.2, 0.7, 0.2, 1); } .ds-btn-ghost:hover { border-color: var(--color-ink, #242627); transform: translateY(-2px); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--color-brand, #308f40); outline-offset: 3px; }"
+    },
+    {
+      "name": "Ghost Button on Dark",
+      "kind": "button",
+      "refersTo": "button-ghost-on-dark",
+      "description": "Ghost variant for dark backgrounds. White text, subtle white border.",
+      "html": "<button class=\"ds-btn-ghost-dark\">Hablar con ejecutivo</button>",
+      "css": ".ds-btn-ghost-dark { display: inline-flex; align-items: center; justify-content: center; gap: 0.625rem; font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 0.98rem; line-height: 1; padding: 14px 26px; background-color: transparent; color: var(--color-on-dark, #f3f7f4); border: 1.5px solid rgba(255, 255, 255, 0.1); border-radius: 999px; cursor: pointer; transition: transform 200ms cubic-bezier(0.2, 0.7, 0.2, 1), background-color 200ms cubic-bezier(0.2, 0.7, 0.2, 1), border-color 200ms cubic-bezier(0.2, 0.7, 0.2, 1); } .ds-btn-ghost-dark:hover { border-color: var(--color-on-dark, #f3f7f4); background-color: rgba(255, 255, 255, 0.06); transform: translateY(-2px); } .ds-btn-ghost-dark:focus-visible { outline: 2px solid var(--color-brand, #308f40); outline-offset: 3px; }"
+    },
+    {
+      "name": "Service Card",
+      "kind": "card",
+      "refersTo": "service-card",
+      "description": "Clickable card for service listings. Image + title + description + CTA arrow.",
+      "html": "<a href=\"#\" class=\"ds-service-card\"><div class=\"ds-service-card__img\"></div><div class=\"ds-service-card__body\"><h3 class=\"ds-service-card__title\">Ingeniería</h3><p class=\"ds-service-card__desc\">Diseño y gestión de proyectos industriales.</p><span class=\"ds-service-card__cta\">Conocer más →</span></div></a>",
+      "css": ".ds-service-card { display: flex; flex-direction: column; background: var(--theme-bg-elevated, #1e2a23); border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.1)); border-radius: 14px; overflow: hidden; text-decoration: none; color: inherit; transition: transform 250ms cubic-bezier(0.2, 0.7, 0.2, 1), border-color 250ms cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 250ms cubic-bezier(0.2, 0.7, 0.2, 1); } .ds-service-card:hover { transform: translateY(-4px); border-color: var(--color-brand, #308f40); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2); } .ds-service-card:focus-visible { outline: 2px solid var(--color-brand, #308f40); outline-offset: 4px; } .ds-service-card__img { aspect-ratio: 16 / 10; background: var(--theme-bg, #0d1611); } .ds-service-card__body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; } .ds-service-card__title { color: var(--theme-text, #f3f7f4); font-family: 'Archivo', sans-serif; font-size: 1.06rem; font-weight: 700; margin: 0; } .ds-service-card__desc { color: var(--theme-text-muted, #9bab9f); font-size: 0.85rem; line-height: 1.55; margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; } .ds-service-card__cta { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 0.85rem; color: var(--theme-eyebrow, #62bb74); }"
+    },
+    {
+      "name": "Eyebrow",
+      "kind": "custom",
+      "refersTo": "eyebrow",
+      "description": "Section introducer. Uppercase text with decorative line to the left.",
+      "html": "<p class=\"ds-eyebrow\">Nuestros servicios</p>",
+      "css": ".ds-eyebrow { display: inline-flex; align-items: center; gap: 12px; font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--theme-eyebrow, #62bb74); margin: 0 0 16px; } .ds-eyebrow::before { content: ''; width: 42px; height: 2px; background: currentColor; flex-shrink: 0; }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Text input with label, focus ring, and error state.",
+      "html": "<div class=\"ds-input-wrapper\"><label class=\"ds-input-label\">Email</label><input class=\"ds-input\" type=\"email\" placeholder=\"tu@email.com\" /></div>",
+      "css": ".ds-input-wrapper { display: flex; flex-direction: column; gap: 4px; } .ds-input-label { font-family: 'Archivo', sans-serif; font-size: 0.875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--theme-text-muted, #9bab9f); } .ds-input { font-family: 'Inter', sans-serif; font-size: 1rem; color: var(--theme-text, #f3f7f4); background-color: var(--theme-bg-elevated, #1e2a23); border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.1)); border-radius: 0.5rem; padding: 0.625rem 0.75rem; transition: border-color 200ms cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 200ms cubic-bezier(0.2, 0.7, 0.2, 1); } .ds-input::placeholder { color: var(--theme-text-subtle, rgba(255, 255, 255, 0.6)); } .ds-input:focus { outline: 2px solid var(--color-brand, #308f40); outline-offset: 2px; border-color: var(--color-brand, #308f40); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Industrial Command Center",
+    "overview": "This design system conveys the authority and reliability of heavy industrial operations. The aesthetic is dark, grounded, and technical — like the control room of a mining operation. Graphite surfaces provide a serious backdrop for content, while the brand green (#308f40) signals action and availability. The system prioritizes clarity over decoration, technical proof over marketing claims, and operational readiness over visual novelty.\n\nThe density is moderate: generous whitespace in headers and CTAs, tighter packing in service grids and equipment cards. The system uses a dual-theme approach (dark graphite default, light surface optional) with semantic tokens that adapt automatically.",
+    "keyCharacteristics": [
+      "Dark-first with graphite surfaces (#0d1611) as the default canvas",
+      "Brand green (#308f40) used sparingly for CTAs and interactive elements",
+      "Condensed industrial typography (Archivo) for headings, clean sans-serif (Inter) for body",
+      "Generous use of backdrop-filter blur for glassmorphic overlays on hero images",
+      "Eyebrow pattern (uppercase + decorative line) as the universal section introducer",
+      "Rounded pill buttons (999px radius) for a modern industrial feel",
+      "Subtle hover animations (translateY -2px to -4px) for tactile feedback"
+    ],
+    "rules": [
+      {
+        "name": "The One Voice Rule",
+        "body": "The brand green (#308f40) is used on ≤10% of any given screen. Its rarity is the point.",
+        "section": "colors"
+      },
+      {
+        "name": "The Graphite Gradient Rule",
+        "body": "Dark sections use graphite (#0d1611), graphite-2 (#15201a), and graphite-3 (#1e2a23) in sequence to create depth without hard borders. Never mix graphite with pure black (#000).",
+        "section": "colors"
+      },
+      {
+        "name": "The Eyebrow Rule",
+        "body": "Every section introduction uses the eyebrow pattern: uppercase text (0.8rem, 700 weight, 0.16em letter-spacing) with a 42px decorative line to the left.",
+        "section": "typography"
+      },
+      {
+        "name": "The Balance Rule",
+        "body": "Display and headline text uses text-wrap: balance to prevent orphaned words. Never disable this for aesthetic reasons.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Surfaces are flat at rest. Shadows appear only as a response to state (hover, focus, active). Never use shadows on dark backgrounds — use tonal layering instead.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Blur Rule",
+        "body": "Backdrop-filter blur (12px) is used for glassmorphic overlays on hero images. Always pair with a semi-transparent background and a subtle border.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Use the eyebrow pattern (uppercase + decorative line) to introduce every section",
+      "Use brand green (#308f40) sparingly — only for primary CTAs, active states, and interactive highlights",
+      "Use graphite surfaces (#0d1611, #15201a, #1e2a23) in sequence for dark sections",
+      "Use backdrop-filter blur (12px) with semi-transparent backgrounds for glassmorphic overlays",
+      "Use pill radius (999px) for buttons and tags",
+      "Use text-wrap: balance for display and headline text",
+      "Use translateY(-2px to -4px) for hover lift on cards and buttons",
+      "Use semantic tokens (var(--theme-*)) for theme-aware colors"
+    ],
+    "donts": [
+      "Don't use brand green on more than 10% of any given surface",
+      "Don't mix graphite with pure black (#000)",
+      "Don't use shadows on dark backgrounds — use tonal layering instead",
+      "Don't disable text-wrap: balance for display and headline text",
+      "Don't use sharp corners (0px radius)",
+      "Don't use backdrop-filter without a semi-transparent background",
+      "Don't use will-change permanently on any element",
+      "Don't hardcode rgba(255, 255, 255, *) values for text on dark backgrounds"
+    ]
+  }
+}
