@@ -161,9 +161,13 @@ const steps = [step1Label, step2Label, step3Label];
       const liveRegion = wizardEl?.querySelector<HTMLElement>('[data-wizard-live]');
       if (liveRegion) {
         const label =
-          wizardEl?.querySelector<HTMLButtonElement>(`[data-step-index="${currentStep}"]`)
+          wizardEl?.querySelector<HTMLButtonElement>((`[data-step-index="${currentStep}"]`))
             ?.dataset.stepLabel ?? '';
         liveRegion.textContent = `Paso ${currentStep} de ${TOTAL_STEPS}: ${label}`;
+      }
+      // Scroll al tope al navegar al paso 3 (resumen) para ver el contenido desde el inicio.
+      if (step === 3) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
 

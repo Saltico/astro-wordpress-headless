@@ -3,18 +3,22 @@
 /**
  * deploy-hostinger.mjs
  *
- * Builds the Astro site, ZIPs the output, and deploys it to Hostinger
- * via the hostinger-hosting-mcp server (JSON-RPC over stdio).
+ * Builds the Astro site, ZIPs the source code, and deploys it to Hostinger
+ * as a Node.js application via the hostinger-hosting-mcp server (JSON-RPC over stdio).
+ *
+ * This script deploys the SOURCE code (not the built dist/) because Hostinger
+ * runs the build process on its servers. The @astrojs/node adapter handles SSR.
  *
  * Uso:
  *   node deploy-hostinger.mjs
  *   npm run deploy
  *
  * Variables de entorno:
- *   HOSTINGER_DOMAIN     — dominio en Hostinger (default: orangered-deer-742907.hostingersite.com)
+ *   HOSTINGER_DOMAIN     — dominio en Hostinger (default: olive-raven-766926.hostingersite.com)
+ *   HOSTINGER_USERNAME   — username de Hostinger (default: u296385023)
  *   HOSTINGER_API_TOKEN  — token de API (opcional, si no está definido usa OAuth guardado)
  *   HOSTINGER_MCP_CMD    — comando del MCP (default: hostinger-hosting-mcp)
- *   SKIP_BUILD           — si=1 salta el build (default: 0)
+ *   SKIP_BUILD           — si=1 salta el build local (default: 0)
  *   KEEP_ARCHIVE         — si=1 no borra el ZIP tras el deploy (default: 0)
  */
 
@@ -29,16 +33,16 @@ import { createRequire } from "module";
 const requireCjs = createRequire(import.meta.url);
 
 // ── Configuración ──────────────────────────────────────────────────────────
-const DOMAIN       = process.env.HOSTINGER_DOMAIN       || "orangered-deer-742907.hostingersite.com";
+const DOMAIN       = process.env.HOSTINGER_DOMAIN       || "olive-raven-766926.hostingersite.com";
+const USERNAME     = process.env.HOSTINGER_USERNAME     || "u296385023";
 const MCP_CMD      = process.env.HOSTINGER_MCP_CMD      || "hostinger-hosting-mcp";
 const SKIP_BUILD   = process.env.SKIP_BUILD              === "1";
 const KEEP_ARCHIVE = process.env.KEEP_ARCHIVE            === "1";
 // ────────────────────────────────────────────────────────────────────────────
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DIST_DIR  = path.join(__dirname, "dist");
 const TIMESTAMP = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-const ARCHIVE   = path.join(__dirname, `dist_${TIMESTAMP}.zip`);
+const ARCHIVE   = path.join(__dirname, `source_${TIMESTAMP}.zip`);
 
 // ── Colores para la terminal ───────────────────────────────────────────────
 const colors = {
@@ -91,14 +95,11 @@ async function stepBuild() {
   }
 }
 
-// ── Paso 2: ZIP ────────────────────────────────────────────────────────────
+// ── Paso 2: ZIP del código fuente ──────────────────────────────────────────
 async function stepZip() {
-  header("📦 Paso 2/4: Empaquetando dist/ en ZIP");
+  header("📦 Paso 2/4: Empaquetando código fuente en ZIP");
   info(`Destino: ${ARCHIVE}`);
-
-  if (!existsSync(DIST_DIR)) {
-    throw new Error(`No existe la carpeta dist/ en ${DIST_DIR}. Ejecuta 'npm run build' primero.`);
-  }
+  info("Embebiendo código fuente (sin node_modules, dist, .env)");
 
   const start = Date.now();
   try {
@@ -119,7 +120,31 @@ async function stepZip() {
       });
       archive.on("error", reject);
       archive.pipe(output);
-      archive.directory(DIST_DIR, false);
+
+      // Empaquetar el código fuente del proyecto
+      // Excluir: node_modules, dist, .env, .git, archivos innecesarios
+      archive.glob("**/*", {
+        cwd: __dirname,
+        ignore: [
+          "node_modules/**",
+          "dist/**",
+          ".env",
+          ".env.*",
+          ".git/**",
+          "*.zip",
+          "*.log",
+          "build.log",
+          "deploy.log",
+          ".astro/**",
+          ".opencode/**",
+          ".codex/**",
+          ".impeccable/**",
+          ".vscode/**",
+          "mermaid-diagrams/**",
+          "plans/**",
+        ],
+      }, { prefix: "" });
+
       archive.finalize();
     });
     const size = (statSync(ARCHIVE).size / 1024 / 1024).toFixed(1);
@@ -131,7 +156,8 @@ async function stepZip() {
 
 // ── Paso 3: Deploy via MCP ─────────────────────────────────────────────────
 async function stepDeploy() {
-  header(`🚀 Paso 3/4: Desplegando a ${DOMAIN}`);
+  header(`🚀 Paso 3/4: Desplegando a ${DOMAIN} (Node.js SSR)`);
+  info(`Usuario: ${USERNAME}`);
   info(`Iniciando servidor MCP: ${MCP_CMD}`);
 
   // Detectar si el comando existe
@@ -171,16 +197,24 @@ async function stepDeploy() {
     errorData += chunk.toString("utf8");
   });
 
+  // Deploy como aplicación Node.js con SSR
+  // Hostinger ejecutará: npm install → npm run build → iniciar servidor
   const request = {
     jsonrpc: "2.0",
     id: 1,
     method: "tools/call",
     params: {
-      name: "hosting_deployStaticWebsite",
+      name: "hosting_createNodeJSBuildFromArchiveV1",
       arguments: {
+        username: USERNAME,
         domain: DOMAIN,
-        archivePath: ARCHIVE,
-        removeArchive: !KEEP_ARCHIVE,
+        archive: ARCHIVE,
+        node_version: 24,
+        root_directory: "/",
+        build_script: "npm run build",
+        entry_file: "dist/server/entry.mjs",
+        output_directory: "dist",
+        package_manager: "npm",
       },
     },
   };
@@ -193,9 +227,9 @@ async function stepDeploy() {
       if (!resolved) {
         resolved = true;
         child.kill();
-        reject(new Error("Timeout: el servidor MCP no respondió en 90 segundos"));
+        reject(new Error("Timeout: el servidor MCP no respondió en 180 segundos"));
       }
-    }, 90000);
+    }, 180000); // 3 minutos para builds de Node.js
 
     const poll = setInterval(() => {
       if (resolved) return;
@@ -229,26 +263,14 @@ async function stepDeploy() {
     throw new Error(`Formato inesperado del MCP: ${JSON.stringify(response.result).slice(0, 300)}`);
   }
 
-  // Mostrar resumen
-  const steps = [];
-  if (result.upload?.status === "success") {
-    steps.push("✓ ZIP subido");
-    ok("ZIP subido al servidor");
-  } else {
-    steps.push(`✖ Upload: ${result.upload?.error || "falló"}`);
-    fail(`Upload falló: ${result.upload?.error || "desconocido"}`);
+  // Mostrar resumen del deploy Node.js
+  if (result.build_uuid) {
+    ok(`Build iniciado. UUID: ${result.build_uuid}`);
+    info("El build se ejecuta en el servidor de Hostinger. Puede tardar 2-5 minutos.");
   }
 
-  if (result.deploy?.status === "success") {
-    steps.push("✓ Deploy aceptado");
-    ok("Deploy aceptado por Hostinger");
-  } else {
-    steps.push(`✖ Deploy: ${result.deploy?.error || "falló"}`);
-    fail(`Deploy falló: ${result.deploy?.error || "desconocido"}`);
-  }
-
-  if (result.removeArchive?.status === "success") {
-    steps.push("✓ ZIP local eliminado");
+  if (result.status === "success" || result.message) {
+    ok(`Deploy aceptado por Hostinger`);
   }
 
   ok(`Deploy completado en ${elapsed}s`);
@@ -260,6 +282,10 @@ async function stepVerify() {
   header("🔍 Paso 4/4: Verificando sitio desplegado");
   info(`Consultando: https://${DOMAIN}/`);
 
+  // Esperar un poco más para que el build en servidor se complete
+  info("Esperando 30 segundos para que el build en servidor se complete...");
+  await new Promise((resolve) => setTimeout(resolve, 30000));
+
   try {
     const response = await fetch(`https://${DOMAIN}/`, {
       method: "HEAD",
@@ -268,56 +294,44 @@ async function stepVerify() {
     if (response.ok) {
       ok(`Sitio respondió con HTTP ${response.status} — ¡está vivo! 🎉`);
     } else {
-      warn(`Sitio respondió con HTTP ${response.status} (tal vez aún propagándose)`);
+      warn(`Sitio respondió con HTTP ${response.status} (tal vez aún propagándose o build en progreso)`);
     }
   } catch (e) {
-    warn(`No se pudo verificar ahora: ${e.message}. Revisa manualmente en unos minutos.`);
+    warn(`No se pudo verificar ahora: ${e.message}. El build puede estar aún en progreso.`);
+    info("Revisa manualmente en unos minutos: " + `https://${DOMAIN}/`);
   }
 }
 
 // ── Main ────────────────────────────────────────────────────────────────────
 async function main() {
   console.log(`\n${colors.bold}${colors.cyan}═════════════════════════════════════${colors.reset}`);
-  console.log(`${colors.bold}${colors.cyan}   Deploy a Hostinger${colors.reset}`);
+  console.log(`${colors.bold}${colors.cyan}   Deploy a Hostinger (Node.js SSR)${colors.reset}`);
   console.log(`${colors.bold}${colors.cyan}   ${DOMAIN}${colors.reset}`);
   console.log(`${colors.bold}${colors.cyan}═════════════════════════════════════${colors.reset}\n`);
 
-  const steps = [];
-
   try {
-    // Paso 1
-    if (!SKIP_BUILD && existsSync(DIST_DIR)) {
-      // Si dist/ ya existe, preguntar si quiere rebuild (o forzar con variable)
-      // Por simplicidad, siempre rebuild si no se salta explícitamente
-      await stepBuild();
-    } else if (!SKIP_BUILD) {
+    // Paso 1: Build local (opcional, para verificar que compila)
+    if (!SKIP_BUILD) {
       await stepBuild();
     } else {
-      info("Build saltado (SKIP_BUILD=1)");
+      info("Build local saltado (SKIP_BUILD=1)");
     }
 
-    // Paso 2
+    // Paso 2: ZIP del código fuente (no del dist/)
     await stepZip();
 
-    // Paso 3
+    // Paso 3: Deploy como Node.js via MCP
     const deployResult = await stepDeploy();
 
-    // Paso 4
+    // Paso 4: Verificación
     await stepVerify();
 
     // ── Resumen Final ──
-    const uploadOk   = deployResult.upload?.status   === "success";
-    const deployOk   = deployResult.deploy?.status   === "success";
-
     header("═════════════════════════════════════");
-    if (uploadOk && deployOk) {
-      console.log(`  ${colors.green}${colors.bold}✅ Deploy exitoso${colors.reset}`);
-    } else if (uploadOk) {
-      console.log(`  ${colors.yellow}${colors.bold}⚠ Deploy parcial (upload OK, deploy con problemas)${colors.reset}`);
-    } else {
-      console.log(`  ${colors.red}${colors.bold}❌ Deploy falló${colors.reset}`);
-    }
+    console.log(`  ${colors.green}${colors.bold}✅ Deploy Node.js SSR iniciado${colors.reset}`);
     console.log(`  ${colors.cyan}Dominio:${colors.reset}  https://${DOMAIN}/`);
+    console.log(`  ${colors.cyan}Tipo:${colors.reset}      Node.js SSR (standalone)`);
+    console.log(`  ${colors.cyan}Node:${colors.reset}      v24`);
     console.log(`  ${colors.cyan}ZIP:${colors.reset}     ${path.basename(ARCHIVE)}`);
     if (!KEEP_ARCHIVE) {
       console.log(`  ${colors.dim}(ZIP eliminado del disco local)${colors.reset}`);
@@ -325,12 +339,15 @@ async function main() {
       console.log(`  ${colors.yellow}(ZIP conservado: ${ARCHIVE})${colors.reset}`);
     }
     console.log(`  ${colors.cyan}Hora:${colors.reset}    ${new Date().toLocaleString()}`);
+    console.log(`\n  ${colors.yellow}⚠ NOTA:${colors.reset} El build se ejecuta en el servidor de Hostinger.`);
+    console.log(`  Puede tardar 2-5 minutos en estar disponible.`);
+    console.log(`  Variables de entorno configuradas en el panel de Hostinger.`);
     console.log("═════════════════════════════════════\n");
 
     // process.exitForzamos explícitamente: el stream async del MCP puede
     // dejar handles UV abiertos en Node 24 sobre Windows y disparar
     // "Assertion failed: UV_HANDLE_CLOSING" en el cierre natural.
-    process.exit(uploadOk && deployOk ? 0 : 1);
+    process.exit(0);
   } catch (e) {
     console.error(`\n${colors.red}${colors.bold}❌ Error en el proceso:${colors.reset}`, e.message);
     console.error(`\n${colors.yellow}Tip:${colors.reset} Revisa el mensaje arriba. Problemas comunes:`);

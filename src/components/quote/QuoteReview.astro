@@ -86,7 +86,7 @@ import Button from '@/components/ui/Button.astro';
       Envía tu cotización por WhatsApp o por correo electrónico.
     </p>
     <div class="quote-review__cta-group">
-      <Button
+<!--       <Button
         href="#"
         variant="ghost"
         icon="whatsapp"
@@ -94,10 +94,10 @@ import Button from '@/components/ui/Button.astro';
         target="_blank"
       >
         Hablar con ejecutivo
-      </Button>
+      </Button> -->
       <Button
         href="#"
-        variant="secondary"
+        variant="ghost"
         size="lg"
         icon="email"
         data-review-action="email"
@@ -111,6 +111,7 @@ import Button from '@/components/ui/Button.astro';
         size="lg"
         icon="whatsapp"
         data-review-action="send"
+        type="button"
         target="_blank"
       >
         Enviar por WhatsApp
@@ -871,9 +872,7 @@ import Button from '@/components/ui/Button.astro';
   /* ── Acciones finales ── */
   .quote-review__actions {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: var(--space-4);
     padding-top: var(--space-5);
     border-top: 1px solid var(--theme-border);
@@ -890,20 +889,24 @@ import Button from '@/components/ui/Button.astro';
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .quote-review__cta-group {
+      justify-content: flex-end;
+    }
   }
 
   @media (max-width: 767.98px) {
-    .quote-review__actions {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
     .quote-review__cta-group {
       flex-direction: column;
+      width: 100%;
     }
 
     .quote-review__cta-group :global(.btn) {
       width: 100%;
+      justify-content: center;
     }
   }
 

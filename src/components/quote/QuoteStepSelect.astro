@@ -58,6 +58,7 @@ import Icon from '@/components/ui/Icon.astro';
   import { getCart, subscribe, updateItem, removeItem, clearCart, initStorageSync } from '@/lib/quoteCart';
   import { QUOTE_ITEM_MAX_QUANTITY, QUOTE_PERIOD_MAX_COUNT, type QuoteCartItem } from '@/types/quote';
   import { RENTAL_CATEGORIES } from '@/data/rental';
+  import { showConfirmModal } from '@/lib/confirmModal';
 
   const linesEl = document.querySelector<HTMLElement>('[data-quote-lines]');
   const emptyEl = document.querySelector<HTMLElement>('[data-quote-empty]');
@@ -289,12 +290,6 @@ import Icon from '@/components/ui/Icon.astro';
     linesEl.hidden = empty;
     actionsEl.hidden = empty;
     
-    // Aplicar clase para orden dinámico en mobile
-    const columnsEl = linesEl.closest<HTMLElement>('.quote-page__columns');
-    if (columnsEl) {
-      columnsEl.classList.toggle('is-cart-empty', empty);
-    }
-    
     // Actualizar estado del botón Continuar
     const nextBtn = document.querySelector<HTMLButtonElement>('[data-quote-wizard-next]');
     if (nextBtn) {
@@ -425,10 +420,16 @@ import Icon from '@/components/ui/Icon.astro';
     // Botón limpiar cotizador
     const clearBtn = document.querySelector<HTMLButtonElement>('[data-quote-action="clear"]');
     if (clearBtn) {
-      clearBtn.addEventListener('click', (e) => {
+      clearBtn.addEventListener('click', async (e) => {
         e.preventDefault();
-        if (!confirm('¿Vaciar todo el cotizador? Esta acción no se puede deshacer.')) return;
-        clearCart();
+        const confirmed = await showConfirmModal({
+          title: '¿Vaciar todo el cotizador?',
+          message: 'Esta acción no se puede deshacer. Se eliminarán todos los equipos seleccionados.',
+          confirmText: 'Vaciar',
+          cancelText: 'Cancelar',
+          confirmVariant: 'danger',
+        });
+        if (confirmed) clearCart();
       });
     }
 
@@ -445,10 +446,16 @@ import Icon from '@/components/ui/Icon.astro';
     // Botón limpiar del topbar (si existe)
     const topbarClear = document.querySelector<HTMLButtonElement>('[data-quote-clear-top]');
     if (topbarClear) {
-      topbarClear.addEventListener('click', (e) => {
+      topbarClear.addEventListener('click', async (e) => {
         e.preventDefault();
-        if (!confirm('¿Vaciar todo el cotizador? Esta acción no se puede deshacer.')) return;
-        clearCart();
+        const confirmed = await showConfirmModal({
+          title: '¿Vaciar todo el cotizador?',
+          message: 'Esta acción no se puede deshacer. Se eliminarán todos los equipos seleccionados.',
+          confirmText: 'Vaciar',
+          cancelText: 'Cancelar',
+          confirmVariant: 'danger',
+        });
+        if (confirmed) clearCart();
       });
     }
   });
@@ -481,26 +488,17 @@ import Icon from '@/components/ui/Icon.astro';
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-5);
+    /* gap: var(--space-5); */
   }
 
-  /* Orden dinámico en mobile: cuando el carrito está vacío, el picker
-     aparece primero; cuando hay equipos, el carrito tiene prioridad visual. */
+  /* Orden dinámico en mobile: el carrito siempre aparece primero
+     (vacío o con equipos) para que el usuario vea su estado actual. */
   @media (max-width: 1023.98px) {
     .quote-page__col--cart {
       order: 1;
     }
     
     .quote-page__col--picker {
-      order: 2;
-    }
-    
-    /* Cuando el carrito está vacío, invertir el orden */
-    .quote-page__columns.is-cart-empty .quote-page__col--picker {
-      order: 1;
-    }
-    
-    .quote-page__columns.is-cart-empty .quote-page__col--cart {
       order: 2;
     }
   }
@@ -576,7 +574,7 @@ import Icon from '@/components/ui/Icon.astro';
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
-    margin-bottom: var(--space-6);
+    /* margin-bottom: var(--space-6); */
   }
 
   /* Barra de acciones: Limpiar + Continuar */
@@ -593,16 +591,17 @@ import Icon from '@/components/ui/Icon.astro';
     position: sticky;
     top: 0;
     z-index: 5;
+    margin-bottom: var(--space-4);
   }
 
   .quote-page__actions[hidden] {
     display: none;
   }
 
-  /* En mobile: botón limpiar muestra solo ícono */
+  /* En mobile: botón limpiar muestra solo ícono, alineado a la izquierda */
   @media (max-width: 479.98px) {
     .quote-page__actions {
-      justify-content: flex-end;
+      justify-content: space-between;
     }
 
     .quote-page__clear-btn :global(.btn__label) {

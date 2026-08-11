@@ -94,6 +94,7 @@ const isWizard = variant === 'wizard';
     subscribeGlobalNotes,
     initGlobalNotesStorageSync,
   } from '@/lib/quoteGlobalNotes';
+  import { showConfirmModal } from '@/lib/confirmModal';
 
   function setText(selector: string, value: string): void {
     const el = document.querySelector<HTMLElement>(`[data-quote-stat="${selector}"]`);
@@ -129,9 +130,15 @@ const isWizard = variant === 'wizard';
     }
   }
 
-  function handleClear(): void {
-    if (!confirm('¿Vaciar todo el cotizador? Esta acción no se puede deshacer.')) return;
-    clearCart();
+  async function handleClear(): Promise<void> {
+    const confirmed = await showConfirmModal({
+      title: '¿Vaciar todo el cotizador?',
+      message: 'Esta acción no se puede deshacer. Se eliminarán todos los equipos seleccionados.',
+      confirmText: 'Vaciar',
+      cancelText: 'Cancelar',
+      confirmVariant: 'danger',
+    });
+    if (confirmed) clearCart();
   }
 
   document.addEventListener('DOMContentLoaded', () => {
