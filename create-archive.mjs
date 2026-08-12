@@ -32,6 +32,7 @@ const rootFiles = [
   "package.json",
   "package-lock.json",
   "tsconfig.json",
+  "server.js",
 ];
 for (const f of rootFiles) {
   const p = path.join(__dirname, f);

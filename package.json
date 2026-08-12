@@ -2,6 +2,7 @@
   "name": "poc1",
   "type": "module",
   "version": "0.0.1",
+  "main": "dist/server/entry.mjs",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -10,7 +11,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "node deploy-hostinger.mjs"
+    "deploy": "node deploy-hostinger.mjs",
+    "start": "node dist/server/entry.mjs"
   },
   "dependencies": {
     "@astrojs/node": "^11.1.0",

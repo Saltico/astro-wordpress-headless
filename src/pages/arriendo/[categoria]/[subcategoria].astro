@@ -7,8 +7,8 @@ import EquipmentCatalog from '@/components/rental/EquipmentCatalog.astro';
 import RelatedEquipment from '@/components/rental/RelatedEquipment.astro';
 import FAQSection from '@/components/rental/FAQSection.astro';
 import Container from '@/components/ui/Container.astro';
-import { RENTAL_CATEGORIES } from '@/data/rental';
-import { productSchemaExtended, breadcrumbSchema, combineSchemas } from '@/lib/seo';
+import { RENTAL_CATEGORIES, findSubcategory } from '@/data/rental';
+import { productSchemaExtended, breadcrumbSchema, itemListSchema, combineSchemas } from '@/lib/seo';
 
 export function getStaticPaths() {
   return RENTAL_CATEGORIES.flatMap((category) =>
@@ -31,27 +31,50 @@ const breadcrumbs = [
   { label: subcategory.name, url: Astro.url.pathname },
 ];
 
+// Schema principal de la subcategoría
+const mainProductSchema = productSchemaExtended({
+  name: subcategory.name,
+  description: subcategory.seoDescription,
+  url: Astro.url.pathname,
+  image: subcategory.heroImage,
+  brand: 'IP Proyectos Industriales',
+  offers: {
+    availability: 'InStock',
+    priceCurrency: 'CLP',
+    priceRange: 'Consultar',
+  },
+});
+
+// Schema ItemList con Product individual por equipo del catálogo
+const catalogItems = subcategory.catalog.map((equipment, index) => ({
+  name: equipment.name,
+  url: `${Astro.url.pathname}#${equipment.slug}`,
+  image: equipment.image,
+  description: equipment.shortDesc,
+  position: index + 1,
+}));
+
+const catalogListSchema = itemListSchema({
+  name: `Catálogo de ${subcategory.name}`,
+  items: catalogItems,
+  url: Astro.url.pathname,
+});
+
+// Agregar areaServed al schema principal
+mainProductSchema.areaServed = ['CL-II', 'CL-III', 'CL-IV'];
+
 const jsonLd = combineSchemas(
-  productSchemaExtended({
-    name: subcategory.name,
-    description: subcategory.seoDescription,
-    url: Astro.url.pathname,
-    image: subcategory.heroImage,
-    offers: {
-      availability: 'InStock',
-      priceCurrency: 'CLP',
-      priceRange: 'Consultar',
-    },
-  }),
+  mainProductSchema,
+  catalogListSchema,
   breadcrumbSchema(breadcrumbs)
 );
 
 const catalogColumns = subcategory.catalog.length >= 4 ? 3 : 2;
 
-// Equipos relacionados: hasta 4 sub-rutas hermanas
-const relatedItems = category.subcategories
+// Equipos relacionados: sub-rutas hermanas + cross-category
+const siblingItems = category.subcategories
   .filter((s) => s.slug !== subcategory.slug)
-  .slice(0, 4)
+  .slice(0, 3)
   .map((s) => ({
     name: s.name,
     shortDesc: s.shortDesc,
@@ -59,8 +82,132 @@ const relatedItems = category.subcategories
     badge: s.catalog[0]?.capacity,
   }));
 
-// FAQs por defecto basadas en la sub-ruta
-const faqItems = [
+const crossCategoryItems = (subcategory.relatedCrossCategory ?? []).map((rel) => {
+  const relSubcategory = findSubcategory(rel.categorySlug, rel.subcategorySlug);
+  return {
+    name: relSubcategory?.name ?? rel.subcategorySlug,
+    shortDesc: relSubcategory?.shortDesc ?? '',
+    href: `/arriendo/${rel.categorySlug}/${rel.subcategorySlug}`,
+    badge: relSubcategory?.catalog[0]?.capacity,
+  };
+});
+
+const relatedItems = [...siblingItems, ...crossCategoryItems];
+
+// FAQs personalizadas por subcategoría
+const FAQ_MAP: Record<string, Array<{ question: string; answer: string }>> = {
+  'rodillos': [
+    {
+      question: '¿Qué tipos de suelo se pueden compactar con un rodillo vibratorio?',
+      answer: 'Nuestros rodillos compactadores de doble tambor son ideales para compactación de asfalto, bases granulares, arenas, gravilla y suelos cohesivos. Son especialmente efectivos en obras de pavimentación, urbanización y mantenimiento vial.',
+    },
+    {
+      question: '¿Cuál es el peso operativo del rodillo compactador en arriendo?',
+      answer: 'El rodillo compactador tiene un peso operativo de 830 kg con motor diésel de bajo consumo y arranque eléctrico. Su diseño compacto permite excelente maniobrabilidad en espacios reducidos y zanjas.',
+    },
+    {
+      question: '¿El operador está incluido en el arriendo del rodillo?',
+      answer: 'Sí, todos nuestros rodillos se entregan con operador certificado con experiencia en faenas de pavimentación y control de densidad según normativa MOP. Mantenimiento, seguros y combustibles incluidos.',
+    },
+    {
+      question: '¿Cuál es la disponibilidad de arriendo de rodillos en zona norte?',
+      answer: 'Tenemos disponibilidad inmediata en Atacama, Coquimbo y centro de Chile con respuesta operativa en menos de 24 horas. Consulta por otras regiones.',
+    },
+  ],
+  'placas-compactadoras': [
+    {
+      question: '¿Para qué tipo de trabajos sirve una placa compactadora?',
+      answer: 'Las placas compactadoras unidireccionales de 15 kN son ideales para compactación de adoquines (pavimentos intertrabados), veredas, zanjas, rellenos, suelos granulares, arenas y gravilla en proyectos de construcción y obras civiles.',
+    },
+    {
+      question: '¿Cuál es la fuerza de compactación de la placa en arriendo?',
+      answer: 'La placa compactadora tiene una fuerza centrífuga de 15 kN con motor a gasolina de alta confiabilidad. Es efectiva para compactación en capas de hasta 30 cm de espesor en suelos granulares.',
+    },
+    {
+      question: '¿La placa compactadora es maniobrable en espacios reducidos?',
+      answer: 'Sí, su diseño compacto y peso reducido la hacen ideal para trabajos en zanjas de instalaciones sanitarias, veredas angostas, estacionamientos y paisajismo donde equipos más grandes no pueden acceder.',
+    },
+    {
+      question: '¿Qué incluye el arriendo de la placa compactadora?',
+      answer: 'El arriendo incluye operador certificado, mantenimiento preventivo, seguros y combustibles. Disponibilidad en zona norte (Atacama, Coquimbo) y centro de Chile.',
+    },
+  ],
+  'vibropison': [
+    {
+      question: '¿Qué es un vibropisón y para qué se usa?',
+      answer: 'Un vibropisón es un equipo compactador de impacto diseñado para la compactación de suelos cohesivos, arcillosos y mixtos. Se utiliza en zanjas, rellenos, fundaciones, canalizaciones y obras sanitarias donde se requiere compactación localizada de alta eficiencia.',
+    },
+    {
+      question: '¿Cuál es la fuerza de impacto del vibropisón en arriendo?',
+      answer: 'El vibropisón tiene una fuerza de impacto de 21 kN con motor diésel Yanmar de bajo consumo. Su altura de salto optimizada permite compactación eficiente en suelos arcillosos y rellenos de zanjas.',
+    },
+    {
+      question: '¿El vibropisón es adecuado para suelos arenosos?',
+      answer: 'El vibropisón está diseñado principalmente para suelos cohesivos y mixtos. Para suelos granulares y arenas recomendamos la placa compactadora. Nuestro equipo técnico puede asesorarte en la selección del equipo adecuado según tu tipo de suelo.',
+    },
+    {
+      question: '¿Qué incluye el arriendo del vibropisón?',
+      answer: 'Operador certificado con experiencia en compactación según normativa MOP, mantenimiento preventivo, seguros y combustibles incluidos. Disponibilidad inmediata en zona norte y centro de Chile.',
+    },
+  ],
+  'alisadora-de-pavimento': [
+    {
+      question: '¿Para qué superficies se usa una alisadora de pavimento?',
+      answer: 'La alisadora de pavimento de 915 mm es ideal para el acabado profesional de losas industriales, pavimentos, radieres, fundaciones, estacionamientos y bodegas. Proporciona un terminado liso o texturizado según requerimiento del proyecto.',
+    },
+    {
+      question: '¿Qué tipo de acabado puede lograr la alisadora?',
+      answer: 'El sistema de alisado con paletas metálicas permite lograr acabados lisos para pisos industriales y estacionamientos, o acabados texturizados antideslizantes para pavimentos exteriores y rampas.',
+    },
+    {
+      question: '¿Cuál es el diámetro de trabajo de la alisadora?',
+      answer: 'La alisadora tiene un diámetro de trabajo de 915 mm (36 pulgadas) con motor a gasolina de alto rendimiento. Su diseño robusto permite uso intensivo en faenas de construcción de gran envergadura.',
+    },
+    {
+      question: '¿El operador está incluido en el arriendo?',
+      answer: 'Sí, incluye operador certificado con experiencia en acabados de hormigón. Mantenimiento, seguros y combustibles incluidos. Disponibilidad en zona norte y centro de Chile.',
+    },
+  ],
+  'mezcladoras-electricas': [
+    {
+      question: '¿Cuál es la capacidad de las mezcladoras eléctricas en arriendo?',
+      answer: 'Nuestras mezcladoras eléctricas tienen capacidad de 250 a 500 litros, con un rendimiento de 4 a 4,5 m³ por hora. Ideales para obras de mediana y gran envergadura en construcción, minería y obras civiles.',
+    },
+    {
+      question: '¿Qué tipo de motor tiene la mezcladora eléctrica?',
+      answer: 'La mezcladora cuenta con motor eléctrico de 3 HP (2,2 kW) con alimentación monofásica de 220V. Tambor fabricado en acero de alta resistencia con corona de fundición y sistema de volteo lateral para descarga eficiente.',
+    },
+    {
+      question: '¿La mezcladora es portátil dentro de la faena?',
+      answer: 'Sí, cuenta con chasis robusto con ruedas para facilitar el traslado dentro de la faena. Su diseño permite moverla entre puntos de trabajo sin necesidad de equipos de izaje.',
+    },
+    {
+      question: '¿Qué incluye el arriendo de la mezcladora?',
+      answer: 'Operador certificado, mantenimiento preventivo, seguros y combustibles incluidos. Disponibilidad bajo pedido en zona norte y centro de Chile.',
+    },
+  ],
+  'canastillos-alza-hombre': [
+    {
+      question: '¿Qué normativa cumplen los canastillos alza hombre?',
+      answer: 'Nuestros canastillos cumplen con estándares europeos para trabajos en altura. Cuentan con piso antideslizante, puntos de anclaje para arnés de seguridad y construcción robusta certificada para uso en minería, construcción y mantenimiento industrial.',
+    },
+    {
+      question: '¿Cuántas personas pueden usar el canastillo?',
+      answer: 'El canastillo tiene capacidad para 2 personas o hasta 200 kg de carga. Está diseñado para trabajos de montaje, mantenimiento e inspección en altura mediante camión pluma o grúa articulada.',
+    },
+    {
+      question: '¿Qué diferencia hay entre el canastillo metálico y el de fibra?',
+      answer: 'El canastillo metálico (Ormet 2MF) es de acero de alta resistencia para trabajos exigentes. El canastillo de fibra de vidrio (Ormet 2VE) es no conductor, ideal para trabajos próximos a redes eléctricas, además de aplicaciones industriales y mineras.',
+    },
+    {
+      question: '¿Con qué equipos es compatible el canastillo?',
+      answer: 'El canastillo es compatible con camiones pluma, grúas articuladas y otros equipos de izaje autorizados. Consulta con nuestro equipo técnico para verificar compatibilidad con tu equipo específico.',
+    },
+  ],
+};
+
+// Fallback a FAQs genéricas si no hay personalizadas
+const defaultFaqItems = [
   {
     question: `¿Cuánto cuesta arrendar ${subcategory.name.toLowerCase()} en Chile?`,
     answer: `El precio del arriendo de ${subcategory.name.toLowerCase()} depende de la duración, ubicación y modelo específico. Solicita una cotización personalizada y recibirás respuesta en menos de 48 horas.`,
@@ -82,6 +229,8 @@ const faqItems = [
     answer: 'El arriendo mínimo es de 1 turno (8 horas) para equipos menores y 1 día (24 horas) para grúas de alto tonelaje.',
   },
 ];
+
+const faqItems = FAQ_MAP[subcategory.slug] ?? defaultFaqItems;
 ---
 
 <RentalLayout

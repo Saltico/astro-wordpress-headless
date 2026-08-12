@@ -33,7 +33,7 @@ import { createRequire } from "module";
 const requireCjs = createRequire(import.meta.url);
 
 // ── Configuración ──────────────────────────────────────────────────────────
-const DOMAIN       = process.env.HOSTINGER_DOMAIN       || "olive-raven-766926.hostingersite.com";
+const DOMAIN       = process.env.HOSTINGER_DOMAIN       || "orangered-deer-742907.hostingersite.com";
 const USERNAME     = process.env.HOSTINGER_USERNAME     || "u296385023";
 const MCP_CMD      = process.env.HOSTINGER_MCP_CMD      || "hostinger-hosting-mcp";
 const SKIP_BUILD   = process.env.SKIP_BUILD              === "1";

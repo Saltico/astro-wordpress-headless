@@ -91,6 +91,11 @@ export interface RentalSubcategory {
   catalog: Equipment[];
   /** Mensaje WhatsApp por defecto de la sub-ruta */
   whatsappMessage: string;
+  /** Equipos complementarios de otras categorías para internal linking */
+  relatedCrossCategory?: Array<{
+    categorySlug: string;
+    subcategorySlug: string;
+  }>;
 }
 
 export interface RentalCategory {
@@ -243,7 +248,7 @@ const IZAJE_GRUAS_80: RentalSubcategory = {
   heroImage: GRUAS_HERO,
   seoTitle: 'Arriendo de Grúas de 80 Toneladas',
   seoDescription:
-    'Arriendo de grúas de 80 toneladas con operador certificado en Chile. Equipos Grove, Tadano y Liebherr. Hasta 60 m de altura. Cotiza online.',
+    'Arriendo de grúas de 80 toneladas con operador certificado en Chile. Equipos Grove, Tadano y Liebherr. Hasta 60 m de altura. Solicita cotización.',
   catalog: [
     {
       slug: 'grua-terex-rt-780-e',
@@ -359,7 +364,7 @@ const IZAJE_GRUAS_250: RentalSubcategory = {
   heroImage: GRUAS_HERO,
   seoTitle: 'Arriendo de Grúas de 250 Toneladas',
   seoDescription:
-    'Arriendo de grúas de 250 toneladas con operador certificado en Chile. Equipos Grove, Liebherr y Tadano. Hasta 130 m de altura. Cotiza online.',
+    'Arriendo de grúas de 250 toneladas con operador certificado en Chile. Equipos Grove, Liebherr y Tadano. Hasta 130 m de altura. Disponibilidad inmediata.',
   catalog: [
     {
       slug: 'grua-grove-gmk-5250l',
@@ -414,7 +419,7 @@ const IZAJE_CAMIONES_PLUMA: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
-  heroImage: HERO,
+  heroImage: CAMION_PLUMA_5T,
   seoTitle: 'Arriendo de Camiones Pluma',
   seoDescription:
     'Arriendo de camiones pluma de 3 a 15 toneladas en Chile. Operador certificado, combustible y seguros incluidos. Disponibilidad inmediata. Cotiza online.',
@@ -471,6 +476,9 @@ const IZAJE_CAMIONES_PLUMA: RentalSubcategory = {
     },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de camiones pluma.',
+  relatedCrossCategory: [
+    { categorySlug: 'transporte', subcategorySlug: 'cama-baja' },
+  ],
 };
 
 const IZAJE_ALZA_HOMBRE: RentalSubcategory = {
@@ -492,7 +500,7 @@ const IZAJE_ALZA_HOMBRE: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
-  heroImage: HERO,
+  heroImage: ALZA_HOMBRE_20M,
   seoTitle: 'Arriendo de Alza-hombre en Chile',
   seoDescription:
     'Arriendo de alza-hombre y plataformas aéreas en Chile. Equipos articulados y telescópicos, altura de 8 a 40 m. Operador certificado. Cotiza online.',
@@ -550,7 +558,7 @@ const IZAJE_GRUAS_HORQUILLA: RentalSubcategory = {
     { label: 'Operador', value: 'Opcional' },
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
-  heroImage: HERO,
+  heroImage: GRUA_HORQUILLA_3T,
   seoTitle: 'Arriendo de Grúas Horquilla en Chile',
   seoDescription:
     'Arriendo de grúas horquilla diésel y eléctricas en Chile. Capacidad de 3 a 7 toneladas. Mantenimiento y seguros incluidos. Cotiza online.',
@@ -611,10 +619,10 @@ const MT_CAMIONES_TOLVA: RentalSubcategory = {
     { label: 'Chofer', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: CAMION_TOLVA_12M3,
   seoTitle: 'Arriendo de Camiones Tolva en Chile',
   seoDescription:
-    'Arriendo de camiones tolva con chofer certificado en Chile. Ideal para movimiento de tierra y transporte de material. Cotiza online.',
+    'Arriendo de camiones tolva con chofer certificado en Chile. Ideal para movimiento de tierra y transporte de material. Responde en 24h.',
   catalog: [
     {
       slug: 'camion-tolva-12-m3',
@@ -657,7 +665,7 @@ const MT_RETROEXCAVADORAS: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: RETROEXCAVADORA_JOHN_DEERE_320D,
   seoTitle: 'Arriendo de Retroexcavadoras en Chile',
   seoDescription:
     'Arriendo de retroexcavadoras hidráulicas con operador en Chile. Equipos de 8 a 25 toneladas, profundidad hasta 6 m. Cotiza online.',
@@ -683,6 +691,9 @@ const MT_RETROEXCAVADORAS: RentalSubcategory = {
     }, */
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de retroexcavadoras.',
+  relatedCrossCategory: [
+    { categorySlug: 'transporte', subcategorySlug: 'camiones-tolva' },
+  ],
 };
 
 const MT_MINICARGADORES: RentalSubcategory = {
@@ -704,10 +715,10 @@ const MT_MINICARGADORES: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
-  heroImage: HERO,
+  heroImage: MINICARGADOR_VOLVO_MC_90B,
   seoTitle: 'Arriendo de Minicargadores en Chile',
   seoDescription:
-    'Arriendo de minicargadores con operador en Chile. Equipos Bobcat, Caterpillar y Case. Ideales para espacios reducidos. Cotiza online.',
+    'Arriendo de minicargadores con operador en Chile. Equipos Bobcat, Caterpillar y Case. Ideales para espacios reducidos. Consulta disponibilidad por región.',
   catalog: [
     {
       slug: 'minicargador-volvo-mc-90b',
@@ -755,10 +766,10 @@ const TR_TRACTO_CAMIONES: RentalSubcategory = {
     { label: 'Chofer', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: TRACTO_CAMION_RENAULT_T_460,
   seoTitle: 'Arriendo de Tracto Camiones en Chile',
   seoDescription:
-    'Arriendo de tracto camiones con chofer en Chile. Capacidad de tiro hasta 60 toneladas. Ideal para transporte de carga pesada. Cotiza online.',
+    'Arriendo de tracto camiones con chofer en Chile. Capacidad de tiro hasta 60 toneladas. Ideal para transporte de carga pesada. Solicita cotización.',
   catalog: [
     {
       slug: 'tracto-camion-renault-premium-lander-460',
@@ -810,7 +821,7 @@ const TR_CAMA_BAJA: RentalSubcategory = {
     { label: 'Permisos', value: 'Incluidos' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: CAMA_BAJA_EAGER_BEAVER_70T,
   seoTitle: 'Arriendo de Cama-baja en Chile',
   seoDescription:
     'Arriendo de camas-baja Eager Beaver de 25 a 80 t en Chile. Permisos de tránsito incluidos. Ideal para transporte de maquinaria pesada. Cotiza online.',
@@ -836,6 +847,9 @@ const TR_CAMA_BAJA: RentalSubcategory = {
     }, */
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de cama-baja Eager Beaver.',
+  relatedCrossCategory: [
+    { categorySlug: 'movimiento-de-tierra', subcategorySlug: 'retroexcavadoras' },
+  ],
 };
 
 const TR_SEMIREMOLQUES: RentalSubcategory = {
@@ -857,10 +871,10 @@ const TR_SEMIREMOLQUES: RentalSubcategory = {
     { label: 'Tipo', value: 'Carga general / Container' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: SEMIREMOLQUE_RANDON,
   seoTitle: 'Arriendo de Semiremolques en Chile',
   seoDescription:
-    'Arriendo de semiremolques de 25 a 40 t en Chile. Compatibles con contenedores de 20 y 40 pies. Mantenimiento y seguros incluidos. Cotiza online.',
+    'Arriendo de semiremolques de 25 a 40 t en Chile. Compatibles con contenedores de 20 y 40 pies. Mantenimiento y seguros incluidos. Responde en 24h.',
   catalog: [
     {
       slug: 'semiremolque-30-toneladas-randon',
@@ -909,7 +923,7 @@ const EE_TORRES_ILUMINACION: RentalSubcategory = {
     { label: 'Autonomía', value: '60 – 80 horas' },
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
-  heroImage: HERO,
+  heroImage: TORRE_ILUMINACION_9M_WACKER_NEUSON,
   seoTitle: 'Arriendo de Torres de Iluminación en Chile',
   seoDescription:
     'Arriendo de torres de iluminación portátil en Chile. Cobertura hasta 4.000 m². Combustible y mantenimiento incluidos. Cotiza online.',
@@ -946,6 +960,9 @@ const EE_TORRES_ILUMINACION: RentalSubcategory = {
     },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de torres de iluminación.',
+  relatedCrossCategory: [
+    { categorySlug: 'equipos-especiales', subcategorySlug: 'generadores-electricos' },
+  ],
 };
 
 const EE_BOMBAS_HORMIGON: RentalSubcategory = {
@@ -967,10 +984,10 @@ const EE_BOMBAS_HORMIGON: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: BOMBA_HORMIGON_TRUEMAX_TM50D,
   seoTitle: 'Arriendo de Bombas de Hormigón en Chile',
   seoDescription:
-    'Arriendo de bombas de hormigón estacionarias y telescópicas en Chile. Capacidad hasta 150 m³/h. Operador certificado. Cotiza online.',
+    'Arriendo de bombas de hormigón estacionarias y telescópicas en Chile. Capacidad hasta 150 m³/h. Operador certificado. Solicita cotización personalizada.',
   catalog: [
     {
       slug: 'bomba-hormigon-truemax-tm50d',
@@ -1013,10 +1030,10 @@ const EE_COMPRESORES_AIRE: RentalSubcategory = {
     { label: 'Motor', value: 'Diésel' },
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
-  heroImage: HERO,
+  heroImage: COMPRESOR_AIRE_AIRMAN_PDS390S_4B1,
   seoTitle: 'Arriendo de Compresores de Aire en Chile',
   seoDescription:
-    'Arriendo de compresores de aire portátiles diésel en Chile. Capacidad 185 a 1.500 CFM. Combustible y mantenimiento incluidos. Cotiza online.',
+    'Arriendo de compresores de aire portátiles diésel en Chile. Capacidad 185 a 1.500 CFM. Combustible y mantenimiento incluidos. Consulta disponibilidad.',
   catalog: [
     {
       slug: 'compresor-aire-airman-pds390s-4b1',
@@ -1060,7 +1077,7 @@ const EE_GENERADORES_ELECTRICOS: RentalSubcategory = {
     { label: 'Motor', value: 'Diésel' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: GENERADOR_ELECTRICO_6KVA_EUROP_ARD_HDY,
   seoTitle: 'Arriendo de Generadores Eléctricos en Chile',
   seoDescription:
     'Arriendo de generadores eléctricos diésel de 20 a 1.500 kVA en Chile. Combustible y mantenimiento incluidos. Disponibilidad 24/7. Cotiza online.',
@@ -1107,6 +1124,9 @@ const EE_GENERADORES_ELECTRICOS: RentalSubcategory = {
     },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de generadores eléctricos.',
+  relatedCrossCategory: [
+    { categorySlug: 'equipos-especiales', subcategorySlug: 'torres-iluminacion' },
+  ],
 };
 
 const EE_TERMOFUSIONADORAS: RentalSubcategory = {
@@ -1128,7 +1148,7 @@ const EE_TERMOFUSIONADORAS: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: 'Bajo pedido' },
   ],
-  heroImage: HERO,
+  heroImage: TERMOFUSIONADORA_ELECTRICA_RITMO_360MM,
   seoTitle: 'Arriendo de Termofusión Eléctrica en Chile',
   seoDescription:
     'Arriendo de equipos de termofusión eléctrica en Chile. Para tuberías HDPE de 20 a 1.200 mm. Operador certificado. Cotiza online.',
@@ -1158,9 +1178,9 @@ const EE_TERMOFUSIONADORAS: RentalSubcategory = {
 const EE_RODILLOS: RentalSubcategory = {
   slug: 'rodillos',
   name: 'Rodillos Compactadores',
-  shortDesc: 'Equipos de compactación y terminación de pavimentos',
+  shortDesc: 'Rodillo vibratorio de doble tambor para compactación de asfalto, bases granulares y suelos en obras viales y de urbanización.',
   description:
-    'Arriendo de rodillo vibratorio de doble tambor diseñado para la compactación de asfalto, bases granulares y suelos en obras de construcción, urbanización y mantenimiento vial.',
+    'Arriendo de rodillos compactadores vibratorios de doble tambor en Chile para obras de construcción, pavimentación y mantenimiento vial. Equipos con peso operativo de 830 kg, motor diésel de bajo consumo y arranque eléctrico, ideales para compactación de asfalto, bases granulares, arenas y suelos en obras de urbanización, parques industriales y mantención de caminos. Operador certificado incluido, con experiencia en faenas de pavimentación y control de densidad según normativa MOP. Mantenimiento preventivo, seguros y combustibles incluidos durante todo el período de arriendo. Disponibilidad inmediata en zona norte (Atacama, Coquimbo) y centro de Chile, con respuesta operativa en menos de 24 horas. Excelente maniobrabilidad en espacios reducidos y zanjas. Solución eficiente para proyectos de compactación uniforme en superficies de asfalto, gravilla y suelos cohesivos.',
   features: [
     'Motor diésel de bajo consumo.',
     'Alto rendimiento con bajo costo de operación.',
@@ -1174,10 +1194,10 @@ const EE_RODILLOS: RentalSubcategory = {
     { label: 'Motor', value: 'Diésel' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: RODILLO_COMPACTADOR,
   seoTitle: 'Arriendo de Rodillos compactadores',
   seoDescription:
-    'Arriendo de equipos de Rodillos compactadores. Cotiza online.',
+    'Arriendo de rodillos compactadores vibratorios en Chile. Peso 830 kg, motor diésel, doble tambor. Ideal para asfalto y suelos. Operador certificado incluido. Solicita cotización.',
   catalog: [
     {
       slug: 'rodillo-compactador',
@@ -1203,10 +1223,10 @@ const EE_RODILLOS: RentalSubcategory = {
 
 const EE_PLACAS_COMPACTADORAS: RentalSubcategory = {
   slug: 'placas-compactadoras',
-  name: 'Placas Compactadores',
-  shortDesc: 'Equipos de compactación y terminación de pavimentos',
+  name: 'Placas Compactadoras',
+  shortDesc: 'Placa compactadora unidireccional de 15 kN para adoquines, zanjas, veredas y suelos granulares en construcción y obras civiles.',
   description:
-    'Arriendo de placa compactadora diseñado para la compactación de asfalto, bases granulares y suelos en obras de construcción, urbanización y mantenimiento vial.',
+    'Arriendo de placas compactadoras unidireccionales en Chile para proyectos de construcción, obras civiles y paisajismo. Equipos con fuerza de compactación de 15 kN, motor a gasolina de alta confiabilidad y diseño compacto, ideales para veredas, zanjas, pavimentos intertrabados (adoquines), arenas, gravilla y suelos granulares. Base plana de acero con alta eficiencia de compactación en superficies de hasta 30 cm de espesor. Operador certificado incluido, con experiencia en compactación de suelos para fundaciones, estacionamientos, veredas y trabajos de paisajismo. Mantenimiento, seguros y combustibles incluidos durante el arriendo. Disponibilidad inmediata en zona norte (Atacama, Coquimbo) y centro de Chile. Equipos livianos y maniobrables para trabajos en espacios reducidos, zanjas de instalaciones sanitarias y rellenos compactados.',
   features: [
     'Motor Bencinero de bajo consumo.',
     'Alto rendimiento con bajo costo de operación.',
@@ -1220,10 +1240,10 @@ const EE_PLACAS_COMPACTADORAS: RentalSubcategory = {
     { label: 'Motor', value: 'Bencinero' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: PLACA_COMPACTADORA_15KN,
   seoTitle: 'Arriendo de Placas Compactadoras',
   seoDescription:
-    'Arriendo de equipos de Placas compactadoras. Cotiza online.',
+    'Arriendo de placas compactadoras 15 kN en Chile. Motor a gasolina, ideal para adoquines, zanjas y suelos granulares. Operador incluido. Disponibilidad inmediata en zona norte.',
   catalog: [
     {
       slug: 'placa-compactadora-15kn',
@@ -1244,15 +1264,15 @@ const EE_PLACAS_COMPACTADORAS: RentalSubcategory = {
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Termofusionadora 160 mm.',
     }, */
   ],
-  whatsappMessage: 'Hola IP, quisiera cotizar arriendo de rodillo compactador.',
+  whatsappMessage: 'Hola IP, quisiera cotizar arriendo de placa compactadora.',
 };
 
 const EE_ALISADORA_PAVIMENTO: RentalSubcategory = {
   slug: 'alisadora-de-pavimento',
   name: 'Alisadora de Pavimentos',
-  shortDesc: 'Equipos de compactación y terminación de pavimentos',
+  shortDesc: 'Alisadora de pavimentos de 915 mm para acabado profesional de losas industriales, radieres, pavimentos y superficies de hormigón.',
   description:
-    'Arriendo de alisadora de pavimentos para acabado profesional. Cotiza online.',
+    'Arriendo de alisadoras de pavimento en Chile para acabado profesional de superficies de hormigón. Equipos con diámetro de trabajo de 915 mm (36 pulgadas), motor a gasolina de alto rendimiento y diseño robusto para uso intensivo en faenas de construcción. Ideales para losas industriales, pavimentos, radieres, fundaciones y superficies de hormigón que requieren un terminado uniforme y de alta calidad. Sistema de alisado con paletas metálicas que proporcionan un acabado liso o texturizado según requerimiento del proyecto. Operador certificado incluido, con experiencia en acabados de hormigón para pisos industriales, estacionamientos, bodegas y obras civiles. Mantenimiento, seguros y combustibles incluidos durante el arriendo. Disponibilidad inmediata en zona norte (Atacama, Coquimbo) y centro de Chile con respuesta operativa en menos de 24 horas.',
   features: [
     'Motor Bencinero de bajo consumo.',
     'Alto rendimiento con bajo costo de operación.',
@@ -1266,10 +1286,10 @@ const EE_ALISADORA_PAVIMENTO: RentalSubcategory = {
     { label: 'Motor', value: 'Bencinero' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: ALISADORA_PAVIMENTO_915MM,
   seoTitle: 'Arriendo de Alisadora de Pavimentos',
   seoDescription:
-    'Arriendo de Alisadora de Pavimentos. Cotiza online.',
+    'Arriendo de alisadoras de pavimento 915 mm en Chile. Acabado profesional de hormigón, losas industriales y radieres. Operador certificado. Responde en 24h.',
   catalog: [
     {
       slug: 'alisadora-de-pavimento-915mm',
@@ -1296,9 +1316,9 @@ const EE_ALISADORA_PAVIMENTO: RentalSubcategory = {
 const EE_VIBROPISON: RentalSubcategory = {
   slug: 'vibropison',
   name: 'Vibropisón',
-  shortDesc: 'Equipos de compactación y terminación de pavimentos',
+  shortDesc: 'Vibropisón diésel de 21 kN para compactación de suelos cohesivos, zanjas, rellenos y áreas de difícil acceso en obras y minería.',
   description:
-    'Arriendo de equipo compactador de suelos para acabado profesional. Cotiza online.',
+    'Arriendo de vibropisones diésel en Chile para compactación de suelos cohesivos, zanjas, rellenos y áreas de difícil acceso. Equipos con fuerza de impacto de 21 kN, motor diésel Yanmar de bajo consumo y construcción robusta para uso intensivo en faenas de construcción, minería y obras civiles. Altura de salto optimizada para compactación eficiente en suelos arcillosos, mixtos y rellenos de zanjas. Diseño compacto y maniobrable para trabajos en espacios reducidos, canalizaciones, fundaciones puntuales y obras sanitarias. Operador certificado incluido, con experiencia en compactación localizada según normativa MOP y estándares de calidad. Mantenimiento preventivo, seguros y combustibles incluidos durante todo el período de arriendo. Disponibilidad inmediata en zona norte (Atacama, Coquimbo) y centro de Chile con respuesta operativa en menos de 24 horas.',
   features: [
     'Motor diésel Yanmar de bajo consumo.',
     'Alto rendimiento con bajo costo de operación.',
@@ -1312,10 +1332,10 @@ const EE_VIBROPISON: RentalSubcategory = {
     { label: 'Motor', value: 'Diésel' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: HERO,
+  heroImage: VIBROPISON_21KN,
   seoTitle: 'Arriendo de Vibropisón',
   seoDescription:
-    'Arriendo de Alisadora de Vibropisón. Cotiza online.',
+    'Arriendo de vibropisón diésel 21 kN en Chile. Compactación de suelos cohesivos, zanjas y rellenos. Motor Yanmar, operador incluido. Consulta disponibilidad por región.',
   catalog: [
     {
       slug: 'vibropison-21kn',
@@ -1342,7 +1362,7 @@ const EE_VIBROPISON: RentalSubcategory = {
 const EE_MEZCLADORAS_ELECTRICAS: RentalSubcategory = {
   slug: 'mezcladoras-electricas',
   name: 'Mezcladora eléctrica',
-  shortDesc: 'Mezcladora eléctrica.',
+  shortDesc: 'Mezcladora eléctrica de hormigón de 250 a 500 L para preparación de concreto en construcción, minería y obras civiles.',
   description:
     'Mezcladora eléctrica de hormigón de uso profesional, diseñada para la preparación eficiente de concreto en proyectos de construcción, minería y obras civiles. Su gran capacidad y sistema de volteo lateral permiten una operación rápida, segura y de alto rendimiento.',
   features: [
@@ -1358,10 +1378,10 @@ const EE_MEZCLADORAS_ELECTRICAS: RentalSubcategory = {
     { label: 'Sistema', value: 'Volteo lateral' },
     { label: 'Disponibilidad', value: 'Bajo pedido' },
   ],
-  heroImage: HERO,
+  heroImage: MEZCLADORA_ELECTRICA_400L_EMARESA_HV_400,
   seoTitle: 'Arriendo de Mezcladora Eléctrica',
   seoDescription:
-    'Arriendo de mezcladora eléctrica en Chile. Capacidad 250 a 500 L, altura hasta 18 m. Operador certificado. Cotiza online.',
+    'Arriendo de mezcladora eléctrica en Chile. Capacidad 250 a 500 L, rendimiento 4 m³/h. Motor eléctrico 3 HP. Operador incluido. Solicita cotización personalizada.',
   catalog: [
     {
       slug: 'mezcladora-electrica-400l',
@@ -1379,8 +1399,8 @@ const EE_MEZCLADORAS_ELECTRICAS: RentalSubcategory = {
 
 const EE_CANASTILLOS_ALZA_HOMBRE: RentalSubcategory = {
   slug: 'canastillos-alza-hombre',
-  name: 'Canastilos Alza Hombre',
-  shortDesc: 'Canastilos Alza Hombre.',
+  name: 'Canastillos Alza Hombre',
+  shortDesc: 'Canastillos certificados para trabajos en altura con camión pluma o grúa articulada. Metálicos y de fibra de vidrio.',
   description:
     'Canastillo certificado para trabajos en altura mediante camión pluma o grúa articulada. Diseñado para realizar labores de montaje, mantenimiento e inspección con altos estándares de seguridad.',
   features: [
@@ -1394,10 +1414,10 @@ const EE_CANASTILLOS_ALZA_HOMBRE: RentalSubcategory = {
     { label: 'Cantidad', value: '2 personas' },
     { label: 'Disponibilidad', value: 'Bajo pedido' },
   ],
-  heroImage: HERO,
-  seoTitle: 'Arriendo de Canastilos Alza Hombre',
+  heroImage: CANASTILLO_ALZA_HOMBRE_METALICO_ORMET_2MF,
+  seoTitle: 'Arriendo de Canastillos Alza Hombre',
   seoDescription:
-    'Arriendo de Canastilos Alza Hombre en Chile. Capacidad 200 Kg. Cotiza online.',
+    'Arriendo de Canastillos Alza Hombre en Chile. Capacidad 200 Kg. Cotiza online.',
   catalog: [
     {
       slug: 'canastillo-alza-hombre-metalico',
@@ -1417,10 +1437,10 @@ const EE_CANASTILLOS_ALZA_HOMBRE: RentalSubcategory = {
       shortDesc: 'Canastillo de fibra de vidrio reforzada para trabajos en altura con camión pluma o grúa articulada. Su material no conductor lo hace especialmente adecuado para labores cercanas a instalaciones eléctricas, además de aplicaciones industriales y mineras.',
       features: ['Capacidad para 2 personas o hasta 200 kg de carga', 'Material no conductor, ideal para trabajos próximos a redes eléctricas', 'Peso aproximado de 99 kg y dimensiones cercanas a 1.400 × 1.110 × 700 mm'],
       image: CANASTILLO_ALZA_HOMBRE_FIBRA_ORMET_2VE,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Canastillo Alza Hombre Metálico Ormet 2MF.',
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Canastillo Alza Hombre de Fibra Ormet 2VE.',
     },
   ],
-  whatsappMessage: 'Hola IP, quisiera cotizar Arriendo de Canastillo Alza Hombre Metálico Ormet 2MF.',
+  whatsappMessage: 'Hola IP, quisiera cotizar Arriendo de Canastillo Alza Hombre.',
 };
 
 // ─────────────────────────────────────────────────────────────
