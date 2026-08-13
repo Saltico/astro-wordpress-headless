@@ -1,0 +1,55 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#308f40', 'primaryTextColor': '#fff', 'primaryBorderColor': '#256d2e', 'lineColor': '#308f40', 'secondaryColor': '#f8f9fa', 'tertiaryColor': '#e8f5e9'}}}%%
+
+flowchart TD
+    subgraph STEP2["Step 2: Datos de Empresa + Envío a Faena"]
+        direction TB
+        
+        A["Usuario completa datos de empresa"] --> B{"¿Requiere envío a faena?"}
+        
+        B -->|No| C["Retiro en bodega"]
+        C --> Z["Continuar al Step 3"]
+        
+        B -->|Sí| D["Sección de dirección de entrega"]
+        
+        subgraph DELIVERY["Sección de Envío a Faena"]
+            direction TB
+            D --> E["Seleccionar Región"]
+            E --> F["Seleccionar Comuna"]
+            
+            F --> G{"¿Cómo ingresa la dirección?"}
+            
+            G -->|Opción A: Solo fix| H["Escribir dirección en input"]
+            H --> H1["confirmed: true + source: manual"]
+            
+            G -->|Opción B: Mapa estático| I["Escribir dirección + ver preview"]
+            I --> I1["Static Maps API muestra imagen"]
+            
+            G -->|Opción C: Mapa interactivo| J["🗺️ Mapa con marcador arrastrable"]
+            J --> J1["🔍 SearchBox en el mapa"]
+            J --> J2["📍 Geolocalización del dispositivo"]
+            J1 --> K["Seleccionar sugerencia → mueve pin"]
+            J2 --> L["Centrar mapa en ubicación actual"]
+            K --> M["Reverse geocoding → actualiza dirección"]
+            L --> M
+            M --> M1["confirmed: true + lat/lng + placeId"]
+            
+            G -->|Opción D: OpenStreetMap| N["🗺️ Leaflet + OSM"]
+            N --> N1["Nominatim para búsqueda"]
+            N1 --> N2["confirmed: true + lat/lng"]
+        end
+        
+        H1 --> V{"¿Validación pasa?"}
+        I1 --> V
+        M1 --> V
+        N2 --> V
+        
+        V -->|Sí| Z
+        V -->|No| W["⚠️ Error: 'Debes seleccionar una dirección de entrega'"]
+        W --> G
+    end
+    
+    style STEP2 fill:#f0f7f0,stroke:#308f40,stroke-width:2px
+    style DELIVERY fill:#e8f5e9,stroke:#308f40,stroke-width:1px
+    style V fill:#fff3cd,stroke:#ffc107,stroke-width:2px
+    style Z fill:#d4edda,stroke:#28a745,stroke-width:2px
+    style W fill:#f8d7da,stroke:#dc3545,stroke-width:2px

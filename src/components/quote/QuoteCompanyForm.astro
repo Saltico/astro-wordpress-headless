@@ -276,15 +276,30 @@ const apiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY ?? 'YOUR_GOOGLE_MAPS_A
           region: getRegionNameByCode(selectedRegion) || existing.deliveryAddress.region,
           commune: selectedCommune || existing.deliveryAddress.commune,
         };
-      } else if (selectedRegion || selectedCommune) {
-        // Si no hay deliveryAddress pero hay región/comuna seleccionada, crear uno manual.
-        data.deliveryAddress = {
-          formattedAddress: '',
-          region: getRegionNameByCode(selectedRegion),
-          commune: selectedCommune,
-          source: 'manual',
-          confirmed: false,
-        };
+      } else {
+        // Leer el texto escrito en el input de dirección.
+        const addressInput = form.querySelector<HTMLInputElement>('[data-address-input]');
+        const typedAddress = addressInput?.value.trim() ?? '';
+
+        if (typedAddress) {
+          // Si el usuario escribió una dirección, aceptarla como manual confirmada.
+          data.deliveryAddress = {
+            formattedAddress: typedAddress,
+            region: getRegionNameByCode(selectedRegion),
+            commune: selectedCommune,
+            source: 'manual',
+            confirmed: true,
+          };
+        } else if (selectedRegion || selectedCommune) {
+          // Solo región/comuna sin dirección → no confirmar aún.
+          data.deliveryAddress = {
+            formattedAddress: '',
+            region: getRegionNameByCode(selectedRegion),
+            commune: selectedCommune,
+            source: 'manual',
+            confirmed: false,
+          };
+        }
       }
     }
     return data;

@@ -1,0 +1,58 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#dc3545', 'primaryTextColor': '#fff', 'primaryBorderColor': '#c82333', 'lineColor': '#6c757d', 'secondaryColor': '#f8f9fa', 'tertiaryColor': '#fff3cd'}}}%%
+
+sequenceDiagram
+    participant U as Usuario
+    participant F as QuoteCompanyForm
+    participant GD as getFormData()
+    participant SC as setCompanyData()
+    participant V as validateCompanyData()
+
+    Note over U,V: 🔴 FLUJO ACTUAL (CON BUG)
+    
+    U->>F: Selecciona "Sí, enviar a faena"
+    F->>F: Muestra sección de dirección
+    U->>F: Selecciona Región = "Metropolitana"
+    U->>F: Selecciona Comuna = "Las Condes"
+    U->>F: Escribe "Av. Apoquindo 1234" en input
+    Note over U: NO selecciona sugerencia de Google
+    
+    U->>F: Click "Continuar"
+    F->>GD: getFormData(form)
+    GD->>GD: Lee selects → region="RM", commune="Las Condes"
+    GD->>GD: existing.deliveryAddress?.confirmed → undefined
+    GD->>GD: Crea: { formattedAddress: '', confirmed: false }
+    Note over GD: ⚠️ formattedAddress vacío<br/>confirmed: false
+    GD-->>F: data
+    F->>SC: setCompanyData(data)
+    SC->>SC: Check: confirmed === false → DISCARD
+    Note over SC: sanitized.deliveryAddress = undefined
+    F->>V: validateCompanyData(data)
+    V->>V: requiresSiteDelivery === true
+    V->>V: addr = undefined
+    V-->>F: ❌ errors.deliveryAddress = "Debes seleccionar una dirección de entrega."
+    F-->>U: ⚠️ Error mostrado, no puede avanzar
+
+    Note over U,V: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    Note over U,V: 🟢 FLUJO PROPUESTO (FIX)
+    
+    U->>F: Selecciona "Sí, enviar a faena"
+    U->>F: Selecciona Región + Comuna
+    U->>F: Escribe "Av. Apoquindo 1234" en input
+    
+    U->>F: Click "Continuar"
+    F->>GD: getFormData(form)
+    GD->>GD: Lee selects → region, commune
+    GD->>GD: Lee input → "Av. Apoquindo 1234"
+    GD->>GD: Si hay texto + selects → confirmed: true
+    Note over GD: ✅ formattedAddress: "Av. Apoquindo 1234"<br/>confirmed: true<br/>source: 'manual'
+    GD-->>F: data
+    F->>SC: setCompanyData(data)
+    SC->>SC: Check: confirmed === true → INCLUDE
+    Note over SC: deliveryAddress guardada ✅
+    F->>V: validateCompanyData(data)
+    V->>V: requiresSiteDelivery === true
+    V->>V: addr.confirmed === true ✅
+    V->>V: addr.formattedAddress no vacío ✅
+    V-->>F: ✅ Sin errores
+    F-->>U: ✅ Avanza al Step 3

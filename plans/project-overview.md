@@ -103,3 +103,34 @@ flowchart LR
 - [Flujo de envío](./flows/resend-email-flow.mmd)
 - [Factibilidad](./reports/resend-email-feasibility.md)
 - [Esfuerzo](./reports/resend-email-effort.md)
+
+---
+
+# Migración de Resend API a SMTP Hostinger
+
+## Resumen
+
+Migración del sistema de envío de correos desde la API de Resend hacia el servidor SMTP de Hostinger, utilizando la infraestructura de correo ya disponible en el hosting contratado. Se reemplaza el SDK de Resend por Nodemailer con configuración SMTP directa, eliminando la dependencia de un servicio externo.
+
+## Estado
+
+**Status**: Planned | **Esfuerzo**: Medio-Bajo (~2 días) | **Prioridad**: Media
+
+## Arquitectura
+
+```mermaid
+flowchart LR
+    User[Usuario] --> Review[QuoteReview]
+    Review --> API[/api/quote-email]
+    API --> Nodemailer[Nodemailer]
+    Nodemailer --> SMTP[Hostinger SMTP]
+    SMTP --> Email[Correo enviado]
+    Review --> WhatsApp[WhatsApp]
+```
+
+## Documentos relacionados
+
+- [Plan de feature](./features/smtp-migration.md)
+- [Flujo de migración](./flows/smtp-migration-flow.mmd)
+- [Factibilidad](./reports/smtp-migration-feasibility.md)
+- [Esfuerzo](./reports/smtp-migration-effort.md)

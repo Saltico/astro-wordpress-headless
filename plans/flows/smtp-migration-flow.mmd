@@ -1,0 +1,102 @@
+sequenceDiagram
+    actor User as Usuario
+    participant Browser as Navegador
+    participant Review as QuoteReview.astro
+    participant API as /api/quote-email.ts
+    participant SMTP as src/lib/smtp.ts
+    participant Hostinger as Hostinger SMTP<br/>(smtp.hostinger.com)
+    participant WhatsApp as WhatsApp
+
+    Note over User, WhatsApp: Flujo de Envio de Cotizacion via SMTP Hostinger (Post-Migracion)
+
+    User->>Review: Clic "Enviar cotizacion"
+    activate Review
+
+    Review->>Review: Validar carrito no vacio
+    Review->>Review: Mostrar loading spinner
+    Review->>Review: Deshabilitar boton
+
+    Review->>API: POST /api/quote-email<br/>{cart, company, globalNotes}
+    activate API
+
+    API->>API: Validar datos de entrada
+    API->>API: Verificar SMTP_USER y SMTP_PASS configuradas
+
+    alt Credenciales no configuradas
+        API-->>Review: 503 Service Unavailable<br/>{success: false, message: "Servicio no configurado"}
+        deactivate API
+        Review->>Review: Mostrar error de configuracion
+        Review->>WhatsApp: Abrir wa.me como fallback
+    end
+
+    API->>API: Construir templates HTML<br/>(companyEmailTemplate + clientEmailTemplate)
+
+    alt Datos validos
+        Note over API, Hostinger: Envio correo a empresa (INTERNO)
+        API->>SMTP: transporter.sendMail({<br/>  from: "IP Proyectos" <cotizaciones@ipproyectosindustriales.cl>,<br/>  to: matias.castillo@sansano.usm.cl,<br/>  replyTo: email_cliente,<br/>  subject: "[INTERNO] Nueva Cotizacion",<br/>  html: companyEmailHtml<br/>})
+        activate SMTP
+        SMTP->>Hostinger: Conexion SMTP (SSL/TLS puerto 465)
+        activate Hostinger
+
+        alt Envio empresa exitoso
+            Hostinger-->>SMTP: 250 OK (messageId)
+            deactivate Hostinger
+            SMTP-->>API: { messageId: "xxx" }
+            deactivate SMTP
+            API->>API: Log: Correo empresa enviado
+        else Error en envio empresa
+            Hostinger-->>SMTP: Error SMTP
+            deactivate Hostinger
+            SMTP-->>API: Error
+            deactivate SMTP
+            API->>API: Log error, continuar con correo cliente
+        end
+
+        Note over API, Hostinger: Envio correo al cliente (RESUMEN)
+        API->>SMTP: transporter.sendMail({<br/>  from: "IP Proyectos" <cotizaciones@ipproyectosindustriales.cl>,<br/>  to: email_cliente,<br/>  replyTo: cotizaciones@ipproyectosindustriales.cl,<br/>  subject: "Tu Cotizacion - IP Proyectos Industriales",<br/>  html: clientEmailHtml<br/>})
+        activate SMTP
+        SMTP->>Hostinger: Conexion SMTP (reutiliza pool)
+        activate Hostinger
+
+        alt Envio cliente exitoso
+            Hostinger-->>SMTP: 250 OK (messageId)
+            deactivate Hostinger
+            SMTP-->>API: { messageId: "yyy" }
+            deactivate SMTP
+            API-->>Review: 200 OK { success: true, emailIds }
+            deactivate API
+
+            Review->>Review: Mostrar confirmacion
+            Review->>WhatsApp: Abrir wa.me con mensaje
+            WhatsApp-->>Browser: Abrir chat de WhatsApp
+
+        else Error en envio cliente
+            Hostinger-->>SMTP: Error SMTP
+            deactivate Hostinger
+            SMTP-->>API: Error
+            deactivate SMTP
+            API-->>Review: 500 Error { success: false, error }
+            deactivate API
+
+            Review->>Review: Mostrar error
+            Review->>Review: Mantener boton habilitado
+            Review->>WhatsApp: Abrir wa.me como fallback
+        end
+
+    else Datos invalidos
+        API-->>Review: 400 Bad Request { success: false, errors }
+        deactivate API
+        Review->>Review: Mostrar errores de validacion
+    end
+
+    deactivate Review
+
+    Note over User, WhatsApp: Comparacion: Antes (Resend API) vs Despues (SMTP Hostinger)
+
+    rect rgb(255, 230, 230)
+        Note over API, Hostinger: ANTES: API -> Resend API (servicio externo) -> SMTP
+    end
+
+    rect rgb(230, 255, 230)
+        Note over API, Hostinger: DESPUES: API -> Nodemailer -> Hostinger SMTP (directo)
+    end

@@ -5,6 +5,8 @@ import Container from '@/components/ui/Container.astro';
 import SectionLayout from '@/components/ui/SectionLayout.astro';
 import { projectSchema } from '@/lib/seo';
 
+export const prerender = true;
+
 export function getStaticPaths() {
   return [
     {

@@ -896,6 +896,13 @@ import Button from '@/components/ui/Button.astro';
     .quote-review__cta-group {
       justify-content: flex-end;
     }
+
+    /* Igualar el ancho de los botones en desktop */
+    .quote-review__cta-group :global(.btn) {
+      flex: 1 1 0;
+      min-width: 220px;
+      max-width: 280px;
+    }
   }
 
   @media (max-width: 767.98px) {

@@ -149,7 +149,7 @@ const clientLogos = [
           <p class="d-hero__search-title">Encuentra tu máquina</p>
           <EquipmentSearch />
           <p class="d-hero__search-cta">
-            ¿Prefieres cotizar directamente? - 
+            ¿Prefieres cotizar directamente?
             <a href="/cotizador" class="d-hero__search-link">
               Ir al cotizador
               <Icon name="arrow-right" size={14} />
@@ -412,13 +412,17 @@ const clientLogos = [
   }
 
   .d-hero__search-link {
+    margin-left: 4px;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
     color: var(--color-brand-300, #62bb74);
     font-weight: 600;
     text-decoration: none;
     transition: gap 0.2s ease;
+  }
+
+  .d-hero__search-link :global(svg) {
+    vertical-align: middle;
   }
 
   .d-hero__search-link:hover {

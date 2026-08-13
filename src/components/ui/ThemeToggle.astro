@@ -98,6 +98,7 @@
     transition: background-color 0.2s var(--ease-out, ease),
       border-color 0.2s var(--ease-out, ease),
       transform 0.2s var(--ease-out, ease);
+    -webkit-tap-highlight-color: transparent;
   }
 
   .theme-toggle:hover {
@@ -105,13 +106,14 @@
     border-color: rgba(255, 255, 255, 0.4);
   }
 
+  .theme-toggle:active {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
   .theme-toggle:focus-visible {
     outline: 2px solid var(--color-brand, #348f41);
     outline-offset: 2px;
-  }
-
-  .theme-toggle:active {
-    transform: scale(0.95);
   }
 
   .theme-toggle__icon {

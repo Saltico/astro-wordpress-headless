@@ -2,6 +2,8 @@
 // src/pages/arriendo/[categoria]/[subcategoria].astro
 // Sub-ruta catálogo: cada tipo de equipo con su grilla de modelos.
 
+export const prerender = true;
+
 import RentalLayout from '@/layouts/RentalLayout.astro';
 import EquipmentCatalog from '@/components/rental/EquipmentCatalog.astro';
 import RelatedEquipment from '@/components/rental/RelatedEquipment.astro';
@@ -235,12 +237,12 @@ const faqItems = FAQ_MAP[subcategory.slug] ?? defaultFaqItems;
 
 <RentalLayout
   title={subcategory.seoTitle}
+  subtitle={subcategory.shortDesc}
   category={subcategory.name}
   description={subcategory.seoDescription}
   heroImage={subcategory.heroImage}
   heroImageAlt={subcategory.name}
   features={subcategory.features}
-  description={subcategory.shortDesc}
   breadcrumbs={breadcrumbs}
   whatsappMessage={subcategory.whatsappMessage}
   jsonLd={jsonLd}
