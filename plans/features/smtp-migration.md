@@ -5,7 +5,7 @@ dependencies:
   - Nodemailer (npm)
   - Credenciales SMTP de Hostinger
   - Cuenta de correo activa en Hostinger
-status: Planned
+status: Completed
 ---
 
 # Migracion de Resend API a SMTP Hostinger
@@ -65,11 +65,11 @@ QUOTE_EMAIL_TO=matias.castillo@sansano.usm.cl
 SMTP_HOST=smtp.hostinger.com
 SMTP_PORT=465
 SMTP_SECURE=true
-SMTP_USER=cotizaciones@ipproyectosindustriales.cl
+SMTP_USER=contacto@matiascastillo.com
 SMTP_PASS=<password de la cuenta de correo>
 
 # Configuracion de correos (se mantienen)
-QUOTE_EMAIL_FROM=cotizaciones@ipproyectosindustriales.cl
+QUOTE_EMAIL_FROM=contacto@matiascastillo.com
 QUOTE_EMAIL_TO=matias.castillo@sansano.usm.cl
 ```
 
@@ -307,17 +307,17 @@ Ver: [plans/flows/smtp-migration-flow.mmd](./flows/smtp-migration-flow.mmd)
 
 ## Criterios de Aceptacion
 
-- [ ] Dependencia `resend` eliminada del proyecto
-- [ ] Dependencia `nodemailer` instalada y funcionando
-- [ ] Archivo `src/lib/resend.ts` eliminado
-- [ ] Archivo `src/lib/smtp.ts` creado con configuracion SMTP
-- [ ] Endpoint `quote-email.ts` usa Nodemailer en lugar de Resend
-- [ ] Variables de entorno actualizadas (`.env`, `.env.example`, Hostinger)
+- [x] Dependencia `resend` eliminada del proyecto
+- [x] Dependencia `nodemailer` instalada y funcionando
+- [x] Archivo `src/lib/resend.ts` eliminado
+- [x] Archivo `src/lib/smtp.ts` creado con configuracion SMTP
+- [x] Endpoint `quote-email.ts` usa Nodemailer en lugar de Resend
+- [x] Variables de entorno actualizadas (`.env`, `.env.example`, Hostinger)
 - [ ] Correo a empresa se envia correctamente via SMTP
 - [ ] Correo al cliente se envia correctamente via SMTP
 - [ ] Manejo de errores funciona (credenciales invalidas, SMTP caido)
 - [ ] Los correos no llegan a spam (SPF/DKIM configurados)
-- [ ] Build de produccion compila sin errores
+- [x] Build de produccion compila sin errores
 - [ ] Deploy a Hostinger funciona correctamente
 
 ## Referencias

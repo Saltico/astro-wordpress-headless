@@ -355,9 +355,37 @@ import Button from '@/components/ui/Button.astro';
     if (feedbackEl) feedbackEl.hidden = true;
   }
 
+  function setButtonLoading(btn: HTMLElement, isLoading: boolean, loadingText?: string): void {
+    const labelEl = btn.querySelector<HTMLElement>('.btn__label');
+    if (!labelEl) return;
+
+    if (isLoading) {
+      // Guardar texto original en un data attribute
+      const originalText = labelEl.textContent || '';
+      btn.dataset.originalText = originalText;
+      labelEl.textContent = loadingText || 'Enviando...';
+      btn.setAttribute('aria-disabled', 'true');
+      btn.classList.add('is-disabled');
+    } else {
+      // Restaurar texto original
+      const originalText = btn.dataset.originalText || 'Enviar por correo';
+      labelEl.textContent = originalText;
+      btn.removeAttribute('aria-disabled');
+      btn.classList.remove('is-disabled');
+      delete btn.dataset.originalText;
+    }
+  }
+
+  function isButtonLoading(btn: HTMLElement): boolean {
+    return btn.getAttribute('aria-disabled') === 'true';
+  }
+
   async function sendQuoteEmail(): Promise<void> {
-    const emailBtn = document.querySelector<HTMLButtonElement>('[data-review-action="email"]');
+    const emailBtn = document.querySelector<HTMLElement>('[data-review-action="email"]');
     if (!emailBtn) return;
+
+    // Prevenir múltiples clicks mientras se procesa
+    if (isButtonLoading(emailBtn)) return;
 
     const cart = getCart();
     const company = getCompanyData();
@@ -381,10 +409,8 @@ import Button from '@/components/ui/Button.astro';
       return;
     }
 
-    // Mostrar loading
-    const originalText = emailBtn.textContent;
-    emailBtn.disabled = true;
-    emailBtn.textContent = 'Enviando...';
+    // Mostrar loading y deshabilitar botón
+    setButtonLoading(emailBtn, true, 'Enviando...');
     hideEmailFeedback();
 
     try {
@@ -421,8 +447,7 @@ import Button from '@/components/ui/Button.astro';
       });
     } finally {
       // Restaurar botón
-      emailBtn.disabled = false;
-      emailBtn.textContent = originalText;
+      setButtonLoading(emailBtn, false);
     }
   }
 
@@ -440,8 +465,11 @@ import Button from '@/components/ui/Button.astro';
     });
 
     // Email button
-    document.querySelector<HTMLButtonElement>('[data-review-action="email"]')?.addEventListener('click', (e) => {
+    document.querySelector<HTMLElement>('[data-review-action="email"]')?.addEventListener('click', (e) => {
       e.preventDefault();
+      const btn = e.currentTarget as HTMLElement;
+      // Prevenir click si ya está procesando
+      if (btn.getAttribute('aria-disabled') === 'true') return;
       sendQuoteEmail();
     });
   });

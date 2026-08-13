@@ -1,12 +1,12 @@
 // src/pages/api/quote-email.ts
-// Endpoint API para enviar correos de cotización usando Resend.
+// Endpoint API para enviar correos de cotización usando SMTP (Nodemailer).
 // Recibe cart, company y globalNotes desde el cliente.
 // Envía 2 correos: uno a la empresa (interno) y otro al cliente (resumen).
 
 import type { APIRoute } from 'astro';
 import type { QuoteCart } from '@/types/quote';
 import type { QuoteCompanyData } from '@/types/quoteCompany';
-import { resend, EMAIL_CONFIG } from '@/lib/resend';
+import { transporter, EMAIL_CONFIG } from '@/lib/smtp';
 import { buildCompanyEmailTemplate } from '@/lib/quoteEmailTemplate';
 import { buildClientEmailTemplate } from '@/lib/quoteClientEmailTemplate';
 import { validateCompanyData } from '@/types/quoteCompany';
@@ -128,9 +128,9 @@ export const POST: APIRoute = async ({ request }) => {
 
     const { cart, company, globalNotes } = validation.data;
 
-    // Verificar que la API key esté configurada
-    if (!import.meta.env.RESEND_API_KEY) {
-      console.error('❌ RESEND_API_KEY no está configurada');
+    // Verificar que las credenciales SMTP estén configuradas
+    if (!import.meta.env.SMTP_USER || !import.meta.env.SMTP_PASS) {
+      console.error('❌ SMTP_USER o SMTP_PASS no están configuradas');
       return new Response(
         JSON.stringify({
           success: false,
@@ -153,56 +153,36 @@ export const POST: APIRoute = async ({ request }) => {
     // Enviar correo a la empresa
     let companyEmailId: string | undefined;
     try {
-      const { data, error } = await resend.emails.send({
-        from: EMAIL_CONFIG.from,
+      const info = await transporter.sendMail({
+        from: `"IP Proyectos Industriales" <${EMAIL_CONFIG.from}>`,
         to: EMAIL_CONFIG.toCompany,
         replyTo: company.email,
         subject: `[INTERNO] ${subject}`,
         html: companyEmailHtml,
       });
 
-      if (error) {
-        console.error('❌ Error al enviar correo a empresa:', error);
-        // No fallar si el correo a empresa falla, continuar con el del cliente
-      } else {
-        companyEmailId = data?.id;
-        console.log(`✅ Correo a empresa enviado: ${companyEmailId}`);
-      }
+      companyEmailId = info.messageId;
+      console.log(`✅ Correo a empresa enviado: ${companyEmailId}`);
     } catch (err) {
-      console.error('❌ Excepción al enviar correo a empresa:', err);
-      // Continuar con el correo al cliente
+      console.error('❌ Error al enviar correo a empresa:', err);
+      // No fallar si el correo a empresa falla, continuar con el del cliente
     }
 
     // Enviar correo al cliente
     let clientEmailId: string | undefined;
     try {
-      const { data, error } = await resend.emails.send({
-        from: EMAIL_CONFIG.from,
+      const info = await transporter.sendMail({
+        from: `"IP Proyectos Industriales" <${EMAIL_CONFIG.from}>`,
         to: company.email,
         replyTo: EMAIL_CONFIG.toCompany,
         subject: `Tu Cotización - IP Proyectos Industriales`,
         html: clientEmailHtml,
       });
 
-      if (error) {
-        console.error('❌ Error al enviar correo al cliente:', error);
-        return new Response(
-          JSON.stringify({
-            success: false,
-            message: 'Error al enviar el correo al cliente. Por favor intenta nuevamente.',
-            error: error.message,
-          } as QuoteEmailResponse),
-          {
-            status: 500,
-            headers: { 'Content-Type': 'application/json' },
-          }
-        );
-      }
-
-      clientEmailId = data?.id;
+      clientEmailId = info.messageId;
       console.log(`✅ Correo al cliente enviado: ${clientEmailId}`);
     } catch (err) {
-      console.error('❌ Excepción al enviar correo al cliente:', err);
+      console.error('❌ Error al enviar correo al cliente:', err);
       return new Response(
         JSON.stringify({
           success: false,

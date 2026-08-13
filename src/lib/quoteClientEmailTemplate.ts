@@ -3,9 +3,10 @@
 // Resumen de la cotización para que pueda validar que está correcta.
 // Diseño alineado con la identidad visual de IP Proyectos Industriales.
 
-import type { QuoteCart } from '@/types/quote';
+import type { QuoteCart, QuoteCartItem } from '@/types/quote';
 import type { QuoteCompanyData } from '@/types/quoteCompany';
 import { computeCartTotals, formatPeriodLabel } from '@/lib/quoteMessage';
+import { RENTAL_CATEGORIES } from '@/data/rental';
 
 // ─────────────────────────────────────────────────────────────
 // Constantes de diseño
@@ -46,6 +47,57 @@ function escapeHtml(s: string | undefined | null): string {
     .replace(/'/g, '&#39;');
 }
 
+// ─────────────────────────────────────────────────────────────
+// Detección de equipos tipo grúa
+// ─────────────────────────────────────────────────────────────
+
+/** Set de slugs de equipos tipo grúa (igual lógica que el frontend). */
+const CRANE_EQUIPMENT_SLUGS = new Set<string>();
+for (const cat of RENTAL_CATEGORIES) {
+  for (const sub of cat.subcategories) {
+    const isCraneSubcategory = sub.slug.startsWith('gruas-') && sub.slug !== 'gruas-horquilla';
+    if (isCraneSubcategory) {
+      for (const eq of sub.catalog) {
+        CRANE_EQUIPMENT_SLUGS.add(eq.slug);
+      }
+    }
+  }
+}
+
+/** Verifica si un item del carrito es un equipo tipo grúa. */
+function isCraneItem(item: QuoteCartItem): boolean {
+  return CRANE_EQUIPMENT_SLUGS.has(item.equipmentSlug);
+}
+
+/** Genera el HTML de la sección de personal del servicio para grúas. */
+function buildCrewSection(item: QuoteCartItem): string {
+  if (!isCraneItem(item)) return '';
+
+  const c = item.customization;
+  const crewItems: string[] = [];
+
+  if (c.crewOperator) crewItems.push('Operador');
+  if (c.crewRigger) crewItems.push('Rigger');
+  if (c.crewAPR) crewItems.push('APR (prevencionista)');
+  if (c.crewSupervisor) crewItems.push('Supervisor');
+
+  if (crewItems.length === 0) return '';
+
+  const crewBadges = crewItems
+    .map(
+      (label) =>
+        `<span style="display: inline-block; padding: 3px 8px; margin: 2px 4px 2px 0; background-color: ${BRAND.greenLight}; color: ${BRAND.greenDarker}; font-size: 11px; font-weight: 600; border-radius: 4px; border: 1px solid ${BRAND.greenAccent};">${escapeHtml(label)}</span>`
+    )
+    .join('');
+
+  return `
+    <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed ${BRAND.border};">
+      <span style="font-size: 11px; color: ${BRAND.inkMuted}; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;">Personal del servicio:</span>
+      <div style="margin-top: 4px;">${crewBadges}</div>
+    </div>
+  `;
+}
+
 /** Genera el HTML del correo para el cliente. */
 export function buildClientEmailTemplate(data: ClientEmailTemplateData): string {
   const { cart, company, globalNotes } = data;
@@ -60,11 +112,13 @@ export function buildClientEmailTemplate(data: ClientEmailTemplateData): string 
   const equipmentRows = cart.items
     .map((item) => {
       const c = item.customization;
+      const crewSection = buildCrewSection(item);
       return `
         <tr>
           <td style="padding: 14px 10px; border-bottom: 1px solid ${BRAND.border}; font-size: 14px; color: ${BRAND.ink};">
             <strong style="color: ${BRAND.ink};">${escapeHtml(item.name)}</strong>
             ${item.capacity ? `<br><span style="color: ${BRAND.inkMuted}; font-size: 12px;">${escapeHtml(item.capacity)}</span>` : ''}
+            ${crewSection}
           </td>
           <td style="padding: 14px 10px; border-bottom: 1px solid ${BRAND.border}; text-align: center; font-size: 14px; font-weight: 700; color: ${BRAND.greenDark};">${c.quantity}</td>
           <td style="padding: 14px 10px; border-bottom: 1px solid ${BRAND.border}; text-align: center; font-size: 14px; color: ${BRAND.ink};">${formatPeriodLabel(c.periodType, c.periodCount)}</td>
