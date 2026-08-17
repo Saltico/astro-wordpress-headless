@@ -1,0 +1,19 @@
+flowchart TD
+  A[Usuario llega desde búsqueda o anuncio] --> B[Astro SSR + BaseLayout]
+  B --> C[dataLayer: site_context sin PII]
+  B --> D[GTM Web]
+  D --> E{Consentimiento}
+  E -->|Necesarias| F[Tags esenciales]
+  E -->|Analítica| G[GA4]
+  E -->|Marketing| H[Google Ads / LinkedIn / remarketing]
+  A --> I[Interacciones: servicio, teléfono, WhatsApp, PDF, cotizador]
+  I --> C
+  I --> J{Cotización enviada con éxito?}
+  J -->|No| K[Registrar error/abandono, sin conversión primaria]
+  J -->|Sí| L[quote_submit_success / generate_lead]
+  L --> M[CRM: fuente + servicio + scoring]
+  M --> N{Resultado comercial}
+  N -->|MQL / SQL / ganado| O[Data Manager / conversiones mejoradas de leads]
+  O --> H
+  G --> P[Looker Studio + análisis funnel]
+  P --> Q[Optimizar landing, keywords y presupuesto]

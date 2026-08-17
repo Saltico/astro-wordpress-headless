@@ -1,0 +1,14 @@
+flowchart TD
+  A[Visita sitio] --> B[Consent Mode default: denied]
+  B --> C[Mostrar banner cookies]
+  C --> D{Usuario elige}
+  D -- Aceptar todo --> E[applyConsent: analytics+marketing granted]
+  D -- Solo necesarias --> F[applyConsent: solo necesarias]
+  D -- Configurar --> G[Toggles por categoría]
+  G --> H[Guardar selección localStorage]
+  E --> I[GTM habilita tags marketing]
+  F --> J[Solo tags esenciales]
+  H --> I
+  H --> J
+  I --> K[dataLayer: consent_update]
+  J --> K

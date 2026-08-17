@@ -1,0 +1,14 @@
+flowchart LR
+  A[Landing / Catálogo equipos] -->|click Agregar| B[quote_add_item event]
+  B --> C[Step 2: datos empresa]
+  C -->|focus 1er campo| D[quote_form_start]
+  D --> E[Submit cotizador]
+E --> F[quote_submit_success tras /api/quote-email]
+  A2[Contacto page] -->|focus| D2[contact_form_start]
+  D2 --> E2[contact_form_submit]
+  E2 --> F
+  W[WhatsApp click] --> G[GA4 + Google Ads conversion]
+  P[Phone click] --> G
+  CD[Catálogo PDF] --> G
+  F --> G
+  G --> H[Optimización SEM]

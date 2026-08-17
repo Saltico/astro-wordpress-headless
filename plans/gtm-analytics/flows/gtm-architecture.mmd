@@ -1,0 +1,15 @@
+flowchart TD
+  A[Usuario visita sitio Astro SSR] --> B[BaseLayout head: GTM snippet + dataLayer init]
+  B --> C[Consent Mode default: denied]
+  C --> D[GTM Container evalúa triggers]
+  D --> E{Consentimiento concedido?}
+  E -- marketing denegado --> F[Tags GA4 ads/remarketing pausados]
+  E -- marketing concedido --> G[GA4 + Google Ads + Remarketing + LinkedIn + Clarity]
+  G --> H[Eventos dataLayer → GA4]
+  H --> I[Conversiones → Google Ads]
+  I --> J[Optimización de puja SEM / value-based]
+  F --> K[Espera decisión en banner]
+  K --> E
+  G --> L[CRM: lead scoring + cierre]
+  L --> M[Import conversiones offline]
+  M --> I

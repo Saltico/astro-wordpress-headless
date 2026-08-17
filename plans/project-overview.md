@@ -1,136 +1,135 @@
 ---
-project: Cotizador — refinamiento de primera pantalla
-effort: High
-dependencies:
-  - src/pages/cotizador.astro
-  - src/components/quote/EquipmentPicker.astro
-  - src/components/quote/QuoteStepSelect.astro
-  - src/components/layout/Header.astro
+feature: Plan de medición GTM, SEM y captación de leads
+effort: Very High
+dependencies: [cuentas-google, consentimiento, crm]
 status: Planned
 ---
 
-# Cotizador — refinamiento de primera pantalla
+# Plan de medición, SEM y generación de leads
 
-## Resumen
+## Resumen ejecutivo
 
-Este plan reorganiza la primera vista del cotizador para que el usuario llegue directamente a la tarea principal: buscar y seleccionar equipos. Se elimina el hero fotográfico como bloque protagonista, se conserva únicamente una superficie compacta que garantice contraste y estabilidad para el navbar transparente, y se desplaza la acción directa de descarga del catálogo al encabezado de “Agregar equipos”.
+La web de IP Proyectos Industriales debe medir el recorrido completo de un prospecto B2B:
 
-La selección actual tendrá mayor peso visual que el descubrimiento de equipos: en desktop se conservarán dos columnas, pero la búsqueda ocupará una columna más estrecha y los equipos seleccionados una columna más amplia. En móvil, ambas zonas se apilarán manteniendo primero la selección actual.
+`anuncio o búsqueda → landing → interacción → cotización → lead contactable → oportunidad → cliente`.
 
-## Objetivos
+Se recomienda instalar **un contenedor web de Google Tag Manager (GTM)** como punto único de
+orquestación. GTM debe distribuir GA4, Google Ads y, después de validar consentimiento,
+Clarity, LinkedIn Insight Tag y otras etiquetas. El objetivo no es acumular métricas, sino
+optimizar inversión hacia **leads calificados**, no únicamente hacia clics o formularios.
 
-- Reducir contenido no esencial antes de la tarea principal.
-- Evitar interferencias visuales entre el navbar transparente y el contenido.
-- Mantener el catálogo accesible con una acción directa y visible.
-- Presentar una card de búsqueda por fila para facilitar lectura, comparación y uso del botón.
-- Dar mayor superficie y jerarquía a los equipos seleccionados.
+> Este documento es un plan técnico/marketing, no asesoría jurídica. Antes de publicar tags se
+> debe validar la política de privacidad, cookies y tratamiento de datos con el responsable legal.
 
-## Alcance
+## Contexto detectado en el repositorio
 
-### Incluido
+| Elemento | Estado actual | Consecuencia para el plan |
+|---|---|---|
+| Framework | Astro 7 + TypeScript, `output: server`, `@astrojs/node` | El HTML común se controla desde `src/layouts/BaseLayout.astro`. |
+| Conversión principal | Cotizador `/cotizador` en 3 pasos | Medir avance del wizard y éxito real del envío. |
+| Envío de cotización | `POST /api/quote-email`, respuesta JSON e indicador inline | `quote_submit_success` debe dispararse después de `response.ok && result.success`; `/gracias` no es actualmente la confirmación del cotizador. |
+| Canales adicionales | WhatsApp, teléfono, email y catálogo PDF | Medir clics como microconversiones; una llamada real requiere call tracking. |
+| Formularios alternativos | Algunos componentes apuntan a `/api/contact` | Verificar/implementar ese endpoint antes de contar sus envíos como conversiones. |
+| Tags actuales | No se encontraron GTM, GA4 ni `dataLayer` | La implementación parte desde cero. |
+| Consentimiento | `/cookies` es contenido placeholder | Debe existir un CMP/banner y una política coherente antes de activar marketing. |
 
-- Reemplazo visual de `QuoteHero.astro` en `/cotizador`.
-- Ajuste del fondo/espacio superior para estabilizar el navbar.
-- Traslado del botón “Descargar catálogo” al header de `EquipmentPicker.astro`.
-- Reorganización de columnas en `QuoteStepSelect.astro`.
-- Resultados de búsqueda en una sola card por fila.
-- Revisión responsive, accesibilidad, estados vacíos y foco.
+## Objetivos y KPI
 
-### No incluido
+### Objetivos de negocio
 
-- Cambios en el modelo de carrito.
-- Cambios en el flujo de datos de empresa, dirección o Google Maps.
-- Cambios en el catálogo o en la fuente `RENTAL_CATEGORIES`.
-- Rediseño global del header fuera de `/cotizador`.
+1. Aumentar cotizaciones de empresas dentro de las zonas atendidas.
+2. Identificar qué servicio, región, campaña y palabra clave produce oportunidades reales.
+3. Reducir formularios irrelevantes mediante segmentación, campos de calificación y CRM.
+4. Devolver a Google Ads el estado comercial del lead para optimizar por calidad.
 
-## Dirección UX
+### KPI recomendados
 
-Modo de la superficie: **Operate**.
+| Nivel | KPI | Uso |
+|---|---|---|
+| Primario | `generate_lead`/cotización enviada | Base inicial de optimización. |
+| Calidad | MQL, SQL, oportunidad y cliente ganado | Sustituye el CPL aislado por calidad y valor. |
+| Eficiencia | CPL, costo por MQL, costo por SQL, tasa de cierre | Decide presupuesto por campaña/servicio. |
+| Funnel | `quote_add_item`, pasos vistos, abandono, `quote_submit_success` | Detecta fricción del cotizador. |
+| Canales | WhatsApp, llamadas contestadas, email, PDF | Atribuye conversiones que no pasan por el formulario. |
 
-La primera pantalla debe comunicar inmediatamente: “estoy en el cotizador, puedo buscar un equipo y revisar mi selección”. La interfaz no debe comportarse como una landing ni competir con el contenido operativo mediante una imagen hero.
+## Diferenciación frente al mercado
+
+La revisión pública de referentes muestra dos patrones:
+
+- **Finning Chile** compite con marca, amplitud de catálogo, arriendo, soporte y cobertura,
+  además de múltiples puntos de contacto.
+- **Salfa** combina maquinaria, arriendo, convenios empresa, sucursales y formularios de
+  contacto; su ventaja es escala y disponibilidad de canales.
+
+La oportunidad de IP Proyectos Industriales no es imitar ese volumen, sino comunicar y medir
+mejor una propuesta especializada: **arriendo de equipos + ingeniería, construcción,
+montajes y soporte para proyectos industriales**, con cobertura del norte, calificación
+empresa/RUT y contexto de faena en el cotizador. El CRM y las conversiones offline convierten
+esa información en una ventaja medible.
 
 ## Arquitectura de alto nivel
 
 ```mermaid
-flowchart TD
-    Header[Header sticky/transparente] --> Surface[Superficie compacta de cotizador]
-    Surface --> Wizard[QuoteWizard]
-    Wizard --> Step1[Primer paso: selección]
-    Step1 --> Picker[EquipmentPicker estrecho]
-    Picker --> CatalogCTA[Descargar catálogo]
-    Step1 --> Selection[Equipos seleccionados amplio]
-    Picker --> Search[Buscar / filtrar]
-    Search --> Results[Una card por fila]
-    Results --> Cart[quoteCart existente]
-    Cart --> Selection
-```
-
-## Documentos relacionados
-
-- [Plan de feature](./features/cotizador-layout-refinement.md)
-- [Flujo de interacción](./flows/cotizador-layout-flow.mmd)
-- [Factibilidad](./reports/feasibility-report.md)
-- [Esfuerzo](./reports/effort-analysis.md)
-- [Consistencia visual previa](./quote-design-consistency.md)
-- [Selector de equipos](./quote-cart/10-equipment-selector.md)
-
----
-
-# Integración de Resend Email para Cotizaciones
-
-## Resumen
-
-Nueva feature para enviar correos electrónicos automáticamente después de completar una cotización utilizando la API de Resend. El correo incluirá el resumen completo de equipos seleccionados, datos de la empresa y notas globales.
-
-## Estado
-
-**Status**: Planned | **Esfuerzo**: Medio (2-3 días) | **Prioridad**: Alta
-
-## Arquitectura
-
-```mermaid
 flowchart LR
-    User[Usuario] --> Review[QuoteReview]
-    Review --> API[/api/quote-email]
-    API --> Resend[Resend API]
-    Resend --> Email[Correo enviado]
-    Review --> WhatsApp[WhatsApp]
+  U[Usuario / empresa] --> W[Web Astro SSR]
+  W --> L[BaseLayout.astro]
+  L --> C{Consentimiento}
+  C -->|necesario| N[Tags esenciales]
+  C -->|analítica aceptada| A[GA4]
+  C -->|marketing aceptado| M[Google Ads / LinkedIn / remarketing]
+  W --> D[dataLayer sin PII]
+  D --> G[GTM web]
+  G --> A
+  G --> M
+  W --> Q[Cotizador /api/quote-email]
+  Q --> R[CRM + lead scoring]
+  R --> S[MQL / SQL / ganado]
+  S --> O[Conversiones mejoradas de leads / Data Manager]
+  O --> M
+  A --> B[Looker Studio]
+  W --> H[Clarity / UX]
 ```
+
+## Fases propuestas
+
+| Fase | Resultado | Esfuerzo |
+|---|---|---|
+| 0. Medición y privacidad | Inventario, cuentas, CMP, política y nombres | Medium |
+| 1. Núcleo GTM + GA4 | Contenedor, dataLayer, eventos y QA | Medium |
+| 2. SEM medible | Google Ads, conversiones, UTM, Search Console | Medium |
+| 3. Calidad comercial | CRM, scoring, GCLID/UTM y estados | High |
+| 4. Optimización multicanal | Call tracking, LinkedIn ABM, Clarity y dashboards | High |
+| 5. Escala | Conversiones mejoradas de leads y GTM server-side si el volumen lo justifica | Very High |
+
+## Decisiones pendientes
+
+1. ¿Existen ya cuentas de GTM, GA4, Google Ads y Search Console? ¿Quién será propietario de cada una?
+2. ¿Cuál es el presupuesto mensual de SEM y cuáles regiones/servicios tienen prioridad comercial?
+3. ¿Qué CRM usa el equipo o cuál está dispuesto a adoptar?
+4. ¿Qué estados y valores definen un MQL, SQL, oportunidad y cliente ganado?
+5. ¿Se requiere un CMP administrado o se autoriza un componente propio revisado legalmente?
 
 ## Documentos relacionados
 
-- [Plan de feature](./features/resend-email-integration.md)
-- [Flujo de envío](./flows/resend-email-flow.mmd)
-- [Factibilidad](./reports/resend-email-feasibility.md)
-- [Esfuerzo](./reports/resend-email-effort.md)
+- [Plan de la feature GTM](./gtm-analytics/feature-plan.md)
+- [Implementación de GTM](./gtm-analytics/gtm-implementation.md)
+- [Plan de eventos](./gtm-analytics/event-tracking-plan.md)
+- [Herramientas recomendadas](./gtm-analytics/recommended-tools.md)
+- [Estrategia SEM](./gtm-analytics/sem-strategy.md)
+- [Consentimiento](./gtm-analytics/consent-management.md)
+- [Stack propuesto](./tech-stack.md)
+- [Factibilidad](./reports/gtm-feasibility-report.md)
+- [Esfuerzo](./reports/gtm-effort-analysis.md)
+- [Flujo principal](./flows/gtm-lead-measurement.mmd)
 
----
+## Fuentes consultadas
 
-# Migración de Resend API a SMTP Hostinger
-
-## Resumen
-
-Migración del sistema de envío de correos desde la API de Resend hacia el servidor SMTP de Hostinger, utilizando la infraestructura de correo ya disponible en el hosting contratado. Se reemplaza el SDK de Resend por Nodemailer con configuración SMTP directa, eliminando la dependencia de un servicio externo.
-
-## Estado
-
-**Status**: Planned | **Esfuerzo**: Medio-Bajo (~2 días) | **Prioridad**: Media
-
-## Arquitectura
-
-```mermaid
-flowchart LR
-    User[Usuario] --> Review[QuoteReview]
-    Review --> API[/api/quote-email]
-    API --> Nodemailer[Nodemailer]
-    Nodemailer --> SMTP[Hostinger SMTP]
-    SMTP --> Email[Correo enviado]
-    Review --> WhatsApp[WhatsApp]
-```
-
-## Documentos relacionados
-
-- [Plan de feature](./features/smtp-migration.md)
-- [Flujo de migración](./flows/smtp-migration-flow.mmd)
-- [Factibilidad](./reports/smtp-migration-feasibility.md)
-- [Esfuerzo](./reports/smtp-migration-effort.md)
+- [Google Tag Manager: crear cuenta y contenedor](https://support.google.com/tagmanager/answer/14842164)
+- [Google: Consent Mode para sitios web](https://developers.google.com/tag-platform/security/guides/consent)
+- [GA4: medición mejorada](https://support.google.com/analytics/answer/9216061?hl=es)
+- [Google Ads: conversiones mejoradas de clientes potenciales](https://support.google.com/google-ads/answer/11347292?hl=es)
+- [Google Search Console](https://search.google.com/search-console/about)
+- [Microsoft Clarity](https://clarity.microsoft.com/)
+- [LinkedIn Ads](https://www.linkedin.com/advertise/ads)
+- [Finning Chile](https://www.finning.com/es_CL)
+- [Salfa Rent](https://www.salfarent.cl/)

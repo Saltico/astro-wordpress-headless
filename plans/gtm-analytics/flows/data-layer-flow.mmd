@@ -1,0 +1,20 @@
+sequenceDiagram
+  participant U as Usuario
+  participant P as Página (Astro SSR)
+  participant DL as dataLayer
+  participant GTM as GTM Container
+  participant GA as GA4 / Google Ads
+  participant CRM as CRM
+  P->>DL: site_context {page_type, content_group}
+  U->>P: click WhatsApp
+  P->>DL: push event whatsapp_click
+  DL->>GTM: evento disponible
+  GTM->>GA: envía conversión secundaria
+  U->>P: envía cotización
+  P->>DL: quote_submit_success {value, currency, service}
+  DL->>GTM: evento primario
+  GTM->>GA: conversión primaria
+  P->>CRM: lead enviado por endpoint/API seguro
+  CRM->>CRM: scoring → SQL/ganado
+  CRM->>GA: MQL/SQL/ganado vía Data Manager
+  GA->>GTM: optimiza puja SEM
