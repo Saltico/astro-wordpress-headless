@@ -68,26 +68,24 @@ import Icon from '@/components/ui/Icon.astro';
     '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
 
   const SHORT_DESC_BY_SLUG = new Map<string, string>();
-  const CRANE_EQUIPMENT_SLUGS = new Set<string>();
   for (const cat of RENTAL_CATEGORIES) {
     for (const sub of cat.subcategories) {
-      // Solo las subcategorías de Grúas (no camiones pluma, ni grúas horquilla, ni alza-hombre)
-      const isCraneSubcategory = sub.slug.startsWith('gruas-') && sub.slug !== 'gruas-horquilla';
       for (const eq of sub.catalog) {
         SHORT_DESC_BY_SLUG.set(eq.slug, eq.shortDesc);
-        if (isCraneSubcategory) {
-          CRANE_EQUIPMENT_SLUGS.add(eq.slug);
-        }
       }
     }
   }
+
+  /** Slug de la categoría Izaje: incluye grúas, camiones pluma, alza-hombre y grúas horquilla. */
+  const IZAJE_CATEGORY_SLUG = 'izaje';
 
   function findShortDesc(slug: string, fallback: string): string {
     return SHORT_DESC_BY_SLUG.get(slug) ?? fallback;
   }
 
-  function isCraneEquipment(slug: string): boolean {
-    return CRANE_EQUIPMENT_SLUGS.has(slug);
+  /** Indica si un item pertenece a la categoría Izaje (cualquier subcategoría). */
+  function isIzajeEquipment(categorySlug: string): boolean {
+    return categorySlug === IZAJE_CATEGORY_SLUG;
   }
 
   function todayIso(): string {
@@ -135,17 +133,29 @@ import Icon from '@/components/ui/Icon.astro';
     const minStart = todayIso();
     const panelId = `line-panel-${safeId}`;
     const toggleId = `line-toggle-${safeId}`;
-    const isCrane = isCraneEquipment(item.equipmentSlug);
-    
-    // Generar checkboxes de personal solo para grúas
-    const crewSection = isCrane ? `
+    const isIzaje = isIzajeEquipment(item.categorySlug);
+
+    // En Izaje el Operador es obligatorio: se renderiza siempre marcado y disabled.
+    // Para el resto del personal (Rigger, APR, Supervisor) se respeta el estado guardado.
+    const operatorAttrs = isIzaje
+      ? 'checked disabled aria-disabled="true"'
+      : c.crewOperator
+        ? 'checked'
+        : '';
+    const operatorLabel = isIzaje
+      ? 'Operador <small class="quote-line__required">(Obligatorio)</small>'
+      : 'Operador';
+
+    // La sección de personal del servicio aplica a todos los equipos de la
+    // categoría Izaje (grúas, camiones pluma, alza-hombre, grúas horquilla).
+    const crewSection = isIzaje ? `
               <div class="quote-line__field quote-line__field--full">
                 <fieldset class="quote-line__crew-group">
                   <legend>Personal del servicio</legend>
                   <div class="quote-line__checkbox-grid">
                     <label class="quote-line__checkbox">
-                      <input type="checkbox" data-line-action="crewOperator" data-line-id="${safeId}" ${c.crewOperator ? 'checked' : ''} />
-                      <span>Operador</span>
+                      <input type="checkbox" data-line-action="crewOperator" data-line-id="${safeId}" ${operatorAttrs} />
+                      <span>${operatorLabel}</span>
                     </label>
                     <label class="quote-line__checkbox">
                       <input type="checkbox" data-line-action="crewRigger" data-line-id="${safeId}" ${c.crewRigger ? 'checked' : ''} />
@@ -163,9 +173,9 @@ import Icon from '@/components/ui/Icon.astro';
                 </fieldset>
               </div>
     ` : '';
-    
+
     return `
-      <article class="quote-line" data-line-id="${safeId}">
+      <article class="quote-line" data-line-id="${safeId}" data-category="${escapeHtml(item.categorySlug)}">
         <header class="quote-line__head">
           <img src="${escapeHtml(item.image)}" alt="${safeName}" class="quote-line__thumb" loading="lazy" />
           <div class="quote-line__heading">
@@ -398,14 +408,22 @@ import Icon from '@/components/ui/Icon.astro';
       notes.addEventListener('input', () => apply(notes.value));
     }
 
-    // Handlers para checkboxes de personal del servicio (solo grúas)
+    // Handlers para checkboxes de personal del servicio (categoría Izaje).
+    // Para Izaje el Operador viene deshabilitado (incluido obligatorio), pero
+    // blindamos el handler para que ningún flujo pueda persistir crewOperator=false.
+    const isIzajeLine = article.dataset.category === IZAJE_CATEGORY_SLUG;
     const crewCheckboxes = article.querySelectorAll<HTMLInputElement>('[data-line-action^="crew"]');
     crewCheckboxes.forEach((checkbox) => {
       checkbox.addEventListener('change', () => {
         const action = checkbox.dataset.lineAction;
         const checked = checkbox.checked;
-        if (action === 'crewOperator') updateItem(lineId, { crewOperator: checked });
-        else if (action === 'crewRigger') updateItem(lineId, { crewRigger: checked });
+        if (action === 'crewOperator') {
+          if (isIzajeLine && !checked) {
+            checkbox.checked = true;
+            return;
+          }
+          updateItem(lineId, { crewOperator: checked });
+        } else if (action === 'crewRigger') updateItem(lineId, { crewRigger: checked });
         else if (action === 'crewAPR') updateItem(lineId, { crewAPR: checked });
         else if (action === 'crewSupervisor') updateItem(lineId, { crewSupervisor: checked });
       });
@@ -901,5 +919,22 @@ import Icon from '@/components/ui/Icon.astro';
 
   :global(.quote-line__checkbox span) {
     user-select: none;
+  }
+
+  :global(.quote-line__required) {
+    font-size: 0.75em;
+    font-weight: 600;
+    color: var(--theme-text-muted);
+    margin-left: 0.25rem;
+    letter-spacing: 0.02em;
+  }
+
+  :global(.quote-line__checkbox input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.85;
+  }
+
+  :global(.quote-line__checkbox:has(input:disabled)) {
+    cursor: not-allowed;
   }
 </style>

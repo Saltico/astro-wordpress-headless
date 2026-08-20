@@ -64,7 +64,8 @@ export interface QuoteCartItemCustomization {
   transportCommune?: string;
   /** @deprecated Movido a QuoteCompanyData.deliveryAddress */
   transportAddress?: string;
-  /** Personal del servicio (solo para subcategoría Grúas). */
+  /** Personal del servicio. Aplica a todos los equipos de la categoría Izaje.
+   *  En Izaje, `crewOperator` es obligatorio (siempre `true` en UI). */
   crewOperator?: boolean;
   crewRigger?: boolean;
   crewAPR?: boolean;

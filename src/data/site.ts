@@ -83,8 +83,6 @@ export const navigationData: NavItem[] = [
     ],
   },
   { label: 'Seguridad', url: '/seguridad' },
-/* TODO: DEFINIR SI SE DEBE MANTENER EL LINK DE CONTACTO EN LA NAVEGACIÓN PRINCIPAL   
- label: 'Contacto', url: '/contacto' }, */
 ];
 
 // ─── Footer ──────────────────────────────────────────────────────────────
@@ -128,32 +126,4 @@ export const footerData: {
   catalogLabel: 'Descargar catálogo 2025',
 };
 
-// ─── Featured Equipment ──────────────────────────────────────────────────
-// Equipos destacados para el homepage. Curado manualmente por el equipo comercial.
-// Este array será usado por el componente FeaturedEquipment.
-export const featuredEquipment = [
-  {
-    categorySlug: 'izaje',
-    subcategorySlug: 'gruas-100-toneladas',
-    badge: 'Más solicitado',
-  },
-  {
-    categorySlug: 'movimiento-de-tierra',
-    subcategorySlug: 'camiones-tolva',
-    badge: 'Disponible',
-  },
-  {
-    categorySlug: 'izaje',
-    subcategorySlug: 'camion-pluma',
-    badge: 'Nuevo',
-  },
-];
 
-// ─── Coverage Zones ──────────────────────────────────────────────────────
-// Zonas de cobertura en el norte de Chile para SEO geográfico.
-// Este array será usado por el componente CoverageSection.
-export const coverageZones = [
-  { region: 'Atacama', cities: ['Copiapó', 'Caldera', 'Vallenar'] },
-  { region: 'Coquimbo', cities: ['La Serena', 'Coquimbo', 'Ovalle'] },
-  { region: 'Antofagasta', cities: ['Antofagasta', 'Calama', 'Tocopilla'] },
-];

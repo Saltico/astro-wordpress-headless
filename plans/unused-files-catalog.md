@@ -1,6 +1,6 @@
 ---
 title: "Catalogo de Archivos No Utilizados"
-status: Analysis
+status: Completed
 date: 2026-08-11
 scope: "src/ - Componentes, paginas, layouts, librerias, datos y tipos"
 ---
