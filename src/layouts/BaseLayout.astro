@@ -21,6 +21,7 @@ import QuoteCartFloatingButton from '@/components/quote/QuoteCartFloatingButton.
 import ThemeToggle from '@/components/ui/ThemeToggle.astro';
 import { organizationSchema, websiteSchema, getSiteUrl } from '@/lib/seo';
 import { siteBrand, siteContact, topbarData, navigationData, footerData } from '@/data/site';
+import { initAnalytics } from '@/lib/analytics';
 import logoImg from '@/assets/logos/logo_ipproyectosindustriales.png';
 
 export interface Props extends BaseLayoutProps {
@@ -132,6 +133,16 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-W8MBKHF');</script>
     <!-- End Google Tag Manager -->
+
+    <!-- Google tag (gtag.js) -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-RGMD8X4MMP"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-RGMD8X4MMP');
+    </script>
+    <!-- End Google tag (gtag.js) -->
 
     <MetaTags
       title={title}
@@ -271,6 +282,11 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
     }
 
     <QuoteCartFloatingButton />
+
+    <script>
+      // Inicializar analytics: escucha eventos del DOM y los envía al dataLayer de GTM
+      initAnalytics();
+    </script>
   </body>
 </html>
 

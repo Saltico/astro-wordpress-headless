@@ -163,7 +163,7 @@ const breadcrumbs = [
 
         <!-- Formulario en card con animación -->
         <div class="safety-form-card" data-animate-slide>
-          <form class="safety-contact-form" action="/api/contact" method="POST" id="safetyContactForm">
+          <form class="safety-contact-form" action="/api/contact" method="POST" id="safetyContactForm" novalidate>
             <div class="safety-form-field">
               <label for="safety-name">Nombre *</label>
               <input type="text" id="safety-name" name="name" placeholder="Tu nombre completo" required>
@@ -191,9 +191,13 @@ const breadcrumbs = [
               <textarea id="safety-message" name="message" rows="4" placeholder="Cuéntanos en qué podemos ayudarte..." required></textarea>
             </div>
 
+            <!-- Feedback message -->
+            <div class="safety-form-feedback" id="safetyFormFeedback" role="alert" aria-live="polite" hidden></div>
+
             <div class="safety-form-actions">
-              <Button type="submit" variant="primary" size="lg">
-                Enviar mensaje
+              <Button type="submit" variant="primary" size="lg" id="safetySubmitBtn">
+                <span id="safetySubmitText">Enviar mensaje</span>
+                <span id="safetySubmitLoading" hidden>Enviando...</span>
               </Button>
             </div>
           </form>
@@ -586,42 +590,143 @@ const breadcrumbs = [
     gap: 16px;
     margin-top: 8px;
   }
+
+  /* Feedback message */
+  .safety-form-feedback {
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.5;
+    display: none;
+  }
+
+  .safety-form-feedback[hidden] {
+    display: none;
+  }
+
+  .safety-form-feedback:not([hidden]) {
+    display: block;
+  }
+
+  .safety-form-feedback--success {
+    background: rgba(26, 156, 74, 0.15);
+    border: 1px solid rgba(26, 156, 74, 0.4);
+    color: #62bb74;
+  }
+
+  .safety-form-feedback--error {
+    background: rgba(220, 38, 38, 0.12);
+    border: 1px solid rgba(220, 38, 38, 0.35);
+    color: #f87171;
+  }
+
+  /* Submit button loading state */
+  .safety-form-actions button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
 </style>
 
 <script>
+  // ─────────────────────────────────────────────────────────────
   // Animación de entrada del formulario
+  // ─────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
     const formCard = document.querySelector('[data-animate-slide]');
-    if (!formCard) return;
+    if (formCard) {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Verificar si el usuario prefiere movimiento reducido
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    
-    if (prefersReducedMotion) {
-      // Si prefiere movimiento reducido, mostrar inmediatamente
-      formCard.classList.add('is-visible');
-      return;
+      if (prefersReducedMotion) {
+        formCard.classList.add('is-visible');
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setTimeout(() => formCard.classList.add('is-visible'), 200);
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.2, rootMargin: '0px 0px -100px 0px' }
+        );
+        observer.observe(formCard);
+      }
     }
 
-    // Usar IntersectionObserver para detectar cuando el formulario entra en viewport
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Pequeño delay para que la animación sea más noticeable
-            setTimeout(() => {
-              formCard.classList.add('is-visible');
-            }, 200);
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        threshold: 0.2, // Activar cuando el 20% del elemento sea visible
-        rootMargin: '0px 0px -100px 0px', // Activar un poco antes de que entre completamente
-      }
-    );
+    // ─────────────────────────────────────────────────────────
+    // AJAX form submission
+    // ─────────────────────────────────────────────────────────
+    const form = document.getElementById('safetyContactForm') as HTMLFormElement | null;
+    if (!form) return;
 
-    observer.observe(formCard);
+    const feedback = document.getElementById('safetyFormFeedback') as HTMLDivElement | null;
+    const submitBtn = document.getElementById('safetySubmitBtn') as HTMLButtonElement | null;
+    const submitText = document.getElementById('safetySubmitText') as HTMLSpanElement | null;
+    const submitLoading = document.getElementById('safetySubmitLoading') as HTMLSpanElement | null;
+
+    /** Muestra un mensaje de feedback con la variante indicada. */
+    function showFeedback(message: string, variant: 'success' | 'error'): void {
+      if (!feedback) return;
+      feedback.textContent = message;
+      feedback.className = `safety-form-feedback safety-form-feedback--${variant}`;
+      feedback.removeAttribute('hidden');
+    }
+
+    /** Oculta el mensaje de feedback. */
+    function hideFeedback(): void {
+      if (!feedback) return;
+      feedback.setAttribute('hidden', '');
+      feedback.className = 'safety-form-feedback';
+    }
+
+    /** Activa/desactiva el estado de carga del botón. */
+    function setLoading(loading: boolean): void {
+      if (!submitBtn || !submitText || !submitLoading) return;
+      submitBtn.disabled = loading;
+      submitText.hidden = loading;
+      submitLoading.hidden = !loading;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideFeedback();
+
+      // Validación básica del lado cliente
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          showFeedback(result.message || 'Mensaje enviado correctamente. Te contactaremos pronto.', 'success');
+          form.reset();
+        } else {
+          const errorMsg = result.errors
+            ? Object.values(result.errors).join(' ')
+            : result.message || 'Error al enviar el mensaje. Por favor intenta nuevamente.';
+          showFeedback(errorMsg, 'error');
+        }
+      } catch {
+        showFeedback('Error de conexión. Por favor verifica tu internet e intenta nuevamente.', 'error');
+      } finally {
+        setLoading(false);
+      }
+    });
   });
 </script>
