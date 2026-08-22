@@ -10,6 +10,8 @@ import { transporter, EMAIL_CONFIG } from '@/lib/smtp';
 import { buildCompanyEmailTemplate } from '@/lib/quoteEmailTemplate';
 import { buildClientEmailTemplate } from '@/lib/quoteClientEmailTemplate';
 import { validateCompanyData } from '@/types/quoteCompany';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 // ─────────────────────────────────────────────────────────────
 // Tipos
@@ -88,6 +90,39 @@ function validateRequest(body: unknown): { valid: boolean; errors?: Record<strin
 }
 
 // ─────────────────────────────────────────────────────────────
+// Logo como attachment (CID)
+// ─────────────────────────────────────────────────────────────
+
+const LOGO_FILENAME = 'logo_ipproyectosindustriales.png';
+
+/**
+ * Busca el logo en múltiples ubicaciones para cubrir dev y producción.
+ * - Dev:       `public/` relativo a process.cwd()
+ * - Standalone: `client/` o raíz del deploy
+ * Retorna el buffer de la imagen o null si no se encuentra.
+ */
+function getLogoAttachment(): { filename: string; content: Buffer; cid: string } | null {
+  const candidates = [
+    resolve(process.cwd(), 'public', LOGO_FILENAME),                 // dev
+    resolve(process.cwd(), 'dist', 'client', LOGO_FILENAME),         // producción (server.js en raíz)
+    resolve(process.cwd(), 'client', LOGO_FILENAME),                 // producción (cwd = dist/)
+    resolve(process.cwd(), LOGO_FILENAME),                            // fallback
+  ];
+
+  for (const filePath of candidates) {
+    try {
+      const content = readFileSync(filePath);
+      return { filename: LOGO_FILENAME, content, cid: 'company-logo' };
+    } catch {
+      // Intentar siguiente ubicación
+    }
+  }
+
+  console.warn('⚠️ No se encontró el archivo del logo en ninguna ubicación esperada');
+  return null;
+}
+
+// ─────────────────────────────────────────────────────────────
 // Endpoint
 // ─────────────────────────────────────────────────────────────
 
@@ -147,6 +182,10 @@ export const POST: APIRoute = async ({ request }) => {
     const companyEmailHtml = buildCompanyEmailTemplate({ cart, company, globalNotes });
     const clientEmailHtml = buildClientEmailTemplate({ cart, company, globalNotes });
 
+    // Preparar attachment del logo (CID)
+    const logoAttachment = getLogoAttachment();
+    const attachments = logoAttachment ? [logoAttachment] : [];
+
     // Asunto del correo
     const subject = `Nueva Cotización - ${company.razonSocial || company.nombreFantasia || 'Cliente'}`;
 
@@ -159,6 +198,7 @@ export const POST: APIRoute = async ({ request }) => {
         replyTo: company.email,
         subject: `[INTERNO] ${subject}`,
         html: companyEmailHtml,
+        attachments,
       });
 
       companyEmailId = info.messageId;
@@ -177,6 +217,7 @@ export const POST: APIRoute = async ({ request }) => {
         replyTo: EMAIL_CONFIG.toCompany,
         subject: `Tu Cotización - IP Proyectos Industriales`,
         html: clientEmailHtml,
+        attachments,
       });
 
       clientEmailId = info.messageId;

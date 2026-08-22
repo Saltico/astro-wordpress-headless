@@ -5,10 +5,10 @@
 import heroImg from '@/assets/imgs/hero.jpg';
 import izajeHero from '@/assets/imgs/hero/arriendo/izaje/izaje.avif';
 import gruasHero from '@/assets/imgs/hero/arriendo/izaje/gruas/gruas.avif';
-// Hero images for categories (using representative equipment images)
-import movimientoTierraHero from '@/assets/imgs/rental/movimiento-de-tierra/camion-tolva/camion-tolva-12-m3/camion-tolva-12-m3.avif';
-import transporteHero from '@/assets/imgs/rental/transporte/tracto-camion/tracto-camion-renault-t-460/tracto-camion-renault-t-460.avif';
-import equiposEspecialesHero from '@/assets/imgs/rental/equipos-especiales/torres-iluminacion/torre-iluminacion-9m-wacker-neuson/torre-iluminacion-9m-wacker-neuson.avif';
+// Hero images for categories
+import movimientoTierraHero from '@/assets/imgs/hero/arriendo/movimiento-de-tierra/movimiento-de-tierra.avif';
+import transporteHero from '@/assets/imgs/hero/arriendo/transporte/transporte.avif';
+import equiposEspecialesHero from '@/assets/imgs/hero/arriendo/equipos-especiales/equipos-especiales.avif';
 import gruaGrove60t from '@/assets/imgs/rental/izaje/grua/grua-grove-rt-765-e/grua-grove-rt-765-e.avif';
 import gruaTerex80t from '@/assets/imgs/rental/izaje/grua/grua-terex-rt-780-e/grua-terex-rt-780-e.avif';
 import gruaGrove100t from '@/assets/imgs/rental/izaje/grua/grua-grove-gmk-4100/grua-grove-gmk-4100.avif';
@@ -81,8 +81,12 @@ export interface RentalSubcategory {
   features: string[];
   /** Specs técnicas clave */
   specs: { label: string; value: string }[];
-  /** Imagen del hero (v1: hero.jpg) */
+  /** Imagen del hero (fondo completo con overlay) */
   heroImage: string;
+  /** Imagen del cuerpo (sección "Qué incluye"). Si no se define, usa heroImage como fallback. */
+  bodyImage?: string;
+  /** Alt text para bodyImage. Si no se define, usa el nombre de la subcategoría. */
+  bodyImageAlt?: string;
   /** Title tag pre-formateado */
   seoTitle: string;
   /** Meta description (150-160 chars) */
@@ -186,7 +190,9 @@ const IZAJE_GRUAS_60: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: GRUAS_HERO,
+  heroImage: IZAJE_HERO,
+  bodyImage: GRUA_GROVE_60T,
+  bodyImageAlt: 'Grúa Grove RT 765 E de 60 toneladas en faena',
   seoTitle: 'Arriendo de Grúas de 60 Toneladas',
   seoDescription:
     'Arriendo de grúas de 60 toneladas con operador certificado en Chile. Equipos Grove, Tadano y Liebherr. Hasta 50 m de altura. Cotiza online.',
@@ -245,7 +251,9 @@ const IZAJE_GRUAS_80: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: GRUAS_HERO,
+  heroImage: IZAJE_HERO,
+  bodyImage: GRUA_TEREX_80T,
+  bodyImageAlt: 'Grúa Terex RT 780 E de 80 toneladas en faena minera',
   seoTitle: 'Arriendo de Grúas de 80 Toneladas',
   seoDescription:
     'Arriendo de grúas de 80 toneladas con operador certificado en Chile. Equipos Grove, Tadano y Liebherr. Hasta 60 m de altura. Solicita cotización.',
@@ -303,7 +311,9 @@ const IZAJE_GRUAS_100: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: GRUAS_HERO,
+  heroImage: IZAJE_HERO,
+  bodyImage: GRUA_GROVE_100T,
+  bodyImageAlt: 'Grúa Grove GMK 4100 de 100 toneladas en faena',
   seoTitle: 'Arriendo de Grúas de 100 Toneladas',
   seoDescription:
     'Arriendo de grúas de 100 toneladas con operador certificado en Chile. Equipos Grove, Liebherr y Tadano. Hasta 88 m de altura. Cotiza online.',
@@ -361,7 +371,9 @@ const IZAJE_GRUAS_250: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: GRUAS_HERO,
+  heroImage: IZAJE_HERO,
+  bodyImage: GRUA_GROVE_250T,
+  bodyImageAlt: 'Grúa Grove GMK 5250L de 250 toneladas en faena',
   seoTitle: 'Arriendo de Grúas de 250 Toneladas',
   seoDescription:
     'Arriendo de grúas de 250 toneladas con operador certificado en Chile. Equipos Grove, Liebherr y Tadano. Hasta 130 m de altura. Disponibilidad inmediata.',
@@ -419,7 +431,9 @@ const IZAJE_CAMIONES_PLUMA: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
-  heroImage: CAMION_PLUMA_5T,
+  heroImage: IZAJE_HERO,
+  bodyImage: CAMION_PLUMA_5T,
+  bodyImageAlt: 'Camión pluma Freightliner M2 106 de 4,7 toneladas en faena',
   seoTitle: 'Arriendo de Camiones Pluma',
   seoDescription:
     'Arriendo de camiones pluma de 3 a 15 toneladas en Chile. Operador certificado, combustible y seguros incluidos. Disponibilidad inmediata. Cotiza online.',
@@ -500,7 +514,9 @@ const IZAJE_ALZA_HOMBRE: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
-  heroImage: ALZA_HOMBRE_20M,
+  heroImage: IZAJE_HERO,
+  bodyImage: ALZA_HOMBRE_20M,
+  bodyImageAlt: 'Alza-hombre Manitou 200 ATJ articulado de 20 metros',
   seoTitle: 'Arriendo de Alza-hombre en Chile',
   seoDescription:
     'Arriendo de alza-hombre y plataformas aéreas en Chile. Equipos articulados y telescópicos, altura de 8 a 40 m. Operador certificado. Cotiza online.',
@@ -558,7 +574,9 @@ const IZAJE_GRUAS_HORQUILLA: RentalSubcategory = {
     { label: 'Operador', value: 'Opcional' },
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
-  heroImage: GRUA_HORQUILLA_3T,
+  heroImage: IZAJE_HERO,
+  bodyImage: GRUA_HORQUILLA_3T,
+  bodyImageAlt: 'Grúa horquilla Doosan D30 S-5 de 3 toneladas',
   seoTitle: 'Arriendo de Grúas Horquilla en Chile',
   seoDescription:
     'Arriendo de grúas horquilla diésel y eléctricas en Chile. Capacidad de 3 a 7 toneladas. Mantenimiento y seguros incluidos. Cotiza online.',
@@ -619,7 +637,9 @@ const MT_CAMIONES_TOLVA: RentalSubcategory = {
     { label: 'Chofer', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: CAMION_TOLVA_12M3,
+  heroImage: MOVIMIENTO_TIERRA_HERO,
+  bodyImage: CAMION_TOLVA_12M3,
+  bodyImageAlt: 'Camión tolva Volkswagen Constellation 31330 de 12 m³',
   seoTitle: 'Arriendo de Camiones Tolva en Chile',
   seoDescription:
     'Arriendo de camiones tolva con chofer certificado en Chile. Ideal para movimiento de tierra y transporte de material. Responde en 24h.',
@@ -665,7 +685,9 @@ const MT_RETROEXCAVADORAS: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: RETROEXCAVADORA_JOHN_DEERE_320D,
+  heroImage: MOVIMIENTO_TIERRA_HERO,
+  bodyImage: RETROEXCAVADORA_JOHN_DEERE_320D,
+  bodyImageAlt: 'Retroexcavadora John Deere 320D en faena de construcción',
   seoTitle: 'Arriendo de Retroexcavadoras en Chile',
   seoDescription:
     'Arriendo de retroexcavadoras hidráulicas con operador en Chile. Equipos de 8 a 25 toneladas, profundidad hasta 6 m. Cotiza online.',
@@ -715,7 +737,9 @@ const MT_MINICARGADORES: RentalSubcategory = {
     { label: 'Operador', value: 'Incluido' },
     { label: 'Disponibilidad', value: 'Inmediata' },
   ],
-  heroImage: MINICARGADOR_VOLVO_MC_90B,
+  heroImage: MOVIMIENTO_TIERRA_HERO,
+  bodyImage: MINICARGADOR_VOLVO_MC_90B,
+  bodyImageAlt: 'Minicargador Volvo MC 90B en faena urbana',
   seoTitle: 'Arriendo de Minicargadores en Chile',
   seoDescription:
     'Arriendo de minicargadores con operador en Chile. Equipos Bobcat, Caterpillar y Case. Ideales para espacios reducidos. Consulta disponibilidad por región.',
@@ -766,7 +790,9 @@ const TR_TRACTO_CAMIONES: RentalSubcategory = {
     { label: 'Chofer', value: 'Incluido' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: TRACTO_CAMION_RENAULT_T_460,
+  heroImage: TRANSPORTE_HERO,
+  bodyImage: TRACTO_CAMION_RENAULT_PREMIUM_LANDER_460,
+  bodyImageAlt: 'Tracto camión Renault Premium Lander 460 en ruta minera',
   seoTitle: 'Arriendo de Tracto Camiones en Chile',
   seoDescription:
     'Arriendo de tracto camiones con chofer en Chile. Capacidad de tiro hasta 60 toneladas. Ideal para transporte de carga pesada. Solicita cotización.',
@@ -821,7 +847,9 @@ const TR_CAMA_BAJA: RentalSubcategory = {
     { label: 'Permisos', value: 'Incluidos' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: CAMA_BAJA_EAGER_BEAVER_70T,
+  heroImage: TRANSPORTE_HERO,
+  bodyImage: CAMA_BAJA_EAGER_BEAVER_70T,
+  bodyImageAlt: 'Cama baja Eager Beaver 60 GSL de 70 toneladas',
   seoTitle: 'Arriendo de Cama-baja en Chile',
   seoDescription:
     'Arriendo de camas-baja Eager Beaver de 25 a 80 t en Chile. Permisos de tránsito incluidos. Ideal para transporte de maquinaria pesada. Cotiza online.',
@@ -871,7 +899,9 @@ const TR_SEMIREMOLQUES: RentalSubcategory = {
     { label: 'Tipo', value: 'Carga general / Container' },
     { label: 'Disponibilidad', value: '24/7' },
   ],
-  heroImage: SEMIREMOLQUE_RANDON,
+  heroImage: TRANSPORTE_HERO,
+  bodyImage: SEMIREMOLQUE_RANDON,
+  bodyImageAlt: 'Semiremolque Randon de 30 toneladas para carga general',
   seoTitle: 'Arriendo de Semiremolques en Chile',
   seoDescription:
     'Arriendo de semiremolques de 25 a 40 t en Chile. Compatibles con contenedores de 20 y 40 pies. Mantenimiento y seguros incluidos. Responde en 24h.',

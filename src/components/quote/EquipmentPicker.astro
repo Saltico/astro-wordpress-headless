@@ -570,9 +570,18 @@ export type Props = Record<string, never>;
         // El subscribe() más abajo re-renderiza; no hace falta renderResults() manual.
       });
 
-      // Re-render cuando el carrito cambia
-      subscribe(() => {
-        renderResults();
+      // Re-render cuando el carrito cambia solo si se agregan/quitan equipos
+      // (evita parpadeo de imágenes al editar personalización como crew, qty, etc.)
+      let prevCartSlugs = new Set(getCart().items.map((i) => i.equipmentSlug));
+      subscribe((cart) => {
+        const newSlugs = new Set(cart.items.map((i) => i.equipmentSlug));
+        const slugsChanged =
+          newSlugs.size !== prevCartSlugs.size ||
+          [...newSlugs].some((s) => !prevCartSlugs.has(s));
+        if (slugsChanged) {
+          prevCartSlugs = newSlugs;
+          renderResults();
+        }
       });
 
       // Pintar estado inicial (los inputs ya están aplicados)

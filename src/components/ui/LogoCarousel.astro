@@ -223,44 +223,7 @@ const hasHeader = Boolean(eyebrow || title || subtitle);
     width: auto;
     height: auto;
     object-fit: contain;
-    filter: grayscale(100%);
-    opacity: 0.75;
-    mix-blend-mode: normal;
-    transition: filter 0.3s var(--ease-out, ease),
-      opacity 0.3s var(--ease-out, ease),
-      transform 0.3s var(--ease-out, ease),
-      mix-blend-mode 0.3s var(--ease-out, ease);
-  }
-
-  .logo-carousel__item:hover .logo-carousel__img,
-  .logo-carousel__item:focus-within .logo-carousel__img {
-    filter: grayscale(0%);
-    opacity: 1;
-    transform: scale(1.05);
-    mix-blend-mode: normal;
-  }
-
-  /* Logos en escala de blancos sobre fondo oscuro:
-     grayscale(100%) invert(1) convierte el fondo blanco a negro
-     y el logo oscuro a blanco. Con mix-blend-mode: screen el negro
-     se fusiona con el fondo oscuro (transparente) y el blanco del
-     logo queda visible como silueta clara. En hover se revelan
-     los colores originales. */
-  .logo-carousel--bg-dark .logo-carousel__img,
-  .logo-carousel--bg-muted .logo-carousel__img {
-    filter: grayscale(100%) invert(1);
-    mix-blend-mode: screen;
-    opacity: 0.6;
-  }
-
-  .logo-carousel--bg-dark .logo-carousel__item:hover .logo-carousel__img,
-  .logo-carousel--bg-dark .logo-carousel__item:focus-within .logo-carousel__img,
-  .logo-carousel--bg-muted .logo-carousel__item:hover .logo-carousel__img,
-  .logo-carousel--bg-muted .logo-carousel__item:focus-within .logo-carousel__img {
-    filter: none;
-    mix-blend-mode: normal;
-    opacity: 1;
-    transform: scale(1.05);
+    border-radius: 16px;
   }
 
   .logo-carousel--pause-hover-true:hover .logo-carousel__track,
@@ -271,9 +234,6 @@ const hasHeader = Boolean(eyebrow || title || subtitle);
   @media (prefers-reduced-motion: reduce) {
     .logo-carousel__track {
       animation: none;
-    }
-    .logo-carousel__img {
-      transition: none;
     }
   }
 </style>

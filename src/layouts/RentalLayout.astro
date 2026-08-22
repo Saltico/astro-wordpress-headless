@@ -20,6 +20,10 @@ export interface Props {
   description: string;
   heroImage: string;
   heroImageAlt: string;
+  /** Imagen del cuerpo (sección "Qué incluye"). Si no se define, usa heroImage. */
+  bodyImage?: string;
+  /** Alt text para bodyImage. Si no se define, usa heroImageAlt. */
+  bodyImageAlt?: string;
   category: string;
   features: string[];
   breadcrumbs: Array<{ label: string; url: string }>;
@@ -43,6 +47,8 @@ const {
   description,
   heroImage,
   heroImageAlt,
+  bodyImage,
+  bodyImageAlt,
   category,
   features,
   breadcrumbs,
@@ -61,6 +67,10 @@ const hasCatalogSlot = Astro.slots.has('catalog');
 const hasStatsSlot = Astro.slots.has('stats');
 const hasRelatedSlot = Astro.slots.has('related');
 const hasFaqSlot = Astro.slots.has('faq');
+
+// Fallback: si no hay bodyImage definido, reutilizar heroImage
+const resolvedBodyImage = bodyImage ?? heroImage;
+const resolvedBodyImageAlt = bodyImageAlt ?? heroImageAlt;
 ---
 
 <BaseLayout
@@ -98,11 +108,11 @@ const hasFaqSlot = Astro.slots.has('faq');
   <section class="rental-content">
     <Container>
       <div class="rental-content__grid">
-        <!-- Imagen destacada -->
+        <!-- Imagen destacada (body image, distinta del hero) -->
         <div class="rental-content__image-wrapper">
           <img
-            src={heroImage}
-            alt={heroImageAlt}
+            src={resolvedBodyImage}
+            alt={resolvedBodyImageAlt}
             class="rental-content__image"
             loading="lazy"
           />

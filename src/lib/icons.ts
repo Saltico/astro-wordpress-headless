@@ -33,6 +33,7 @@ export const ICON_NAMES = [
   'sun',
   'moon',
   'trash',
+  'pencil',
   'blueprint',
   'building',
   'wrench',

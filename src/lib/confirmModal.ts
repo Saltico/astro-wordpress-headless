@@ -8,6 +8,8 @@ interface ConfirmModalOptions {
   confirmText?: string;
   cancelText?: string;
   confirmVariant?: 'primary' | 'danger';
+  /** Centra los botones horizontalmente en lugar de alinearlos a la derecha. */
+  centerActions?: boolean;
 }
 
 let modalElement: HTMLElement | null = null;
@@ -45,6 +47,12 @@ export async function showConfirmModal(options: ConfirmModalOptions = {}): Promi
     if (confirmBtn) {
       confirmBtn.className = `confirm-modal__btn confirm-modal__btn--confirm confirm-modal__btn--${options.confirmVariant}`;
     }
+  }
+
+  // Centrar acciones horizontalmente cuando se solicita
+  const actionsEl = modalElement.querySelector<HTMLElement>('.confirm-modal__actions');
+  if (actionsEl) {
+    actionsEl.classList.toggle('confirm-modal__actions--center', !!options.centerActions);
   }
 
   return new Promise<boolean>((resolve) => {
@@ -149,6 +157,9 @@ function createModal(): HTMLElement {
         gap: 0.75rem;
         padding: 1rem 1.5rem 1.5rem;
         justify-content: flex-end;
+      }
+      .confirm-modal__actions--center {
+        justify-content: center;
       }
       .confirm-modal__btn {
         display: inline-flex;

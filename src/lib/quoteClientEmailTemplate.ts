@@ -5,7 +5,7 @@
 
 import type { QuoteCart, QuoteCartItem } from '@/types/quote';
 import type { QuoteCompanyData } from '@/types/quoteCompany';
-import { computeCartTotals, formatPeriodLabel } from '@/lib/quoteMessage';
+import { computeCartTotals, formatPeriodLabel, formatDateShort, resolveSubcategoryName } from '@/lib/quoteMessage';
 import { RENTAL_CATEGORIES } from '@/data/rental';
 
 // ─────────────────────────────────────────────────────────────
@@ -28,7 +28,8 @@ const BRAND = {
   border: '#e2e4e5',
 };
 
-const LOGO_URL = 'https://ipproyectosindustriales.cl/logo_ipproyectosindustriales.png';
+/** CID (Content-ID) del logo adjunto en el correo. */
+const LOGO_CID = 'company-logo';
 
 interface ClientEmailTemplateData {
   cart: QuoteCart;
@@ -118,11 +119,12 @@ export function buildClientEmailTemplate(data: ClientEmailTemplateData): string 
           <td style="padding: 14px 10px; border-bottom: 1px solid ${BRAND.border}; font-size: 14px; color: ${BRAND.ink};">
             <strong style="color: ${BRAND.ink};">${escapeHtml(item.name)}</strong>
             ${item.capacity ? `<br><span style="color: ${BRAND.inkMuted}; font-size: 12px;">${escapeHtml(item.capacity)}</span>` : ''}
+            ${item.subcategorySlug ? `<br><span style="color: ${BRAND.inkMuted}; font-size: 11px; font-style: italic;">${escapeHtml(resolveSubcategoryName(item.categorySlug, item.subcategorySlug))}</span>` : ''}
             ${crewSection}
           </td>
           <td style="padding: 14px 10px; border-bottom: 1px solid ${BRAND.border}; text-align: center; font-size: 14px; font-weight: 700; color: ${BRAND.greenDark};">${c.quantity}</td>
           <td style="padding: 14px 10px; border-bottom: 1px solid ${BRAND.border}; text-align: center; font-size: 14px; color: ${BRAND.ink};">${formatPeriodLabel(c.periodType, c.periodCount)}</td>
-          <td style="padding: 14px 10px; border-bottom: 1px solid ${BRAND.border}; text-align: center; font-size: 14px; color: ${BRAND.ink};">${c.startDate}</td>
+          <td style="padding: 14px 10px; border-bottom: 1px solid ${BRAND.border}; text-align: center; font-size: 14px; color: ${BRAND.ink};">${formatDateShort(c.startDate)}</td>
         </tr>
       `;
     })
@@ -170,7 +172,7 @@ export function buildClientEmailTemplate(data: ClientEmailTemplateData): string 
   <div style="max-width: 600px; margin: 0 auto; background-color: ${BRAND.white};">
     <!-- Header con logo -->
     <div style="background-color: ${BRAND.graphite}; padding: 30px 20px; text-align: center; border-bottom: 4px solid ${BRAND.green};">
-      <img src="${LOGO_URL}" alt="IP Proyectos Industriales" style="max-width: 180px; height: auto; margin-bottom: 16px;" />
+      <img src="cid:${LOGO_CID}" alt="IP Proyectos Industriales" width="180" style="max-width: 180px; height: auto; margin: 0 auto 16px auto;" />
       <h1 style="margin: 0; font-size: 22px; font-weight: 700; color: ${BRAND.white}; letter-spacing: 0.02em;">Resumen de tu Cotización</h1>
       <p style="margin: 10px 0 0 0; font-size: 13px; color: ${BRAND.greenAccent};">${now}</p>
     </div>
@@ -201,15 +203,15 @@ export function buildClientEmailTemplate(data: ClientEmailTemplateData): string 
           </tr>
           <tr>
             <td style="padding: 10px 0; font-size: 14px; color: ${BRAND.inkMuted}; font-weight: 500;">Días totales:</td>
-            <td style="padding: 10px 0; font-size: 18px; font-weight: 700; text-align: right; color: ${BRAND.greenDark};">${totals.totalDays}</td>
+            <td style="padding: 10px 0; font-size: 18px; font-weight: 700; text-align: right; color: ${BRAND.greenDark};">${Math.ceil(totals.totalDays)}</td>
           </tr>
           <tr>
             <td style="padding: 10px 0; font-size: 14px; color: ${BRAND.inkMuted}; font-weight: 500;">Fecha de inicio:</td>
-            <td style="padding: 10px 0; font-size: 14px; font-weight: 600; text-align: right; color: ${BRAND.ink};">${totals.earliestStart || '—'}</td>
+            <td style="padding: 10px 0; font-size: 14px; font-weight: 600; text-align: right; color: ${BRAND.ink};">${formatDateShort(totals.earliestStart)}</td>
           </tr>
           <tr>
             <td style="padding: 10px 0; font-size: 14px; color: ${BRAND.inkMuted}; font-weight: 500;">Fecha de término:</td>
-            <td style="padding: 10px 0; font-size: 14px; font-weight: 600; text-align: right; color: ${BRAND.ink};">${totals.latestEnd || '—'}</td>
+            <td style="padding: 10px 0; font-size: 14px; font-weight: 600; text-align: right; color: ${BRAND.ink};">${formatDateShort(totals.latestEnd)}</td>
           </tr>
         </table>
       </div>

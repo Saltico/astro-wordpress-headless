@@ -6,6 +6,7 @@ import type { PeriodType, QuoteCart } from '@/types/quote';
 import { customizationToDays } from '@/types/quote';
 import type { QuoteCompanyData } from '@/types/quoteCompany';
 import { normalizeRut } from '@/types/quoteCompany';
+import { RENTAL_CATEGORIES } from '@/data/rental';
 
 // ─────────────────────────────────────────────────────────────
 // Constantes
@@ -64,6 +65,30 @@ export function formatPeriodLabel(periodType: PeriodType, periodCount: number): 
   return `${periodCount} ${unit}`;
 }
 
+/**
+ * Convierte una fecha ISO (YYYY-MM-DD) a formato corto DD/MM/YY.
+ * Si el input no es válido, lo retorna sin cambios.
+ */
+export function formatDateShort(isoDate: string | null | undefined): string {
+  if (!isoDate) return '—';
+  const match = isoDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return isoDate;
+  const [, yyyy, mm, dd] = match;
+  const yy = yyyy.slice(-2);
+  return `${dd}/${mm}/${yy}`;
+}
+
+/**
+ * Resuelve el nombre legible de una subcategoría a partir de sus slugs.
+ * Retorna el subcategorySlug original si no se encuentra coincidencia.
+ */
+export function resolveSubcategoryName(categorySlug: string, subcategorySlug: string): string {
+  const category = RENTAL_CATEGORIES.find((c) => c.slug === categorySlug);
+  if (!category) return subcategorySlug;
+  const sub = category.subcategories.find((s) => s.slug === subcategorySlug);
+  return sub?.name ?? subcategorySlug;
+}
+
 // ─────────────────────────────────────────────────────────────
 // Builders del mensaje
 // ─────────────────────────────────────────────────────────────
@@ -72,6 +97,7 @@ interface ItemLine {
   quantity: string;
   name: string;
   capacity: string;
+  subcategory: string;
   periodLabel: string;
   startDate: string;
   notes: string;
@@ -79,10 +105,11 @@ interface ItemLine {
 
 function renderItemLine(item: ItemLine): string {
   const cap = item.capacity ? ` (${item.capacity})` : '';
+  const sub = item.subcategory ? `\n  Categoría: ${item.subcategory}` : '';
   return (
-    `• ${item.quantity} × ${item.name}${cap}\n` +
+    `• ${item.quantity} × ${item.name}${cap}${sub}\n` +
     `  Período: ${item.periodLabel}\n` +
-    `  Inicio: ${item.startDate}\n` +
+    `  Inicio: ${formatDateShort(item.startDate)}\n` +
     `  Notas: ${item.notes || '—'}`
   );
 }
@@ -93,6 +120,9 @@ function renderItemLineForBuild(item: import('@/types/quote').QuoteCartItem): It
     quantity: String(c.quantity),
     name: sanitizePlainText(item.name, 120),
     capacity: sanitizePlainText(item.capacity, 40),
+    subcategory: item.subcategorySlug
+      ? sanitizePlainText(resolveSubcategoryName(item.categorySlug, item.subcategorySlug), 60)
+      : '',
     periodLabel: formatPeriodLabel(c.periodType, c.periodCount),
     startDate: c.startDate,
     notes: sanitizePlainText(c.notes, 280),
@@ -177,10 +207,10 @@ export function buildWhatsAppMessage(
   const lines: string[] = [header, '', itemLines];
   lines.push('', `Total: ${totals.uniqueItems} equipos, ${totals.totalUnits} unidades.`);
   if (totals.totalDays > 0) {
-    lines.push(`Duración agregada aprox.: ${totals.totalDays} días.`);
+    lines.push(`Duración agregada aprox.: ${Math.ceil(totals.totalDays)} días.`);
   }
   if (totals.earliestStart) {
-    lines.push(`Mayor inicio: ${totals.earliestStart}.`);
+    lines.push(`Mayor inicio: ${formatDateShort(totals.earliestStart)}.`);
   }
   if (company && Object.values(company).some((v) => String(v).trim())) {
     lines.push('', 'Datos de la empresa:');
@@ -223,7 +253,7 @@ export function buildWhatsAppMessage(
         lines.push(`• Ubicación: ${sanitizePlainText(loc, 120)}`);
       }
       if (addr.source === 'manual') {
-        lines.push('  (Dirección referencial — un ejecutivo confirmará la ubicación)');
+        lines.push('  (Dirección referencial)');
       }
     } else {
       lines.push('', 'Entrega: Retiro en bodega');

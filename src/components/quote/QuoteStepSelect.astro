@@ -230,11 +230,11 @@ import Icon from '@/components/ui/Icon.astro';
                 <label>Fecha de inicio</label>
                 <input type="date" min="${minStart}" value="${c.startDate}" data-line-action="startDate" data-line-id="${safeId}" />
               </div>
-              <div class="quote-line__field quote-line__field--full">
-                <label>Notas del equipo (opcional)</label>
-                <textarea rows="2" maxlength="280" placeholder="Información específica de este equipo…" data-line-action="notes" data-line-id="${safeId}">${safeNotes}</textarea>
-              </div>
               ${crewSection}
+              <div class="quote-line__field quote-line__field--full">
+                <label>Notas (opcional)</label>
+                <textarea rows="2" maxlength="280" placeholder="Requerimientos adicionales para este equipo…" data-line-action="notes" data-line-id="${safeId}">${safeNotes}</textarea>
+              </div>
             </div>
           </div>
         </div>
@@ -446,6 +446,7 @@ import Icon from '@/components/ui/Icon.astro';
           confirmText: 'Vaciar',
           cancelText: 'Cancelar',
           confirmVariant: 'danger',
+          centerActions: true,
         });
         if (confirmed) clearCart();
       });
@@ -472,6 +473,7 @@ import Icon from '@/components/ui/Icon.astro';
           confirmText: 'Vaciar',
           cancelText: 'Cancelar',
           confirmVariant: 'danger',
+          centerActions: true,
         });
         if (confirmed) clearCart();
       });
@@ -797,6 +799,16 @@ import Icon from '@/components/ui/Icon.astro';
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: var(--theme-text-muted);
+  }
+
+  :global(.quote-line__crew-group legend) {
+    font-size: var(--text-small);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--theme-text-muted);
+    padding: 0;
+    margin: 0;
   }
 
   :global(.quote-line__field input),

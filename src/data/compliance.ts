@@ -19,7 +19,7 @@ export const complianceDocs: ComplianceDoc[] = [
     title: 'Modelo de Prevención del Delito',
     description:
       'Sistema de prevención conforme a la Ley N° 20.393, con controles y responsabilidades para prevenir delitos en la organización.',
-    pdfUrl: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/XX/mpd-ipp.pdf',
+    pdfUrl: '/documents/modelo-prevencion-delito.pdf',
     version: 'v2.1',
     updatedAt: '2025-08-01',
     sizeBytes: 245_000,
@@ -30,7 +30,7 @@ export const complianceDocs: ComplianceDoc[] = [
     title: 'Anexo de Proveedores',
     description:
       'Cláusulas y compromisos de cumplimiento ético y legal que aceptan nuestros proveedores y colaboradores.',
-    pdfUrl: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/XX/anexo-proveedores.pdf',
+    pdfUrl: '/documents/anexo-proveedores.pdf',
     version: 'v1.4',
     updatedAt: '2025-06-15',
     sizeBytes: 180_000,
@@ -41,7 +41,7 @@ export const complianceDocs: ComplianceDoc[] = [
     title: 'Código de Ética',
     description:
       'Principios, valores y conductas que guían el actuar de todo el equipo de IP Proyectos Industriales.',
-    pdfUrl: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/XX/codigo-etica.pdf',
+    pdfUrl: '/documents/codigo-de-etica.pdf',
     version: 'v3.0',
     updatedAt: '2025-05-20',
     sizeBytes: 320_000,
@@ -52,7 +52,7 @@ export const complianceDocs: ComplianceDoc[] = [
     title: 'Órdenes de compra',
     description:
       'Términos y condiciones generales que rigen nuestras órdenes de compra con proveedores.',
-    pdfUrl: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/XX/oc-terminos.pdf',
+    pdfUrl: '/documents/ordenes-de-compra.pdf',
     version: 'v1.2',
     updatedAt: '2025-04-10',
     sizeBytes: 195_000,
@@ -63,7 +63,7 @@ export const complianceDocs: ComplianceDoc[] = [
     title: 'Política de Donaciones',
     description:
       'Marco y criterios para los aportes y donaciones que realiza la empresa, con transparencia y trazabilidad.',
-    pdfUrl: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/XX/politica-donaciones.pdf',
+    pdfUrl: '/documents/politica-donaciones.pdf',
     version: 'v1.0',
     updatedAt: '2025-03-05',
     sizeBytes: 165_000,

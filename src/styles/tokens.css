@@ -118,8 +118,8 @@
 
 :root {
   /* Layout */
-  --container-max-width: 1360px;
-  --container-full-width: 1440px;
+  --container-max-width: 1536px;
+  --container-full-width: 1536px;
   --container-padding: 1rem;
   --header-height: 5rem;
   --header-compact-height: 3.5rem;

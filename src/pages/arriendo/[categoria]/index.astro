@@ -10,7 +10,6 @@ import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import Icon from '@/components/ui/Icon.astro';
 import CTABand from '@/components/ui/CTABand.astro';
 import PageHero from '@/components/ui/PageHero.astro';
-import heroImg from '@/assets/imgs/hero.jpg';
 import { RENTAL_CATEGORIES } from '@/data/rental';
 import { serviceSchema, breadcrumbSchema, combineSchemas } from '@/lib/seo';
 import edificio from '@/assets/imgs/edificio.jpg';
@@ -46,7 +45,7 @@ const jsonLd = combineSchemas(
   jsonLd={jsonLd}
 >
   <PageHero
-    image={heroImg.src}
+    image={category.heroImage}
     imageAlt={`Arriendo de equipos de ${category.name.toLowerCase()} para minería, construcción e industria en Chile — IP Proyectos Industriales`}
     eyebrow={`Arriendo · ${category.name}`}
     title={category.name}

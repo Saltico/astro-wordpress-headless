@@ -18,8 +18,8 @@ import Button from '@/components/ui/Button.astro';
             Equipos seleccionados
             <span class="quote-review__count" data-review-count>0</span>
           </h3>
-          <Button variant="ghost" type="button" data-quote-wizard-step1>
-            Editar equipos
+          <Button icon="pencil" variant="ghost" type="button" data-quote-wizard-step1>
+            Editar
           </Button>
         </div>
         <div class="quote-review__lines" data-review-lines aria-live="polite">
@@ -42,7 +42,8 @@ import Button from '@/components/ui/Button.astro';
       <section class="quote-review__card" aria-labelledby="quote-review-company-title">
         <div class="quote-review__card-head">
           <h3 id="quote-review-company-title" class="quote-review__card-title">Datos de la empresa</h3>
-          <Button icon="trash" variant="ghost" type="button" data-quote-wizard-prev="review">
+          <Button icon="pencil" variant="ghost" type="button" data-quote-wizard-prev="review">
+            Editar
           </Button>
         </div>
         <div class="quote-review__company" data-review-company>
@@ -125,11 +126,12 @@ import Button from '@/components/ui/Button.astro';
 </section>
 
 <script>
-  import { getCart, subscribe } from '@/lib/quoteCart';
+  import { getCart, subscribe, clearCart } from '@/lib/quoteCart';
   import { getCompanyData, subscribeCompanyData } from '@/lib/quoteCompany';
   import { getGlobalNotes, subscribeGlobalNotes } from '@/lib/quoteGlobalNotes';
   import { buildWhatsAppUrl, buildWhatsAppTalkUrl, computeCartTotals, formatPeriodLabel } from '@/lib/quoteMessage';
   import { formatRut, normalizePhone } from '@/types/quoteCompany';
+  import { showConfirmModal } from '@/lib/confirmModal';
   import type { QuoteCartItem } from '@/types/quote';
 
   function escapeHtml(s: string): string {
@@ -429,22 +431,49 @@ import Button from '@/components/ui/Button.astro';
       const result = await response.json();
 
       if (response.ok && result.success) {
-        showEmailFeedback({
-          success: true,
-          message: '✓ Cotización enviada exitosamente. Revisa tu correo para confirmar los detalles.',
+        // ── Éxito: modal de confirmación ──
+        const shouldClear = await showConfirmModal({
+          title: 'Correo enviado',
+          message: 'Se ha notificado a un ejecutivo los datos de tu cotización, puedes revisar tu correo para ver el detalle.',
+          confirmText: 'Seguir cotizando',
+          cancelText: 'Limpiar cotizador',
+          confirmVariant: 'primary',
+          centerActions: true,
         });
+        // Si canceló → limpiar cotizador
+        if (!shouldClear) {
+          clearCart();
+        }
       } else {
-        showEmailFeedback({
-          success: false,
-          message: result.message || 'Error al enviar el correo. Por favor intenta nuevamente.',
+        // ── Error: modal con opción de enviar por WhatsApp ──
+        const shouldSendWhatsapp = await showConfirmModal({
+          title: 'Error en envío',
+          message: 'Ha ocurrido un error al enviar la cotización, vuelva a intentarlo en unos minutos o contacte a un ejecutivo vía whatsapp',
+          confirmText: 'Enviar por whatsapp',
+          cancelText: 'Volver al cotizador',
+          confirmVariant: 'primary',
+          centerActions: true,
         });
+        if (shouldSendWhatsapp) {
+          const whatsappUrl = buildWhatsAppUrl(cart, { company, globalNotes });
+          window.open(whatsappUrl, '_blank');
+        }
       }
     } catch (err) {
       console.error('Error al enviar correo:', err);
-      showEmailFeedback({
-        success: false,
-        message: 'Error de conexión. Por favor verifica tu conexión a internet e intenta nuevamente.',
+      // ── Error de red: mismo modal de error ──
+      const shouldSendWhatsapp = await showConfirmModal({
+        title: 'Error en envío',
+        message: 'Ha ocurrido un error al enviar la cotización, vuelva a intentarlo en unos minutos o contacte a un ejecutivo vía whatsapp',
+        confirmText: 'Enviar por whatsapp',
+        cancelText: 'Volver al cotizador',
+        confirmVariant: 'primary',
+        centerActions: true,
       });
+      if (shouldSendWhatsapp) {
+        const whatsappUrl = buildWhatsAppUrl(cart, { company, globalNotes });
+        window.open(whatsappUrl, '_blank');
+      }
     } finally {
       // Restaurar botón
       setButtonLoading(emailBtn, false);

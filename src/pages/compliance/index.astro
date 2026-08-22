@@ -7,7 +7,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import PageHero from '@/components/ui/PageHero.astro';
 import Icon from '@/components/ui/Icon.astro';
-import montajesImg from '@/assets/imgs/montajes.jpg';
+import complianceHero from '@/assets/imgs/hero/compliance/compliance.avif';
 import { complianceDocs, formatSize } from '@/data/compliance';
 import { articleSchema, breadcrumbSchema, combineSchemas } from '@/lib/seo';
 import { getSiteUrl } from '@/lib/seo';
@@ -43,10 +43,10 @@ function formatDate(iso?: string): string {
 >
   <!-- Hero -->
   <PageHero
-    image={montajesImg.src}
+    image={complianceHero.src}
     imageAlt="Operación minera con estándares de cumplimiento HSEC, IP Proyectos Industriales"
-    imageWidth={montajesImg.width}
-    imageHeight={montajesImg.height}
+    imageWidth={complianceHero.width}
+    imageHeight={complianceHero.height}
     eyebrow="Compliance"
     title="Compromiso con la integridad y la transparencia"
     subtitle="Operamos bajo un modelo de cumplimiento conforme a la Ley N° 20.393 sobre responsabilidad penal de las personas jurídicas. Aquí encuentras nuestras políticas y documentos vigentes."
@@ -74,11 +74,11 @@ function formatDate(iso?: string): string {
               <div class="doc-card__body">
                 <h3 class="doc-card__title">{doc.title}</h3>
                 <p class="doc-card__description">{doc.description}</p>
-                <div class="doc-card__meta">
+                <!-- <div class="doc-card__meta">
                   {doc.version && <span class="doc-card__version">{doc.version}</span>}
                   {doc.updatedAt && <span class="doc-card__date">{formatDate(doc.updatedAt)}</span>}
                   {doc.sizeBytes && <span class="doc-card__size">{formatSize(doc.sizeBytes)}</span>}
-                </div>
+                </div> -->
                 <a
                   href={doc.pdfUrl}
                   class="doc-card__download"
