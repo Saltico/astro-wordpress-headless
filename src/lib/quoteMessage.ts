@@ -12,7 +12,7 @@ import { RENTAL_CATEGORIES } from '@/data/rental';
 // Constantes
 // ─────────────────────────────────────────────────────────────
 
-export const WHATSAPP_PHONE = '56965593202';
+export const WHATSAPP_PHONE = '56956594144';
 export const WHATSAPP_BASE_URL = 'https://wa.me/';
 
 // ─────────────────────────────────────────────────────────────

@@ -258,7 +258,7 @@ export function buildClientEmailTemplate(data: ClientEmailTemplateData): string 
           <strong style="color: ${BRAND.white};">Email:</strong> cotizaciones@ipproyectosindustriales.cl
         </p>
         <p style="margin: 0; font-size: 14px; color: ${BRAND.greenAccent};">
-          <strong style="color: ${BRAND.white};">WhatsApp:</strong> +56 9 6559 3202
+          <strong style="color: ${BRAND.white};">WhatsApp:</strong> +56 9 5659 4144
         </p>
       </div>
     </div>

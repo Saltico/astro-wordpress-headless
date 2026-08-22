@@ -25,7 +25,7 @@ export const siteContact = {
   phoneMobileHref: 'tel:+56956594144',
   phoneLandline: '(51) 2 750535',
   phoneLandlineHref: 'tel:+56512750535',
-  whatsappNumber: '56965593202',
+  whatsappNumber: '56956594144',
   email: 'contacto@ipproyectosindustriales.cl',
   address: 'Parcela 110 Lote A-3, Vegas Norte, La Serena',
   schedule: 'Lunes a Viernes, 08:00 – 18:00',
