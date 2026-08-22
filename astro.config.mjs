@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Dominio canónico de producción
-const SITE_URL = 'https://ipproyectosindustriales.cl';
+const SITE_URL = 'https://www.iprental.cl';
 
 // https://docs.astro.build/en/guides/integrations-guide/node/
 export default defineConfig({

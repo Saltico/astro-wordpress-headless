@@ -125,6 +125,14 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
 
+    <!-- Google Tag Manager -->
+    <script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-W8MBKHF');</script>
+    <!-- End Google Tag Manager -->
+
     <MetaTags
       title={title}
       description={description}
@@ -203,6 +211,11 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
     <JsonLd data={allSchemas} />
   </head>
   <body class={bodyClass}>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W8MBKHF"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <SkipLink targetId="main-content" />
 
     {showTopBar && <TopBar phone={topbar.phone} email={topbar.email} social={topbar.social} links={topbar.links} />}

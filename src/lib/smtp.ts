@@ -50,6 +50,6 @@ export async function verifySmtpConnection(): Promise<boolean> {
 
 // Configuración de correos
 export const EMAIL_CONFIG = {
-  from: import.meta.env.QUOTE_EMAIL_FROM || 'cotizaciones@ipproyectosindustriales.cl',
-  toCompany: import.meta.env.QUOTE_EMAIL_TO || 'matias.castillo@sansano.usm.cl',
+  from: import.meta.env.QUOTE_EMAIL_FROM || 'contacto@iprental.cl',
+  toCompany: import.meta.env.QUOTE_EMAIL_TO || 'cotizaciones@iprental.cl',
 };

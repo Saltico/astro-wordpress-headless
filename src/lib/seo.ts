@@ -4,11 +4,11 @@
 import type { SiteConfig } from '@/types/seo';
 
 const DEFAULT_CONFIG: SiteConfig = {
-  siteUrl: 'https://ipproyectosindustriales.cl',
+  siteUrl: 'https://www.iprental.cl',
   siteName: 'IP Proyectos Industriales',
   defaultLocale: 'es',
   phone: '+56 9 0000 0000',
-  email: 'contacto@ipproyectosindustriales.cl',
+  email: 'contacto@iprental.cl',
   logoPath: '/logo.png',
 };
 

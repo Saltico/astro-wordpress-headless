@@ -16,7 +16,7 @@ export const siteBrand = {
   description:
     'Arriendo de grúas, movimiento de tierra, transporte y equipos especiales para la gran minería. También ingeniería, construcción y montajes industriales.',
   logoUrl: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/logo.png',
-  siteUrl: 'https://ipproyectosindustriales.cl',
+  siteUrl: 'https://www.iprental.cl',
 };
 
 // ─── Contacto ───────────────────────────────────────────────────────────
@@ -26,7 +26,7 @@ export const siteContact = {
   phoneLandline: '(51) 2 750535',
   phoneLandlineHref: 'tel:+56512750535',
   whatsappNumber: '56956594144',
-  email: 'contacto@ipproyectosindustriales.cl',
+  email: 'contacto@iprental.cl',
   address: 'Parcela 110 Lote A-3, Vegas Norte, La Serena',
   schedule: 'Lunes a Viernes, 08:00 – 18:00',
   catalogUrl:

@@ -255,7 +255,7 @@ export function buildClientEmailTemplate(data: ClientEmailTemplateData): string 
       <div style="margin: 24px 0; padding: 24px; background-color: ${BRAND.graphite}; border-radius: 8px; text-align: center;">
         <h3 style="margin: 0 0 14px 0; font-size: 16px; font-weight: 700; color: ${BRAND.white}; text-transform: uppercase; letter-spacing: 0.05em;">¿Necesitas ayuda?</h3>
         <p style="margin: 0 0 6px 0; font-size: 14px; color: ${BRAND.greenAccent};">
-          <strong style="color: ${BRAND.white};">Email:</strong> cotizaciones@ipproyectosindustriales.cl
+          <strong style="color: ${BRAND.white};">Email:</strong> cotizaciones@iprental.cl
         </p>
         <p style="margin: 0; font-size: 14px; color: ${BRAND.greenAccent};">
           <strong style="color: ${BRAND.white};">WhatsApp:</strong> +56 9 5659 4144
