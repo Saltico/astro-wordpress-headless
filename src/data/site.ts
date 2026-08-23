@@ -50,6 +50,10 @@ export const topbarData = {
       platform: 'facebook' as const,
       url: 'https://web.facebook.com/ipproyectosindustrialescqbo',
     },
+    {
+      platform: 'whatsapp' as const,
+      url: `https://wa.me/${siteContact.whatsappNumber}?text=Hola,%20me%20gustar%C3%ADa%20cotizar%20un%20servicio.`,
+    },
   ] satisfies SocialLink[],
   links: [
     { label: 'Compliance', url: '/compliance' },
