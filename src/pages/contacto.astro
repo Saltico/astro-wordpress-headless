@@ -1,0 +1,87 @@
+---
+// src/pages/contacto.astro
+// Página de contacto con formulario e información de la empresa.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import ContactSection from '@/components/ui/ContactSection.astro';
+import CTABand from '@/components/ui/CTABand.astro';
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { getSiteUrl, contactPageSchema, breadcrumbSchema, combineSchemas } from '@/lib/seo';
+import { siteContact, siteBrand } from '@/data/site';
+import edificioImg from '@/assets/imgs/edificio.jpg';
+
+const title = 'Contacto | IP Proyectos Industriales';
+const description = 'Contacta a IP Proyectos Industriales. Ingeniería, construcción, montajes y rental de equipos para la gran minería. La Serena, Chile. +56 9 5659 4144.';
+const canonical = getSiteUrl('/contacto');
+
+const breadcrumbs = [
+  { label: 'Empresa', url: '/' },
+  { label: 'Contacto', url: '/contacto' },
+];
+
+const jsonLd = combineSchemas(
+  contactPageSchema(),
+  breadcrumbSchema(breadcrumbs)
+);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+>
+  <PageHero
+    image={edificioImg.src}
+    imageAlt="Oficinas de IP Proyectos Industriales en La Serena, Chile"
+    imageWidth={edificioImg.width}
+    imageHeight={edificioImg.height}
+    eyebrow="Contacto"
+    title="Tu próximo proyecto empieza con una conversación"
+    subtitle="Completa el formulario o contáctanos directamente. Nuestro equipo te responderá a la brevedad."
+    minHeight="sm"
+  >
+    <Breadcrumbs slot="breadcrumbs" items={breadcrumbs} variant="hero" />
+  </PageHero>
+
+  <ContactSection
+    title="Conversemos sobre tu proyecto"
+    subtitle="Completa el formulario y un asesor especializado se pondrá en contacto contigo."
+    background="alt"
+    formAction="/api/contact"
+    submitLabel="Enviar mensaje"
+    contactInfo={{
+      address: siteContact.address,
+      phone: `${siteContact.phoneLandline} · ${siteContact.phoneMobile}`,
+      email: siteContact.email,
+      schedule: siteContact.schedule,
+    }}
+    formFields={[
+      { name: 'nombre', type: 'text', label: 'Nombre completo', placeholder: 'Tu nombre completo', required: true },
+      { name: 'empresa', type: 'text', label: 'Empresa', placeholder: 'Nombre de tu empresa' },
+      { name: 'email', type: 'email', label: 'Email', placeholder: 'tu@email.com', required: true },
+      { name: 'telefono', type: 'tel', label: 'Teléfono', placeholder: '+56 9 0000 0000' },
+      { name: 'motivo', type: 'select', label: 'Motivo de contacto', options: ['Ingeniería', 'Construcción', 'Montajes', 'Infraestructura portuaria', 'Rental de equipos', 'Otro'] },
+      { name: 'mensaje', type: 'textarea', label: 'Mensaje', placeholder: 'Cuéntanos sobre tu proyecto...', required: true },
+    ]}
+  />
+
+  <!-- WhatsApp CTA alternativo -->
+  <CTABand
+    eyebrow="¿Prefieres WhatsApp?"
+    title="Escríbenos directamente"
+    backgroundImage={edificioImg.src}
+    backgroundAlt="Edificio corporativo IP Proyectos Industriales"
+    backgroundWidth={edificioImg.width}
+    backgroundHeight={edificioImg.height}
+    buttons={[
+      { label: 'WhatsApp', href: `https://wa.me/${siteContact.whatsappNumber}?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20conversar%20sobre%20un%20proyecto.`, variant: 'primary', external: true, icon: 'whatsapp' },
+    ]}
+    contentAlign="center"
+    minHeight="sm"
+  />
+</BaseLayout>

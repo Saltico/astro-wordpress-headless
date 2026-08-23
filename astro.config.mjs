@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Dominio canónico de producción
-const SITE_URL = 'https://www.iprental.cl';
+const SITE_URL = 'https://www.ipproyectosindustriales.cl';
 
 // https://docs.astro.build/en/guides/integrations-guide/node/
 export default defineConfig({
@@ -35,7 +35,7 @@ export default defineConfig({
         },
       },
       filter: (page) => {
-        const noIndexPaths = ['/gracias', '/404', '/500', '/aviso-legal', '/privacidad', '/cookies', '/cotizador'];
+        const noIndexPaths = ['/gracias', '/404', '/500', '/aviso-legal', '/privacidad', '/cookies', '/gracias-contacto'];
         return !noIndexPaths.some((path) => page.includes(path));
       },
     }),

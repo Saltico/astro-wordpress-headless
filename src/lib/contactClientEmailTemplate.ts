@@ -102,7 +102,7 @@ export function buildContactClientEmailTemplate(data: ContactFormData): string {
       <p style="margin: 0 0 6px 0; font-size: 13px; font-weight: 600; color: ${BRAND.white};">IP Proyectos Industriales</p>
       <p style="margin: 0; font-size: 11px; color: ${BRAND.greenAccent};">
         Este es un correo automático, por favor no respondas a esta dirección.<br>
-        Si necesitas ayuda, escríbenos a <a href="mailto:contacto@iprental.cl" style="color: ${BRAND.greenAccent};">contacto@iprental.cl</a>
+        Si necesitas ayuda, escríbenos a <a href="mailto:contacto@ipproyectosindustriales.cl" style="color: ${BRAND.greenAccent};">contacto@ipproyectosindustriales.cl</a>
       </p>
     </div>
   </div>

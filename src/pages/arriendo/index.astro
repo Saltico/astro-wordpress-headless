@@ -55,8 +55,8 @@ const stats: StatItem[] = [
   >
     <Breadcrumbs slot="breadcrumbs" items={breadcrumbs} variant="hero" />
     <Fragment slot="actions">
-      <Button href="#cotizar" variant="primary" size="lg" icon="arrow-right" iconPosition="right">
-        Cotizar
+      <Button href="/contacto" variant="primary" size="lg" icon="arrow-right" iconPosition="right">
+        Contactar
       </Button>
       <Button href="/catalogo.pdf" variant="ghost" onDark size="lg" icon="download" download>
         Descargar catálogo
@@ -113,22 +113,20 @@ const stats: StatItem[] = [
     </Container>
   </section>
 
-  <div id="cotizar">
   <CTABand
-    eyebrow="Cotiza tu equipo ahora"
-    title="¿Necesitas arrendar maquinaria? Cotiza en minutos"
+    eyebrow="¿Necesitas equipos para tu faena?"
+    title="Cotiza tu arriendo en iprental.cl"
     backgroundImage={gruasImg.src}
     backgroundAlt="Grúas de alto tonelaje en faena minera"
     backgroundWidth={gruasImg.width}
     backgroundHeight={gruasImg.height}
     buttons={[
-      { label: 'Ir al cotizador', href: '/cotizador', variant: 'primary', icon: 'arrow-right', ariaLabel: 'Ir al cotizador en línea' },
-      { label: 'Hablar por WhatsApp', href: 'https://wa.me/56956594144?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20solicitar%20una%20cotizaci%C3%B3n%20de%20arriendo%20de%20equipos.', variant: 'outline', external: true, icon: 'whatsapp' },
+      { label: 'Cotizar en iprental.cl', href: 'https://www.iprental.cl', variant: 'primary', icon: 'arrow-right', external: true, ariaLabel: 'Ir a iprental.cl para cotizar equipos' },
+      { label: 'WhatsApp', href: 'https://wa.me/56956594144?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20conversar%20sobre%20un%20proyecto.', variant: 'outline', external: true, icon: 'whatsapp' },
     ]}
     contentAlign="center"
     minHeight="md"
   />
-  </div>
 </BaseLayout>
 
 <style>

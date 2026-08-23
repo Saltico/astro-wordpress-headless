@@ -80,13 +80,21 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
         <div class="footer__column">
           <h4 class="footer__title">{column.title}</h4>
           <ul class="footer__list">
-            {column.links.map((link) => (
-              <li>
-                <a href={link.url} class="footer__link">
-                  {link.label}
-                </a>
-              </li>
-            ))}
+            {column.links.map((link) => {
+              const isExternal = link.url.startsWith('http://') || link.url.startsWith('https://');
+              return (
+                <li>
+                  <a
+                    href={link.url}
+                    class="footer__link"
+                    target={isExternal ? '_blank' : undefined}
+                    rel={isExternal ? 'noopener noreferrer' : undefined}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </div>
       ))}

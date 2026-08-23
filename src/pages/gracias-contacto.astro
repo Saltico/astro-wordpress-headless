@@ -1,0 +1,99 @@
+---
+// src/pages/gracias-contacto.astro
+// Página de agradecimiento tras enviar el formulario de contacto.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import Icon from '@/components/ui/Icon.astro';
+import { getSiteUrl } from '@/lib/seo';
+
+const title = 'Mensaje enviado | IP Proyectos Industriales';
+const description = 'Gracias por contactarnos. Nuestro equipo revisará tu mensaje y te responderá a la brevedad.';
+const canonical = getSiteUrl('/gracias-contacto');
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonical={canonical}
+  noindex={true}
+>
+  <SectionLayout spacing="lg" alt>
+    <Container>
+      <div class="gracias">
+        <div class="gracias__icon">
+          <Icon name="check" size={48} />
+        </div>
+        <h1 class="gracias__title">Mensaje enviado</h1>
+        <p class="gracias__text">
+          Gracias por contactarnos. Nuestro equipo revisará tu mensaje y te responderá a la brevedad.
+        </p>
+        <a href="/" class="gracias__btn">
+          Volver al inicio
+          <Icon name="arrow-right" size={16} />
+        </a>
+      </div>
+    </Container>
+  </SectionLayout>
+</BaseLayout>
+
+<style>
+  .gracias {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-block: clamp(60px, 10vw, 120px);
+    gap: 20px;
+  }
+
+  .gracias__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: var(--color-brand, #308f40);
+    color: #fff;
+  }
+
+  .gracias__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--theme-heading);
+  }
+
+  .gracias__text {
+    max-width: 48ch;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--theme-text-muted);
+    margin: 0;
+  }
+
+  .gracias__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+    padding: 16px 30px;
+    background-color: var(--color-brand, #308f40);
+    color: #fff;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background-color .2s ease, transform .18s ease;
+  }
+
+  .gracias__btn:hover {
+    background-color: var(--color-brand-700, #256d30);
+    transform: translateY(-2px);
+  }
+</style>

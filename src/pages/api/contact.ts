@@ -14,10 +14,10 @@ import { resolve } from 'node:path';
 // ─────────────────────────────────────────────────────────────
 
 /** Email destino interno (equipo). Usa CONTACT_EMAIL_TO o fallback a QUOTE_EMAIL_TO. */
-const CONTACT_EMAIL_TO = import.meta.env.CONTACT_EMAIL_TO || import.meta.env.QUOTE_EMAIL_TO || 'contacto@iprental.cl';
+const CONTACT_EMAIL_TO = import.meta.env.CONTACT_EMAIL_TO || import.meta.env.QUOTE_EMAIL_TO || 'contacto@ipproyectosindustriales.cl';
 
 /** Remitente para los correos de contacto. */
-const CONTACT_EMAIL_FROM = import.meta.env.CONTACT_EMAIL_FROM || import.meta.env.QUOTE_EMAIL_FROM || 'contacto@iprental.cl';
+const CONTACT_EMAIL_FROM = import.meta.env.CONTACT_EMAIL_FROM || import.meta.env.QUOTE_EMAIL_FROM || 'contacto@ipproyectosindustriales.cl';
 
 // ─────────────────────────────────────────────────────────────
 // Tipos
@@ -245,13 +245,11 @@ export const POST: APIRoute = async ({ request }) => {
       // El correo interno ya se envió, responder con éxito parcial
     }
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: 'Mensaje enviado correctamente. Te contactaremos pronto.',
-      } satisfies ContactResponse),
-      { status: 200, headers: jsonHeaders }
-    );
+    // Redirigir a página de agradecimiento
+    return new Response(null, {
+      status: 303,
+      headers: { Location: '/gracias-contacto' },
+    });
   } catch (err) {
     console.error('❌ Error inesperado en contact endpoint:', err);
     return new Response(

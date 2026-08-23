@@ -1,94 +1,90 @@
 ---
 // src/pages/index.astro
-// Homepage rental-first con hero split, stats, servicios con imágenes, catálogo y CTA.
+// Homepage corporativa de IP Proyectos Industriales.
+// Usa los componentes del design system: HeroSection, SplitSection, NewsGrid, etc.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import HeroSection from '@/components/ui/HeroSection.astro';
+import SplitSection from '@/components/ui/SplitSection.astro';
 import StatsCounter from '@/components/ui/StatsCounter.astro';
 import LogoCarousel from '@/components/ui/LogoCarousel.astro';
 import CTABand from '@/components/ui/CTABand.astro';
-import EquipmentSearch from '@/components/rental/EquipmentSearch.astro';
-import CategoryShowcase from '@/components/rental/CategoryShowcase.astro';
+import NewsGrid from '@/components/ui/NewsGrid.astro';
+import Container from '@/components/ui/Container.astro';
+import SectionLayout from '@/components/ui/SectionLayout.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
+import Button from '@/components/ui/Button.astro';
+import Icon from '@/components/ui/Icon.astro';
 import type { StatItem } from '@/components/ui/StatsCounter.astro';
 import { localBusinessSchema } from '@/lib/seo';
-import { siteBrand, siteContact } from '@/data/site';
-import Icon from '@/components/ui/Icon.astro';
-import Eyebrow from '@/components/ui/Eyebrow.astro';
+import { siteBrand, siteContact, IPRENTAL_URL } from '@/data/site';
+import { getLatestNews } from '@/lib/news';
 
-import rentalHero from '@/assets/imgs/hero/arriendo/arriendo.avif';
 import servIngenieria from '@/assets/imgs/serv-ingenieria.jpg';
 import servConstruccion from '@/assets/imgs/serv-construccion.jpg';
 import servMontajes from '@/assets/imgs/serv-montajes.jpg';
 import portuaria from '@/assets/imgs/portuaria.jpg';
+import servIzaje from '@/assets/imgs/serv-izaje.jpg';
+import faenaIzaje from '@/assets/imgs/faena-izaje.jpg';
+import montajes from '@/assets/imgs/montajes.jpg';
+import edificio from '@/assets/imgs/edificio.jpg';
 
-const title = 'Arriendo de Maquinaria Pesada en el Norte de Chile | IP Proyectos Industriales';
-const description = 'Arriendo de grúas, movimiento de tierra, transporte y equipos especiales para minería e industria. Disponibilidad 24/7 en Atacama, Coquimbo y Antofagasta. Cotiza online.';
+const title = 'IP Proyectos Industriales | Ingeniería, montajes y grúas de alto tonelaje para la minería';
+const description = 'IP Proyectos Industriales: ingeniería, construcción, montajes e izajes de alto tonelaje (hasta 400 t) para la gran minería en Atacama y Coquimbo. Conoce nuestra experiencia y contáctanos.';
 
 const jsonLd = localBusinessSchema({
   name: siteBrand.name,
-  address: siteContact.address,
-  phone: siteContact.phoneMobile,
+  description: siteBrand.description,
+  telephone: siteContact.phoneMobile,
   email: siteContact.email,
+  address: {
+    streetAddress: siteContact.address,
+    addressLocality: 'La Serena',
+    addressRegion: 'Coquimbo',
+    addressCountry: 'CL',
+  },
   areaServed: ['Atacama', 'Coquimbo', 'Antofagasta'],
+  url: siteBrand.siteUrl,
 });
 
-// Stats rental-focused
+// Stats corporativos
 const stats: StatItem[] = [
-  {
-    value: 25,
-    label: 'Años de experiencia',
-    prefix: '+',
-    prefixPosition: 'before'
-  },
-  {
-    value: 100,
-    label: 'Equipos propios',
-    prefix: '+',
-    prefixPosition: 'before'
-  },
-  {
-    value: 400,
-    label: 'Capacidad máxima',
-    suffix: 'Tons',
-    suffixPosition: 'after'
-  },
-  {
-    value: 24,
-    label: 'Disponibilidad',
-    suffix: '/7',
-    suffixPosition: 'after'
-  },
+  { value: 25, label: 'Años de experiencia', prefix: '+', prefixPosition: 'before' },
+  { value: 100, label: 'Equipos propios', prefix: '+', prefixPosition: 'before' },
+  { value: 400, label: 'Capacidad de izaje', suffix: 'Tons', suffixPosition: 'after' },
+  { value: 5, label: 'Líneas de servicio' },
 ];
 
-// Servicios con imágenes (estilo news cards)
+// Servicios para el bento grid
 const services = [
   {
-    title: 'Ingeniería',
-    description: 'Diseño y gestión de proyectos',
-    seoText: 'Diseño, planificación y gestión integral de proyectos de ingeniería industrial y minera. Soluciones técnicas a medida con estándares de seguridad y eficiencia para la gran minería del norte de Chile.',
+    category: 'Ingeniería',
+    title: 'Con foco en constructibilidad',
+    description: 'Diseño e ingeniería de detalle y gestión integral de proyectos, compras y contratos.',
     image: servIngenieria.src,
-    imageAlt: 'Equipo de ingeniería industrial en planta minera del norte de Chile',
+    imageAlt: 'Equipo de ingeniería industrial en planta minera',
     url: '/servicios/ingenieria',
   },
   {
-    title: 'Construcción',
-    description: 'Obras civiles e industriales',
-    seoText: 'Ejecución de obras civiles e industriales para los sectores minero, energético e infraestructura. Desde cimentaciones hasta estructuras complejas con altos estándares de calidad y plazos garantizados.',
+    category: 'Construcción',
+    title: 'Obras civiles e industriales',
+    description: 'Control de calidad en cada etapa: contratos EPC, prefabricados y pinturas especiales.',
     image: servConstruccion.src,
     imageAlt: 'Obras civiles e industriales en faena minera',
     url: '/servicios/construccion',
   },
   {
-    title: 'Montajes',
-    description: 'Electromecánico y estructural',
-    seoText: 'Montajes electromecánicos y estructurales para plantas industriales y faenas mineras. Instalación de equipos pesados, tuberías y estructuras de acero con personal certificado.',
+    category: 'Montajes',
+    title: 'Mineros e industriales',
+    description: 'Montaje electromecánico y estructural en faena, con foco en seguridad.',
     image: servMontajes.src,
     imageAlt: 'Montaje electromecánico de equipos pesados en faena',
     url: '/servicios/montajes',
   },
   {
-    title: 'Infraestructura portuaria',
-    description: 'Obras marítimas y muelles',
-    seoText: 'Construcción y mantención de infraestructura portuaria, muelles y obras marítimas. Experiencia en terminales de embarque, amarres y obras costeras en el norte de Chile.',
+    category: 'Infraestructura portuaria',
+    title: 'Puertos y terminales',
+    description: 'Obras marítimas: muelles, defensas e impermeabilización de piscinas y tranques.',
     image: portuaria.src,
     imageAlt: 'Infraestructura portuaria y obras marítimas en el norte de Chile',
     url: '/servicios/infraestructura-portuaria',
@@ -110,6 +106,16 @@ const clientLogos = [
   { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/20.jpg', alt: 'Cliente' },
   { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/19.jpg', alt: 'Cliente' },
 ];
+
+// Mini stats HSEC
+const hsecStats = [
+  { value: '460.000', label: 'Horas hombre trabajadas' },
+  { value: '0,93%', label: 'Tasa de cotización (R12)' },
+  { value: 'Bajo', label: 'Riesgo psicosocial' },
+];
+
+// Obtener noticias (async)
+const latestNews = await getLatestNews(3);
 ---
 
 <BaseLayout
@@ -117,46 +123,18 @@ const clientLogos = [
   description={description}
   jsonLd={jsonLd}
 >
-  <link slot="head" rel="preload" as="image" href={rentalHero.src} fetchpriority="high" />
-
-  <!-- §1: HERO SPLIT — full-bleed image, text fades into image -->
-  <section class="d-hero">
-    <!-- Full-bleed background image -->
-    <img
-      src={rentalHero.src}
-      alt="Arriendo de maquinaria pesada para minería e industria en el norte de Chile"
-      class="d-hero__bg"
-      width={rentalHero.width}
-      height={rentalHero.height}
-      fetchpriority="high"
-      decoding="async"
-    />
-    <!-- Gradient overlay: dark left → transparent right -->
-    <div class="d-hero__overlay" aria-hidden="true"></div>
-    
-    <div class="d-hero__grid">
-      <!-- Lado izquierdo: Texto SEO (se difumina hacia la imagen) -->
-      <div class="d-hero__text">
-        <h1 class="d-hero__title">Arriendo de equipos y maquinaria para <span>construcción y minería</span></h1>
-        <p class="d-hero__subtitle">Grúas de hasta 400 toneladas, movimiento de tierra, transporte y equipos especiales. Disponibilidad 24/7 en Atacama, Coquimbo y Antofagasta.</p>
-      </div>
-      
-      <!-- Lado derecho: Panel de búsqueda -->
-      <div class="d-hero__search">
-        <div class="d-hero__search-content">
-          <p class="d-hero__search-title">Encuentra tu máquina</p>
-          <EquipmentSearch />
-          <p class="d-hero__search-cta">
-            ¿Prefieres cotizar directamente?
-            <a href="/cotizador" class="d-hero__search-link">
-              Ir al cotizador
-              <Icon name="arrow-right" size={14} />
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- §1: HERO CORPORATIVO -->
+  <HeroSection
+    title="La pasión y el valor por un trabajo bien hecho"
+    subtitle="Ingeniería, construcción, montajes y Rental de equipos. Todo de principio a fin, con una sola empresa."
+    backgroundImage={faenaIzaje.src}
+    backgroundAlt="Izaje en tándem con grúas de alto tonelaje en faena minera"
+    eyebrow="Desde el año 2000 junto a la Gran Minería"
+    variant="left"
+    minHeight="lg"
+    ctaPrimary={{ label: 'Contactar', href: '/contacto' }}
+    ctaSecondary={{ label: 'WhatsApp', href: `https://wa.me/${siteContact.whatsappNumber}?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20conversar%20sobre%20un%20proyecto.` }}
+  />
 
   <!-- §2: STATS COUNTER -->
   <StatsCounter
@@ -168,398 +146,303 @@ const clientLogos = [
     duration={1500}
   />
 
-  <!-- §3: SERVICIOS (con imágenes) -->
-  <section class="services-section">
-    <div class="services-section__container">
-      <header class="services-section__header">
-        <Eyebrow text="También hacemos" />
-        <h2 class="services-section__title">Ingeniería, construcción y montajes industriales</h2>
-      </header>
-      <div class="services-section__grid">
-        {services.map((service) => (
-          <a href={service.url} class="service-card">
-            <div class="service-card__image">
-              <img
-                src={service.image}
-                alt={service.imageAlt}
-                loading="lazy"
-                decoding="async"
-                width="800"
-                height="500"
-              />
-            </div>
-            <div class="service-card__body">
-              <h3 class="service-card__title">{service.title}</h3>
-              <p class="service-card__seo-text">{service.seoText}</p>
-              <span class="service-card__link-cta" aria-hidden="true">
-                Conocer más
-                <Icon name="arrow-right" size={14} />
-              </span>
-            </div>
-          </a>
-        ))}
+  <!-- §3: MARQUEE DE SERVICIOS -->
+  <div class="service-marquee" aria-hidden="true">
+    <div class="service-marquee__track">
+      <div class="service-marquee__group">
+        <span>Ingeniería</span><i>◆</i>
+        <span>Construcción</span><i>◆</i>
+        <span>Montajes mineros e industriales</span><i>◆</i>
+        <span>Rental de equipos</span><i>◆</i>
+      </div>
+      <div class="service-marquee__group">
+        <span>Ingeniería</span><i>◆</i>
+        <span>Construcción</span><i>◆</i>
+        <span>Montajes mineros e industriales</span><i>◆</i>
+        <span>Rental de equipos</span><i>◆</i>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- §4: CLIENT LOGOS -->
+  <!-- §4: QUIÉNES SOMOS -->
+  <SplitSection
+    eyebrow="Quiénes somos"
+    title="En el corazón de los proyectos industriales más desafiantes"
+    description="IP Proyectos Industriales se posiciona como referente en izajes seguros y eficientes, combinando tecnología de vanguardia con un equipo humano de alto nivel. Más de 25 años apoyando a la gran minería de Chile."
+    image={faenaIzaje.src}
+    imageAlt="Izaje en tándem con grúas de alto tonelaje en faena minera"
+    imageWidth={faenaIzaje.width}
+    imageHeight={faenaIzaje.height}
+    cta={{ label: 'Conocer nuestros servicios', href: '/servicios' }}
+    variant="default"
+    background="dark"
+    ghostText="IP"
+  />
+
+  <!-- §5: SERVICIOS (Bento Grid) -->
+  <SectionLayout spacing="lg" alt>
+    <Container>
+      <Eyebrow text="Lo que hacemos" />
+      <h2 class="services-heading">Una sola empresa para todo el ciclo de tu proyecto</h2>
+      <div class="services-bento">
+        {services.map((service) => (
+          <article class="service-card reveal">
+            <div class="service-card__img">
+              <img src={service.image} alt={service.imageAlt} loading="lazy" decoding="async" />
+            </div>
+            <div class="service-card__body">
+              <span class="service-card__cat">{service.category}</span>
+              <h3 class="service-card__title">{service.title}</h3>
+              <p class="service-card__desc">{service.description}</p>
+              <a class="service-card__link" href={service.url}>
+                Conocer
+                <Icon name="arrow-right" size={16} />
+              </a>
+            </div>
+          </article>
+        ))}
+        <!-- Tarjeta destacada: Rental de equipos -->
+        <article class="service-card service-card--feat reveal">
+          <div class="service-card__img">
+            <img src={servIzaje.src} alt="Grúas de alto tonelaje en faena minera" loading="lazy" decoding="async" />
+          </div>
+          <div class="service-card__body">
+            <span class="service-card__cat">Rental de equipos</span>
+            <h3 class="service-card__title">Grúas de alto tonelaje</h3>
+            <p class="service-card__desc">Hasta 400 toneladas. Grúas AT/RT, alza-hombre, camión pluma y manipuladores, con operadores certificados. Más movimiento de tierra, transporte y equipos especiales.</p>
+            <a class="service-card__link" href={`${IPRENTAL_URL}/arriendo`} target="_blank" rel="noopener noreferrer">
+              Ver flota
+              <Icon name="arrow-right" size={16} />
+            </a>
+          </div>
+        </article>
+      </div>
+    </Container>
+  </SectionLayout>
+
+  <!-- §6: SEGURIDAD / HSEC -->
+  <SplitSection
+    eyebrow="Seguridad, salud y medio ambiente"
+    title="El cuidado de las personas es nuestro primer estándar"
+    description="Contamos con un Departamento de Prevención de Riesgos y Medio Ambiente propio, y un Sistema de Gestión HSEC que respalda cada faena."
+    image={montajes.src}
+    imageAlt="Trabajo seguro en faena con EPP"
+    imageWidth={montajes.width}
+    imageHeight={montajes.height}
+    miniStats={hsecStats}
+    cta={{ label: 'Conocer Seguridad', href: '/seguridad' }}
+    variant="reversed"
+    background="dark"
+    ghostText="HSEC"
+  />
+
+  <!-- §7: CLIENTES -->
   <LogoCarousel
     logos={clientLogos}
     eyebrow="Confían en nosotros"
-    title="Empresas que confían en nuestra flota"
+    title="Empresas líderes de la gran minería"
+    subtitle="Más de 25 años apoyando a las empresas más exigentes del sector minero e industrial de Chile."
     speed="normal"
     backgroundVariant="dark"
     pauseOnHover={true}
   />
 
-  <!-- §5: CATEGORY SHOWCASE -->
-  <CategoryShowcase />
-
-  <!-- §6: CTA BAND -->
+  <!-- §8: CTA BAND -->
   <CTABand
-    eyebrow="Cotiza tu equipo ahora"
-    title="¿Necesitas arrendar maquinaria? Cotiza en minutos"
-    backgroundImage={rentalHero.src}
-    backgroundAlt="Arriendo de maquinaria pesada para minería e industria"
-    backgroundWidth={rentalHero.width}
-    backgroundHeight={rentalHero.height}
+    eyebrow="Hablemos"
+    title="Tu próximo proyecto empieza con una conversación"
+    backgroundImage={edificio.src}
+    backgroundAlt="Edificio corporativo IP Proyectos Industriales"
+    backgroundWidth={edificio.width}
+    backgroundHeight={edificio.height}
     buttons={[
-      { label: 'Ir al cotizador', href: '/cotizador', variant: 'primary', icon: 'arrow-right', ariaLabel: 'Ir al cotizador en línea' },
-      { label: 'Hablar por WhatsApp', href: 'https://wa.me/56956594144?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20solicitar%20una%20cotizaci%C3%B3n%20de%20arriendo%20de%20equipos.', variant: 'outline', external: true, icon: 'whatsapp' },
+      { label: 'Contactar', href: '/contacto', variant: 'primary', icon: 'arrow-right', ariaLabel: 'Ir al formulario de contacto' },
+      { label: 'WhatsApp', href: `https://wa.me/${siteContact.whatsappNumber}?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20conversar%20sobre%20un%20proyecto.`, variant: 'outline', external: true, icon: 'whatsapp' },
     ]}
     contentAlign="center"
     minHeight="md"
   />
 
+  <!-- §9: NOTICIAS -->
+  <NewsGrid
+    items={latestNews}
+    eyebrow="Últimas noticias"
+    title="Novedades"
+    subtitle="Operaciones, seguridad y crecimiento de nuestra flota. Síguenos para conocer nuestros proyectos más recientes."
+    columns={3}
+    variant="dark"
+  />
 </BaseLayout>
 
 <style>
-  /* ===== HERO SPLIT — full-bleed image, text fades into image ===== */
-  .d-hero {
-    position: relative;
-    min-height: calc(70svh + var(--topbar-height, 40px) + var(--header-height, 80px));
-    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
+  /* ===== MARQUEE DE SERVICIOS ===== */
+  .service-marquee {
+    background: var(--color-brand);
+    overflow: hidden;
+    padding: var(--space-5) 0;
+    border-block: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .service-marquee__track {
+    display: flex;
+    width: max-content;
+    animation: marquee-scroll 32s linear infinite;
+  }
+
+  .service-marquee:hover .service-marquee__track {
+    animation-play-state: paused;
+  }
+
+  @keyframes marquee-scroll {
+    to { transform: translateX(-50%); }
+  }
+
+  .service-marquee__group {
     display: flex;
     align-items: center;
-    overflow: visible;
-    background-color: var(--color-graphite, #0d1611);
+    gap: var(--space-8);
+    padding-right: var(--space-8);
   }
 
-  @media (max-width: 1024px) {
-    .d-hero {
-      min-height: auto;
-      padding-block: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 40px) 60px;
-    }
-  }
-
-  /* Full-bleed background image */
-  .d-hero__bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 0;
-  }
-
-  /* Gradient overlay: dark left → transparent right (creates the diffusion) */
-  .d-hero__overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: linear-gradient(
-      90deg,
-      rgba(13, 22, 17, 1) 0%,
-      rgba(13, 22, 17, 0.97) 25%,
-      rgba(13, 22, 17, 0.85) 45%,
-      rgba(13, 22, 17, 0.5) 65%,
-      rgba(13, 22, 17, 0.15) 85%,
-      rgba(13, 22, 17, 0) 100%
-    );
-  }
-
-  @media (max-width: 1024px) {
-    .d-hero__overlay {
-      background: linear-gradient(
-        180deg,
-        rgba(13, 22, 17, 0.4) 0%,
-        rgba(13, 22, 17, 0.92) 60%,
-        rgba(13, 22, 17, 1) 100%
-      );
-    }
-  }
-
-  /* Grid container for text + search */
-  .d-hero__grid {
-    position: relative;
-    z-index: 2;
-    display: grid;
-    grid-template-columns: 1.8fr 1fr;
-    gap: 2rem;
-    max-width: var(--container-max-width, 1360px);
-    width: 100%;
-    margin-inline: auto;
-    min-height: calc(70svh + var(--topbar-height, 40px) + var(--header-height, 80px));
-    align-items: center;
-  }
-
-  @media (max-width: 1024px) {
-    .d-hero__grid {
-      grid-template-columns: 1fr;
-      min-height: auto;
-      gap: 32px;
-    }
-  }
-
-  /* Left: SEO text - always fully visible */
-  .d-hero__text {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    /* padding: 100px 0 80px clamp(20px, 3vw, 60px); */
-  }
-
-  @media (max-width: 1024px) {
-    .d-hero__text {
-      padding: 40px 20px 0;
-    }
-  }
-
-  .d-hero__title {
-    color: var(--color-on-dark);
+  .service-marquee__group span {
     font-family: var(--font-heading);
-    font-weight: 900;
-    line-height: 0.98;
-    letter-spacing: -0.03em;
-    font-size: clamp(2.2rem, 5vw, 4.5rem);
-    max-width: 18ch;
-    text-wrap: balance;
-    margin: 0 0 24px;
-  }
-
-  .d-hero__title span {
-    color: var(--color-brand-300, #62bb74);
-    font-weight: 900;
-  }
-
-  .d-hero__subtitle {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: var(--text-lead);
-    max-width: 48ch;
-    margin: 0;
-    line-height: 1.55;
-  }
-
-  /* Right: Search panel floating over image */
-  .d-hero__search {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  @media (max-width: 1024px) {
-    .d-hero__search {
-      padding: 0 20px 40px;
-    }
-  }
-
-  .d-hero__search-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding: 32px;
-    max-width: 520px;
-    width: 100%;
-    background: rgba(13, 22, 17, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: var(--radius-panel);
-  }
-
-  @media (max-width: 1024px) {
-    .d-hero__search-content {
-      padding: 24px 20px;
-      max-width: 100%;
-    }
-  }
-
-  .d-hero__search-title {
-    color: var(--color-on-dark);
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 1.1rem;
+    font-weight: 800;
+    font-size: clamp(1.3rem, 2.6vw, 2.1rem);
     letter-spacing: 0.02em;
-    margin: 0;
-    text-align: center;
+    text-transform: uppercase;
+    color: var(--color-on-brand);
+    white-space: nowrap;
   }
 
-  .d-hero__search-cta {
-    color: rgba(255, 255, 255, 0.82);
-    font-size: var(--text-small);
-    margin: 0;
-    text-align: center;
-    line-height: 1.5;
+  .service-marquee__group i {
+    color: rgba(255, 255, 255, 0.55);
+    font-style: normal;
   }
 
-  .d-hero__search-link {
-    margin-left: 4px;
-    display: inline-flex;
-    align-items: center;
-    color: var(--color-brand-300, #62bb74);
-    font-weight: 600;
-    text-decoration: none;
-    transition: gap 0.2s ease;
+  @media (prefers-reduced-motion: reduce) {
+    .service-marquee__track { animation: none; }
   }
 
-  .d-hero__search-link :global(svg) {
-    vertical-align: middle;
-  }
-
-  .d-hero__search-link:hover {
-    gap: 10px;
-  }
-
-  /* ===== SERVICIOS (news-card style: image + title + CTA) ===== */
-  .services-section {
-    padding-block: clamp(56px, 8vw, 100px);
-    background-color: var(--theme-bg);
-  }
-
-  .services-section__container {
-    max-width: var(--container-max-width, 1360px);
-    margin-inline: auto;
-    padding-inline: var(--container-padding, 20px);
-  }
-
-  .services-section__header {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: clamp(28px, 4vw, 48px);
-  }
-
-  .services-section__title {
+  /* ===== SERVICIOS (Bento Grid) ===== */
+  .services-heading {
     font-family: var(--font-heading);
     font-weight: 800;
     font-size: var(--text-h2);
     letter-spacing: -0.02em;
-    line-height: 1.12;
-    margin: 0;
+    margin: 0 0 var(--space-6);
     color: var(--theme-heading);
-    text-wrap: balance;
   }
 
-  .services-section__grid {
+  .services-bento {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    grid-template-columns: 1fr 1fr 1.12fr;
+    gap: var(--space-4);
   }
 
-  @media (max-width: 1024px) {
-    .services-section__grid {
-      grid-template-columns: repeat(2, 1fr);
+  .service-card--feat {
+    grid-column: 3;
+    grid-row: 1 / 3;
+  }
+
+  @media (max-width: 860px) {
+    .services-bento {
+      grid-template-columns: 1fr 1fr;
+    }
+    .service-card--feat {
+      grid-column: 1 / -1;
+      grid-row: auto;
     }
   }
 
-  @media (max-width: 600px) {
-    .services-section__grid {
+  @media (max-width: 560px) {
+    .services-bento {
       grid-template-columns: 1fr;
     }
+    .service-card--feat {
+      grid-column: auto;
+    }
   }
 
-  /* News-card style: entire card is clickable link */
   .service-card {
     display: flex;
     flex-direction: column;
     background: var(--theme-bg-elevated);
     border: 1px solid var(--theme-border);
-    border-radius: var(--radius-card);
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.25s var(--ease-out, ease),
-      border-color 0.25s var(--ease-out, ease),
-      box-shadow 0.25s var(--ease-out, ease);
+    transition: transform var(--motion-base) var(--ease-out),
+                border-color var(--motion-base) var(--ease-out);
   }
 
   .service-card:hover {
     transform: translateY(-4px);
-    border-color: var(--color-brand, #308f40);
-    box-shadow: var(--shadow-lg);
+    border-color: var(--color-brand);
   }
 
-  .service-card:focus-visible {
-    outline: 2px solid var(--color-brand, #308f40);
-    outline-offset: 4px;
-  }
-
-  .service-card__image {
-    display: block;
+  .service-card__img {
     aspect-ratio: 16 / 10;
     overflow: hidden;
-    background-color: var(--theme-bg);
   }
 
-  .service-card__image img {
+  .service-card__img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s var(--ease-out, ease);
+    transition: transform var(--motion-slow) var(--ease-out);
   }
 
-  .service-card:hover .service-card__image img {
+  .service-card:hover .service-card__img img {
     transform: scale(1.05);
   }
 
   .service-card__body {
-    padding: 18px 20px 20px;
+    padding: var(--space-5);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--space-2);
     flex: 1;
   }
 
+  .service-card__cat {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-small);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--theme-eyebrow);
+  }
+
   .service-card__title {
-    color: var(--theme-text);
     font-family: var(--font-heading);
     font-size: var(--text-h5);
     line-height: 1.25;
     font-weight: 700;
     margin: 0;
-    letter-spacing: -0.005em;
+    color: var(--theme-text);
   }
 
-  .service-card__seo-text {
-    color: var(--theme-text-muted, var(--color-ink-600));
+  .service-card__desc {
+    color: var(--theme-text-muted);
     font-size: var(--text-small);
-    line-height: 1.55;
+    line-height: 1.5;
     margin: 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
   }
 
-  .service-card__link-cta {
+  .service-card__link {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-2);
     margin-top: auto;
+    padding-top: var(--space-3);
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: var(--text-small);
     color: var(--theme-eyebrow);
-    transition: color 0.2s var(--ease-out, ease);
+    text-decoration: none;
+    transition: gap var(--motion-base) var(--ease-out);
   }
 
-  .service-card__link-cta svg {
-    transition: transform 0.2s var(--ease-out, ease);
-  }
-
-  .service-card:hover .service-card__link-cta svg {
-    transform: translateX(4px);
+  .service-card__link:hover {
+    gap: var(--space-3);
   }
 </style>

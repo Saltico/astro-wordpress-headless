@@ -16,8 +16,6 @@ import Footer from '@/components/layout/Footer.astro';
 import MetaTags from '@/components/seo/MetaTags.astro';
 import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import JsonLd from '@/components/seo/JsonLd.astro';
-import QuoteCartBadge from '@/components/quote/QuoteCartBadge.astro';
-import QuoteCartFloatingButton from '@/components/quote/QuoteCartFloatingButton.astro';
 import ThemeToggle from '@/components/ui/ThemeToggle.astro';
 import { organizationSchema, websiteSchema, getSiteUrl } from '@/lib/seo';
 import { siteBrand, siteContact, topbarData, navigationData, footerData } from '@/data/site';
@@ -184,36 +182,14 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
         });
       }
 
-      // 3. Toast layer (notificaciones efímeras del cotizador)
+      // 3. Toast layer (notificaciones efímeras)
       (function () {
         if (typeof window === 'undefined' || typeof document === 'undefined') return;
         const layer = document.createElement('div');
         layer.setAttribute('data-toast-layer', '');
         layer.style.cssText =
-          'position:fixed;bottom:5.5rem;right:1rem;z-index:95;display:flex;flex-direction:column;gap:0.5rem;pointer-events:none;';
+          'position:fixed;bottom:1.5rem;right:1rem;z-index:95;display:flex;flex-direction:column;gap:0.5rem;pointer-events:none;';
         document.body.appendChild(layer);
-
-        window.addEventListener('quote-cart:toast', (event) => {
-          const e = event as CustomEvent<{ kind: 'info' | 'warning' | 'error'; message: string }>;
-          const toast = document.createElement('div');
-          toast.textContent = e.detail.message;
-          toast.setAttribute('role', 'status');
-          const bg =
-            e.detail.kind === 'warning'
-              ? 'var(--color-warning, #b7791f)'
-              : e.detail.kind === 'error'
-                ? 'var(--color-danger, #c0392b)'
-                : 'var(--color-brand, #308f40)';
-          toast.style.cssText = `padding:0.75rem 1rem;background-color:${bg};color:#fff;font-weight:700;border-radius:var(--radius-toast);box-shadow:var(--shadow-md);opacity:0;transition:opacity 0.2s ease;pointer-events:auto;max-width:320px;font-size:var(--text-small);`;
-          layer.appendChild(toast);
-          requestAnimationFrame(() => {
-            toast.style.opacity = '1';
-          });
-          window.setTimeout(() => {
-            toast.style.opacity = '0';
-            window.setTimeout(() => toast.remove(), 250);
-          }, 2500);
-        });
       })();
     </script>
 
@@ -250,7 +226,7 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
           </Navigation>
           <Fragment slot="cta">
             <ThemeToggle />
-            <QuoteCartBadge />
+            <a href="/contacto" class="header-cta-btn">Contactar</a>
           </Fragment>
         </Header>
       )
@@ -281,8 +257,6 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
       )
     }
 
-    <QuoteCartFloatingButton />
-
     <script>
       // Inicializar analytics: escucha eventos del DOM y los envía al dataLayer de GTM
       initAnalytics();
@@ -311,5 +285,34 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
     }
   }
 
+  .header-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-body);
+    line-height: 1;
+    white-space: nowrap;
+    padding: 14px 26px;
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+    background-color: var(--color-brand, #308f40);
+    color: var(--color-on-brand, #fff);
+    transition: background-color 0.2s ease, transform 0.18s ease, border-color 0.2s ease;
+  }
+
+  .header-cta-btn:hover {
+    background-color: var(--color-brand-700, #256d30);
+    transform: translateY(-1px);
+  }
+
+  .header-cta-btn:active {
+    transform: translateY(0);
+  }
 
 </style>
