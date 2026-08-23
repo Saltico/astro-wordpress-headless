@@ -135,14 +135,13 @@ function formatDate(iso: string): string {
     margin-bottom: clamp(28px, 4vw, 48px);
   }
 
-  /* Cuando la sección va en una página de detalle (noticias/[post]),
-     el layout flex-end mantiene la coherencia con los split-sections. */
+  /* En desktop: eyebrow + título agrupados a la izquierda, subtítulo
+     debajo del título (no disperso en la fila). */
   @media (min-width: 768px) {
     .news-grid__header {
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: flex-end;
-      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
     }
   }
 

@@ -1,8 +1,9 @@
 // src/lib/news.ts
-// Helpers para consumir noticias.
-// Hoy lee de data estática; mañana lee del endpoint WP con la misma firma.
+// Helpers para consumir noticias desde WordPress REST API.
+// Fallback a datos estáticos si la API no está disponible.
 
-import { newsArticles, type NewsArticle } from '@/data/news';
+import { newsArticles as staticArticles, type NewsArticle } from '@/data/news';
+import { fetchAllNews, fetchNewsBySlug, fetchRelatedNews } from './wordpress-api';
 
 export interface NewsCard {
   slug: string;
@@ -28,29 +29,85 @@ function toCard(article: NewsArticle): NewsCard {
   };
 }
 
+/**
+ * Obtiene las últimas noticias publicadas.
+ * Intenta desde la API de WordPress, fallback a datos estáticos.
+ */
 export async function getLatestNews(limit = 6): Promise<NewsCard[]> {
-  // Mañana: const articles = await fetchAllNews({ perPage: limit });
-  const articles = newsArticles;
-  return articles
+  try {
+    const articles = await fetchAllNews({ perPage: limit });
+    if (articles.length > 0) {
+      return articles.map(toCard);
+    }
+  } catch (error) {
+    console.warn('Error fetching from WordPress API, using static data:', error);
+  }
+
+  // Fallback a datos estáticos
+  return staticArticles
     .filter((a) => a.status === 'publish')
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, limit)
     .map(toCard);
 }
 
+/**
+ * Obtiene un artículo por su slug.
+ * Intenta desde la API de WordPress, fallback a datos estáticos.
+ */
 export async function getNewsBySlug(slug: string): Promise<NewsArticle | null> {
-  // Mañana: return await fetchNewsBySlug(slug);
-  return newsArticles.find((a) => a.slug === slug) ?? null;
+  try {
+    const article = await fetchNewsBySlug(slug);
+    if (article) return article;
+  } catch (error) {
+    console.warn('Error fetching from WordPress API, using static data:', error);
+  }
+
+  // Fallback a datos estáticos
+  return staticArticles.find((a) => a.slug === slug) ?? null;
 }
 
+/**
+ * Obtiene artículos relacionados (misma categoría).
+ * Intenta desde la API de WordPress, fallback a datos estáticos.
+ */
 export async function getRelatedNews(slug: string, limit = 3): Promise<NewsCard[]> {
   const current = await getNewsBySlug(slug);
   if (!current) return [];
-  const articles = newsArticles.filter(
+
+  const categoryId = current._embedded?.['wp:term']?.[0]?.[0]?.id;
+
+  try {
+    const related = await fetchRelatedNews(slug, categoryId, limit);
+    if (related.length > 0) {
+      return related.map(toCard);
+    }
+  } catch (error) {
+    console.warn('Error fetching related news from WordPress API, using static data:', error);
+  }
+
+  // Fallback a datos estáticos
+  const articles = staticArticles.filter(
     (a) => a.slug !== slug && a.status === 'publish'
   );
   return articles
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, limit)
     .map(toCard);
+}
+
+/**
+ * Obtiene todos los artículos para generar rutas estáticas.
+ * Usado en getStaticPaths() de Astro.
+ */
+export async function getAllNewsForPaths(): Promise<NewsArticle[]> {
+  try {
+    const articles = await fetchAllNews();
+    if (articles.length > 0) return articles;
+  } catch (error) {
+    console.warn('Error fetching all news for paths, using static data:', error);
+  }
+
+  // Fallback a datos estáticos
+  return staticArticles.filter((a) => a.status === 'publish');
 }

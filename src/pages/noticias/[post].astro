@@ -2,17 +2,17 @@
 // src/pages/noticias/[post].astro
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import NewsGrid from '@/components/ui/NewsGrid.astro';
-import { getNewsBySlug, getRelatedNews } from '@/lib/news';
-import { newsArticles } from '@/data/news';
+import { getRelatedNews, getAllNewsForPaths } from '@/lib/news';
 import { newsArticleSchemaExtended, breadcrumbSchema, combineSchemas } from '@/lib/seo';
 import { getSiteUrl } from '@/lib/seo';
 
 export const prerender = true;
 
 export async function getStaticPaths() {
-  // Mañana: await fetchAllNews({ perPage: 100 });
-  return newsArticles.map((article) => ({
+  const articles = await getAllNewsForPaths();
+  return articles.map((article) => ({
     params: { post: article.slug },
     props: { article },
   }));
@@ -22,6 +22,7 @@ const { article } = Astro.props;
 
 const siteUrl = getSiteUrl(article.link);
 const image = article._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+const imageAlt = article._embedded?.['wp:featuredmedia']?.[0]?.alt_text ?? article.title.rendered;
 const author = article._embedded?.author?.[0]?.name ?? 'IP Proyectos Industriales';
 const category = article._embedded?.['wp:term']?.[0]?.[0]?.name;
 
@@ -54,6 +55,23 @@ const dateFormatted = new Date(article.date).toLocaleDateString('es-CL', {
   month: 'long',
   day: 'numeric',
 });
+
+/**
+ * Limpia el HTML de WordPress: elimina estilos inline, clases y atributos
+ * de presentación. Solo conserva la estructura semántica.
+ */
+function sanitizeWpContent(html: string): string {
+  return html
+    .replace(/\s*style="[^"]*"/g, '')
+    .replace(/\s*class="[^"]*"/g, '')
+    .replace(/\s*(width|height|align|valign|border|cellpadding|cellspacing)="[^"]*"/g, '')
+    .replace(/<span[^>]*>\s*<\/span>/g, '')
+    .replace(/<div[^>]*>\s*<\/div>/g, '')
+    .replace(/<div([^>]*)>/g, '<p>')
+    .replace(/<\/div>/g, '</p>');
+}
+
+const cleanContent = sanitizeWpContent(article.content.rendered);
 ---
 
 <BaseLayout
@@ -64,33 +82,58 @@ const dateFormatted = new Date(article.date).toLocaleDateString('es-CL', {
   ogImage={image}
 >
   <article class="news-article">
-    <header class="news-article__header">
-      <Container>
-        {category && <p class="news-article__category">{category}</p>}
-        <h1 class="news-article__title">{article.title.rendered}</h1>
-        <div class="news-article__meta">
-          <span>Por <strong>{author}</strong></span>
-          <time datetime={article.date}>{dateFormatted}</time>
-        </div>
-      </Container>
-    </header>
+    <!-- Hero con imagen de fondo y contenido superpuesto -->
+    <section class="news-article__hero">
+      {image && <img src={image} alt={imageAlt} class="news-article__hero-bg" loading="eager" />}
+      <div class="news-article__hero-overlay" aria-hidden="true"></div>
+      <div class="news-article__hero-content">
+        <Container>
+          <!-- Breadcrumb -->
+          <Breadcrumbs
+            items={[
+              { label: 'Inicio', url: '/' },
+              { label: 'Noticias', url: '/noticias' },
+            ]}
+            variant="hero"
+          />
 
-    {image && (
-      <figure class="news-article__hero">
-        <img
-          src={image}
-          alt={article._embedded?.['wp:featuredmedia']?.[0]?.alt_text ?? article.title.rendered}
-          loading="eager"
-          decoding="async"
-          width="1200"
-          height="675"
-        />
-      </figure>
-    )}
+          <!-- Categoría -->
+          {category && (
+            <span class="news-article__category">{category}</span>
+          )}
 
+          <!-- Título -->
+          <h1 class="news-article__title">{article.title.rendered}</h1>
+
+          <!-- Meta -->
+          <div class="news-article__meta">
+            <span class="news-article__meta-author">Por <strong>{author}</strong></span>
+            <span class="news-article__meta-sep" aria-hidden="true">•</span>
+            <time datetime={article.date}>{dateFormatted}</time>
+          </div>
+        </Container>
+      </div>
+    </section>
+
+    <!-- Cuerpo del artículo -->
     <div class="news-article__body">
       <Container>
-        <div class="news-article__content" set:html={article.content.rendered} />
+        <div class="news-article__layout">
+          <!-- Columna izquierda: contenido -->
+          <div class="news-article__content" set:html={cleanContent} />
+          
+          <!-- Columna derecha: imagen de portada -->
+          {image && (
+            <aside class="news-article__sidebar">
+              <img
+                src={image}
+                alt={imageAlt}
+                class="news-article__featured-image"
+                loading="lazy"
+              />
+            </aside>
+          )}
+        </div>
       </Container>
     </div>
   </article>
@@ -102,19 +145,32 @@ const dateFormatted = new Date(article.date).toLocaleDateString('es-CL', {
       title="Noticias relacionadas"
       subtitle="Otros artículos sobre operaciones, seguridad y proyectos de IP Proyectos Industriales."
       columns={3}
-      variant="light"
+      variant="dark"
       headingId="related-news"
     />
   )}
 </BaseLayout>
 
 <style is:global>
-  /* Estilos del artículo — se aplican globalmente al set:html de WordPress */
+  /* ══════════════════════════════════════════════════════════════
+     Contenido del artículo — Estilado 100% del design system.
+     Sobrescribe cualquier estilo heredado de WordPress.
+     ══════════════════════════════════════════════════════════════ */
+
+  .news-article__content,
+  .news-article__content * {
+    /* Reset de estilos WordPress */
+    font-family: var(--font-body) !important;
+    border: none !important;
+    box-shadow: none !important;
+    text-decoration: none;
+  }
+
+  /* Contenedor principal */
   .news-article__content {
-    font-family: var(--font-body);
-    font-size: 1.0625rem;
-    line-height: 1.75;
-    color: var(--color-ink-700, #2d3748);
+    font-size: 1.0625rem !important;
+    line-height: 1.75 !important;
+    color: var(--theme-text) !important;
     max-width: 68ch;
     margin: 0 auto;
   }
@@ -123,124 +179,323 @@ const dateFormatted = new Date(article.date).toLocaleDateString('es-CL', {
     margin-top: 1.4em;
   }
 
-  .news-article__content h2 {
-    font-family: var(--font-heading);
-    font-weight: 800;
-    font-size: clamp(1.4rem, 2.4vw, 1.8rem);
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-    color: var(--color-ink, #1a1a1a);
-    margin-top: 2em;
-  }
-
-  .news-article__content h3 {
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 1.25rem;
-    line-height: 1.3;
-    color: var(--color-ink, #1a1a1a);
-    margin-top: 1.6em;
-  }
-
+  /* Párrafos */
   .news-article__content p {
+    font-family: var(--font-body) !important;
+    font-size: 1.0625rem !important;
+    line-height: 1.75 !important;
+    color: var(--theme-text) !important;
     margin: 0;
   }
 
+  /* Headings */
+  .news-article__content h2 {
+    font-family: var(--font-heading) !important;
+    font-weight: 800 !important;
+    font-size: clamp(1.4rem, 2.4vw, 1.8rem) !important;
+    letter-spacing: -0.01em;
+    line-height: 1.2 !important;
+    color: var(--theme-heading) !important;
+    margin-top: 2em;
+    text-wrap: balance;
+  }
+
+  .news-article__content h3 {
+    font-family: var(--font-heading) !important;
+    font-weight: 700 !important;
+    font-size: clamp(1.125rem, 1.8vw, 1.375rem) !important;
+    line-height: 1.3 !important;
+    color: var(--theme-heading) !important;
+    margin-top: 1.6em;
+  }
+
+  .news-article__content h4 {
+    font-family: var(--font-heading) !important;
+    font-weight: 700 !important;
+    font-size: clamp(1rem, 1.4vw, 1.125rem) !important;
+    line-height: 1.4 !important;
+    color: var(--theme-heading) !important;
+    margin-top: 1.4em;
+  }
+
+  /* Links */
   .news-article__content a {
-    color: var(--color-brand, #1a9c4a);
-    text-decoration: underline;
+    color: var(--color-brand) !important;
+    text-decoration: underline !important;
     text-underline-offset: 3px;
+    font-family: var(--font-body) !important;
+    font-size: inherit !important;
+    transition: color 0.2s ease;
   }
 
+  .news-article__content a:hover {
+    color: var(--color-brand-600) !important;
+  }
+
+  /* Blockquote */
   .news-article__content blockquote {
-    border-left: 4px solid var(--color-brand, #1a9c4a);
-    padding: 0.4em 0 0.4em 1.4em;
+    border-left: 1px solid var(--color-brand) !important;
+    padding: 0.4em 0 0.4em 1.4em !important;
     font-style: italic;
-    color: var(--color-ink-500, #6b7280);
+    color: var(--theme-text-muted) !important;
+    margin: 1.4em 0;
   }
 
+  .news-article__content blockquote p {
+    color: var(--theme-text-muted) !important;
+  }
+
+  /* Listas */
   .news-article__content ul,
   .news-article__content ol {
     padding-left: 1.6em;
+    margin: 1.4em 0;
   }
 
-  .news-article__content ul li { list-style: disc; }
-  .news-article__content ol li { list-style: decimal; }
+  .news-article__content ul li {
+    list-style: disc;
+    color: var(--theme-text) !important;
+    font-family: var(--font-body) !important;
+    line-height: 1.75 !important;
+  }
 
+  .news-article__content ol li {
+    list-style: decimal;
+    color: var(--theme-text) !important;
+    font-family: var(--font-body) !important;
+    line-height: 1.75 !important;
+  }
+
+  /* Imágenes dentro del contenido */
   .news-article__content img {
-    border-radius: 8px;
+    border-radius: 0.75rem;
     margin-block: 2em;
+    max-width: 100%;
+    height: auto;
   }
 
+  .news-article__content figure {
+    margin: 2em 0;
+  }
+
+  .news-article__content figcaption {
+    font-size: 0.875rem !important;
+    color: var(--theme-text-muted) !important;
+    text-align: center;
+    margin-top: 0.5em;
+  }
+
+  /* Strong y em */
+  .news-article__content strong,
+  .news-article__content b {
+    font-weight: 700 !important;
+    color: var(--theme-heading) !important;
+  }
+
+  .news-article__content em,
+  .news-article__content i {
+    font-style: italic;
+  }
+
+  /* Código inline */
   .news-article__content code {
-    font-family: 'Menlo', 'Monaco', monospace;
-    font-size: 0.9em;
-    background: var(--color-surface-alt, #f7f9f7);
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace !important;
+    font-size: 0.9em !important;
+    background: var(--theme-bg-elevated) !important;
     padding: 0.15em 0.4em;
-    border-radius: 4px;
+    border-radius: 0.25rem;
+    color: var(--theme-text) !important;
+  }
+
+  /* Tablas */
+  .news-article__content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.4em 0;
+    font-size: 0.9rem !important;
+  }
+
+  .news-article__content th {
+    font-family: var(--font-heading) !important;
+    font-weight: 700 !important;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background: var(--theme-bg-elevated);
+    color: var(--theme-heading) !important;
+    border-bottom: 2px solid var(--theme-border);
+  }
+
+  .news-article__content td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--theme-border);
+    color: var(--theme-text) !important;
+    font-family: var(--font-body) !important;
   }
 </style>
 
 <style>
-  .news-article__header {
-    background-color: var(--color-graphite, #0d1611);
-    color: var(--color-on-dark);
-    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
-    padding-block: calc(clamp(60px, 8vw, 100px) + var(--topbar-height, 40px) + var(--header-height, 80px)) clamp(40px, 6vw, 60px);
-  }
-
-  .news-article__category {
-    display: inline-block;
-    padding: 4px 12px;
-    background: var(--color-brand-050, rgba(26, 156, 74, 0.15));
-    color: var(--color-brand-300, #4ade80);
-    font-family: var(--font-heading);
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    border-radius: 999px;
-    margin-bottom: 16px;
-  }
-
-  .news-article__title {
-    font-family: var(--font-heading);
-    font-weight: 900;
-    font-size: clamp(2rem, 4.5vw, 3.4rem);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    color: var(--color-on-dark);
-    margin: 0 0 24px;
-    max-width: 22ch;
-    text-wrap: balance;
-  }
-
-  .news-article__meta {
-    display: flex;
-    gap: 24px;
-    align-items: center;
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
-  }
-
-  .news-article__meta time {
-    color: rgba(255, 255, 255, 0.85);
-  }
-
+  /* ══════════════════════════════════════════════════════════════
+     Hero — Compacto, la imagen no invade el artículo.
+     Modo Read: el contenido es protagonista.
+     ══════════════════════════════════════════════════════════════ */
   .news-article__hero {
-    margin: 0;
-    aspect-ratio: 16 / 9;
+    position: relative;
+    width: 100%;
+    min-height: calc(280px + var(--topbar-height, 40px) + var(--header-height, 80px));
+    max-height: calc(440px + var(--topbar-height, 40px) + var(--header-height, 80px));
+    background-color: var(--color-graphite-3, #1e2a23);
+    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
+    display: flex;
+    align-items: flex-end;
     overflow: hidden;
-    background-color: var(--color-surface-alt, #2a2a2a);
   }
 
-  .news-article__hero img {
+  .news-article__hero-bg {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center center;
+    z-index: 0;
   }
 
+  .news-article__hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(13, 22, 17, 0.3) 0%,
+      rgba(13, 22, 17, 0.55) 40%,
+      rgba(13, 22, 17, 0.94) 100%
+    );
+    pointer-events: none;
+  }
+
+  .news-article__hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-block: clamp(32px, 5vw, 32px);
+  }
+
+  /* Breadcrumb — usa el componente compartido Breadcrumbs.astro */
+  :global(.news-article__hero .breadcrumbs) {
+    margin-bottom: 14px;
+  }
+
+  /* Categoría — badge pill bajo el breadcrumb */
+  .news-article__category {
+    display: inline-block;
+    padding: 5px 14px;
+    background: rgba(98, 187, 116, 0.12);
+    color: var(--color-brand-300, #62bb74);
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 999px;
+    border: 1px solid rgba(98, 187, 116, 0.2);
+    margin-bottom: 18px;
+  }
+
+  /* Título — protagonista absoluto */
+  .news-article__title {
+    font-family: var(--font-heading, 'Archivo', sans-serif);
+    font-weight: 900;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--color-on-dark, #f3f7f4);
+    margin: 0 0 16px;
+    max-width: 24ch;
+    text-wrap: balance;
+  }
+
+  /* Meta */
+  .news-article__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    font-family: var(--font-body, 'Inter', sans-serif);
+    font-size: 0.8125rem;
+    color: var(--color-on-dark-muted, #9bab9f);
+  }
+
+  .news-article__meta-author strong {
+    color: var(--color-on-dark, #f3f7f4);
+    font-weight: 600;
+  }
+
+  .news-article__meta-sep {
+    color: var(--color-on-dark-muted, #9bab9f);
+    opacity: 0.5;
+  }
+
+  .news-article__meta time {
+    color: color-mix(in srgb, var(--color-on-dark, #f3f7f4) 85%, transparent);
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     Cuerpo del artículo — Layout de dos columnas
+     ══════════════════════════════════════════════════════════════ */
   .news-article__body {
     padding-block: clamp(60px, 8vw, 100px);
+    background-color: var(--theme-bg);
+  }
+
+  .news-article__layout {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 42%);
+    gap: clamp(32px, 4vw, 56px);
+    align-items: start;
+  }
+
+  /* Columna izquierda: contenido del artículo */
+  .news-article__layout > .news-article__content {
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  /* Columna derecha: imagen de portada */
+  .news-article__sidebar {
+    position: sticky;
+    top: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 24px);
+    margin: 0;
+  }
+
+  .news-article__featured-image {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-card, 0.875rem);
+    display: block;
+    box-shadow: var(--shadow-md, 0 4px 12px rgba(36, 38, 39, 0.08));
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+
+  .news-article__featured-image:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-lg, 0 8px 24px rgba(36, 38, 39, 0.12));
+  }
+
+  /* Mobile: una columna, imagen bajo el texto */
+  @media (max-width: 768px) {
+    .news-article__layout {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .news-article__sidebar {
+      position: static;
+      order: 1;
+    }
+
+    .news-article__layout > .news-article__content {
+      order: 0;
+      max-width: none;
+    }
   }
 </style>
