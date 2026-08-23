@@ -1,20 +1,17 @@
 ---
 // src/pages/index.astro
 // Homepage corporativa de IP Proyectos Industriales.
-// Usa los componentes del design system: HeroSection, SplitSection, NewsGrid, etc.
+// Usa los componentes del design system: HeroVideo, SplitSection, ServiceBentoGrid, etc.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import HeroSection from '@/components/ui/HeroSection.astro';
+import HeroVideo from '@/components/ui/HeroVideo.astro';
 import SplitSection from '@/components/ui/SplitSection.astro';
 import StatsCounter from '@/components/ui/StatsCounter.astro';
 import LogoCarousel from '@/components/ui/LogoCarousel.astro';
 import CTABand from '@/components/ui/CTABand.astro';
 import NewsGrid from '@/components/ui/NewsGrid.astro';
-import Container from '@/components/ui/Container.astro';
-import SectionLayout from '@/components/ui/SectionLayout.astro';
-import Eyebrow from '@/components/ui/Eyebrow.astro';
-import Button from '@/components/ui/Button.astro';
-import Icon from '@/components/ui/Icon.astro';
+import ServiceMarquee from '@/components/ui/ServiceMarquee.astro';
+import ServiceBentoGrid from '@/components/ui/ServiceBentoGrid.astro';
 import type { StatItem } from '@/components/ui/StatsCounter.astro';
 import { localBusinessSchema } from '@/lib/seo';
 import { siteBrand, siteContact, IPRENTAL_URL } from '@/data/site';
@@ -55,6 +52,14 @@ const stats: StatItem[] = [
   { value: 5, label: 'Líneas de servicio' },
 ];
 
+// Items para el marquee
+const marqueeItems = [
+  'Ingeniería',
+  'Construcción',
+  'Montajes mineros e industriales',
+  'Rental de equipos',
+];
+
 // Servicios para el bento grid
 const services = [
   {
@@ -91,6 +96,18 @@ const services = [
   },
 ];
 
+// Servicio destacado (Rental)
+const featuredService = {
+  featured: true,
+  category: 'Rental de equipos',
+  title: 'Grúas de alto tonelaje',
+  description: 'Hasta 400 toneladas. Grúas AT/RT, alza-hombre, camión pluma y manipuladores, con operadores certificados. Más movimiento de tierra, transporte y equipos especiales.',
+  image: servIzaje.src,
+  imageAlt: 'Grúas de alto tonelaje en faena minera',
+  url: `${IPRENTAL_URL}/arriendo`,
+  linkLabel: 'Ver flota',
+};
+
 // Clientes
 const clientLogos = [
   { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/barrick.jpg', alt: 'Barrick' },
@@ -123,17 +140,21 @@ const latestNews = await getLatestNews(3);
   description={description}
   jsonLd={jsonLd}
 >
-  <!-- §1: HERO CORPORATIVO -->
-  <HeroSection
-    title="La pasión y el valor por un trabajo bien hecho"
-    subtitle="Ingeniería, construcción, montajes y Rental de equipos. Todo de principio a fin, con una sola empresa."
-    backgroundImage={faenaIzaje.src}
-    backgroundAlt="Izaje en tándem con grúas de alto tonelaje en faena minera"
+  <!-- §1: HERO CON VIDEO -->
+  <HeroVideo
+    videoSrc="/videos/servicios.mp4"
+    poster={faenaIzaje.src}
     eyebrow="Desde el año 2000 junto a la Gran Minería"
-    variant="left"
+    title="La pasión y el valor por un trabajo bien hecho"
+    titleHighlight="trabajo bien hecho"
+    subtitle="Ingeniería, construcción, montajes y Rental de equipos. Todo de principio a fin, con una sola empresa."
     minHeight="lg"
     ctaPrimary={{ label: 'Contactar', href: '/contacto' }}
-    ctaSecondary={{ label: 'WhatsApp', href: `https://wa.me/${siteContact.whatsappNumber}?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20conversar%20sobre%20un%20proyecto.` }}
+    ctaSecondary={{ 
+      label: 'WhatsApp', 
+      href: `https://wa.me/${siteContact.whatsappNumber}?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20conversar%20sobre%20un%20proyecto.`,
+      external: true 
+    }}
   />
 
   <!-- §2: STATS COUNTER -->
@@ -147,22 +168,7 @@ const latestNews = await getLatestNews(3);
   />
 
   <!-- §3: MARQUEE DE SERVICIOS -->
-  <div class="service-marquee" aria-hidden="true">
-    <div class="service-marquee__track">
-      <div class="service-marquee__group">
-        <span>Ingeniería</span><i>◆</i>
-        <span>Construcción</span><i>◆</i>
-        <span>Montajes mineros e industriales</span><i>◆</i>
-        <span>Rental de equipos</span><i>◆</i>
-      </div>
-      <div class="service-marquee__group">
-        <span>Ingeniería</span><i>◆</i>
-        <span>Construcción</span><i>◆</i>
-        <span>Montajes mineros e industriales</span><i>◆</i>
-        <span>Rental de equipos</span><i>◆</i>
-      </div>
-    </div>
-  </div>
+  <ServiceMarquee items={marqueeItems} />
 
   <!-- §4: QUIÉNES SOMOS -->
   <SplitSection
@@ -180,45 +186,12 @@ const latestNews = await getLatestNews(3);
   />
 
   <!-- §5: SERVICIOS (Bento Grid) -->
-  <SectionLayout spacing="lg" alt>
-    <Container>
-      <Eyebrow text="Lo que hacemos" />
-      <h2 class="services-heading">Una sola empresa para todo el ciclo de tu proyecto</h2>
-      <div class="services-bento">
-        {services.map((service) => (
-          <article class="service-card reveal">
-            <div class="service-card__img">
-              <img src={service.image} alt={service.imageAlt} loading="lazy" decoding="async" />
-            </div>
-            <div class="service-card__body">
-              <span class="service-card__cat">{service.category}</span>
-              <h3 class="service-card__title">{service.title}</h3>
-              <p class="service-card__desc">{service.description}</p>
-              <a class="service-card__link" href={service.url}>
-                Conocer
-                <Icon name="arrow-right" size={16} />
-              </a>
-            </div>
-          </article>
-        ))}
-        <!-- Tarjeta destacada: Rental de equipos -->
-        <article class="service-card service-card--feat reveal">
-          <div class="service-card__img">
-            <img src={servIzaje.src} alt="Grúas de alto tonelaje en faena minera" loading="lazy" decoding="async" />
-          </div>
-          <div class="service-card__body">
-            <span class="service-card__cat">Rental de equipos</span>
-            <h3 class="service-card__title">Grúas de alto tonelaje</h3>
-            <p class="service-card__desc">Hasta 400 toneladas. Grúas AT/RT, alza-hombre, camión pluma y manipuladores, con operadores certificados. Más movimiento de tierra, transporte y equipos especiales.</p>
-            <a class="service-card__link" href={`${IPRENTAL_URL}/arriendo`} target="_blank" rel="noopener noreferrer">
-              Ver flota
-              <Icon name="arrow-right" size={16} />
-            </a>
-          </div>
-        </article>
-      </div>
-    </Container>
-  </SectionLayout>
+  <ServiceBentoGrid
+    eyebrow="Lo que hacemos"
+    title="Una sola empresa para todo el ciclo de tu proyecto"
+    services={services}
+    featuredService={featuredService}
+  />
 
   <!-- §6: SEGURIDAD / HSEC -->
   <SplitSection
@@ -273,176 +246,3 @@ const latestNews = await getLatestNews(3);
     variant="dark"
   />
 </BaseLayout>
-
-<style>
-  /* ===== MARQUEE DE SERVICIOS ===== */
-  .service-marquee {
-    background: var(--color-brand);
-    overflow: hidden;
-    padding: var(--space-5) 0;
-    border-block: 1px solid rgba(0, 0, 0, 0.12);
-  }
-
-  .service-marquee__track {
-    display: flex;
-    width: max-content;
-    animation: marquee-scroll 32s linear infinite;
-  }
-
-  .service-marquee:hover .service-marquee__track {
-    animation-play-state: paused;
-  }
-
-  @keyframes marquee-scroll {
-    to { transform: translateX(-50%); }
-  }
-
-  .service-marquee__group {
-    display: flex;
-    align-items: center;
-    gap: var(--space-8);
-    padding-right: var(--space-8);
-  }
-
-  .service-marquee__group span {
-    font-family: var(--font-heading);
-    font-weight: 800;
-    font-size: clamp(1.3rem, 2.6vw, 2.1rem);
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    color: var(--color-on-brand);
-    white-space: nowrap;
-  }
-
-  .service-marquee__group i {
-    color: rgba(255, 255, 255, 0.55);
-    font-style: normal;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .service-marquee__track { animation: none; }
-  }
-
-  /* ===== SERVICIOS (Bento Grid) ===== */
-  .services-heading {
-    font-family: var(--font-heading);
-    font-weight: 800;
-    font-size: var(--text-h2);
-    letter-spacing: -0.02em;
-    margin: 0 0 var(--space-6);
-    color: var(--theme-heading);
-  }
-
-  .services-bento {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1.12fr;
-    gap: var(--space-4);
-  }
-
-  .service-card--feat {
-    grid-column: 3;
-    grid-row: 1 / 3;
-  }
-
-  @media (max-width: 860px) {
-    .services-bento {
-      grid-template-columns: 1fr 1fr;
-    }
-    .service-card--feat {
-      grid-column: 1 / -1;
-      grid-row: auto;
-    }
-  }
-
-  @media (max-width: 560px) {
-    .services-bento {
-      grid-template-columns: 1fr;
-    }
-    .service-card--feat {
-      grid-column: auto;
-    }
-  }
-
-  .service-card {
-    display: flex;
-    flex-direction: column;
-    background: var(--theme-bg-elevated);
-    border: 1px solid var(--theme-border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    transition: transform var(--motion-base) var(--ease-out),
-                border-color var(--motion-base) var(--ease-out);
-  }
-
-  .service-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--color-brand);
-  }
-
-  .service-card__img {
-    aspect-ratio: 16 / 10;
-    overflow: hidden;
-  }
-
-  .service-card__img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform var(--motion-slow) var(--ease-out);
-  }
-
-  .service-card:hover .service-card__img img {
-    transform: scale(1.05);
-  }
-
-  .service-card__body {
-    padding: var(--space-5);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    flex: 1;
-  }
-
-  .service-card__cat {
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: var(--text-small);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--theme-eyebrow);
-  }
-
-  .service-card__title {
-    font-family: var(--font-heading);
-    font-size: var(--text-h5);
-    line-height: 1.25;
-    font-weight: 700;
-    margin: 0;
-    color: var(--theme-text);
-  }
-
-  .service-card__desc {
-    color: var(--theme-text-muted);
-    font-size: var(--text-small);
-    line-height: 1.5;
-    margin: 0;
-  }
-
-  .service-card__link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin-top: auto;
-    padding-top: var(--space-3);
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: var(--text-small);
-    color: var(--theme-eyebrow);
-    text-decoration: none;
-    transition: gap var(--motion-base) var(--ease-out);
-  }
-
-  .service-card__link:hover {
-    gap: var(--space-3);
-  }
-</style>

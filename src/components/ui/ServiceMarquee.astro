@@ -1,0 +1,90 @@
+---
+// src/components/ui/ServiceMarquee.astro
+// Marquee/carrusel infinito de texto con servicios.
+// Estructura basada en la referencia IP-Sitio-Web (d-marq).
+
+export interface Props {
+  items: string[];
+  separator?: string;
+}
+
+const {
+  items,
+  separator = '◆',
+} = Astro.props;
+---
+
+<div class="service-marquee" aria-hidden="true">
+  <div class="service-marquee__track">
+    <!-- Duplicado para loop infinito -->
+    <div class="service-marquee__group">
+      {items.map((item, i) => (
+        <>
+          <span>{item}</span>
+          {i < items.length - 1 && <i>{separator}</i>}
+        </>
+      ))}
+      <i>{separator}</i>
+    </div>
+    <div class="service-marquee__group">
+      {items.map((item, i) => (
+        <>
+          <span>{item}</span>
+          {i < items.length - 1 && <i>{separator}</i>}
+        </>
+      ))}
+      <i>{separator}</i>
+    </div>
+  </div>
+</div>
+
+<style>
+  .service-marquee {
+    background: var(--color-brand);
+    overflow: hidden;
+    padding: var(--space-5) 0;
+    border-block: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .service-marquee__track {
+    display: flex;
+    width: max-content;
+    animation: marquee-scroll 32s linear infinite;
+  }
+
+  .service-marquee:hover .service-marquee__track {
+    animation-play-state: paused;
+  }
+
+  @keyframes marquee-scroll {
+    to { transform: translateX(-50%); }
+  }
+
+  .service-marquee__group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    padding-right: var(--space-8);
+  }
+
+  .service-marquee__group span {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.3rem, 2.6vw, 2.1rem);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--color-on-brand);
+    white-space: nowrap;
+  }
+
+  .service-marquee__group i {
+    color: rgba(255, 255, 255, 0.55);
+    font-style: normal;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .service-marquee__track {
+      animation: none;
+    }
+  }
+</style>

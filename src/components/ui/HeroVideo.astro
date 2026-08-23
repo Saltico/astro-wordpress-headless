@@ -1,0 +1,217 @@
+---
+// src/components/ui/HeroVideo.astro
+// Hero section con video de fondo, overlay gradient y contenido alineado abajo.
+// Estructura basada en la referencia IP-Sitio-Web (d-hero).
+
+import Container from './Container.astro';
+import Button from './Button.astro';
+import Eyebrow from './Eyebrow.astro';
+
+export interface Props {
+  videoSrc: string;
+  poster?: string;
+  eyebrow?: string;
+  title: string;
+  titleHighlight?: string; // Texto que se resaltará en verde
+  subtitle?: string;
+  ctaPrimary?: {
+    label: string;
+    href: string;
+  };
+  ctaSecondary?: {
+    label: string;
+    href: string;
+    external?: boolean;
+  };
+  minHeight?: 'sm' | 'md' | 'lg';
+}
+
+const {
+  videoSrc,
+  poster,
+  eyebrow,
+  title,
+  titleHighlight,
+  subtitle,
+  ctaPrimary,
+  ctaSecondary,
+  minHeight = 'lg',
+} = Astro.props;
+
+const minHeightClasses = {
+  sm: 'hero-video--sm',
+  md: 'hero-video--md',
+  lg: 'hero-video--lg',
+};
+
+// Función para resaltar texto en el título
+function renderTitle(fullTitle: string, highlight?: string): string {
+  if (!highlight) return fullTitle;
+  return fullTitle.replace(highlight, `<b>${highlight}</b>`);
+}
+---
+
+<section class={`hero-video ${minHeightClasses[minHeight]}`}>
+  <video
+    autoplay
+    muted
+    loop
+    playsinline
+    poster={poster}
+  >
+    <source src={videoSrc} type="video/mp4" />
+  </video>
+  
+  <div class="hero-video__overlay" aria-hidden="true"></div>
+  
+  <Container class="hero-video__container">
+    <div class="hero-video__content">
+      {eyebrow && <Eyebrow text={eyebrow} />}
+      
+      <h1 class="hero-video__title" set:html={renderTitle(title, titleHighlight)}></h1>
+      
+      {subtitle && <p class="hero-video__subtitle">{subtitle}</p>}
+      
+      {(ctaPrimary || ctaSecondary) && (
+        <div class="hero-video__actions">
+          {ctaPrimary && (
+            <Button href={ctaPrimary.href} variant="primary" size="lg">
+              {ctaPrimary.label}
+            </Button>
+          )}
+          {ctaSecondary && (
+            <Button 
+              href={ctaSecondary.href} 
+              variant="ghost" 
+              onDark 
+              size="lg"
+              target={ctaSecondary.external ? '_blank' : undefined}
+              rel={ctaSecondary.external ? 'noopener noreferrer' : undefined}
+            >
+              {ctaSecondary.label}
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
+  </Container>
+  
+  <div class="hero-video__scroll" aria-hidden="true">
+    <span></span>
+    Scroll
+  </div>
+</section>
+
+<style>
+  .hero-video {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    background-color: var(--color-graphite);
+  }
+
+  .hero-video--sm {
+    min-height: calc(50svh + var(--topbar-height, 40px) + var(--header-height, 80px));
+  }
+
+  .hero-video--md {
+    min-height: calc(65svh + var(--topbar-height, 40px) + var(--header-height, 80px));
+  }
+
+  .hero-video--lg {
+    min-height: calc(75svh + var(--topbar-height, 40px) + var(--header-height, 80px));
+  }
+
+  @media (max-width: 1180px) {
+    .hero-video--lg {
+      min-height: calc(65svh + var(--topbar-height, 40px) + var(--header-height, 80px));
+    }
+  }
+
+  .hero-video video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .hero-video__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(13, 22, 17, 0.5) 0%,
+      rgba(13, 22, 17, 0.12) 30%,
+      rgba(13, 22, 17, 0.5) 60%,
+      rgba(13, 22, 17, 0.96) 100%
+    );
+  }
+
+  .hero-video__container {
+    position: relative;
+    z-index: 2;
+    padding-bottom: clamp(40px, 7vh, 90px);
+    padding-top: 60px;
+  }
+
+  .hero-video__content {
+    max-width: 16ch;
+  }
+
+  .hero-video__title {
+    color: var(--color-on-dark);
+    font-family: var(--font-heading);
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    font-size: clamp(2.4rem, 6vw, 5.4rem);
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  .hero-video__title b {
+    color: var(--color-brand-300);
+    font-weight: 900;
+  }
+
+  .hero-video__subtitle {
+    color: rgba(255, 255, 255, 0.86);
+    font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+    max-width: 54ch;
+    margin: 24px 0 28px;
+    line-height: 1.55;
+  }
+
+  .hero-video__actions {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .hero-video__scroll {
+    position: absolute;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    z-index: 3;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .hero-video__scroll span {
+    width: 1px;
+    height: 30px;
+    background: linear-gradient(rgba(255, 255, 255, 0.55), transparent);
+  }
+</style>

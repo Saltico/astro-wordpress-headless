@@ -16,11 +16,11 @@ Transformar la homepage de rental-first (con buscador de equipos y CTAs al cotiz
 
 | # | Seccion | Componente del Design System | Estado |
 |---|---------|------------------------------|--------|
-| 1 | Hero corporativo | `HeroSection.astro` | **Usar componente** |
-| 2 | Stats Counter | `StatsCounter.astro` | **Modificar** datos |
-| 3 | Marquee de servicios | Inline (unico sin componente) | **Crear** con tokens CSS |
+| 1 | Hero con video | `HeroVideo.astro` (nuevo) | **Creado** |
+| 2 | Stats Counter | `StatsCounter.astro` | **Usar componente** |
+| 3 | Marquee de servicios | `ServiceMarquee.astro` (nuevo) | **Creado** |
 | 4 | Quienes Somos | `SplitSection.astro` (variant="default", ghostText="IP") | **Usar componente** |
-| 5 | Servicios (bento grid) | `SectionLayout` + `Container` + `Eyebrow` + CSS inline | **Crear** grid bento |
+| 5 | Servicios (bento grid) | `ServiceBentoGrid.astro` (nuevo) | **Creado** |
 | 6 | Seguridad / HSEC | `SplitSection.astro` (variant="reversed", ghostText="HSEC", miniStats) | **Usar componente** |
 | 7 | Carrusel de clientes | `LogoCarousel.astro` | **Usar componente** |
 | 8 | CTA Band | `CTABand.astro` | **Usar componente** |
@@ -30,8 +30,11 @@ Transformar la homepage de rental-first (con buscador de equipos y CTAs al cotiz
 
 | Componente | Uso |
 |------------|-----|
-| `HeroSection` | Hero con imagen de fondo, overlay, eyebrow, titulo, CTAs, stats |
+| `HeroVideo` | Hero con video de fondo, overlay gradient, eyebrow, título con highlight, CTAs |
+| `HeroSection` | Hero con imagen de fondo (alternativa si no hay video) |
 | `SplitSection` | Seccion dividida texto+imagen con ghost text, mini stats, features, CTA |
+| `ServiceBentoGrid` | Grid bento asimétrico de servicios con tarjeta destacada |
+| `ServiceMarquee` | Marquee/carrusel infinito de texto con servicios |
 | `SectionLayout` | Wrapper de seccion con spacing y alt background |
 | `Container` | Contenedor max-width |
 | `StatsCounter` | Contador animado de stats |
@@ -44,33 +47,46 @@ Transformar la homepage de rental-first (con buscador de equipos y CTAs al cotiz
 
 ---
 
-## Tarea 3.1: Hero Corporativo
+## Tarea 3.1: Hero con Video
 
 **Archivo:** `src/pages/index.astro`
 
-### Usar componente `HeroSection`:
+### Usar componente `HeroVideo`:
 
 ```astro
-<HeroSection
-  title="La pasión y el valor por un trabajo bien hecho"
-  subtitle="Ingeniería, construcción, montajes y Rental de equipos. Todo de principio a fin, con una sola empresa."
-  backgroundImage={faenaIzaje.src}
-  backgroundAlt="Izaje en tándem con grúas de alto tonelaje en faena minera"
+<HeroVideo
+  videoSrc="/videos/servicios.mp4"
+  poster={faenaIzaje.src}
   eyebrow="Desde el año 2000 junto a la Gran Minería"
-  variant="left"
+  title="La pasión y el valor por un trabajo bien hecho"
+  titleHighlight="trabajo bien hecho"
+  subtitle="Ingeniería, construcción, montajes y Rental de equipos. Todo de principio a fin, con una sola empresa."
   minHeight="lg"
   ctaPrimary={{ label: 'Contactar', href: '/contacto' }}
-  ctaSecondary={{ label: 'WhatsApp', href: `https://wa.me/${siteContact.whatsappNumber}?text=...` }}
+  ctaSecondary={{ 
+    label: 'WhatsApp', 
+    href: `https://wa.me/${siteContact.whatsappNumber}?text=...`,
+    external: true 
+  }}
 />
 ```
 
-### Props disponibles de HeroSection:
-- `title`, `subtitle`, `eyebrow`
-- `backgroundImage`, `backgroundAlt`
-- `ctaPrimary`, `ctaSecondary` (objetos con `label` y `href`)
-- `variant`: 'left' | 'centered'
-- `minHeight`: 'sm' | 'md' | 'lg' | 'full'
-- `stats`: array de StatItem (opcional)
+### Props disponibles de HeroVideo:
+- `videoSrc`: ruta al video MP4
+- `poster`: imagen de fallback mientras carga el video
+- `eyebrow`: texto superior decorado
+- `title`: título principal
+- `titleHighlight`: texto que se resaltará en verde dentro del título
+- `subtitle`: subtítulo
+- `ctaPrimary`, `ctaSecondary`: botones CTA
+- `minHeight`: 'sm' | 'md' | 'lg'
+
+### Estructura visual (basada en HTML referencia):
+- Video de fondo con `autoplay muted loop playsinline`
+- Overlay gradient: `linear-gradient(180deg, rgba(13,22,17,.5) 0%, rgba(13,22,17,.12) 30%, rgba(13,22,17,.5) 60%, rgba(13,22,17,.96) 100%)`
+- Contenido alineado abajo con padding-bottom generoso
+- Scroll indicator en la parte inferior
+- Título con texto resaltado en verde (`<b>` con color brand-300)
 
 ---
 
@@ -92,24 +108,27 @@ Transformar la homepage de rental-first (con buscador de equipos y CTAs al cotiz
 
 ## Tarea 3.3: Marquee de Servicios
 
-**Componente nuevo:** `src/components/ui/ServiceMarquee.astro`
+**Archivo:** `src/pages/index.astro`
 
-Scroll horizontal infinito con las palabras clave de la empresa:
+### Usar componente `ServiceMarquee`:
+
+```astro
+<ServiceMarquee 
+  items={['Ingeniería', 'Construcción', 'Montajes mineros e industriales', 'Rental de equipos']} 
+/>
 ```
-Ingenieria ◆ Construccion ◆ Montajes mineros e industriales ◆ Rental de equipos
-```
 
-**Props:**
-- `items: string[]` - lista de textos
-- `speed?: 'slow' | 'normal' | 'fast'` - velocidad de animacion
-- `backgroundColor?: string` - color de fondo (default: brand accent)
+### Props disponibles:
+- `items`: array de strings con los textos
+- `separator`: carácter separador (default: '◆')
 
-**Estilo:**
-- Fondo verde accent (`var(--color-brand)`)
+### Estructura visual (basada en HTML referencia):
+- Fondo verde brand (`--color-brand`)
 - Texto blanco, uppercase, font-weight 800, Archivo
-- Animacion CSS `@keyframes` con `translateX(-50%)`
+- Animación CSS `@keyframes` con `translateX(-50%)`
 - Pausa en hover
 - Accesible: `aria-hidden="true"` (decorativo)
+- Separadores `◆` entre textos con opacidad reducida
 
 ---
 
@@ -129,21 +148,44 @@ Ingenieria ◆ Construccion ◆ Montajes mineros e industriales ◆ Rental de eq
 
 ## Tarea 3.5: Seccion de Servicios (Bento Grid)
 
-**Modificar la seccion existente de servicios en `index.astro`**
+**Archivo:** `src/pages/index.astro`
 
-### Cambios:
-- Mover de seccion secundaria a seccion principal
-- Titulo: "Una sola empresa para todo el ciclo de tu proyecto"
-- Eyebrow: "Lo que hacemos"
-- Anadir tarjeta de "Rental de equipos" como tarjeta destacada (mas grande)
-- Usar bento grid asimetrico similar a la referencia
+### Usar componente `ServiceBentoGrid`:
 
-### Tarjetas (5 en total):
-1. **Ingenieria** - "Con foco en constructibilidad" -> `/servicios/ingenieria`
-2. **Construccion** - "Obras civiles e industriales" -> `/servicios/construccion`
-3. **Montajes** - "Mineros e industriales" -> `/servicios/montajes`
-4. **Infraestructura portuaria** - "Puertos y terminales" -> `/servicios/infraestructura-portuaria`
-5. **Rental de equipos** (destacada, mas grande) - "Gruas de alto tonelaje" -> `/arriendo`
+```astro
+<ServiceBentoGrid
+  eyebrow="Lo que hacemos"
+  title="Una sola empresa para todo el ciclo de tu proyecto"
+  services={services}
+  featuredService={featuredService}
+/>
+```
+
+### Props disponibles:
+- `eyebrow`: texto superior decorado
+- `title`: título de la sección
+- `services`: array de ServiceCard (4 tarjetas regulares)
+- `featuredService`: FeaturedServiceCard (tarjeta destacada más grande)
+
+### Estructura de ServiceCard:
+```typescript
+{
+  category: string;      // Categoría (ej: "Ingeniería")
+  title: string;         // Título de la tarjeta
+  description: string;   // Descripción corta
+  image: string;         // URL de la imagen
+  imageAlt: string;      // Alt text de la imagen
+  url: string;           // Link de la tarjeta
+  linkLabel?: string;    // Texto del link (default: "Conocer")
+}
+```
+
+### Estructura visual (basada en HTML referencia):
+- Grid asimétrico: 3 columnas, la tarjeta destacada ocupa columna 3 y filas 1-2
+- Cards con imagen arriba, categoría (eyebrow verde), título, descripción y link
+- Hover: translateY(-4px) + border-color brand
+- Responsive: 2 columnas en tablet, 1 columna en mobile
+- Tarjeta destacada (Rental) más grande y prominente
 
 ---
 
@@ -225,7 +267,7 @@ Si ya existe `NewsGrid.astro`, reutilizarlo. Si no, crear inline con el mismo pa
 
 ## Criterios de aceptacion
 
-- [ ] Hero muestra video/imagen corporativa con titulo y subtitulo correctos
+- [ ] Hero muestra video de fondo con texto corporativo y título con highlight
 - [ ] Stats muestra 4 datos: +25 anos, +100 equipos, 400 Tons, 5 lineas
 - [ ] Marquee de servicios visible con animacion infinita
 - [ ] Seccion "Quienes somos" con imagen y texto corporativo
@@ -237,3 +279,51 @@ Si ya existe `NewsGrid.astro`, reutilizarlo. Si no, crear inline con el mismo pa
 - [ ] Meta tags SEO actualizados
 - [ ] Responsive correcto en todas las secciones
 - [ ] `npm run build` sin errores
+
+---
+
+## Nuevos componentes creados
+
+### `src/components/ui/HeroVideo.astro`
+Hero con video de fondo, overlay gradient y contenido alineado abajo.
+
+**Props:**
+- `videoSrc`: ruta al video MP4 (requerido)
+- `poster`: imagen de fallback (opcional)
+- `eyebrow`, `title`, `titleHighlight`, `subtitle`
+- `ctaPrimary`, `ctaSecondary`
+- `minHeight`: 'sm' | 'md' | 'lg'
+
+**Tokens CSS utilizados:**
+- `--color-graphite`, `--color-on-dark`, `--color-brand-300`
+- `--font-heading`
+- `--topbar-height`, `--header-height`
+- `--space-*`
+
+### `src/components/ui/ServiceMarquee.astro`
+Marquee/carrusel infinito de texto con servicios.
+
+**Props:**
+- `items`: array de strings (requerido)
+- `separator`: carácter separador (default: '◆')
+
+**Tokens CSS utilizados:**
+- `--color-brand`, `--color-on-brand`
+- `--font-heading`
+- `--space-*`
+
+### `src/components/ui/ServiceBentoGrid.astro`
+Grid bento asimétrico de servicios con tarjeta destacada.
+
+**Props:**
+- `eyebrow`, `title`
+- `services`: array de ServiceCard
+- `featuredService`: FeaturedServiceCard (opcional)
+
+**Tokens CSS utilizados:**
+- `--theme-bg-alt`, `--theme-bg-elevated`, `--theme-border`
+- `--theme-heading`, `--theme-text`, `--theme-text-muted`, `--theme-eyebrow`
+- `--color-brand`
+- `--font-heading`
+- `--text-*`, `--space-*`, `--radius-lg`
+- `--motion-base`, `--motion-slow`, `--ease-out`
