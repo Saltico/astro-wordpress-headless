@@ -1,14 +1,14 @@
 ---
 // src/pages/contacto.astro
-// Página de contacto con formulario e información de la empresa.
+// Página de contacto con formulario dual (email + WhatsApp) y mapa
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
 import PageHero from '@/components/ui/PageHero.astro';
 import ContactSection from '@/components/ui/ContactSection.astro';
-import CTABand from '@/components/ui/CTABand.astro';
-import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
+import Button from '@/components/ui/Button.astro';
 import Icon from '@/components/ui/Icon.astro';
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import { getSiteUrl, contactPageSchema, breadcrumbSchema, combineSchemas } from '@/lib/seo';
 import { siteContact, siteBrand } from '@/data/site';
 import edificioImg from '@/assets/imgs/edificio.jpg';
@@ -26,6 +26,9 @@ const jsonLd = combineSchemas(
   contactPageSchema(),
   breadcrumbSchema(breadcrumbs)
 );
+
+// Google Maps embed URL
+const mapEmbedUrl = 'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d55353.53150282473!2d-71.256424!3d-29.875931000000005!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9691b596f361cee7%3A0x141ee8681017a68e!2sIP%20PROYECTOS%20INDUSTRIALES%20SpA!5e0!3m2!1ses-419!2scl!4v1689693032510!5m2!1ses-419!2scl';
 ---
 
 <BaseLayout
@@ -40,20 +43,22 @@ const jsonLd = combineSchemas(
     imageAlt="Oficinas de IP Proyectos Industriales en La Serena, Chile"
     imageWidth={edificioImg.width}
     imageHeight={edificioImg.height}
-    eyebrow="Contacto"
-    title="Tu próximo proyecto empieza con una conversación"
-    subtitle="Completa el formulario o contáctanos directamente. Nuestro equipo te responderá a la brevedad."
+    eyebrow="Hablemos"
+    title="Conversemos sobre tu proyecto"
+    subtitle="Cuéntanos qué necesitas y un encargado de IP Proyectos Industriales te responderá a la brevedad. También puedes escribirnos directamente por WhatsApp, teléfono o correo."
     minHeight="sm"
   >
     <Breadcrumbs slot="breadcrumbs" items={breadcrumbs} variant="hero" />
   </PageHero>
 
+  <!-- Formulario de contacto dual (email + WhatsApp) -->
   <ContactSection
-    title="Conversemos sobre tu proyecto"
-    subtitle="Completa el formulario y un asesor especializado se pondrá en contacto contigo."
+    title="Completa el formulario y un asesor especializado se pondrá en contacto contigo."
+    subtitle=""
     background="alt"
     formAction="/api/contact"
-    submitLabel="Enviar mensaje"
+    submitLabel="Enviar correo"
+    whatsappNumber={siteContact.whatsappNumber}
     contactInfo={{
       address: siteContact.address,
       phone: `${siteContact.phoneLandline} · ${siteContact.phoneMobile}`,
@@ -61,27 +66,58 @@ const jsonLd = combineSchemas(
       schedule: siteContact.schedule,
     }}
     formFields={[
-      { name: 'nombre', type: 'text', label: 'Nombre completo', placeholder: 'Tu nombre completo', required: true },
-      { name: 'empresa', type: 'text', label: 'Empresa', placeholder: 'Nombre de tu empresa' },
-      { name: 'email', type: 'email', label: 'Email', placeholder: 'tu@email.com', required: true },
-      { name: 'telefono', type: 'tel', label: 'Teléfono', placeholder: '+56 9 0000 0000' },
-      { name: 'motivo', type: 'select', label: 'Motivo de contacto', options: ['Ingeniería', 'Construcción', 'Montajes', 'Infraestructura portuaria', 'Rental de equipos', 'Otro'] },
-      { name: 'mensaje', type: 'textarea', label: 'Mensaje', placeholder: 'Cuéntanos sobre tu proyecto...', required: true },
+      { name: 'name', type: 'text', label: 'Nombre completo', placeholder: 'Tu nombre completo', required: true },
+      { name: 'email', type: 'email', label: 'Correo electrónico', placeholder: 'tu@email.com', required: true },
+      { name: 'phone', type: 'tel', label: 'Teléfono / WhatsApp', placeholder: '+56 9 0000 0000' },
+      { name: 'reason', type: 'select', label: 'Motivo de contacto', options: ['Consulta general', 'Ingeniería', 'Construcción', 'Montajes', 'Infraestructura portuaria', 'Rental de equipos', 'Seguridad y compliance'] },
+      { name: 'message', type: 'textarea', label: 'Mensaje', placeholder: 'Cuéntanos brevemente cómo podemos ayudarte.', required: true },
     ]}
   />
 
-  <!-- WhatsApp CTA alternativo -->
-  <CTABand
-    eyebrow="¿Prefieres WhatsApp?"
-    title="Escríbenos directamente"
-    backgroundImage={edificioImg.src}
-    backgroundAlt="Edificio corporativo IP Proyectos Industriales"
-    backgroundWidth={edificioImg.width}
-    backgroundHeight={edificioImg.height}
-    buttons={[
-      { label: 'WhatsApp', href: `https://wa.me/${siteContact.whatsappNumber}?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20conversar%20sobre%20un%20proyecto.`, variant: 'primary', external: true, icon: 'whatsapp' },
-    ]}
-    contentAlign="center"
-    minHeight="sm"
-  />
+  <!-- Sección con mapa full-width -->
+  <section class="map-section">
+    <div class="map-section__map-full">
+      <iframe 
+        src={mapEmbedUrl} 
+        loading="lazy" 
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Ubicación IP Proyectos Industriales"
+      ></iframe>
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     MAP SECTION
+     Sección con mapa de Google Maps full-width
+     Usa tokens semánticos para soporte dark/light
+     ═══════════════════════════════════════════════════════════════════════════════ */
+
+  .map-section {
+    background: var(--theme-bg-alt);
+    border-top: 1px solid var(--theme-border);
+  }
+
+  /* Mapa full-width */
+  .map-section__map-full {
+    position: relative;
+    width: 100%;
+    height: 450px;
+  }
+
+  .map-section__map-full iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  @media (max-width: 640px) {
+    .map-section__map-full {
+      height: 350px;
+    }
+  }
+</style>

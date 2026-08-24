@@ -22,7 +22,7 @@ export const siteBrand = {
   description:
     'Ingeniería, construcción, montajes e izajes de alto tonelaje (hasta 400 t) para la gran minería en Atacama y Coquimbo. Más de 25 años de experiencia.',
   logoUrl: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/logo.png',
-  siteUrl: 'https://www.ipproyectosindustriales.cl',
+  siteUrl: 'ipproyectosindustriales.cl',
 };
 
 // ─── Contacto ───────────────────────────────────────────────────────────
@@ -62,7 +62,7 @@ export const topbarData = {
     },
   ] satisfies SocialLink[],
   links: [
-    { label: 'Compliance', url: '/compliance' },
+    { label: 'IP Rental', url: IPRENTAL_URL },
     { label: 'Noticias', url: '/noticias' },
   ],
 };
@@ -95,7 +95,6 @@ export const navigationData: NavItem[] = [
   },
   { label: 'Seguridad', url: '/seguridad' },
   { label: 'Compliance', url: '/compliance' },
-  { label: 'Contacto', url: '/contacto' },
 ];
 
 // ─── Footer ──────────────────────────────────────────────────────────────
@@ -136,6 +135,6 @@ export const footerData: {
     { label: 'Política de Privacidad', url: '/privacidad' },
     { label: 'Cookies', url: '/cookies' },
   ],
-  catalogUrl: siteContact.catalogUrl,
-  catalogLabel: 'Descargar catálogo 2025',
+  catalogUrl: IPRENTAL_URL,
+  catalogLabel: 'Cotiza en IP Rental',
 };
