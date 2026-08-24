@@ -85,12 +85,12 @@ export const navigationData: NavItem[] = [
   },
   {
     label: 'Rental de equipos',
-    url: `${IPRENTAL_URL}/arriendo`,
+    url: '/arriendo',
     children: [
-      { label: 'Izaje', url: `${IPRENTAL_URL}/arriendo/izaje` },
-      { label: 'Movimiento de Tierra', url: `${IPRENTAL_URL}/arriendo/movimiento-de-tierra` },
-      { label: 'Transporte', url: `${IPRENTAL_URL}/arriendo/transporte` },
-      { label: 'Equipos Especiales', url: `${IPRENTAL_URL}/arriendo/equipos-especiales` },
+      { label: 'Izaje', url: '/arriendo/izaje' },
+      { label: 'Movimiento de Tierra', url: '/arriendo/movimiento-de-tierra' },
+      { label: 'Transporte', url: '/arriendo/transporte' },
+      { label: 'Equipos Especiales', url: '/arriendo/equipos-especiales' },
     ],
   },
   { label: 'Seguridad', url: '/seguridad' },
@@ -116,7 +116,7 @@ export const footerData: {
           label: 'Infraestructura portuaria',
           url: '/servicios/infraestructura-portuaria',
         },
-        { label: 'Arriendo de equipos', url: `${IPRENTAL_URL}/arriendo` },
+        { label: 'Arriendo de equipos', url: '/arriendo' },
       ],
     },
     {

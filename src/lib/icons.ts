@@ -38,6 +38,7 @@ export const ICON_NAMES = [
   'building',
   'wrench',
   'anchor',
+  'check-circle',
 ] as const;
 
 export type IconName = (typeof ICON_NAMES)[number];

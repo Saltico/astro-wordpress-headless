@@ -1,0 +1,179 @@
+---
+// src/components/ui/FleetTable.astro
+// Tabla de especificaciones de flota de equipos.
+// Muestra modelo, capacidad, año y rango de pluma.
+
+export interface FleetItem {
+  model: string;
+  capacity: string;
+  year: string | number;
+  boom: string;
+  highlight?: boolean;
+  badge?: string;
+}
+
+export interface Props {
+  title: string;
+  capacityRange?: string;
+  items: FleetItem[];
+  className?: string;
+}
+
+const {
+  title,
+  capacityRange,
+  items,
+  className = '',
+} = Astro.props;
+---
+
+<div class={`fleet-group reveal ${className}`.trim()}>
+  <div class="fleet-group__head">
+    <h3>{title}</h3>
+    {capacityRange && <span class="cap">{capacityRange}</span>}
+  </div>
+  <div class="fleet-wrap">
+    <table class="fleet-table">
+      <thead>
+        <tr>
+          <th>Modelo</th>
+          <th>Cap.</th>
+          <th>Año</th>
+          <th>Pluma</th>
+        </tr>
+      </thead>
+      <tbody>
+        {items.map((item) => (
+          <tr class:list={[item.highlight && 'hl']}>
+            <td>
+              {item.model}
+              {item.badge && <span class="soon">{item.badge}</span>}
+            </td>
+            <td class="t">{item.capacity}</td>
+            <td>{item.year}</td>
+            <td>{item.boom}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  .fleet-group {
+    background: var(--theme-bg);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-6);
+  }
+
+  .fleet-group__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--theme-border);
+  }
+
+  .fleet-group__head h3 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    color: var(--theme-heading);
+    margin: 0;
+  }
+
+  .fleet-group__head .cap {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-brand-300);
+    background: rgba(52, 143, 65, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .fleet-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .fleet-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+
+  .fleet-table th {
+    text-align: left;
+    padding: var(--space-3) var(--space-4);
+    font-weight: 600;
+    color: var(--theme-muted);
+    border-bottom: 2px solid var(--theme-border);
+    white-space: nowrap;
+  }
+
+  .fleet-table td {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--theme-border);
+    color: var(--theme-text);
+  }
+
+  .fleet-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .fleet-table tbody tr:hover {
+    background: var(--theme-bg-alt);
+  }
+
+  .fleet-table td.t {
+    font-weight: 700;
+    color: var(--color-brand-300);
+  }
+
+  .fleet-table tr.hl {
+    background: rgba(52, 143, 65, 0.05);
+  }
+
+  .fleet-table tr.hl td {
+    color: var(--color-brand-300);
+    font-weight: 600;
+  }
+
+  .soon {
+    display: inline-block;
+    margin-left: var(--space-2);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-brand-300);
+    background: rgba(52, 143, 65, 0.15);
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  @media (max-width: 640px) {
+    .fleet-group {
+      padding: var(--space-4);
+    }
+
+    .fleet-group__head {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-2);
+    }
+
+    .fleet-table {
+      font-size: 0.875rem;
+    }
+
+    .fleet-table th,
+    .fleet-table td {
+      padding: var(--space-2) var(--space-3);
+    }
+  }
+</style>

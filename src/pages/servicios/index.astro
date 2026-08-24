@@ -7,10 +7,9 @@ import Container from '@/components/ui/Container.astro';
 import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import StatsCounter from '@/components/ui/StatsCounter.astro';
 import CTABand from '@/components/ui/CTABand.astro';
-import PageHero from '@/components/ui/PageHero.astro';
+import HeroVideo from '@/components/ui/HeroVideo.astro';
 import Icon from '@/components/ui/Icon.astro';
 import type { StatItem } from '@/components/ui/StatsCounter.astro';
-import ingenieriaImg from '@/assets/imgs/ingenieria.jpg';
 import edificioImg from '@/assets/imgs/edificio.jpg';
 
 const title = 'Servicios | Ingeniería, construcción, montajes e infraestructura portuaria — IP Proyectos Industriales';
@@ -64,19 +63,19 @@ const services = [
   title={title}
   description={description}
   breadcrumbs={breadcrumbs}
+  immersive={true}
 >
-  <PageHero
-    image={ingenieriaImg.src}
-    imageAlt="Equipo de ingeniería de IP Proyectos Industriales trabajando en proyecto minero"
-    imageWidth={ingenieriaImg.width}
-    imageHeight={ingenieriaImg.height}
+  <HeroVideo
+    videoSrc="/videos/arriendos.mp4"
     eyebrow="Nuestros servicios"
     title="Soluciones integrales para cada etapa de tu proyecto"
+    titleHighlight="cada etapa de tu proyecto"
     subtitle="Reunimos ingeniería, construcción, montajes e infraestructura portuaria bajo un mismo equipo, con estándares de la gran minería."
+    ctaPrimary={{ label: 'Conocer más', href: '#servicios-list' }}
+    ctaSecondary={{ label: 'Contactar', href: '/contacto' }}
     minHeight="sm"
-  >
-    <Breadcrumbs slot="breadcrumbs" items={breadcrumbs} variant="hero" />
-  </PageHero>
+    layout="split"
+  />
 
   <!-- Stats -->
   <StatsCounter
@@ -88,7 +87,7 @@ const services = [
   />
 
   <!-- Lista de servicios -->
-  <section class="services-list">
+  <section class="services-list" id="servicios-list">
     <Container>
       <div class="services-list__items">
         {services.map((service) => (

@@ -1,128 +1,284 @@
 ---
 // src/pages/arriendo/index.astro
-// Hub principal del catálogo de arriendo con cards visuales.
+// Página de Rental de equipos / Arriendos
+// Diseño basado en la referencia HTML de IP-Sitio-Web/arriendos.html
+
+export const prerender = true;
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import Container from '@/components/ui/Container.astro';
-import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
-import StatsCounter from '@/components/ui/StatsCounter.astro';
-import CTABand from '@/components/ui/CTABand.astro';
 import PageHero from '@/components/ui/PageHero.astro';
-import Icon from '@/components/ui/Icon.astro';
 import Button from '@/components/ui/Button.astro';
+import StatsCounter from '@/components/ui/StatsCounter.astro';
+import SplitSection from '@/components/ui/SplitSection.astro';
+import ServiceBentoGrid from '@/components/ui/ServiceBentoGrid.astro';
+import CTABand from '@/components/ui/CTABand.astro';
+import FleetTable from '@/components/ui/FleetTable.astro';
+import Container from '@/components/ui/Container.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
 import type { StatItem } from '@/components/ui/StatsCounter.astro';
-import gruasImg from '@/assets/imgs/hero/arriendo/izaje/gruas/gruas.avif';
-import rentalImg from '@/assets/imgs/hero/arriendo/arriendo.avif';
-import { RENTAL_CATEGORIES } from '@/data/rental';
-import { collectionPageSchema, breadcrumbSchema, combineSchemas } from '@/lib/seo';
+import { siteContact, IPRENTAL_URL } from '@/data/site';
 
-const title = 'Arriendo de Maquinaria y Equipos para Minería | IP Proyectos Industriales';
-const description = 'Arriendo de grúas, izaje, movimiento de tierra, transporte y equipos especiales para minería e industria en Chile. Cotiza online.';
+import arriendoHero from '@/assets/imgs/hero/arriendo/arriendo.avif';
+import gruas from '@/assets/imgs/gruas.jpg';
+import izaje from '@/assets/imgs/izaje.jpg';
+import apoyo from '@/assets/imgs/apoyo.jpg';
+import faenaIzaje from '@/assets/imgs/faena-izaje.jpg';
+
+const title = 'Arriendo de grúas de alto tonelaje | IP Proyectos Industriales — División Arriendos';
+const description = 'Arriendo de grúas de alto tonelaje hasta 400 toneladas para faenas mineras e industriales en Atacama y Coquimbo. Operadores certificados e ingeniería de izaje.';
 
 const breadcrumbs = [
-  { label: 'Inicio', url: '/' },
-  { label: 'Arriendo de Equipos', url: '/arriendo' },
+  { label: 'Empresa', url: '/' },
+  { label: 'Rental de equipos', url: '/arriendo' },
 ];
 
-const jsonLd = combineSchemas(
-  collectionPageSchema('Arriendo de Equipos', '/arriendo'),
-  breadcrumbSchema(breadcrumbs)
-);
-
+// Stats de arriendos
 const stats: StatItem[] = [
-  { value: 400, label: 'Toneladas capacidad', suffix: 'Tons', suffixPosition: 'after' },
-  { value: 100, prefix: '+', label: 'Equipos propios', prefixPosition: 'before' },
-  { value: 24, label: 'Disponibilidad', suffix: '/7', suffixPosition: 'after' },
-  { value: 15, prefix: '+', label: 'Años de experiencia', prefixPosition: 'before' },
+  { value: 400, label: 'Capacidad máxima de izaje', suffix: 'Tons', suffixPosition: 'after' },
+  { value: 100, label: 'Operadores certificados', suffix: '%', suffixPosition: 'after' },
+  { value: 25, label: 'Años de experiencia', prefix: '+', prefixPosition: 'before' },
+  { value: 2, label: 'Sucursales en III y IV región' },
+];
+
+// Flota de grúas Todo Terreno
+const fleetAT = [
+  { model: 'Grove GMK 6400', capacity: '400 t', year: 2021, boom: '15,4 – 60 m' },
+  { model: 'Grove GMK 5250L', capacity: '250 t', year: 2018, boom: '13,3 – 70 m' },
+  { model: 'Grove GMK 5250 XL-1', capacity: '250 t', year: 2025, boom: '13,4 – 78,5 m' },
+  { model: 'Demag Terex AC-160-5', capacity: '160 t', year: 2020, boom: '12,4 – 68 m' },
+  { model: 'Demag Terex AC-160', capacity: '160 t', year: 2023, boom: '12,4 – 68 m' },
+  { model: 'Grove GMK 4100', capacity: '100 t', year: 2012, boom: '11,3 – 52 m' },
+  { model: 'Grove GMK 8700', capacity: '700 t', year: 2028, boom: '+80 m', highlight: true, badge: 'Próximamente' },
+];
+
+// Flota de grúas Rough Terrain
+const fleetRT = [
+  { model: 'Tadano GR 1300 XL', capacity: '130 t', year: 2023, boom: '12,2 – 56 m' },
+  { model: 'Tadano GR 1200 XL', capacity: '120 t', year: 2025, boom: '12 – 56 m' },
+  { model: 'Tadano GR 1000 XL', capacity: '100 t', year: 2024, boom: '12 – 47 m' },
+  { model: 'Terex RT 780', capacity: '80 t', year: 2015, boom: '12 – 47 m' },
+  { model: 'Grove RT 765E', capacity: '60 t', year: 2015, boom: '11 – 33,5 m' },
+];
+
+// Categorías de equipos para el bento grid
+const categories = [
+  {
+    category: 'Izaje',
+    title: 'Grúas y altura',
+    description: 'Grúas de alto tonelaje (AT / RT), alza-hombre hasta 43 m, camión pluma 7–26 t, manipulador telescópico y grúa horquilla 3–16 t.',
+    image: gruas.src,
+    imageAlt: 'Grúas de alto tonelaje',
+    url: '/arriendo/izaje',
+  },
+  {
+    category: 'Movimiento de Tierra',
+    title: 'Maquinaria pesada',
+    description: 'Camiones tolva, cargadores frontales, excavadoras, retroexcavadoras, minicargadores, rodillos compactadores y aljibes.',
+    image: apoyo.src,
+    imageAlt: 'Maquinaria pesada para movimiento de tierra',
+    url: '/arriendo/movimiento-de-tierra',
+  },
+  {
+    category: 'Transporte',
+    title: 'Punto a punto',
+    description: 'Rampla seca, cama baja y carga sobredimensionada. Hasta 120 t y 24 m de largo, con servicio de escolta.',
+    image: izaje.src,
+    imageAlt: 'Equipos de transporte',
+    url: '/arriendo/transporte',
+  },
+  {
+    category: 'Equipos Especiales',
+    title: 'Apoyo a faena',
+    description: 'Torres de iluminación, generadores, compresores, buses y minibuses, camión 3/4, camioneta y petroleador, canastillos, bombas de hormigón y termofusión.',
+    image: faenaIzaje.src,
+    imageAlt: 'Equipos especiales para faena',
+    url: '/arriendo/equipos-especiales',
+  },
 ];
 ---
 
-<BaseLayout
-  title={title}
-  description={description}
-  breadcrumbs={breadcrumbs}
-  jsonLd={jsonLd}
->
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumbs}>
+  <!-- §1: HERO -->
   <PageHero
-    image={rentalImg.src}
-    imageAlt="Grúa de alto tonelaje de la flota de arriendo de IP Proyectos Industriales"
-    imageWidth={rentalImg.width}
-    imageHeight={rentalImg.height}
-    eyebrow="Rental de equipos"
-    title="Arriendo de maquinaria pesada para minería e industria"
-    subtitle="Grúas, izaje, movimiento de tierra, transporte y equipos especiales con operadores certificados. Disponibilidad 24/7 en zona norte de Chile."
+    image={arriendoHero.src}
+    imageAlt="Grúas de alto tonelaje IP Proyectos Industriales"
+    imageWidth={arriendoHero.width}
+    imageHeight={arriendoHero.height}
+    eyebrow="División Arriendos · Atacama y Coquimbo"
+    title="Arriendo de grúas de alto tonelaje"
+    subtitle="Flota propia para izajes seguros y de precisión, con capacidad hasta 400 toneladas. Operadores certificados, ingeniería de izaje y disponibilidad para faenas mineras e industriales."
     minHeight="sm"
   >
-    <Breadcrumbs slot="breadcrumbs" items={breadcrumbs} variant="hero" />
-    <Fragment slot="actions">
-      <Button href="/contacto" variant="primary" size="lg" icon="arrow-right" iconPosition="right">
+    <div slot="actions" class="hero-actions">
+      <Button href={`${IPRENTAL_URL}/cotizador`} variant="primary" size="lg" target="_blank" rel="noopener noreferrer">
+        Cotizar
+      </Button>
+      <Button href="/contacto" variant="ghost" onDark size="lg">
         Contactar
       </Button>
-      <Button href="/catalogo.pdf" variant="ghost" onDark size="lg" icon="download" download>
-        Descargar catálogo
-      </Button>
-    </Fragment>
+    </div>
   </PageHero>
 
+  <!-- §2: STATS -->
   <StatsCounter
     stats={stats}
     variant="dark"
-    layout="horizontal"
+    layout="grid"
     columns={4}
     animated={true}
+    showDividers={true}
   />
 
-  <section class="cat-grid">
+  <!-- §3: NUESTRA FLOTA -->
+  <section class="section">
     <Container>
-      <div class="cat-grid__header">
-        <p class="cat-grid__eyebrow">Nuestro catálogo</p>
-        <h2 class="cat-grid__title">Equipos en arriendo para minería e industria</h2>
+      <div class="head-2col reveal">
+        <div>
+          <Eyebrow text="Nuestra flota" />
+          <h2 class="h-section">Grúas para cada exigencia de izaje</h2>
+        </div>
+        <p class="muted">Capacidad en expansión para responder a las maniobras más demandantes de la minería y la industria. Selecciona la categoría y te asesoramos con la grúa adecuada para tu carga.</p>
       </div>
-      <div class="cat-grid__items">
-        {RENTAL_CATEGORIES.map((category) => (
-          <article class="cat-card">
-            <div class="cat-card__image-wrapper">
-              <img
-                src={category.heroImage}
-                alt={category.name}
-                class="cat-card__image"
-                loading="lazy"
-              />
-            </div>
-            <div class="cat-card__content">
-              <h3 class="cat-card__title">{category.name}</h3>
-              <p class="cat-card__desc">{category.shortDesc}</p>
-              <div class="cat-card__pills">
-                {category.subcategories.map((sub) => (
-                  <a
-                    href={`/arriendo/${category.slug}/${sub.slug}`}
-                    class="cat-card__pill"
-                  >
-                    {sub.name}
-                  </a>
-                ))}
-              </div>
-              <a href={`/arriendo/${category.slug}`} class="cat-card__link">
-                Ver categoría
-                <Icon name="arrow-right" size={18} />
-              </a>
-            </div>
-          </article>
-        ))}
+      <div class="svc-grid">
+        <article class="svc reveal">
+          <div class="svc__img"><img src={gruas.src} alt="Grúa de gran capacidad" loading="lazy" /></div>
+          <div class="svc__body">
+            <span class="post__date">Alto tonelaje</span>
+            <h3 class="svc__title">Grúas hasta 400 t</h3>
+            <a class="svc__link" href={IPRENTAL_URL} target="_blank" rel="noopener">
+              Cotizar
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </article>
+        <article class="svc reveal">
+          <div class="svc__img"><img src={izaje.src} alt="Grúa de capacidad media" loading="lazy" /></div>
+          <div class="svc__body">
+            <span class="post__date">Capacidad media</span>
+            <h3 class="svc__title">Grúas todo terreno</h3>
+            <a class="svc__link" href={IPRENTAL_URL} target="_blank" rel="noopener">
+              Cotizar
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </article>
+        <article class="svc reveal">
+          <div class="svc__img"><img src={apoyo.src} alt="Equipos de apoyo" loading="lazy" /></div>
+          <div class="svc__body">
+            <span class="post__date">Apoyo a faena</span>
+            <h3 class="svc__title">Equipos de apoyo</h3>
+            <a class="svc__link" href={IPRENTAL_URL} target="_blank" rel="noopener">
+              Cotizar
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </article>
       </div>
+      <p class="form__note reveal" style="margin-top:18px;">
+        ¿No estás seguro de qué grúa necesitas? 
+        <a href={IPRENTAL_URL} target="_blank" rel="noopener" style="color:var(--color-brand-300);font-weight:600;">Cotiza en iprental.cl</a> 
+        y te recomendamos el equipo adecuado para tu faena.
+      </p>
     </Container>
   </section>
 
+  <!-- §4: FLOTA DETALLADA -->
+  <section class="section section--alt">
+    <Container>
+      <div class="head-2col reveal">
+        <div>
+          <Eyebrow text="Flota detallada" />
+          <h2 class="h-section">+100 equipos propios, certificados y asegurados</h2>
+        </div>
+        <p class="muted">Certificación vigente, seguro y operadores certificados. Grúas de alto tonelaje más una flota completa para cada etapa de tu faena.</p>
+      </div>
+
+      <div class="fleet-cols">
+        <FleetTable
+          title="Grúas Todo Terreno (AT)"
+          capacityRange="100 – 700 t"
+          items={fleetAT}
+        />
+        <FleetTable
+          title="Grúas Rough Terrain (RT)"
+          capacityRange="60 – 130 t"
+          items={fleetRT}
+        />
+      </div>
+
+      <h3 class="fleet-subhead reveal">Categorías de equipos</h3>
+    </Container>
+  </section>
+
+  <!-- §5: CATEGORÍAS -->
+  <ServiceBentoGrid
+    title=""
+    services={categories}
+  />
+
+  <!-- §6: POR QUÉ IP -->
+  <SplitSection
+    eyebrow="Por qué IP"
+    title="Más que arrendar una grúa: izajes bien planificados"
+    description="No solo entregamos el equipo. Detrás de cada maniobra hay ingeniería de izaje, mantenimiento riguroso y un equipo que conoce las exigencias de la minería."
+    image={faenaIzaje.src}
+    imageAlt="Izaje seguro en faena minera"
+    imageWidth={faenaIzaje.width}
+    imageHeight={faenaIzaje.height}
+    features={[
+      {
+        icon: 'check-circle',
+        title: 'Ingeniería de izaje',
+        description: 'y estudios de carga antes de cada maniobra.',
+      },
+      {
+        icon: 'check-circle',
+        title: 'Operadores certificados',
+        description: 'y protocolos de seguridad reforzados.',
+      },
+      {
+        icon: 'check-circle',
+        title: 'Mantenimiento riguroso',
+        description: 'que asegura disponibilidad y confiabilidad.',
+      },
+      {
+        icon: 'check-circle',
+        title: 'Respaldo integral',
+        description: 'de una empresa con ingeniería, construcción y montaje.',
+      },
+    ]}
+    cta={{ label: 'Cotizar en iprental.cl', href: IPRENTAL_URL }}
+    variant="reversed"
+    background="light"
+  />
+
+  <!-- §7: CTA COTIZA ONLINE -->
   <CTABand
-    eyebrow="¿Necesitas equipos para tu faena?"
-    title="Cotiza tu arriendo en iprental.cl"
-    backgroundImage={gruasImg.src}
-    backgroundAlt="Grúas de alto tonelaje en faena minera"
-    backgroundWidth={gruasImg.width}
-    backgroundHeight={gruasImg.height}
+    eyebrow="Cotiza online"
+    title="Encuentra el equipo perfecto en iprental.cl"
+    subtitle="Explora nuestro catálogo completo de grúas, equipos de izaje, movimiento de tierra y más. Cotiza en minutos con nuestro sistema online."
     buttons={[
-      { label: 'Cotizar en iprental.cl', href: 'https://www.iprental.cl', variant: 'primary', icon: 'arrow-right', external: true, ariaLabel: 'Ir a iprental.cl para cotizar equipos' },
-      { label: 'WhatsApp', href: 'https://wa.me/56956594144?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20conversar%20sobre%20un%20proyecto.', variant: 'outline', external: true, icon: 'whatsapp' },
+      { label: 'Ir a iprental.cl', href: IPRENTAL_URL, variant: 'primary', icon: 'arrow-right', external: true, ariaLabel: 'Ir a iprental.cl' },
+      { label: 'Contactar', href: '/contacto', variant: 'outline' },
+    ]}
+    contentAlign="center"
+    minHeight="md"
+  />
+
+  <!-- §8: CTA HABLEMOS -->
+  <CTABand
+    eyebrow="Hablemos"
+    title="Conversemos sobre tu próximo izaje"
+    subtitle="Cuéntanos sobre tu faena, sus requerimientos y ubicación. Un encargado te responderá por WhatsApp, teléfono o correo."
+    buttons={[
+      { 
+        label: 'Hablemos', 
+        href: `https://wa.me/${siteContact.whatsappNumber}?text=Hola%2C%20quisiera%20conversar%20sobre%20el%20arriendo%20de%20una%20gr%C3%BAa.`, 
+        variant: 'primary', 
+        icon: 'whatsapp',
+        external: true 
+      },
+      { label: 'Contactar', href: '/contacto', variant: 'outline' },
     ]}
     contentAlign="center"
     minHeight="md"
@@ -130,167 +286,161 @@ const stats: StatItem[] = [
 </BaseLayout>
 
 <style>
-  /* Acciones del hero: en mobile se apilan a ancho completo */
-  @media (max-width: 480px) {
-    .page-hero__actions {
-      flex-direction: column;
-      align-items: stretch;
-    }
-    .page-hero__actions :global(.btn) {
-      justify-content: center;
-    }
+  .section {
+    padding-block: clamp(56px, 8vw, 100px);
   }
 
-  .cat-grid {
-    background-color: var(--theme-bg);
-    padding-block: clamp(40px, 6vw, 80px);
+  .section--alt {
+    background: var(--theme-bg-alt);
   }
 
-  .cat-grid__header {
-    margin-bottom: 40px;
-    text-align: center;
+  .head-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+    margin-bottom: var(--space-10);
+    align-items: end;
   }
 
-  .cat-grid__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 0.8rem;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    color: var(--theme-eyebrow);
+  .head-2col .muted {
+    color: var(--theme-muted);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    max-width: 50ch;
+    margin: 0;
   }
 
-  .cat-grid__eyebrow::before {
-    content: '';
-    width: 42px;
-    height: 2px;
-    background: currentColor;
-  }
-
-  .cat-grid__title {
+  .h-section {
     font-family: var(--font-heading);
     font-weight: 800;
     font-size: clamp(1.8rem, 3.4vw, 2.8rem);
     letter-spacing: -0.02em;
-    margin: 0;
     color: var(--theme-heading);
+    margin: var(--space-3) 0 0;
   }
 
-  .cat-grid__items {
+  .svc-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
   }
 
-  @media (max-width: 768px) {
-    .cat-grid__items {
+  .svc {
+    background: var(--theme-bg);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
+  }
+
+  .svc:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  }
+
+  .svc__img {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+
+  .svc__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s var(--ease-out);
+  }
+
+  .svc:hover .svc__img img {
+    transform: scale(1.05);
+  }
+
+  .svc__body {
+    padding: var(--space-5);
+  }
+
+  .post__date {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-brand-300);
+    margin-bottom: var(--space-2);
+  }
+
+  .svc__title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--theme-heading);
+    margin: 0 0 var(--space-3);
+  }
+
+  .svc__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 600;
+    color: var(--color-brand-300);
+    text-decoration: none;
+    transition: gap 0.2s var(--ease-out);
+  }
+
+  .svc__link:hover {
+    gap: var(--space-3);
+  }
+
+  .svc__link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .form__note {
+    color: var(--theme-muted);
+    font-size: 0.9375rem;
+    text-align: center;
+  }
+
+  .fleet-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+    margin-bottom: var(--space-10);
+  }
+
+  .fleet-subhead {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--theme-heading);
+    margin: var(--space-8) 0 var(--space-6);
+    text-align: center;
+  }
+
+  @media (max-width: 1024px) {
+    .head-2col {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+
+    .svc-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .fleet-cols {
       grid-template-columns: 1fr;
     }
   }
 
-  .cat-card {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--theme-bg-elevated);
-    border: 1px solid var(--theme-border);
-    border-radius: 16px;
-    overflow: hidden;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  @media (max-width: 640px) {
+    .svc-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
-  .cat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
-    border-color: var(--color-brand, #308f40);
-  }
-
-  .cat-card__image-wrapper {
-    position: relative;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    background-color: var(--color-graphite, #0d1611);
-  }
-
-  .cat-card__image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.4s ease;
-  }
-
-  .cat-card:hover .cat-card__image {
-    transform: scale(1.05);
-  }
-
-  .cat-card__content {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 20px 22px 22px;
-    flex: 1;
-  }
-
-  .cat-card__title {
-    font-family: var(--font-heading);
-    font-weight: 800;
-    font-size: 1.4rem;
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-    margin: 0;
-    color: var(--theme-text);
-  }
-
-  .cat-card__desc {
-    margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    color: var(--theme-text-muted);
-  }
-
-  .cat-card__pills {
+  .hero-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 4px;
-  }
-
-  .cat-card__pill {
-    display: inline-block;
-    padding: 6px 14px;
-    background-color: var(--theme-bg);
-    border: 1px solid var(--theme-border);
-    border-radius: 999px;
-    color: var(--theme-text-subtle);
-    font-size: 0.875rem;
-    text-decoration: none;
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-  }
-
-  .cat-card__pill:hover,
-  .cat-card__pill:focus {
-    background-color: var(--color-brand, #308f40);
-    border-color: var(--color-brand, #308f40);
-    color: var(--color-on-dark);
-  }
-
-  .cat-card__link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: var(--theme-eyebrow);
-    text-decoration: none;
-    margin-top: 8px;
-    transition: gap 0.2s ease;
-  }
-
-  .cat-card__link:hover {
     gap: 12px;
   }
 </style>

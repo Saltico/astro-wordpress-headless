@@ -2,6 +2,7 @@
 // src/components/ui/HeroVideo.astro
 // Hero section con video de fondo, overlay gradient y contenido alineado abajo.
 // Estructura basada en la referencia IP-Sitio-Web (d-hero).
+// Soporta layout "full" (video de fondo completo) y "split" (video a la derecha, texto a la izquierda).
 
 import Container from './Container.astro';
 import Button from './Button.astro';
@@ -24,6 +25,7 @@ export interface Props {
     external?: boolean;
   };
   minHeight?: 'sm' | 'md' | 'lg';
+  layout?: 'full' | 'split';
 }
 
 const {
@@ -36,6 +38,7 @@ const {
   ctaPrimary,
   ctaSecondary,
   minHeight = 'lg',
+  layout = 'full',
 } = Astro.props;
 
 const minHeightClasses = {
@@ -43,6 +46,8 @@ const minHeightClasses = {
   md: 'hero-video--md',
   lg: 'hero-video--lg',
 };
+
+const layoutClass = layout === 'split' ? 'hero-video--split' : '';
 
 // Función para resaltar texto en el título
 function renderTitle(fullTitle: string, highlight?: string): string {
@@ -59,55 +64,105 @@ const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('
   : poster;
 ---
 
-<section class={`hero-video ${minHeightClasses[minHeight]}`}>
-  <video
-    autoplay
-    muted
-    loop
-    playsinline
-    poster={resolvedPoster}
-  >
-    <source src={resolvedVideoSrc} type="video/mp4" />
-  </video>
-  
-  <div class="hero-video__overlay" aria-hidden="true"></div>
-  
-  <Container class="hero-video__container">
-    <div class="hero-video__content">
-      {eyebrow && <Eyebrow text={eyebrow} />}
+<section class={`hero-video ${minHeightClasses[minHeight]} ${layoutClass}`.trim()}>
+  {layout === 'full' ? (
+    <>
+      <video
+        autoplay
+        muted
+        loop
+        playsinline
+        poster={resolvedPoster}
+      >
+        <source src={resolvedVideoSrc} type="video/mp4" />
+      </video>
       
-      <h1 class="hero-video__title" set:html={renderTitle(title, titleHighlight)}></h1>
+      <div class="hero-video__overlay" aria-hidden="true"></div>
       
-      {subtitle && <p class="hero-video__subtitle">{subtitle}</p>}
-      
-      {(ctaPrimary || ctaSecondary) && (
-        <div class="hero-video__actions">
-          {ctaPrimary && (
-            <Button href={ctaPrimary.href} variant="primary" size="lg">
-              {ctaPrimary.label}
-            </Button>
-          )}
-          {ctaSecondary && (
-            <Button 
-              href={ctaSecondary.href} 
-              variant="ghost" 
-              onDark 
-              size="lg"
-              target={ctaSecondary.external ? '_blank' : undefined}
-              rel={ctaSecondary.external ? 'noopener noreferrer' : undefined}
-            >
-              {ctaSecondary.label}
-            </Button>
+      <Container class="hero-video__container">
+        <div class="hero-video__content">
+          {eyebrow && <Eyebrow text={eyebrow} />}
+          
+          <h1 class="hero-video__title" set:html={renderTitle(title, titleHighlight)}></h1>
+          
+          {subtitle && <p class="hero-video__subtitle">{subtitle}</p>}
+          
+          {(ctaPrimary || ctaSecondary) && (
+            <div class="hero-video__actions">
+              {ctaPrimary && (
+                <Button href={ctaPrimary.href} variant="primary" size="lg">
+                  {ctaPrimary.label}
+                </Button>
+              )}
+              {ctaSecondary && (
+                <Button 
+                  href={ctaSecondary.href} 
+                  variant="ghost" 
+                  onDark 
+                  size="lg"
+                  target={ctaSecondary.external ? '_blank' : undefined}
+                  rel={ctaSecondary.external ? 'noopener noreferrer' : undefined}
+                >
+                  {ctaSecondary.label}
+                </Button>
+              )}
+            </div>
           )}
         </div>
-      )}
-    </div>
-  </Container>
-  
-  <div class="hero-video__scroll" aria-hidden="true">
-    <span></span>
-    Scroll
-  </div>
+      </Container>
+      
+      <div class="hero-video__scroll" aria-hidden="true">
+        <span></span>
+        Scroll
+      </div>
+    </>
+  ) : (
+    <>
+      <div class="hero-video__media">
+        <video
+          autoplay
+          muted
+          loop
+          playsinline
+          poster={resolvedPoster}
+        >
+          <source src={resolvedVideoSrc} type="video/mp4" />
+        </video>
+      </div>
+      
+      <Container class="hero-video__container-split">
+        <div class="hero-video__content-split">
+          {eyebrow && <Eyebrow text={eyebrow} />}
+          
+          <h1 class="hero-video__title" set:html={renderTitle(title, titleHighlight)}></h1>
+          
+          {subtitle && <p class="hero-video__subtitle">{subtitle}</p>}
+          
+          {(ctaPrimary || ctaSecondary) && (
+            <div class="hero-video__actions">
+              {ctaPrimary && (
+                <Button href={ctaPrimary.href} variant="primary" size="lg">
+                  {ctaPrimary.label}
+                </Button>
+              )}
+              {ctaSecondary && (
+                <Button 
+                  href={ctaSecondary.href} 
+                  variant="ghost" 
+                  onDark 
+                  size="lg"
+                  target={ctaSecondary.external ? '_blank' : undefined}
+                  rel={ctaSecondary.external ? 'noopener noreferrer' : undefined}
+                >
+                  {ctaSecondary.label}
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      </Container>
+    </>
+  )}
 </section>
 
 <script>
@@ -262,5 +317,102 @@ const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('
     width: 1px;
     height: 30px;
     background: linear-gradient(rgba(255, 255, 255, 0.55), transparent);
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     LAYOUT SPLIT: Video a la derecha (46%), texto a la izquierda sobre fondo graphite
+     Basado en la referencia IP-Sitio-Web/arriendos.html
+     ═══════════════════════════════════════════════════════════════════════════════ */
+  
+  .hero-video--split {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .hero-video--split.hero-video--sm {
+    min-height: calc(100dvh - 84px - 138px - 56px - 38px);
+  }
+
+  .hero-video--split.hero-video--md {
+    min-height: calc(100dvh - 84px - 138px - 56px - 38px);
+  }
+
+  .hero-video--split.hero-video--lg {
+    min-height: calc(100dvh - 84px - 138px - 56px - 38px);
+  }
+
+  .hero-video__media {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 46%;
+    z-index: 0;
+  }
+
+  .hero-video__media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+  }
+
+  .hero-video__media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: 
+      linear-gradient(90deg, var(--color-graphite) 0%, rgba(13, 22, 17, 0.55) 16%, rgba(13, 22, 17, 0) 46%),
+      linear-gradient(180deg, rgba(13, 22, 17, 0) 60%, rgba(13, 22, 17, 0.5) 100%);
+  }
+
+  .hero-video__container-split {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: var(--container-max-width, 1360px);
+    margin-inline: auto;
+    padding-block: clamp(32px, 4.5vh, 64px) clamp(26px, 3.5vh, 46px);
+    padding-inline: var(--container-padding, 20px);
+  }
+
+  .hero-video__content-split {
+    max-width: 34rem;
+  }
+
+  .hero-video__content-split .hero-video__title {
+    text-align: left;
+    font-size: clamp(1.9rem, 4.4vw, 3.4rem);
+  }
+
+  .hero-video__content-split .hero-video__subtitle {
+    text-align: left;
+    margin: 20px 0 0;
+  }
+
+  .hero-video__content-split .hero-video__actions {
+    justify-content: flex-start;
+    margin-top: 28px;
+  }
+
+  @media (max-width: 880px) {
+    .hero-video__media {
+      display: none;
+    }
+
+    .hero-video--split {
+      min-height: auto;
+      display: block;
+    }
+
+    .hero-video__content-split .hero-video__title,
+    .hero-video__content-split .hero-video__subtitle {
+      text-align: center;
+    }
+
+    .hero-video__content-split .hero-video__actions {
+      justify-content: center;
+    }
   }
 </style>
