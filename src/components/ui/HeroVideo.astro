@@ -49,6 +49,14 @@ function renderTitle(fullTitle: string, highlight?: string): string {
   if (!highlight) return fullTitle;
   return fullTitle.replace(highlight, `<b>${highlight}</b>`);
 }
+
+// Asegurar que la ruta del video sea absoluta
+const resolvedVideoSrc = videoSrc.startsWith('/') ? videoSrc : `/${videoSrc}`;
+// El poster puede venir de un asset de Astro (/_astro/...) o de una ruta estática
+// No modificar si ya empieza con / o _
+const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('_') 
+  ? `/${poster}` 
+  : poster;
 ---
 
 <section class={`hero-video ${minHeightClasses[minHeight]}`}>
@@ -57,9 +65,9 @@ function renderTitle(fullTitle: string, highlight?: string): string {
     muted
     loop
     playsinline
-    poster={poster}
+    poster={resolvedPoster}
   >
-    <source src={videoSrc} type="video/mp4" />
+    <source src={resolvedVideoSrc} type="video/mp4" />
   </video>
   
   <div class="hero-video__overlay" aria-hidden="true"></div>
@@ -102,6 +110,32 @@ function renderTitle(fullTitle: string, highlight?: string): string {
   </div>
 </section>
 
+<script>
+  // Manejar autoplay del video - algunos navegadores bloquean autoplay incluso con muted
+  document.addEventListener('DOMContentLoaded', () => {
+    const videos = document.querySelectorAll('.hero-video video');
+    videos.forEach((video) => {
+      // Intentar reproducir el video
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Si falla el autoplay, el poster se mostrará como fallback
+          // Intentar reproducir cuando el usuario interactúe con la página
+          const tryPlayOnInteraction = () => {
+            video.play().catch(() => {});
+            document.removeEventListener('click', tryPlayOnInteraction);
+            document.removeEventListener('scroll', tryPlayOnInteraction);
+            document.removeEventListener('keydown', tryPlayOnInteraction);
+          };
+          document.addEventListener('click', tryPlayOnInteraction, { once: true });
+          document.addEventListener('scroll', tryPlayOnInteraction, { once: true });
+          document.addEventListener('keydown', tryPlayOnInteraction, { once: true });
+        });
+      }
+    });
+  });
+</script>
+
 <style>
   .hero-video {
     position: relative;
@@ -131,7 +165,8 @@ function renderTitle(fullTitle: string, highlight?: string): string {
 
   .hero-video video {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -140,26 +175,31 @@ function renderTitle(fullTitle: string, highlight?: string): string {
 
   .hero-video__overlay {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 1;
     background: linear-gradient(
       180deg,
-      rgba(13, 22, 17, 0.5) 0%,
-      rgba(13, 22, 17, 0.12) 30%,
-      rgba(13, 22, 17, 0.5) 60%,
-      rgba(13, 22, 17, 0.96) 100%
+      rgba(13, 22, 17, 0.3) 0%,
+      rgba(13, 22, 17, 0.1) 40%,
+      rgba(13, 22, 17, 0.4) 70%,
+      rgba(13, 22, 17, 0.85) 100%
     );
   }
 
   .hero-video__container {
     position: relative;
-    z-index: 2;
+    z-index: 10;
     padding-bottom: clamp(40px, 7vh, 90px);
     padding-top: 60px;
   }
 
   .hero-video__content {
-    max-width: 16ch;
+    /* max-width: 16ch; */
+    position: relative;
+    z-index: 11;
   }
 
   .hero-video__title {

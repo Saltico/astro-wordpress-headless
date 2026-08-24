@@ -96,18 +96,6 @@ const services = [
   },
 ];
 
-// Servicio destacado (Rental)
-const featuredService = {
-  featured: true,
-  category: 'Rental de equipos',
-  title: 'Grúas de alto tonelaje',
-  description: 'Hasta 400 toneladas. Grúas AT/RT, alza-hombre, camión pluma y manipuladores, con operadores certificados. Más movimiento de tierra, transporte y equipos especiales.',
-  image: servIzaje.src,
-  imageAlt: 'Grúas de alto tonelaje en faena minera',
-  url: `${IPRENTAL_URL}/arriendo`,
-  linkLabel: 'Ver flota',
-};
-
 // Clientes
 const clientLogos = [
   { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/barrick.jpg', alt: 'Barrick' },
@@ -190,10 +178,40 @@ const latestNews = await getLatestNews(3);
     eyebrow="Lo que hacemos"
     title="Una sola empresa para todo el ciclo de tu proyecto"
     services={services}
-    featuredService={featuredService}
   />
 
-  <!-- §6: SEGURIDAD / HSEC -->
+  <!-- §6: RENTAL DE EQUIPOS -->
+  <SplitSection
+    eyebrow="Rental de equipos"
+    title="Grúas de alto tonelaje y maquinaria especializada"
+    description="Hasta 400 toneladas. Grúas AT/RT, alza-hombre, camión pluma y manipuladores, con operadores certificados. Más movimiento de tierra, transporte y equipos especiales para tu faena."
+    image={servIzaje.src}
+    imageAlt="Grúas de alto tonelaje en faena minera"
+    imageWidth={servIzaje.width}
+    imageHeight={servIzaje.height}
+    miniStats={[
+      { value: '400', label: 'Toneladas capacidad' },
+      { value: '+100', label: 'Equipos propios' },
+      { value: '24/7', label: 'Disponibilidad' },
+    ]}
+    cta={{ label: 'Cotizar en iprental.cl', href: `${IPRENTAL_URL}/arriendo` }}
+    variant="default"
+    background="dark"
+    ghostText="RENTAL"
+  />
+
+  <!-- §7: CLIENTES -->
+  <LogoCarousel
+    logos={clientLogos}
+    eyebrow="Confían en nosotros"
+    title="Empresas líderes de la gran minería"
+    subtitle="Más de 25 años apoyando a las empresas más exigentes del sector minero e industrial de Chile."
+    speed="normal"
+    backgroundVariant="dark"
+    pauseOnHover={true}
+  />
+
+  <!-- §8: SEGURIDAD / HSEC -->
   <SplitSection
     eyebrow="Seguridad, salud y medio ambiente"
     title="El cuidado de las personas es nuestro primer estándar"
@@ -209,18 +227,7 @@ const latestNews = await getLatestNews(3);
     ghostText="HSEC"
   />
 
-  <!-- §7: CLIENTES -->
-  <LogoCarousel
-    logos={clientLogos}
-    eyebrow="Confían en nosotros"
-    title="Empresas líderes de la gran minería"
-    subtitle="Más de 25 años apoyando a las empresas más exigentes del sector minero e industrial de Chile."
-    speed="normal"
-    backgroundVariant="dark"
-    pauseOnHover={true}
-  />
-
-  <!-- §8: CTA BAND -->
+  <!-- §9: CTA BAND -->
   <CTABand
     eyebrow="Hablemos"
     title="Tu próximo proyecto empieza con una conversación"
@@ -236,7 +243,7 @@ const latestNews = await getLatestNews(3);
     minHeight="md"
   />
 
-  <!-- §9: NOTICIAS -->
+  <!-- §10: NOTICIAS -->
   <NewsGrid
     items={latestNews}
     eyebrow="Últimas noticias"

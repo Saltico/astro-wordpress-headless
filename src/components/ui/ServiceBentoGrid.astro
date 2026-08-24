@@ -36,7 +36,7 @@ const {
 } = Astro.props;
 ---
 
-<section class="service-bento-section">
+<section class={`service-bento-section ${featuredService ? 'has-featured' : ''}`}>
   <Container>
     {eyebrow && <Eyebrow text={eyebrow} />}
     <h2 class="service-bento-section__title">{title}</h2>
@@ -102,8 +102,13 @@ const {
 
   .svc-bento {
     display: grid;
-    grid-template-columns: 1fr 1fr 1.12fr;
+    grid-template-columns: 1fr 1fr;
     gap: var(--space-4);
+  }
+
+  /* Cuando hay featuredService, usar layout bento asimétrico */
+  .has-featured .svc-bento {
+    grid-template-columns: 1fr 1fr 1.12fr;
   }
 
   .svc-card--feat {
@@ -115,7 +120,7 @@ const {
     .svc-bento {
       grid-template-columns: 1fr 1fr;
     }
-    .svc-card--feat {
+    .has-featured .svc-card--feat {
       grid-column: 1 / -1;
       grid-row: auto;
     }
