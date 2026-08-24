@@ -62,6 +62,7 @@ export interface Props extends BaseLayoutProps {
     siteUrl?: string;
   };
   headerVariant?: 'default' | 'brand';
+  immersive?: boolean; // Header transparente sobre hero
 }
 
 const {
@@ -81,6 +82,7 @@ const {
   navigation,
   footer,
   headerVariant = 'default',
+  immersive = false,
 } = Astro.props;
 
 const canonical = canonicalProp ?? getSiteUrl(Astro.url.pathname);
@@ -108,7 +110,11 @@ const navItems = navigation?.items ?? navigationData;
 
 // Si el topbar no se renderiza, marcamos el body para que el header
 // no quede con un gap arriba (Header.astro escucha body.topbar-hidden).
-const bodyClass = !showTopBar ? 'topbar-hidden' : undefined;
+// Si immersive es true, agregamos la clase para header transparente sobre hero.
+const bodyClasses = [
+  !showTopBar && 'topbar-hidden',
+  immersive && 'immersive-hero',
+].filter(Boolean).join(' ') || undefined;
 
 // Schemas base inyectados en todas las paginas
 const baseSchemas = [organizationSchema(), websiteSchema()];
@@ -197,7 +203,7 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
 
     <JsonLd data={allSchemas} />
   </head>
-  <body class={bodyClass}>
+  <body class={bodyClasses}>
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W8MBKHF"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>

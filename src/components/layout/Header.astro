@@ -63,6 +63,26 @@ const headerClassList = ['header', variant === 'brand' && 'header--brand'];
     color: var(--color-on-brand, #fff);
   }
 
+  /* Modo inmersivo: header transparente sobre hero */
+  :global(body.immersive-hero) .header {
+    position: fixed;
+    top: var(--topbar-height, 40px);
+    left: 0;
+    right: 0;
+    background-color: transparent;
+    border-bottom-color: transparent;
+    box-shadow: none;
+  }
+
+  :global(body.immersive-hero) .header.is-scrolled {
+    background-color: var(--color-graphite, #0d1611);
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+  }
+
+  :global(body.immersive-hero.topbar-hidden) .header {
+    top: 0;
+  }
+
   .header__inner {
     display: flex;
     align-items: center;

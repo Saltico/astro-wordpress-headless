@@ -127,6 +127,7 @@ const latestNews = await getLatestNews(3);
   title={title}
   description={description}
   jsonLd={jsonLd}
+  immersive={true}
 >
   <!-- §1: HERO CON VIDEO -->
   <HeroVideo
@@ -139,7 +140,7 @@ const latestNews = await getLatestNews(3);
     minHeight="lg"
     ctaPrimary={{ label: 'Contactar', href: '/contacto' }}
     ctaSecondary={{ 
-      label: 'WhatsApp', 
+      label: 'Hablemos', 
       href: `https://wa.me/${siteContact.whatsappNumber}?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20conversar%20sobre%20un%20proyecto.`,
       external: true 
     }}
@@ -237,7 +238,7 @@ const latestNews = await getLatestNews(3);
     backgroundHeight={edificio.height}
     buttons={[
       { label: 'Contactar', href: '/contacto', variant: 'primary', icon: 'arrow-right', ariaLabel: 'Ir al formulario de contacto' },
-      { label: 'WhatsApp', href: `https://wa.me/${siteContact.whatsappNumber}?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20conversar%20sobre%20un%20proyecto.`, variant: 'outline', external: true, icon: 'whatsapp' },
+      { label: 'Hablemos', href: `https://wa.me/${siteContact.whatsappNumber}?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20conversar%20sobre%20un%20proyecto.`, variant: 'outline', external: true, icon: 'whatsapp' },
     ]}
     contentAlign="center"
     minHeight="md"
