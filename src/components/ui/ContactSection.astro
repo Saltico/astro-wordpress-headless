@@ -202,8 +202,33 @@ const backgroundClasses = {
   (function() {
     const form = document.getElementById('contactForm');
     const whatsappBtn = document.getElementById('whatsappBtn');
+    const submitBtn = form?.querySelector('button[type="submit"]');
     
-    if (!form || !whatsappBtn) return;
+    if (!form) return;
+    
+    // Manejar submit del formulario para mostrar estado de carga
+    form.addEventListener('submit', function(e) {
+      if (submitBtn) {
+        // Desactivar botón y mostrar estado de carga
+        submitBtn.disabled = true;
+        const originalText = submitBtn.querySelector('.btn__label')?.textContent || submitBtn.textContent;
+        const label = submitBtn.querySelector('.btn__label');
+        if (label) {
+          label.textContent = 'Enviando...';
+        } else {
+          submitBtn.textContent = 'Enviando...';
+        }
+        submitBtn.classList.add('btn--loading');
+        
+        // Si hay icono, ocultarlo temporalmente
+        const icon = submitBtn.querySelector('.icon');
+        if (icon) {
+          icon.style.display = 'none';
+        }
+      }
+    });
+    
+    if (!whatsappBtn) return;
     
     whatsappBtn.addEventListener('click', function(e) {
       e.preventDefault();
@@ -458,5 +483,36 @@ const backgroundClasses = {
   .contact-form__actions :global(.btn) {
     flex: 1;
     min-width: 180px;
+  }
+
+  /* Estado de carga del botón */
+  .contact-form__actions :global(.btn[disabled]) {
+    opacity: 0.7;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .contact-form__actions :global(.btn.btn--loading) {
+    position: relative;
+  }
+
+  .contact-form__actions :global(.btn.btn--loading)::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: btn-spin 0.6s linear infinite;
+    right: var(--space-4);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  @keyframes btn-spin {
+    to {
+      transform: translateY(-50%) rotate(360deg);
+    }
   }
 </style>

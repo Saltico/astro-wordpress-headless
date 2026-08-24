@@ -19,6 +19,9 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone',
   }),
+  security: {
+    checkOrigin: false,
+  },
   i18n: {
     defaultLocale: 'es',
     locales: ['es'],

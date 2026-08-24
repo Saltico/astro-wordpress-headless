@@ -245,7 +245,21 @@ export const POST: APIRoute = async ({ request }) => {
       // El correo interno ya se envió, responder con éxito parcial
     }
 
-    // Redirigir a página de agradecimiento
+    // Responder según el tipo de request
+    const isJsonRequest = request.headers.get('content-type')?.includes('application/json');
+    
+    if (isJsonRequest) {
+      // Para requests AJAX (JSON), retornar respuesta JSON
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: 'Mensaje enviado correctamente.',
+        } satisfies ContactResponse),
+        { status: 200, headers: jsonHeaders }
+      );
+    }
+
+    // Para requests nativos de formulario, redirigir a página de agradecimiento
     return new Response(null, {
       status: 303,
       headers: { Location: '/gracias-contacto' },
