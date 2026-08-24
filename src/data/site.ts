@@ -86,12 +86,6 @@ export const navigationData: NavItem[] = [
   {
     label: 'Rental de equipos',
     url: '/arriendo',
-    children: [
-      { label: 'Izaje', url: '/arriendo/izaje' },
-      { label: 'Movimiento de Tierra', url: '/arriendo/movimiento-de-tierra' },
-      { label: 'Transporte', url: '/arriendo/transporte' },
-      { label: 'Equipos Especiales', url: '/arriendo/equipos-especiales' },
-    ],
   },
   { label: 'Seguridad', url: '/seguridad' },
   { label: 'Compliance', url: '/compliance' },

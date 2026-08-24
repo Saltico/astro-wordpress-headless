@@ -10,7 +10,6 @@ import PageHero from '@/components/ui/PageHero.astro';
 import Button from '@/components/ui/Button.astro';
 import StatsCounter from '@/components/ui/StatsCounter.astro';
 import SplitSection from '@/components/ui/SplitSection.astro';
-import ServiceBentoGrid from '@/components/ui/ServiceBentoGrid.astro';
 import CTABand from '@/components/ui/CTABand.astro';
 import FleetTable from '@/components/ui/FleetTable.astro';
 import Container from '@/components/ui/Container.astro';
@@ -19,6 +18,11 @@ import type { StatItem } from '@/components/ui/StatsCounter.astro';
 import { siteContact, IPRENTAL_URL } from '@/data/site';
 
 import arriendoHero from '@/assets/imgs/hero/arriendo/arriendo.avif';
+import izajeImg from '@/assets/imgs/hero/arriendo/izaje/izaje.avif';
+import movimientoTierraImg from '@/assets/imgs/hero/arriendo/movimiento-de-tierra/movimiento-de-tierra.avif';
+import transporteImg from '@/assets/imgs/hero/arriendo/transporte/transporte.avif';
+import equiposEspecialesImg from '@/assets/imgs/hero/arriendo/equipos-especiales/equipos-especiales.avif';
+import edificioImg from '@/assets/imgs/edificio.jpg';
 import gruas from '@/assets/imgs/gruas.jpg';
 import izaje from '@/assets/imgs/izaje.jpg';
 import apoyo from '@/assets/imgs/apoyo.jpg';
@@ -66,33 +70,37 @@ const categories = [
     category: 'Izaje',
     title: 'Grúas y altura',
     description: 'Grúas de alto tonelaje (AT / RT), alza-hombre hasta 43 m, camión pluma 7–26 t, manipulador telescópico y grúa horquilla 3–16 t.',
-    image: gruas.src,
+    image: izajeImg.src,
     imageAlt: 'Grúas de alto tonelaje',
-    url: '/arriendo/izaje',
+    url: `${IPRENTAL_URL}/arriendo/izaje`,
+    variant: 'tall',
   },
   {
     category: 'Movimiento de Tierra',
     title: 'Maquinaria pesada',
     description: 'Camiones tolva, cargadores frontales, excavadoras, retroexcavadoras, minicargadores, rodillos compactadores y aljibes.',
-    image: apoyo.src,
+    image: movimientoTierraImg.src,
     imageAlt: 'Maquinaria pesada para movimiento de tierra',
-    url: '/arriendo/movimiento-de-tierra',
+    url: `${IPRENTAL_URL}/arriendo/movimiento-de-tierra`,
+    variant: 'normal',
   },
   {
     category: 'Transporte',
     title: 'Punto a punto',
     description: 'Rampla seca, cama baja y carga sobredimensionada. Hasta 120 t y 24 m de largo, con servicio de escolta.',
-    image: izaje.src,
+    image: transporteImg.src,
     imageAlt: 'Equipos de transporte',
-    url: '/arriendo/transporte',
+    url: `${IPRENTAL_URL}/arriendo/transporte`,
+    variant: 'normal',
   },
   {
     category: 'Equipos Especiales',
     title: 'Apoyo a faena',
     description: 'Torres de iluminación, generadores, compresores, buses y minibuses, camión 3/4, camioneta y petroleador, canastillos, bombas de hormigón y termofusión.',
-    image: faenaIzaje.src,
+    image: equiposEspecialesImg.src,
     imageAlt: 'Equipos especiales para faena',
-    url: '/arriendo/equipos-especiales',
+    url: `${IPRENTAL_URL}/arriendo/equipos-especiales`,
+    variant: 'wide',
   },
 ];
 ---
@@ -205,16 +213,40 @@ const categories = [
           items={fleetRT}
         />
       </div>
-
-      <h3 class="fleet-subhead reveal">Categorías de equipos</h3>
     </Container>
   </section>
 
   <!-- §5: CATEGORÍAS -->
-  <ServiceBentoGrid
-    title=""
-    services={categories}
-  />
+  <section class="section">
+    <h2 class="fleet-subhead reveal">Categorías de equipos</h2>
+    <Container>
+      <div class="bento-grid">
+        {categories.map((cat) => (
+          <article
+            class:list={[
+              'bento',
+              { 'bento--img': cat.image },
+              { 'bento--tall': cat.variant === 'tall' },
+              { 'bento--wide': cat.variant === 'wide' },
+              { 'bento--green': cat.variant === 'green' },
+              { 'bento--tint': cat.variant === 'wide' && cat.image },
+            ]}
+            style={cat.image ? `background-image:url('${cat.image}')` : undefined}
+          >
+            <span class="bento__cat">{cat.category}</span>
+            <h3 class="bento__title">{cat.title}</h3>
+            <p class="bento__desc">{cat.description}</p>
+            <a class="bento__link" href={cat.url} target="_blank" rel="noopener noreferrer">
+              Conocer
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </a>
+          </article>
+        ))}
+      </div>
+    </Container>
+  </section>
 
   <!-- §6: POR QUÉ IP -->
   <SplitSection
@@ -253,7 +285,7 @@ const categories = [
   />
 
   <!-- §7: CTA COTIZA ONLINE -->
-  <CTABand
+<!--   <CTABand
     eyebrow="Cotiza online"
     title="Encuentra el equipo perfecto en iprental.cl"
     subtitle="Explora nuestro catálogo completo de grúas, equipos de izaje, movimiento de tierra y más. Cotiza en minutos con nuestro sistema online."
@@ -263,13 +295,17 @@ const categories = [
     ]}
     contentAlign="center"
     minHeight="md"
-  />
+  /> -->
 
   <!-- §8: CTA HABLEMOS -->
   <CTABand
     eyebrow="Hablemos"
     title="Conversemos sobre tu próximo izaje"
     subtitle="Cuéntanos sobre tu faena, sus requerimientos y ubicación. Un encargado te responderá por WhatsApp, teléfono o correo."
+    backgroundImage={edificioImg.src}
+    backgroundAlt="Edificio corporativo de IP Proyectos Industriales en Chile"
+    backgroundWidth={edificioImg.width}
+    backgroundHeight={edificioImg.height}
     buttons={[
       { 
         label: 'Hablemos', 
@@ -442,5 +478,189 @@ const categories = [
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════════════
+     BENTO GRID - Categorías de equipos
+     ═══════════════════════════════════════════════════════════════════════════════ */
+
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: minmax(220px, auto);
+    gap: 16px;
+  }
+
+  .bento {
+    position: relative;
+    border-radius: var(--radius-lg);
+    padding: 26px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+    transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+  }
+
+  .bento:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.4);
+  }
+
+  .bento__cat {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.05rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .bento__title {
+    font-size: 1.4rem;
+    line-height: 1.1;
+    margin: 0;
+    color: inherit;
+  }
+
+  .bento__desc {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+    flex: 1;
+  }
+
+  .bento__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.88rem;
+    margin-top: 4px;
+    text-decoration: none;
+  }
+
+  .bento__link svg {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .bento:hover .bento__link svg {
+    transform: translateX(4px);
+  }
+
+  /* Variantes de tamaño */
+  .bento--tall {
+    grid-row: span 2;
+  }
+
+  .bento--wide {
+    grid-column: span 2;
+  }
+
+  /* Variante con imagen de fondo */
+  .bento--img {
+    color: #fff;
+    justify-content: flex-end;
+    background-size: cover;
+    background-position: center;
+    min-height: 300px;
+  }
+
+  .bento--img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(13, 22, 17, 0.12) 0%,
+      rgba(13, 22, 17, 0.55) 55%,
+      rgba(13, 22, 17, 0.9) 100%
+    );
+    z-index: 0;
+  }
+
+  .bento--img > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .bento--img .bento__cat {
+    color: var(--color-brand-300);
+  }
+
+  .bento--img .bento__desc {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .bento--img .bento__link {
+    color: #fff;
+  }
+
+  /* Variante verde sólido */
+  .bento--green {
+    background: var(--color-brand-700);
+    color: #fff;
+  }
+
+  .bento--green .bento__cat {
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .bento--green .bento__desc {
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  .bento--green .bento__link {
+    color: #fff;
+  }
+
+  /* Variante con tinte verde */
+  .bento--tint {
+    background: var(--color-graphite-3);
+    border: 1px solid var(--theme-border);
+    color: var(--color-on-dark);
+  }
+
+  .bento--tint .bento__cat {
+    color: var(--color-brand-300);
+  }
+
+  .bento--tint .bento__title {
+    color: #fff;
+  }
+
+  .bento--tint .bento__desc {
+    color: var(--color-on-dark-muted);
+  }
+
+  .bento--tint .bento__link {
+    color: var(--color-brand-300);
+  }
+
+  /* Responsive */
+  @media (max-width: 860px) {
+    .bento-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .bento--tall {
+      grid-row: auto;
+    }
+
+    .bento--wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .bento-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .bento--wide {
+      grid-column: auto;
+    }
   }
 </style>
