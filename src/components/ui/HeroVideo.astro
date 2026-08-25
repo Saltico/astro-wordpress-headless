@@ -26,6 +26,10 @@ export interface Props {
   };
   minHeight?: 'sm' | 'md' | 'lg';
   layout?: 'full' | 'split';
+  /** Ancho intrínseco del video (evita CLS). Default: 1920 */
+  videoWidth?: number;
+  /** Alto intrínseco del video (evita CLS). Default: 1080 */
+  videoHeight?: number;
 }
 
 const {
@@ -39,6 +43,8 @@ const {
   ctaSecondary,
   minHeight = 'lg',
   layout = 'full',
+  videoWidth = 1920,
+  videoHeight = 1080,
 } = Astro.props;
 
 const minHeightClasses = {
@@ -56,7 +62,7 @@ function renderTitle(fullTitle: string, highlight?: string): string {
 }
 
 // Asegurar que la ruta del video sea absoluta
-const resolvedVideoSrc = videoSrc.startsWith('/') ? videoSrc : `/${videoSrc}`;
+const resolvedVideoSrc = videoSrc ? (videoSrc.startsWith('/') ? videoSrc : `/${videoSrc}`) : '';
 // El poster puede venir de un asset de Astro (/_astro/...) o de una ruta estática
 // No modificar si ya empieza con / o _
 const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('_') 
@@ -68,11 +74,14 @@ const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('
   {layout === 'full' ? (
     <>
       <video
-        autoplay
         muted
         loop
         playsinline
+        preload="none"
+        width={videoWidth}
+        height={videoHeight}
         poster={resolvedPoster}
+        data-hero-video
       >
         <source src={resolvedVideoSrc} type="video/mp4" />
       </video>
@@ -120,11 +129,14 @@ const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('
     <>
       <div class="hero-video__media">
         <video
-          autoplay
           muted
           loop
           playsinline
+          preload="none"
+          width={videoWidth}
+          height={videoHeight}
           poster={resolvedPoster}
+          data-hero-video
         >
           <source src={resolvedVideoSrc} type="video/mp4" />
         </video>
@@ -166,28 +178,68 @@ const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('
 </section>
 
 <script>
-  // Manejar autoplay del video - algunos navegadores bloquean autoplay incluso con muted
+  /**
+   * Hero Video — carga diferida con IntersectionObserver.
+   *
+   * Estrategia de rendimiento:
+   * 1. El <video> nace con preload="none" → no descarga bytes hasta que sea necesario.
+   * 2. IntersectionObserver detecta cuando el hero entra al viewport.
+   * 3. En ese momento se inyecta el <source>, se carga y se reproduce.
+   * 4. Cuando el hero sale del viewport, se pausa para ahorrar CPU/batería.
+   * 5. Si el usuario prefiere movimiento reducido, se muestra solo el poster.
+   */
   document.addEventListener('DOMContentLoaded', () => {
-    const videos = document.querySelectorAll('.hero-video video');
-    videos.forEach((video) => {
-      // Intentar reproducir el video
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Si falla el autoplay, el poster se mostrará como fallback
-          // Intentar reproducir cuando el usuario interactúe con la página
-          const tryPlayOnInteraction = () => {
-            video.play().catch(() => {});
-            document.removeEventListener('click', tryPlayOnInteraction);
-            document.removeEventListener('scroll', tryPlayOnInteraction);
-            document.removeEventListener('keydown', tryPlayOnInteraction);
-          };
-          document.addEventListener('click', tryPlayOnInteraction, { once: true });
-          document.addEventListener('scroll', tryPlayOnInteraction, { once: true });
-          document.addEventListener('keydown', tryPlayOnInteraction, { once: true });
-        });
-      }
-    });
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const videos = document.querySelectorAll<HTMLVideoElement>('[data-hero-video]');
+
+    if (prefersReducedMotion) {
+      // No cargar ni reproducir video — el poster queda visible como fallback estático.
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const video = entry.target as HTMLVideoElement;
+
+          if (entry.isIntersecting) {
+            // Si el source aún no se ha inyectado, hacerlo ahora (lazy load).
+            if (!video.dataset.loaded) {
+              const source = video.querySelector('source');
+              if (source) {
+                // El src ya está en el HTML pero con preload="none" no se descarga.
+                // Forzar la carga cambiando preload a "auto".
+                video.preload = 'auto';
+                video.load();
+              }
+              video.dataset.loaded = 'true';
+            }
+
+            // Intentar reproducir.
+            video.play().catch(() => {
+              // Si el navegador bloquea autoplay, reintentar en la primera interacción.
+              const resume = () => {
+                video.play().catch(() => {});
+                document.removeEventListener('click', resume);
+                document.removeEventListener('scroll', resume);
+                document.removeEventListener('keydown', resume);
+              };
+              document.addEventListener('click', resume, { once: true });
+              document.addEventListener('scroll', resume, { once: true });
+              document.addEventListener('keydown', resume, { once: true });
+            });
+          } else {
+            // Pausar cuando el hero no es visible — ahorra CPU y batería.
+            if (video.dataset.loaded && !video.paused) {
+              video.pause();
+            }
+          }
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    videos.forEach((video) => observer.observe(video));
   });
 </script>
 
@@ -233,6 +285,8 @@ const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('
     height: 100%;
     object-fit: cover;
     z-index: 0;
+    contain: strict;
+    background-color: var(--color-graphite);
   }
 
   .hero-video__overlay {
@@ -356,6 +410,8 @@ const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('
     height: 100%;
     object-fit: cover;
     opacity: 0.9;
+    contain: strict;
+    background-color: var(--color-graphite);
   }
 
   .hero-video__media::after {

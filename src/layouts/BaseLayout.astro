@@ -88,6 +88,10 @@ const {
 const canonical = canonicalProp ?? getSiteUrl(Astro.url.pathname);
 const pageUrl = getSiteUrl(Astro.url.pathname);
 
+// Google Analytics IDs desde variables de entorno
+const gtmId = import.meta.env.PUBLIC_GTM_ID || 'GTM-W8MBKHF';
+const gaId = import.meta.env.PUBLIC_GA_ID || 'G-RGMD8X4MMP';
+
 // Footer canónico derivado de site.ts; el override (si existe) gana.
 const effectiveFooter = {
   columns: footer?.columns ?? footerData.columns,
@@ -131,21 +135,27 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
     <meta name="generator" content={Astro.generator} />
 
     <!-- Google Tag Manager -->
-    <script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-W8MBKHF');</script>
+    {gtmId && (
+      <script define:vars={{ gtmId }} is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer',gtmId);</script>
+    )}
     <!-- End Google Tag Manager -->
 
     <!-- Google tag (gtag.js) -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-RGMD8X4MMP"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-RGMD8X4MMP');
-    </script>
+    {gaId && (
+      <>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+        <script define:vars={{ gaId }} is:inline>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', gaId);
+        </script>
+      </>
+    )}
     <!-- End Google tag (gtag.js) -->
 
     <MetaTags
@@ -205,8 +215,10 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
   </head>
   <body class={bodyClasses}>
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W8MBKHF"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    {gtmId && (
+      <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    )}
     <!-- End Google Tag Manager (noscript) -->
 
     <SkipLink targetId="main-content" />
