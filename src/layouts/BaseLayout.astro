@@ -24,6 +24,9 @@ import { siteBrand, siteContact, topbarData, navigationData, footerData } from '
 import { initAnalytics } from '@/lib/analytics';
 import logoImg from '@/assets/logos/logo_ipproyectosindustriales.png';
 
+// GTM ID desde variable de entorno. Si no existe, no se carga tracking.
+const gtmId = import.meta.env.PUBLIC_GTM_ID as string | undefined;
+
 export interface Props extends BaseLayoutProps {
   ogImage?: string;
   ogVideo?: {
@@ -64,6 +67,14 @@ export interface Props extends BaseLayoutProps {
     siteUrl?: string;
   };
   headerVariant?: 'default' | 'brand';
+  /** Tipo de página para dataLayer: 'home' | 'catalog' | 'service' | 'quote_wizard' | 'contact' | 'news' | 'error' */
+  pageType?: string;
+  /** Categoría principal para dataLayer: 'arriendo' | 'servicios' | 'seguridad' | 'cotizador' */
+  pageCategory?: string;
+  /** Subcategoría para dataLayer: 'izaje' | 'movimiento-de-tierra' | 'ingenieria' */
+  pageSubcategory?: string;
+  /** Sección del sitio para dataLayer: 'rental' | 'services' | 'safety' | 'quote' | 'news' */
+  siteSection?: string;
 }
 
 const {
@@ -83,6 +94,10 @@ const {
   navigation,
   footer,
   headerVariant = 'default',
+  pageType = 'page',
+  pageCategory = '',
+  pageSubcategory = '',
+  siteSection = '',
 } = Astro.props;
 
 const canonical = canonicalProp ?? getSiteUrl(Astro.url.pathname);
@@ -126,23 +141,47 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- Google Tag Manager -->
-    <script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-W8MBKHF');</script>
-    <!-- End Google Tag Manager -->
-
-    <!-- Google tag (gtag.js) -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-RGMD8X4MMP"></script>
+    <!-- Consent Mode v2 — DEBE ir antes del script de GTM -->
     <script is:inline>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-RGMD8X4MMP');
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        functionality_storage: 'denied',
+        personalization_storage: 'denied',
+        security_storage: 'granted',
+        wait_for_update: 500
+      });
     </script>
-    <!-- End Google tag (gtag.js) -->
+
+    <!-- Google Tag Manager — ID dinámico desde variable de entorno -->
+    {gtmId ? (
+      <script is:inline set:html={`
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','${gtmId}');
+      `} />
+    ) : (
+      <script is:inline>window.dataLayer = window.dataLayer || [];</script>
+    )}
+
+    <!-- dataLayer inicial con metadata de página (no-PII) -->
+    <script is:inline set:html={`
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'page_data',
+        page_type: '${pageType}',
+        page_category: '${pageCategory}',
+        page_subcategory: '${pageSubcategory}',
+        page_locale: 'es',
+        site_section: '${siteSection}'
+      });
+    `} />
 
     <MetaTags
       title={title}
@@ -219,13 +258,22 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
 
     <slot name="head" />
 
+    <meta name="page-type" content={pageType} />
+
     <JsonLd data={allSchemas} />
   </head>
   <body class={bodyClass}>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W8MBKHF"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+    <!-- Google Tag Manager (noscript) — ID dinámico -->
+    {gtmId && (
+      <noscript>
+        <iframe
+          src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
+          height="0"
+          width="0"
+          style="display:none;visibility:hidden"
+        />
+      </noscript>
+    )}
 
     <SkipLink targetId="main-content" />
 

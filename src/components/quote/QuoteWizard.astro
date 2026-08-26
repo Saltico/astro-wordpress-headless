@@ -70,9 +70,14 @@ const steps = [step1Label, step2Label, step3Label];
   import { getCart, subscribe as subscribeCart } from '@/lib/quoteCart';
   import { getCompanyData, subscribeCompanyData } from '@/lib/quoteCompany';
   import { validateCompanyData } from '@/types/quoteCompany';
+  import { trackQuoteWizardStart, trackQuoteWizardStep, trackQuoteWizardAbandon } from '@/lib/analytics';
 
   const STEP_KEY = 'ip_quote_wizard_step';
   const TOTAL_STEPS = 3;
+
+  // Tracking: variables de tiempo del wizard
+  let wizardStartTime = Date.now();
+  let wizardInitialized = false;
 
   type WizardAPI = {
     goToStep: (step: number) => void;
@@ -169,6 +174,9 @@ const steps = [step1Label, step2Label, step3Label];
       if (step === 3) {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
+      // Tracking: avance de paso
+      const stepNames = ['', 'equipos', 'datos', 'resumen'];
+      trackQuoteWizardStep(step, stepNames[step] ?? '', getCart().items.length);
     }
 
     function nextStep(): void {
@@ -181,10 +189,29 @@ const steps = [step1Label, step2Label, step3Label];
 
     function resolveInitialStep(): number {
       const saved = readSavedStep();
-      if (canAdvanceToStep(saved)) return saved;
-      if (getCart().items.length === 0) return 1;
-      if (!validateCompanyData(getCompanyData()).valid) return 2;
+      if (canAdvanceToStep(saved)) {
+        trackWizardStartOnce();
+        return saved;
+      }
+      if (getCart().items.length === 0) {
+        trackWizardStartOnce();
+        return 1;
+      }
+      if (!validateCompanyData(getCompanyData()).valid) {
+        trackWizardStartOnce();
+        return 2;
+      }
+      trackWizardStartOnce();
       return 1;
+    }
+
+    /** Tracking: inicio del wizard (solo una vez por sesión). */
+    function trackWizardStartOnce(): void {
+      if (wizardInitialized) return;
+      wizardInitialized = true;
+      wizardStartTime = Date.now();
+      const cart = getCart();
+      trackQuoteWizardStart(cart.items.length, cart.items.length > 0);
     }
 
     // Inicializar stepper.
@@ -250,6 +277,20 @@ const steps = [step1Label, step2Label, step3Label];
 
     // Inicializar en el paso guardado (o el permitido).
     goToStep(resolveInitialStep());
+
+    // Tracking: detectar abandono del wizard con items en carrito
+    function detectAbandon(): void {
+      const cart = getCart();
+      if (cart.items.length > 0 && currentStep < 3) {
+        const timeSpent = Math.round((Date.now() - wizardStartTime) / 1000);
+        trackQuoteWizardAbandon(currentStep, cart.items.length, timeSpent);
+      }
+    }
+
+    window.addEventListener('beforeunload', detectAbandon);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') detectAbandon();
+    });
   }
 </script>
 

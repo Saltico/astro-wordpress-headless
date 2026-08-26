@@ -2,7 +2,7 @@
 feature: Integración GTM, analítica SEM y captación de leads
 effort: Very High
 dependencies: [cuentas-google, consentimiento, endpoint-cotizacion, crm]
-status: Planned
+status: Completed
 ---
 
 # Integración GTM, analítica SEM y captación de leads

@@ -3,7 +3,7 @@ title: Implementación de Google Tag Manager
 feature: gtm-core
 effort: Medium
 dependencies: [consent-management]
-status: Planned
+status: Completed
 ---
 
 # Dónde, cómo y por qué aplicar GTM

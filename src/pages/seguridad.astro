@@ -55,6 +55,9 @@ const breadcrumbs = [
   title={title}
   description={description}
   breadcrumbs={breadcrumbs}
+  pageType="contact"
+  pageCategory="seguridad"
+  siteSection="safety"
 >
   <!-- Hero con breadcrumbs integrados -->
   <section class="safety-hero">
@@ -699,6 +702,14 @@ const breadcrumbs = [
         return;
       }
 
+      // Tracking: intento de envío de formulario de contacto
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'contact_form_submit',
+        form_id: 'safety_contact',
+        page_url: location.pathname,
+      });
+
       setLoading(true);
 
       try {
@@ -714,15 +725,35 @@ const breadcrumbs = [
         const result = await response.json();
 
         if (response.ok && result.success) {
+          // Tracking: éxito de formulario de contacto (conversión secundaria)
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'contact_form_success',
+            form_id: 'safety_contact',
+          });
           showFeedback(result.message || 'Mensaje enviado correctamente. Te contactaremos pronto.', 'success');
           form.reset();
         } else {
+          // Tracking: error de API en formulario de contacto
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'contact_form_error',
+            form_id: 'safety_contact',
+            error_type: 'api_error',
+          });
           const errorMsg = result.errors
             ? Object.values(result.errors).join(' ')
             : result.message || 'Error al enviar el mensaje. Por favor intenta nuevamente.';
           showFeedback(errorMsg, 'error');
         }
       } catch {
+        // Tracking: error de red en formulario de contacto
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'contact_form_error',
+          form_id: 'safety_contact',
+          error_type: 'network_error',
+        });
         showFeedback('Error de conexión. Por favor verifica tu internet e intenta nuevamente.', 'error');
       } finally {
         setLoading(false);

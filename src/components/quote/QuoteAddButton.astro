@@ -39,7 +39,8 @@ const { item, sourceUrl } = Astro.props;
 </button>
 
 <script>
-  import { addItem, subscribe, getCart } from '@/lib/quoteCart';
+  import { addItem, subscribe, getCart, equipmentToLocation } from '@/lib/quoteCart';
+  import { trackQuoteAddItem } from '@/lib/analytics';
 
   type BtnState = 'idle' | 'added' | 'error';
 
@@ -107,6 +108,17 @@ const { item, sourceUrl } = Astro.props;
     }
 
     paintState(btn, 'added');
+
+    // Tracking: agregar equipo con metadata completa (sin PII)
+    const location = equipmentToLocation(slug);
+    trackQuoteAddItem({
+      itemSlug: slug,
+      itemName: name,
+      itemCategory: location?.categoryName ?? '',
+      itemSubcategory: location?.subcategoryName ?? '',
+      itemCapacity: capacity,
+      sourcePage: sourceUrl,
+    });
 
     // Inline feedback
     const original = btn.querySelector<HTMLElement>('.quote-add-btn__label[data-state="added"]');

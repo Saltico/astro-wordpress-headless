@@ -62,6 +62,7 @@ const socialIconMap: Record<SocialLink['platform'], IconName> = {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={link.label || `Ir a ${link.platform}`}
+                data-wa-location={link.platform === 'whatsapp' ? 'topbar' : undefined}
               >
                 <Icon name={socialIconMap[link.platform]} size={14} />
               </a>

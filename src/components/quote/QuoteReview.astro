@@ -132,6 +132,7 @@ import Button from '@/components/ui/Button.astro';
   import { buildWhatsAppUrl, buildWhatsAppTalkUrl, computeCartTotals, formatPeriodLabel } from '@/lib/quoteMessage';
   import { formatRut, normalizePhone } from '@/types/quoteCompany';
   import { showConfirmModal } from '@/lib/confirmModal';
+  import { trackQuoteCartView, trackQuoteSendWhatsApp, trackQuoteEmailSuccess, trackQuoteEmailError } from '@/lib/analytics';
   import type { QuoteCartItem } from '@/types/quote';
 
   function escapeHtml(s: string): string {
@@ -309,11 +310,32 @@ import Button from '@/components/ui/Button.astro';
         sendBtn.removeAttribute('aria-disabled');
         sendBtn.classList.remove('is-disabled');
         sendBtn.href = buildWhatsAppUrl(cart, { company, globalNotes });
+
+        // Tracking: click en "Enviar por WhatsApp" (conversión primaria)
+        sendBtn.addEventListener('click', () => {
+          const totals = computeCartTotals(cart);
+          trackQuoteSendWhatsApp({
+            cartItemsCount: totals.uniqueItems,
+            totalUnits: totals.totalUnits,
+            uniqueCategories: new Set(cart.items.map(i => i.categorySlug)).size,
+            hasCompanyData: !!company.email,
+          });
+        });
       }
     }
 
     const talkBtn = document.querySelector<HTMLAnchorElement>('[data-review-action="talk"]');
     if (talkBtn) talkBtn.href = buildWhatsAppTalkUrl();
+
+    // Tracking: vista del resumen (solo si hay items)
+    if (cart.items.length > 0) {
+      trackQuoteCartView({
+        cartItemsCount: totals.uniqueItems,
+        totalUnits: totals.totalUnits,
+        totalDays: totals.totalDays,
+        uniqueCategories: new Set(cart.items.map(i => i.categorySlug)).size,
+      });
+    }
   }
 
   function dispatchNavigate(direction: 'next' | 'prev' | number): void {
@@ -415,6 +437,14 @@ import Button from '@/components/ui/Button.astro';
     setButtonLoading(emailBtn, true, 'Enviando...');
     hideEmailFeedback();
 
+    // Tracking: intento de envío por email
+    const totals = computeCartTotals(cart);
+    trackQuoteSendEmail({
+      cartItemsCount: totals.uniqueItems,
+      totalUnits: totals.totalUnits,
+      uniqueCategories: new Set(cart.items.map(i => i.categorySlug)).size,
+    });
+
     try {
       const response = await fetch('/api/quote-email', {
         method: 'POST',
@@ -431,6 +461,12 @@ import Button from '@/components/ui/Button.astro';
       const result = await response.json();
 
       if (response.ok && result.success) {
+        // Tracking: éxito de envío por email (conversión primaria)
+        const totals = computeCartTotals(cart);
+        trackQuoteEmailSuccess({
+          cartItemsCount: totals.uniqueItems,
+          totalUnits: totals.totalUnits,
+        });
         // ── Éxito: modal de confirmación ──
         const shouldClear = await showConfirmModal({
           title: 'Correo enviado',
@@ -445,6 +481,8 @@ import Button from '@/components/ui/Button.astro';
           clearCart();
         }
       } else {
+        // Tracking: error de API en envío por email
+        trackQuoteEmailError('api_error');
         // ── Error: modal con opción de enviar por WhatsApp ──
         const shouldSendWhatsapp = await showConfirmModal({
           title: 'Error en envío',
@@ -461,6 +499,8 @@ import Button from '@/components/ui/Button.astro';
       }
     } catch (err) {
       console.error('Error al enviar correo:', err);
+      // Tracking: error de red en envío por email
+      trackQuoteEmailError('network_error');
       // ── Error de red: mismo modal de error ──
       const shouldSendWhatsapp = await showConfirmModal({
         title: 'Error en envío',

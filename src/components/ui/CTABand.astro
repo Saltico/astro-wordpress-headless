@@ -18,6 +18,12 @@ export interface CTAButton {
   icon?: IconName;
   external?: boolean;
   ariaLabel?: string;
+  /** Ubicación del CTA para tracking (ej: 'cta_band', 'hero', 'footer') */
+  waLocation?: string;
+  /** Label del CTA para tracking */
+  ctaLabel?: string;
+  /** Destino del CTA para tracking */
+  ctaDestination?: string;
 }
 
 export interface Props {
@@ -104,6 +110,9 @@ const alignClasses = {
             iconPosition="right"
             ariaLabel={btn.ariaLabel ?? btn.label}
             target={btn.external ? '_blank' : undefined}
+            data-wa-location={btn.waLocation}
+            data-cta-label={btn.ctaLabel}
+            data-cta-destination={btn.ctaDestination}
           >
             {btn.label}
           </Button>

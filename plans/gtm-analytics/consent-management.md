@@ -3,7 +3,7 @@ title: Gestión de consentimiento (cookies) + Consent Mode v2
 feature: consent-management
 effort: High
 dependencies: [gtm-core]
-status: Planned
+status: In Progress
 ---
 
 # Gestión de consentimiento y Consent Mode v2

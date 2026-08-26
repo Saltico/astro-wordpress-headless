@@ -277,6 +277,19 @@ const searchIndexJson = JSON.stringify(searchIndex);
 
     // Render results
     function renderResults(results) {
+      // Tracking: búsqueda realizada
+      const query = input.value.trim();
+      const searchType = results.length > 0
+        ? (results[0].subcategory ? 'equipment' : results[0].category ? 'category' : 'unknown')
+        : 'no_results';
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'equipment_search',
+        search_query: query,
+        results_count: results.length,
+        search_type: searchType,
+      });
+
       if (results.length === 0) {
         resultsContainer.innerHTML = `
           <div class="equipment-search__empty">
@@ -373,6 +386,21 @@ const searchIndexJson = JSON.stringify(searchIndex);
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.equipment-search')) {
         hideResults();
+      }
+      // Tracking: selección de resultado de búsqueda
+      const resultItem = e.target.closest('.equipment-search__result-item');
+      if (resultItem) {
+        const query = input.value.trim();
+        const resultName = resultItem.querySelector('.equipment-search__result-name')?.textContent ?? '';
+        const resultUrl = resultItem.getAttribute('href') ?? '';
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'equipment_search_select',
+          result_name: resultName,
+          result_url: resultUrl,
+          result_type: 'equipment',
+          search_query: query,
+        });
       }
     });
   })();

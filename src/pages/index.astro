@@ -116,6 +116,9 @@ const clientLogos = [
   title={title}
   description={description}
   jsonLd={jsonLd}
+  pageType="home"
+  pageCategory="home"
+  siteSection="rental"
 >
   <link slot="head" rel="preload" as="image" href={rentalHero.src} fetchpriority="high" />
 
@@ -224,8 +227,8 @@ const clientLogos = [
     backgroundWidth={rentalHero.width}
     backgroundHeight={rentalHero.height}
     buttons={[
-      { label: 'Ir al cotizador', href: '/cotizador', variant: 'primary', icon: 'arrow-right', ariaLabel: 'Ir al cotizador en línea' },
-      { label: 'Hablar por WhatsApp', href: 'https://wa.me/56956594144?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20solicitar%20una%20cotizaci%C3%B3n%20de%20arriendo%20de%20equipos.', variant: 'outline', external: true, icon: 'whatsapp' },
+      { label: 'Ir al cotizador', href: '/cotizador', variant: 'primary', icon: 'arrow-right', ariaLabel: 'Ir al cotizador en línea', ctaLabel: 'Ir al cotizador', ctaDestination: 'cotizador' },
+      { label: 'Hablar por WhatsApp', href: 'https://wa.me/56956594144?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20solicitar%20una%20cotizaci%C3%B3n%20de%20arriendo%20de%20equipos.', variant: 'outline', external: true, icon: 'whatsapp', waLocation: 'cta_band', ctaLabel: 'Hablar por WhatsApp', ctaDestination: 'whatsapp' },
     ]}
     contentAlign="center"
     minHeight="md"

@@ -3,7 +3,7 @@ title: Plan de eventos de tracking (dataLayer)
 feature: event-tracking
 effort: Medium
 dependencies: [gtm-core]
-status: Planned
+status: Completed
 ---
 
 # Plan de eventos de tracking para SEM y leads
