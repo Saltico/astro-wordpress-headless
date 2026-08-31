@@ -22,12 +22,13 @@ export interface Props {
   align?: 'left' | 'center' | 'right';
   decorated?: boolean;
   class?: string;
+  style?: string;
 }
 
-const { text, align = 'left', decorated = true, class: className } = Astro.props;
+const { text, align = 'left', decorated = true, class: className, style } = Astro.props;
 ---
 
-<p class:list={['eyebrow', `eyebrow--${align}`, !decorated && 'eyebrow--plain', className]}>
+<p class:list={['eyebrow', `eyebrow--${align}`, !decorated && 'eyebrow--plain', className]} style={style}>
   {text}
 </p>
 

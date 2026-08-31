@@ -1,6 +1,6 @@
 ---
 // src/pages/servicios/index.astro
-// Página index de servicios - Replica estructura del sitio de referencia
+// Página index de servicios — secciones detalladas por línea de servicio
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
@@ -8,10 +8,15 @@ import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import StatsCounter from '@/components/ui/StatsCounter.astro';
 import CTABand from '@/components/ui/CTABand.astro';
 import PageHero from '@/components/ui/PageHero.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
 import Icon from '@/components/ui/Icon.astro';
 import type { StatItem } from '@/components/ui/StatsCounter.astro';
-import ingenieriaImg from '@/assets/imgs/ingenieria.jpg';
+import ingenieriaImg from '@/assets/imgs/servicios/servicios.avif';
 import edificioImg from '@/assets/imgs/edificio.jpg';
+import servIngenieriaImg from '@/assets/imgs/serv-ingenieria.jpg';
+import servConstruccionImg from '@/assets/imgs/serv-construccion.jpg';
+import servMontajesImg from '@/assets/imgs/serv-montajes.jpg';
+import portuariaImg from '@/assets/imgs/portuaria.jpg';
 
 const title = 'Servicios | Ingeniería, construcción, montajes e infraestructura portuaria — IP Proyectos Industriales';
 const description = 'Reunimos ingeniería, construcción, montajes e infraestructura portuaria bajo un mismo equipo, con estándares de la gran minería.';
@@ -30,32 +35,69 @@ const stats: StatItem[] = [
 
 const services = [
   {
-    number: '01',
-    category: 'Ingeniería',
-    title: 'Ingeniería con foco en constructibilidad',
-    description: 'Diseño e ingeniería de detalle para proyectos mineros e industriales, con gestión integral de compras, contratos y puesta en marcha.',
+    eyebrow: 'Ingeniería',
+    title: 'Buscamos ofrecer soluciones integrales a nuestros clientes',
+    description:
+      'Nos encargamos de toda la implementación de sus proyectos, tanto en el diseño preliminar como en su ingeniería de detalle y fabricación, además de la gestión de compra, construcción y puesta en marcha de las instalaciones entregadas.',
+    image: servIngenieriaImg,
+    imageAlt: 'Ingeniería de detalle para proyectos mineros e industriales, IP Proyectos Industriales',
     link: '/servicios/ingenieria',
+    features: [
+      { icon: 'blueprint' as const, text: 'Diseño preliminar e ingeniería de detalle' },
+      { icon: 'check' as const, text: 'Fabricación y gestión de compras' },
+      { icon: 'check' as const, text: 'Construcción y puesta en marcha' },
+    ],
+    reversed: false,
+    variant: 'alt' as const,
   },
   {
-    number: '02',
-    category: 'Construcción',
-    title: 'Obras civiles e industriales',
-    description: 'Construcción industrial con control de calidad en cada etapa: contratos EPC, prefabricados y pinturas especiales.',
+    eyebrow: 'Construcción',
+    title: 'Carácter multidisciplinario al servicio de tu proyecto',
+    description:
+      'Uno de los servicios que engloba el carácter multidisciplinario de IP Proyectos Industriales es la construcción, donde conforme a los requerimientos del cliente, se desarrolla la solución a través de las siguientes necesidades.',
+    image: servConstruccionImg,
+    imageAlt: 'Construcción de obras civiles e industriales en faena minera, IP Proyectos Industriales',
     link: '/servicios/construccion',
+    features: [
+      { icon: 'building' as const, text: 'Obras civiles y pavimentos de hormigón' },
+      { icon: 'check' as const, text: 'Fabricación de estructuras metálicas' },
+      { icon: 'wrench' as const, text: 'Fabricación de piping y piezas especiales' },
+      { icon: 'check' as const, text: 'Granallado ecológico y pinturas especiales' },
+    ],
+    reversed: true,
+    variant: 'dark' as const,
   },
   {
-    number: '03',
-    category: 'Montajes',
-    title: 'Montajes mineros e industriales',
-    description: 'Montaje electromecánico y estructural en faena, con foco en seguridad. Pipelines, termofusión HDPE y pantallas eólicas.',
+    eyebrow: 'Montajes mineros e industriales',
+    title: 'Obras de gran complejidad con altos estándares de seguridad',
+    description:
+      'En el área de montajes — tanto industriales como mineros — hemos ejecutado múltiples servicios, hecho que nos ha otorgado la experiencia para poder llevar a cabo obras de gran complejidad y envergadura, desarrolladas con altos estándares de seguridad, control de calidad y mejora continua.',
+    image: servMontajesImg,
+    imageAlt: 'Montaje electromecánico y estructural en faena minera, IP Proyectos Industriales',
     link: '/servicios/montajes',
+    features: [
+      { icon: 'wrench' as const, text: 'Termofusión e instalación en HDPE' },
+      { icon: 'check' as const, text: 'Montaje de piping industrial' },
+      { icon: 'check' as const, text: 'Montaje electromecánico' },
+    ],
+    reversed: false,
+    variant: 'alt' as const,
   },
   {
-    number: '04',
-    category: 'Infraestructura portuaria',
-    title: 'Infraestructura para puertos y terminales',
-    description: 'Obras marítimas que integran ingeniería, construcción y montaje: muelles, defensas marítimas e impermeabilización de piscinas y tranques.',
+    eyebrow: 'Infraestructura portuaria',
+    title: 'Mantención y reparación de obras marítimas terrestres',
+    description:
+      'Nuestro enfoque en materia de infraestructura portuaria se ha dirigido a la mantención y reparación de obras marítimas terrestres. Al respecto, nuestro principal cliente ha sido CAP Minería y los puertos industriales de sus tres valles productivos.',
+    image: portuariaImg,
+    imageAlt: 'Infraestructura portuaria: construcción de muelles y obras marítimas, IP Proyectos Industriales',
     link: '/servicios/infraestructura-portuaria',
+    features: [
+      { icon: 'anchor' as const, text: 'Montaje de manga telescópica' },
+      { icon: 'check' as const, text: 'Construcción de muelle' },
+      { icon: 'building' as const, text: 'Construcción y montaje de cortinas eólicas' },
+    ],
+    reversed: true,
+    variant: 'dark' as const,
   },
 ];
 ---
@@ -90,26 +132,45 @@ const services = [
     animated={true}
   />
 
-  <!-- Lista de servicios -->
-  <section class="services-list">
-    <Container>
-      <div class="services-list__items">
-        {services.map((service) => (
-          <article class="service-item">
-            <div class="service-item__number">{service.number} — {service.category}</div>
-            <div class="service-item__content">
-              <h2 class="service-item__title">{service.title}</h2>
-              <p class="service-item__description">{service.description}</p>
-              <a href={service.link} class="service-item__link">
-                Conocer más
-                <Icon name="arrow-right" size={18} />
-              </a>
-            </div>
-          </article>
-        ))}
-      </div>
-    </Container>
-  </section>
+  <!-- Secciones de servicio -->
+  {services.map((service, index) => (
+    <section class:list={['service-block', `service-block--${service.variant}`, service.reversed && 'service-block--reversed']}>
+      <Container>
+        <div class="service-block__grid">
+          <div class="service-block__image-col reveal reveal--image">
+            <img
+              src={service.image.src}
+              alt={service.imageAlt}
+              class="service-block__image"
+              width={service.image.width}
+              height={service.image.height}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="service-block__content">
+            <Eyebrow text={service.eyebrow} class="reveal reveal--stagger" style={`--stagger-delay: ${index * 50 + 100}ms`} />
+            <h2 class="service-block__title reveal reveal--stagger" style={`--stagger-delay: ${index * 50 + 180}ms`}>{service.title}</h2>
+            <p class="service-block__description reveal reveal--stagger" style={`--stagger-delay: ${index * 50 + 260}ms`}>{service.description}</p>
+            <ul class="service-block__features">
+              {service.features.map((feature, fIndex) => (
+                <li class="service-block__feature reveal reveal--stagger" style={`--stagger-delay: ${index * 50 + 340 + fIndex * 80}ms`}>
+                  <span class="service-block__feature-icon">
+                    <Icon name={feature.icon} size={18} />
+                  </span>
+                  <span>{feature.text}</span>
+                </li>
+              ))}
+            </ul>
+            <a href={service.link} class="service-block__link reveal reveal--stagger" style={`--stagger-delay: ${index * 50 + 340 + service.features.length * 80 + 60}ms`}>
+              Conocer más
+              <Icon name="arrow-right" size={18} />
+            </a>
+          </div>
+        </div>
+      </Container>
+    </section>
+  ))}
 
   <!-- CTA -->
   <CTABand
@@ -129,84 +190,181 @@ const services = [
 </BaseLayout>
 
 <style>
-  /* Services List */
-  .services-list {
+  /* ── Service Block ── */
+  .service-block {
+    padding-block: clamp(56px, 8vw, 100px);
+    overflow: hidden;
+  }
+
+  .service-block--alt {
+    background-color: var(--theme-bg-alt);
+  }
+
+  .service-block--dark {
     background-color: var(--theme-bg);
-    padding-block: clamp(40px, 6vw, 80px);
   }
 
-  .services-list__items {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .service-item {
+  /* Grid: single column mobile → two columns desktop */
+  .service-block__grid {
     display: grid;
-    gap: 20px;
-    padding-block: clamp(30px, 4vw, 50px);
-    border-bottom: 1px solid var(--theme-border);
+    gap: clamp(28px, 4vw, 56px);
+    align-items: center;
   }
 
-  .service-item:last-child {
-    border-bottom: none;
-  }
+  @media (min-width: 860px) {
+    .service-block__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 5vw, 80px);
+    }
 
-  @media (min-width: 768px) {
-    .service-item {
-      grid-template-columns: 200px 1fr;
-      gap: 40px;
-      align-items: start;
+    /* Reverse: swap image ↔ content columns via direction */
+    .service-block--reversed .service-block__grid {
+      direction: rtl;
+    }
+
+    .service-block--reversed .service-block__grid > * {
+      direction: ltr;
     }
   }
 
-  .service-item__number {
+  /* ── Image ── */
+  .service-block__image {
+    width: 100%;
+    height: clamp(260px, 36vw, 440px);
+    object-fit: cover;
+    border-radius: var(--radius-lg, 1.25rem);
+  }
+
+  @media (min-width: 860px) {
+    .service-block__image {
+      height: clamp(320px, 42vh, 500px);
+    }
+  }
+
+  /* ── Content ── */
+  .service-block__content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .service-block__title {
     font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-weight: 800;
+    font-size: var(--text-h2);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--theme-heading);
+    margin: 0 0 20px;
+    text-wrap: balance;
+  }
+
+  .service-block__description {
+    color: var(--theme-text-muted);
+    font-size: var(--text-body);
+    line-height: 1.65;
+    margin: 0 0 28px;
+    max-width: 52ch;
+  }
+
+  /* ── Features list ── */
+  .service-block__features {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 0 0 32px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .service-block__feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: var(--text-small);
+    line-height: 1.5;
+    color: var(--theme-text);
+  }
+
+  .service-block__feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm, 0.5rem);
+    background-color: var(--theme-bg-elevated);
     color: var(--theme-eyebrow);
   }
 
-  .service-item__content {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .service-item__title {
-    font-family: var(--font-heading);
-    font-weight: 800;
-    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
-    letter-spacing: -0.02em;
-    color: var(--theme-text);
-    margin: 0;
-    line-height: 1.2;
-  }
-
-  .service-item__description {
-    color: var(--theme-text-muted);
-    font-size: 1rem;
-    line-height: 1.6;
-    margin: 0;
-    max-width: 60ch;
-  }
-
-  .service-item__link {
+  /* ── Link ── */
+  .service-block__link {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: var(--text-small);
     color: var(--theme-eyebrow);
     text-decoration: none;
-    margin-top: 8px;
-    transition: gap 0.2s ease;
+    transition: gap var(--motion-base, 200ms) var(--ease-out);
   }
 
-  .service-item__link:hover {
-    gap: 12px;
+  .service-block__link:hover {
+    gap: 14px;
+  }
+
+  .service-block__link:focus-visible {
+    outline: 2px solid var(--theme-eyebrow);
+    outline-offset: 4px;
+    border-radius: var(--radius-xs);
+  }
+
+  /* ── Animaciones reveal ── */
+  .reveal--image {
+    opacity: 0;
+    transform: translateX(-30px) scale(0.96);
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+
+  .service-block--reversed .reveal--image {
+    transform: translateX(30px) scale(0.96);
+  }
+
+  .reveal--image.is-visible {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+
+  /* Stagger delays para contenido */
+  .reveal--stagger {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+    transition-delay: var(--stagger-delay, 0ms);
+  }
+
+  .reveal--stagger.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Hover sutil en imagen */
+  .service-block__image {
+    transition: transform 0.5s var(--ease-out);
+  }
+
+  .service-block__image-col:hover .service-block__image {
+    transform: scale(1.02);
+  }
+
+  /* Hover en feature icons */
+  .service-block__feature-icon {
+    transition: background-color 0.25s var(--ease-out), color 0.25s var(--ease-out);
+  }
+
+  .service-block__feature:hover .service-block__feature-icon {
+    background-color: var(--theme-eyebrow);
+    color: var(--theme-bg);
   }
 </style>
