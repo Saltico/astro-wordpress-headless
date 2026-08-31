@@ -86,6 +86,7 @@ export const navigationData: NavItem[] = [
       },
     ],
   },
+  { label: 'Nosotros', url: '/nosotros' },
   { label: 'Seguridad', url: '/seguridad' },
 ];
 

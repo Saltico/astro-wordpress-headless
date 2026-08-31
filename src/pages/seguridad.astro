@@ -8,7 +8,6 @@ import SplitSection from '@/components/ui/SplitSection.astro';
 import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import Icon from '@/components/ui/Icon.astro';
 import StatsCounter from '@/components/ui/StatsCounter.astro';
-import Button from '@/components/ui/Button.astro';
 import type { StatItem } from '@/components/ui/StatsCounter.astro';
 import montajesImg from '@/assets/imgs/montajes.jpg';
 import edificioImg from '@/assets/imgs/edificio.jpg';
@@ -62,11 +61,11 @@ const breadcrumbs = [
   <!-- Hero con breadcrumbs integrados -->
   <section class="safety-hero">
     <img
-      src={montajesImg.src}
+      src={edificioImg.src}
       alt="Operación minera con estándares de seguridad y EPP, sistema HSEC de IP Proyectos Industriales"
       class="safety-hero__bg"
-      width={montajesImg.width}
-      height={montajesImg.height}
+      width={edificioImg.width}
+      height={edificioImg.height}
       loading="eager"
       fetchpriority="high"
     />
@@ -117,97 +116,16 @@ const breadcrumbs = [
     eyebrow="Cultura de seguridad"
     title="Formación continua y liderazgo visible"
     description="Nuestro equipo participa en capacitaciones semanales, charlas de 5 minutos y simulacros periódicos. El liderazgo visible en terreno es un pilar fundamental de nuestra cultura HSEC."
-    image={edificioImg.src}
+    image={montajesImg.src}
     imageAlt="Equipo de IP Proyectos Industriales en formación de seguridad HSEC"
-    imageWidth={edificioImg.width}
-    imageHeight={edificioImg.height}
+    imageWidth={montajesImg.width}
+    imageHeight={montajesImg.height}
     variant="default"
     background="dark"
   />
 
   <!-- Formulario de contacto -->
-  <section class="safety-form-section">
-    <!-- Background image -->
-    <img
-      src={edificioImg.src}
-      alt="Sistema de gestión HSEC de IP Proyectos Industriales"
-      class="safety-form-section__bg"
-      width={edificioImg.width}
-      height={edificioImg.height}
-      loading="lazy"
-      decoding="async"
-    />
-    <div class="safety-form-section__overlay"></div>
-    
-    <Container>
-      <div class="safety-form-wrapper">
-        <!-- Texto informativo -->
-        <div class="safety-form-info">
-          <p class="safety-form-info__eyebrow">¿Quieres saber más?</p>
-          <h2 class="safety-form-info__title">Conoce nuestro sistema de gestión</h2>
-          <p class="safety-form-info__subtitle">
-            Contamos con un Departamento de Prevención de Riesgos y Medio Ambiente propio, y un Sistema de Gestión HSEC que respalda cada faena. Nuestro compromiso es con la seguridad de las personas y el cuidado del medio ambiente.
-          </p>
-          <div class="safety-form-info__features">
-            <div class="safety-info-feature">
-              <Icon name="shield" size={24} />
-              <span>Seguridad certificada</span>
-            </div>
-            <div class="safety-info-feature">
-              <Icon name="check" size={24} />
-              <span>Gestión responsable</span>
-            </div>
-            <div class="safety-info-feature">
-              <Icon name="certificate" size={24} />
-              <span>Cumplimiento normativo</span>
-            </div>
-          </div>
-        </div>
 
-        <!-- Formulario en card con animación -->
-        <div class="safety-form-card" data-animate-slide>
-          <form class="safety-contact-form" action="/api/contact" method="POST" id="safetyContactForm" novalidate>
-            <div class="safety-form-field">
-              <label for="safety-name">Nombre *</label>
-              <input type="text" id="safety-name" name="name" placeholder="Tu nombre completo" required>
-            </div>
-
-            <div class="safety-form-row">
-              <div class="safety-form-field">
-                <label for="safety-email">E-mail *</label>
-                <input type="email" id="safety-email" name="email" placeholder="tu@correo.cl" required>
-              </div>
-
-              <div class="safety-form-field">
-                <label for="safety-phone">Teléfono *</label>
-                <input type="tel" id="safety-phone" name="phone" placeholder="+56 9 ..." required>
-              </div>
-            </div>
-
-            <div class="safety-form-field">
-              <label for="safety-reason">Motivo *</label>
-              <input type="text" id="safety-reason" name="reason" placeholder="Ej: Consulta sobre política HSEC, denuncia, certificación..." required>
-            </div>
-
-            <div class="safety-form-field">
-              <label for="safety-message">Consulta *</label>
-              <textarea id="safety-message" name="message" rows="4" placeholder="Cuéntanos en qué podemos ayudarte..." required></textarea>
-            </div>
-
-            <!-- Feedback message -->
-            <div class="safety-form-feedback" id="safetyFormFeedback" role="alert" aria-live="polite" hidden></div>
-
-            <div class="safety-form-actions">
-              <Button type="submit" variant="primary" size="lg" id="safetySubmitBtn">
-                <span id="safetySubmitText">Enviar mensaje</span>
-                <span id="safetySubmitLoading" hidden>Enviando...</span>
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </Container>
-  </section>
 </BaseLayout>
 
 <style>
@@ -279,14 +197,14 @@ const breadcrumbs = [
     line-height: 1.05;
     letter-spacing: -0.02em;
     font-size: clamp(2rem, 5vw, 3.5rem);
-    max-width: 18ch;
+    /* max-width: 18ch; */
     margin: 0 0 16px;
   }
 
   .safety-hero__subtitle {
     color: rgba(255, 255, 255, 0.85);
     font-size: clamp(1rem, 1.5vw, 1.2rem);
-    max-width: 60ch;
+    /* max-width: 60ch; */
     margin: 0;
     line-height: 1.5;
   }

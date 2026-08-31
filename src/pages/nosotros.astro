@@ -1,0 +1,1037 @@
+---
+// src/pages/nosotros.astro
+// Página "Nosotros" — Historia, valores y contacto de IP Proyectos Industriales.
+// THESIS: Industrial credibility through 25+ years of proven track record in critical mining infrastructure.
+// STORY: Visitor trusts the company's experience and contacts them or goes to the cotizador.
+// FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md.
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
+import StatsCounter from '@/components/ui/StatsCounter.astro';
+import LogoCarousel from '@/components/ui/LogoCarousel.astro';
+import CTABand from '@/components/ui/CTABand.astro';
+import Icon from '@/components/ui/Icon.astro';
+import Button from '@/components/ui/Button.astro';
+import { aboutPageSchema } from '@/lib/seo';
+import type { StatItem } from '@/components/ui/StatsCounter.astro';
+
+import nosotrosImg from '@/assets/imgs/hero/nosotros/nosotros.avif';
+import historiaImg from '@/assets/imgs/nosotros/nuestra-historia.avif';
+import compromisoImg from '@/assets/imgs/nosotros/nuestro-compromiso.avif';
+import contactoImg from '@/assets/imgs/nosotros/nosotros-contacto.avif';
+
+const title = 'Nosotros | IP Proyectos Industriales — 25+ Años en Minería e Industria';
+const description = 'Conoce IP Proyectos Industriales. 25+ años de experiencia en arriendo de maquinaria pesada, ingeniería, construcción y montajes para la gran minería en el norte de Chile.';
+
+const jsonLd = aboutPageSchema();
+
+const breadcrumbs = [
+  { label: 'Empresa', url: '/' },
+  { label: 'Nosotros', url: '/nosotros' },
+];
+
+// Stats
+const stats: StatItem[] = [
+  { value: 25, label: 'Años de experiencia', prefix: '+', prefixPosition: 'before' },
+  { value: 100, label: 'Equipos propios', prefix: '+', prefixPosition: 'before' },
+  { value: 400, label: 'Capacidad máxima', suffix: 'Tons', suffixPosition: 'after' },
+  { value: 24, label: 'Disponibilidad', suffix: '/7', suffixPosition: 'after' },
+];
+
+// Valores / Compromisos
+const compromisos = [
+  {
+    icon: 'shield',
+    title: 'Seguridad',
+    description: 'Salvaguardamos la vida e integridad de nuestros trabajadores.',
+    subtext: 'Fomentamos la actitud preventiva, el liderazgo positivo y el autocuidado en cada faena. Nuestros protocolos de seguridad industrial cumplen con los estándares más exigentes de la minería chilena.',
+  },
+  {
+    icon: 'certificate',
+    title: 'Medio Ambiente',
+    description: 'Gestión ambiental responsable en cada proyecto.',
+    subtext: 'Mantenemos y aplicamos planes medioambientales en todos nuestros puntos de trabajo, logrando una correcta segregación de residuos, control de emisiones y el cuidado del entorno natural.',
+  },
+  {
+    icon: 'check',
+    title: 'Capacitación Continua',
+    description: 'Invertimos en la formación integral de nuestro equipo.',
+    subtext: 'Programas de capacitación en seguridad, salud ocupacional y medio ambiente. Charlas de 5 minutos, simulacros periódicos y certificaciones que mantienen a nuestro personal preparado.',
+  },
+  {
+    icon: 'warning',
+    title: 'Reconocimiento del Sector',
+    description: 'Certificados por la Mutual y la Cámara Chilena de la Construcción.',
+    subtext: 'Reconocimientos en implementación de sistemas de Gestión de Seguridad y Salud Ocupacional, y por los resultados positivos destacables en Gestión de Prevención de Riesgos.',
+  },
+];
+
+// Client logos
+const clientLogos = [
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/barrick.jpg', alt: 'Barrick' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/cmpchile_logo.jpeg', alt: 'CMP' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/aura.png', alt: 'Aura Minerals' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/minerals.png', alt: 'Minerals' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/aguasvalle.jpg', alt: 'Aguas del Valle' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/cummnins.jpg', alt: 'Cummins' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/famesa.jpg', alt: 'Famesa' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/23.jpg', alt: 'Cliente' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/22.jpg', alt: 'Cliente' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/21.jpg', alt: 'Cliente' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/20.jpg', alt: 'Cliente' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/19.jpg', alt: 'Cliente' },
+];
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={jsonLd}
+  breadcrumbs={breadcrumbs}
+  pageType="about"
+  pageCategory="nosotros"
+  siteSection="company"
+>
+  <!-- §1: HERO -->
+  <PageHero
+    image={nosotrosImg.src}
+    imageAlt="IP Proyectos Industriales, 25 años de experiencia en servicios mineros e industriales en Chile"
+    imageWidth={nosotrosImg.width}
+    imageHeight={nosotrosImg.height}
+    eyebrow="Nuestra empresa"
+    title="25+ años construyendo infraestructura crítica para la minería"
+    subtitle="Desde el año 2000, somos el socio estratégico de la gran minería en el norte de Chile. Combinamos arriendo de equipos, ingeniería, construcción y montajes industriales con un compromiso inquebrantable por la seguridad."
+    minHeight="sm"
+  >
+    <Breadcrumbs slot="breadcrumbs" items={breadcrumbs} variant="hero" />
+  </PageHero>
+
+  <!-- §2: STATS -->
+<!--   <StatsCounter
+    stats={stats}
+    variant="dark"
+    layout="horizontal"
+    columns={4}
+    animated={true}
+    showDividers={true}
+  /> -->
+  <!-- §4: COMPROMISO -->
+  <section class="about-commitment">
+    <Container>
+      <div class="about-commitment__grid">
+        <!-- Imagen -->
+        <div class="about-commitment__visual reveal">
+          <img
+            src={compromisoImg.src}
+            alt="Sistema de gestión HSEC de IP Proyectos Industriales, seguridad y medio ambiente en faena minera"
+            class="about-commitment__image"
+            width={compromisoImg.width}
+            height={compromisoImg.height}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+
+        <!-- Contenido: header + listado -->
+        <div class="about-commitment__content reveal">
+          <div class="about-commitment__header">
+            <p class="about-commitment__eyebrow">Nuestro compromiso</p>
+            <h2 class="about-commitment__title">Seguridad, personas y medio ambiente</h2>
+            <p class="about-commitment__subtitle">Cada proyecto se ejecuta bajo un marco riguroso que prioriza la seguridad de las personas, la salud de nuestros colaboradores y el cuidado del medio ambiente.</p>
+          </div>
+
+          <ul class="commitment-list">
+            {compromisos.map((item) => (
+              <li class="commitment-item">
+                <div class="commitment-item__icon">
+                  <Icon name={item.icon as any} size={24} />
+                </div>
+                <div class="commitment-item__body">
+                  <h3 class="commitment-item__title">{item.title}</h3>
+                  <p class="commitment-item__desc">{item.description}</p>
+                  <p class="commitment-item__subtext">{item.subtext}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- §3: HISTORIA -->
+  <section class="about-history">
+    <Container>
+      <div class="about-history__grid">
+        <div class="about-history__content reveal-left">
+          <div class="about-history__heading">
+            <p class="about-history__eyebrow">Nuestra historia</p>
+            <h2 class="about-history__title">Una trayectoria construida sobre bases sólidas</h2>
+          </div>
+          <div class="about-history__body">
+            <p>
+              IP Proyectos Industriales surge en el año 2000 como una empresa orientada a brindar servicios de montaje industrial y obras civiles en el área de la minería y la construcción. Desde su origen, nuestro principal respaldo es el equipo humano: profesionales y técnicos de diversas áreas que día a día se movilizan para entregar soluciones oportunas a los requerimientos de nuestros clientes.
+            </p>
+            <p>
+              Nuestros más de 25 años de experiencia nos avalan y definen como una alternativa confiable para solucionar y apoyar proyectos de inversión de la gran minería en Chile. Hoy, además del montaje industrial, ofrecemos arriendo de maquinaria pesada, ingeniería, construcción y mantención de infraestructura portuaria.
+            </p>
+          </div>
+        </div>
+        
+        <div class="about-history__visual reveal-scale">
+          <img
+            src={historiaImg.src}
+            alt="Trayectoria de IP Proyectos Industriales, 25 años de experiencia en minería e industria en Chile"
+            class="about-history__image"
+            width={historiaImg.width}
+            height={historiaImg.height}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+    </Container>
+  </section>
+
+
+  <!-- §5: CLIENT LOGOS -->
+<!--   <LogoCarousel
+    logos={clientLogos}
+    eyebrow="Confían en nosotros"
+    title="Empresas que confían en nuestra experiencia"
+    speed="normal"
+    backgroundVariant="dark"
+    pauseOnHover={true}
+  /> -->
+
+  <!-- §6: FORMULARIO DE CONTACTO -->
+  <section class="about-form-section">
+    <img
+      src={contactoImg.src}
+      alt="Equipo de IP Proyectos Industriales en faena minera"
+      class="about-form-section__bg"
+      width={contactoImg.width}
+      height={contactoImg.height}
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="about-form-section__overlay"></div>
+
+    <Container>
+      <div class="about-form-wrapper">
+        <!-- Info -->
+        <div class="about-form-info">
+          <p class="about-form-info__eyebrow">¿Quieres saber más?</p>
+          <h2 class="about-form-info__title">Conversemos sobre tu proyecto</h2>
+          <p class="about-form-info__subtitle">
+            Somos el socio estratégico que tu proyecto necesita. Cuéntanos tus necesidades y te entregaremos una solución a medida con los más altos estándares de seguridad y calidad.
+          </p>
+          <div class="about-form-info__features">
+            <div class="about-info-feature">
+              <Icon name="shield" size={24} />
+              <span>Seguridad certificada</span>
+            </div>
+            <div class="about-info-feature">
+              <Icon name="check" size={24} />
+              <span>Respuesta oportuna</span>
+            </div>
+            <div class="about-info-feature">
+              <Icon name="certificate" size={24} />
+              <span>Experiencia comprobada</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form card -->
+        <div class="about-form-card" data-animate-slide>
+          <form class="about-contact-form" action="/api/contact" method="POST" id="nosotrosContactForm" novalidate>
+            <div class="about-form-field">
+              <label for="nosotros-name">Nombre *</label>
+              <input type="text" id="nosotros-name" name="name" placeholder="Tu nombre completo" required>
+            </div>
+
+            <div class="about-form-row">
+              <div class="about-form-field">
+                <label for="nosotros-email">E-mail *</label>
+                <input type="email" id="nosotros-email" name="email" placeholder="tu@correo.cl" required>
+              </div>
+              <div class="about-form-field">
+                <label for="nosotros-phone">Teléfono *</label>
+                <input type="tel" id="nosotros-phone" name="phone" placeholder="+56 9 ..." required>
+              </div>
+            </div>
+
+            <div class="about-form-field">
+              <label for="nosotros-company">Empresa</label>
+              <input type="text" id="nosotros-company" name="company" placeholder="Nombre de tu empresa">
+            </div>
+
+            <div class="about-form-field">
+              <label for="nosotros-reason">Motivo *</label>
+              <input type="text" id="nosotros-reason" name="reason" placeholder="Ej: Arriendo de equipos, consulta sobre servicios, proyecto específico..." required>
+            </div>
+
+            <div class="about-form-field">
+              <label for="nosotros-message">Consulta *</label>
+              <textarea id="nosotros-message" name="message" rows="4" placeholder="Cuéntanos en qué podemos ayudarte..." required></textarea>
+            </div>
+
+            <div class="about-form-feedback" id="nosotrosFormFeedback" role="alert" aria-live="polite" hidden></div>
+
+            <div class="about-form-actions">
+              <Button type="submit" variant="primary" size="lg" id="nosotrosSubmitBtn">
+                <span id="nosotrosSubmitText">Enviar mensaje</span>
+                <span id="nosotrosSubmitLoading" hidden>Enviando...</span>
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <!-- §7: CTA BAND -->
+<!--   <CTABand
+    eyebrow="¿Listo para comenzar?"
+    title="Tu próximo proyecto empieza con una conversación"
+    backgroundImage={construccionImg.src}
+    backgroundAlt="Proyecto de construcción industrial de IP Proyectos Industriales"
+    backgroundWidth={construccionImg.width}
+    backgroundHeight={construccionImg.height}
+    buttons={[
+      { label: 'Ir al cotizador', href: '/cotizador', variant: 'primary', icon: 'arrow-right', ariaLabel: 'Ir al cotizador en línea', ctaLabel: 'Ir al cotizador', ctaDestination: 'cotizador' },
+      { label: 'Hablar por WhatsApp', href: 'https://wa.me/56956594144?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20solicitar%20una%20cotización.', variant: 'outline', external: true, icon: 'whatsapp', waLocation: 'cta_band', ctaLabel: 'Hablar por WhatsApp', ctaDestination: 'whatsapp' },
+    ]}
+    contentAlign="center"
+    minHeight="md"
+  /> -->
+</BaseLayout>
+
+<style>
+  /* ===== §3: HISTORIA ===== */
+  .about-history {
+    background-color: var(--theme-bg);
+    padding-block: clamp(56px, 8vw, 100px);
+  }
+
+  .about-history__grid {
+    display: grid;
+    gap: clamp(32px, 5vw, 64px);
+    align-items: center;
+  }
+
+  @media (min-width: 860px) {
+    .about-history__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(48px, 6vw, 80px);
+    }
+  }
+
+  /* Imagen */
+  .about-history__visual {
+    position: relative;
+    order: 2;
+  }
+
+  @media (min-width: 860px) {
+    .about-history__visual {
+      order: 2;
+    }
+  }
+
+  .about-history__image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+  }
+
+  @media (min-width: 860px) {
+    .about-history__image {
+      aspect-ratio: 3 / 4;
+    }
+  }
+
+  /* Contenido */
+  .about-history__content {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(24px, 3vw, 32px);
+    order: 1;
+  }
+
+  @media (min-width: 860px) {
+    .about-history__content {
+      order: 1;
+    }
+  }
+
+  .about-history__heading {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .about-history__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--theme-eyebrow);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .about-history__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .about-history__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--theme-heading);
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .about-history__body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .about-history__body p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--theme-text-muted);
+    margin: 0;
+    max-width: 60ch;
+  }
+
+  /* Animaciones */
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .reveal-left.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .reveal-scale {
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: 0.15s;
+  }
+
+  .reveal-scale.is-visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal-left,
+    .reveal-scale {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  /* Reveal animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* ===== §4: COMPROMISO ===== */
+  .about-commitment {
+    background-color: var(--theme-bg-elevated);
+    padding-block: clamp(60px, 8vw, 100px);
+  }
+
+  .about-commitment__grid {
+    display: grid;
+    gap: clamp(30px, 5vw, 60px);
+    align-items: start;
+  }
+
+  @media (min-width: 860px) {
+    .about-commitment__grid {
+      grid-template-columns: 0.85fr 1fr;
+      gap: clamp(40px, 5vw, 80px);
+    }
+  }
+
+  /* Imagen */
+  .about-commitment__visual {
+    position: relative;
+  }
+
+  .about-commitment__image {
+    width: 100%;
+    height: clamp(280px, 40vh, 480px);
+    object-fit: cover;
+    border-radius: var(--radius-lg, 16px);
+  }
+
+  @media (min-width: 860px) {
+    .about-commitment__visual {
+      position: sticky;
+      top: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 24px);
+    }
+
+    .about-commitment__image {
+      height: auto;
+      aspect-ratio: 4 / 5;
+      max-height: 560px;
+    }
+  }
+
+  /* Contenido */
+  .about-commitment__content {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(28px, 4vw, 40px);
+  }
+
+  .about-commitment__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .about-commitment__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--theme-eyebrow);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .about-commitment__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .about-commitment__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    letter-spacing: -0.02em;
+    color: var(--theme-heading);
+    margin: 0 0 14px;
+    line-height: 1.12;
+    text-wrap: balance;
+  }
+
+  .about-commitment__subtitle {
+    color: var(--theme-text-muted);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 50ch;
+  }
+
+  /* Listado vertical */
+  .commitment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .commitment-item {
+    display: flex;
+    gap: 16px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--theme-border);
+    transition: background-color 0.2s ease;
+  }
+
+  .commitment-item:first-child {
+    padding-top: 0;
+  }
+
+  .commitment-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  @media (min-width: 640px) {
+    .commitment-item {
+      gap: 20px;
+      padding: 28px 0;
+    }
+  }
+
+  .commitment-item__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    background: var(--theme-bg-alt);
+    border-radius: 50%;
+    color: var(--theme-eyebrow);
+    margin-top: 2px;
+  }
+
+  @media (min-width: 640px) {
+    .commitment-item__icon {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  .commitment-item__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .commitment-item__title {
+    color: var(--theme-text);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 0 0 6px;
+    line-height: 1.3;
+  }
+
+  .commitment-item__desc {
+    color: var(--theme-heading);
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.5;
+    margin: 0 0 8px;
+  }
+
+  .commitment-item__subtext {
+    color: var(--theme-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  /* ===== §6: FORM SECTION ===== */
+  .about-form-section {
+    position: relative;
+    padding-block: clamp(80px, 10vw, 120px);
+    overflow: hidden;
+  }
+
+  .about-form-section__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .about-form-section__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      135deg,
+      rgba(13, 22, 17, 0.92) 0%,
+      rgba(13, 22, 17, 0.85) 50%,
+      rgba(13, 22, 17, 0.78) 100%
+    );
+  }
+
+  .about-form-wrapper {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .about-form-wrapper {
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+    }
+  }
+
+  /* Info panel */
+  .about-form-info {
+    color: var(--color-on-dark);
+  }
+
+  .about-form-info__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-brand-300, #62bb74);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .about-form-info__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .about-form-info__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    letter-spacing: -0.02em;
+    color: var(--color-on-dark);
+    margin: 0 0 20px;
+    line-height: 1.15;
+  }
+
+  .about-form-info__subtitle {
+    margin: 0 0 32px;
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.6;
+  }
+
+  .about-form-info__features {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .about-info-feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-on-dark);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .about-info-feature :global(svg) {
+    color: var(--color-brand-300, #62bb74);
+    flex-shrink: 0;
+  }
+
+  /* Form card */
+  .about-form-card {
+    background: var(--color-graphite, #0d1611);
+    border: 1px solid var(--theme-border);
+    border-radius: 18px;
+    padding: clamp(28px, 4vw, 44px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .about-form-card.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .about-form-card {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Contact form */
+  .about-contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .about-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .about-form-field label {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-on-dark);
+  }
+
+  .about-form-field input,
+  .about-form-field textarea,
+  .about-form-field select {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: var(--color-on-dark);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .about-form-field input::placeholder,
+  .about-form-field textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .about-form-field input:focus,
+  .about-form-field textarea:focus,
+  .about-form-field select:focus {
+    outline: none;
+    border-color: var(--color-brand, #308f40);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .about-form-field textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .about-form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media (min-width: 640px) {
+    .about-form-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .about-form-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  /* Feedback */
+  .about-form-feedback {
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.5;
+    display: none;
+  }
+
+  .about-form-feedback[hidden] {
+    display: none;
+  }
+
+  .about-form-feedback:not([hidden]) {
+    display: block;
+  }
+
+  .about-form-feedback--success {
+    background: rgba(26, 156, 74, 0.15);
+    border: 1px solid rgba(26, 156, 74, 0.4);
+    color: #62bb74;
+  }
+
+  .about-form-feedback--error {
+    background: rgba(220, 38, 38, 0.12);
+    border: 1px solid rgba(220, 38, 38, 0.35);
+    color: #f87171;
+  }
+
+  .about-form-actions button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ─────────────────────────────────────────────────────────────
+    // Reveal animations (history section)
+    // ─────────────────────────────────────────────────────────────
+    const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-scale');
+    if (revealElements.length > 0 && !prefersReducedMotion) {
+      const revealObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.2, rootMargin: '0px 0px -80px 0px' }
+      );
+      revealElements.forEach((el) => revealObserver.observe(el));
+    } else {
+      revealElements.forEach((el) => el.classList.add('is-visible'));
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Form card slide-in animation
+    // ─────────────────────────────────────────────────────────────
+    const formCard = document.querySelector('[data-animate-slide]');
+    if (formCard) {
+      if (prefersReducedMotion) {
+        formCard.classList.add('is-visible');
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                setTimeout(() => formCard.classList.add('is-visible'), 200);
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.2, rootMargin: '0px 0px -100px 0px' }
+        );
+        observer.observe(formCard);
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // AJAX form submission
+    // ─────────────────────────────────────────────────────────────
+    const form = document.getElementById('nosotrosContactForm') as HTMLFormElement | null;
+    if (!form) return;
+
+    const feedback = document.getElementById('nosotrosFormFeedback') as HTMLDivElement | null;
+    const submitBtn = document.getElementById('nosotrosSubmitBtn') as HTMLButtonElement | null;
+    const submitText = document.getElementById('nosotrosSubmitText') as HTMLSpanElement | null;
+    const submitLoading = document.getElementById('nosotrosSubmitLoading') as HTMLSpanElement | null;
+
+    function showFeedback(message: string, variant: 'success' | 'error'): void {
+      if (!feedback) return;
+      feedback.textContent = message;
+      feedback.className = `about-form-feedback about-form-feedback--${variant}`;
+      feedback.removeAttribute('hidden');
+    }
+
+    function hideFeedback(): void {
+      if (!feedback) return;
+      feedback.setAttribute('hidden', '');
+      feedback.className = 'about-form-feedback';
+    }
+
+    function setLoading(loading: boolean): void {
+      if (!submitBtn || !submitText || !submitLoading) return;
+      submitBtn.disabled = loading;
+      submitText.hidden = loading;
+      submitLoading.hidden = !loading;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideFeedback();
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      // Tracking: form submission attempt
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'contact_form_submit',
+        form_id: 'nosotros_contact',
+        page_url: location.pathname,
+      });
+
+      setLoading(true);
+
+      try {
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'contact_form_success',
+            form_id: 'nosotros_contact',
+          });
+          showFeedback(result.message || 'Mensaje enviado correctamente. Te contactaremos pronto.', 'success');
+          form.reset();
+        } else {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: 'contact_form_error',
+            form_id: 'nosotros_contact',
+            error_type: 'api_error',
+          });
+          const errorMsg = result.errors
+            ? Object.values(result.errors).join(' ')
+            : result.message || 'Error al enviar el mensaje. Por favor intenta nuevamente.';
+          showFeedback(errorMsg, 'error');
+        }
+      } catch {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'contact_form_error',
+          form_id: 'nosotros_contact',
+          error_type: 'network_error',
+        });
+        showFeedback('Error de conexión. Por favor verifica tu internet e intenta nuevamente.', 'error');
+      } finally {
+        setLoading(false);
+      }
+    });
+  });
+</script>
