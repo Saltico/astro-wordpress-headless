@@ -18,6 +18,7 @@ import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import JsonLd from '@/components/seo/JsonLd.astro';
 import QuoteCartBadge from '@/components/quote/QuoteCartBadge.astro';
 import QuoteCartFloatingButton from '@/components/quote/QuoteCartFloatingButton.astro';
+import CookieBanner from '@/components/ui/CookieBanner.astro';
 import ThemeToggle from '@/components/ui/ThemeToggle.astro';
 import { organizationSchema, websiteSchema, getSiteUrl } from '@/lib/seo';
 import { siteBrand, siteContact, topbarData, navigationData, footerData } from '@/data/site';
@@ -330,6 +331,8 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
     }
 
     <QuoteCartFloatingButton />
+
+    <CookieBanner />
 
     <script>
       // Inicializar analytics: escucha eventos del DOM y los envía al dataLayer de GTM

@@ -5,6 +5,7 @@
 export const prerender = true;
 
 import RentalLayout from '@/layouts/RentalLayout.astro';
+import SubcategoryHero from '@/components/rental/SubcategoryHero.astro';
 import EquipmentCatalog from '@/components/rental/EquipmentCatalog.astro';
 import RelatedEquipment from '@/components/rental/RelatedEquipment.astro';
 import FAQSection from '@/components/rental/FAQSection.astro';
@@ -71,7 +72,15 @@ const jsonLd = combineSchemas(
   breadcrumbSchema(breadcrumbs)
 );
 
-const catalogColumns = subcategory.catalog.length >= 4 ? 3 : 2;
+const catalogColumns = 3;
+
+// Selector de subcategorías (hermanas dentro de la misma categoría)
+const subcategoryOptions = category.subcategories.map((s) => ({
+  name: s.name,
+  slug: s.slug,
+  href: `/arriendo/${category.slug}/${s.slug}`,
+  catalogCount: s.catalog.length,
+}));
 
 // Equipos relacionados: sub-rutas hermanas + cross-category
 const siblingItems = category.subcategories
@@ -82,6 +91,7 @@ const siblingItems = category.subcategories
     shortDesc: s.shortDesc,
     href: `/arriendo/${category.slug}/${s.slug}`,
     badge: s.catalog[0]?.capacity,
+    image: s.heroImage,
   }));
 
 const crossCategoryItems = (subcategory.relatedCrossCategory ?? []).map((rel) => {
@@ -91,6 +101,7 @@ const crossCategoryItems = (subcategory.relatedCrossCategory ?? []).map((rel) =>
     shortDesc: relSubcategory?.shortDesc ?? '',
     href: `/arriendo/${rel.categorySlug}/${rel.subcategorySlug}`,
     badge: relSubcategory?.catalog[0]?.capacity,
+    image: relSubcategory?.heroImage,
   };
 });
 
@@ -242,20 +253,30 @@ const faqItems = FAQ_MAP[subcategory.slug] ?? defaultFaqItems;
   description={subcategory.seoDescription}
   heroImage={subcategory.heroImage}
   heroImageAlt={subcategory.name}
-  bodyImage={subcategory.bodyImage}
-  bodyImageAlt={subcategory.bodyImageAlt}
   features={subcategory.features}
   breadcrumbs={breadcrumbs}
   whatsappMessage={subcategory.whatsappMessage}
   jsonLd={jsonLd}
   >
+  <SubcategoryHero
+    slot="hero"
+    heroImage={subcategory.heroImage}
+    heroImageAlt={subcategory.name}
+    breadcrumbs={breadcrumbs}
+    category={category.name}
+    title={subcategory.name}
+    description={subcategory.seoDescription}
+    equipmentCount={subcategory.catalog.length}
+    subcategories={subcategoryOptions}
+    currentSubcategorySlug={subcategory.slug}
+  />
+
   <EquipmentCatalog
     slot="catalog"
     items={subcategory.catalog}
     columns={catalogColumns}
     background="dark"
     title={`Modelos disponibles de ${subcategory.name.toLowerCase()}`}
-    subtitle={`${subcategory.catalog.length} ${subcategory.catalog.length === 1 ? 'equipo' : 'equipos'} en arriendo con operador certificado y mantenimiento incluido.`}
   />
 
   <Fragment slot="related">

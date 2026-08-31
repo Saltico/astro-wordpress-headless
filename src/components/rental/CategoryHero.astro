@@ -1,0 +1,254 @@
+---
+// src/components/rental/CategoryHero.astro
+// Hero compacto para páginas de categoría de arriendo.
+// Contiene: imagen de fondo, breadcrumbs, texto SEO, y selector de categorías.
+
+import Container from '@/components/ui/Container.astro';
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
+
+export interface CategoryOption {
+  name: string;
+  slug: string;
+  href: string;
+  subcategoryCount: number;
+}
+
+export interface Props {
+  heroImage: string;
+  heroImageAlt: string;
+  breadcrumbs: Array<{ label: string; url: string }>;
+  title: string;
+  description: string;
+  categories: CategoryOption[];
+  currentCategorySlug: string;
+}
+
+const {
+  heroImage,
+  heroImageAlt,
+  breadcrumbs,
+  title,
+  description,
+  categories,
+  currentCategorySlug,
+} = Astro.props;
+---
+
+<section class="category-hero">
+  <img
+    src={heroImage}
+    alt={heroImageAlt}
+    class="category-hero__bg"
+    loading="eager"
+    fetchpriority="high"
+  />
+  <div class="category-hero__overlay"></div>
+  <div class="category-hero__content">
+    <Container>
+      <Breadcrumbs items={breadcrumbs} variant="hero" />
+
+      <p class="category-hero__eyebrow">Arriendo de equipos</p>
+      <h1 class="category-hero__title">{title}</h1>
+      <p class="category-hero__desc">{description}</p>
+
+      {categories.length > 1 && (
+        <nav class="category-hero__nav" aria-label="Navegación de categorías">
+          <div class="category-hero__nav-scroll">
+            {categories.map((cat) => {
+              const isCurrent = cat.slug === currentCategorySlug;
+              return (
+                <a
+                  href={cat.href}
+                  class:list={['category-hero__pill', isCurrent && 'category-hero__pill--active']}
+                  aria-current={isCurrent ? 'page' : undefined}
+                >
+                  <span class="category-hero__pill-name">{cat.name}</span>
+                  <span class="category-hero__pill-count">{cat.subcategoryCount}</span>
+                </a>
+              );
+            })}
+          </div>
+        </nav>
+      )}
+    </Container>
+  </div>
+</section>
+
+<style>
+  .category-hero {
+    position: relative;
+    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
+    min-height: calc(320px + var(--topbar-height, 40px) + var(--header-height, 80px));
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .category-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .category-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(13, 22, 17, 0.55) 0%,
+      rgba(13, 22, 17, 0.82) 50%,
+      rgba(13, 22, 17, 0.97) 100%
+    );
+  }
+
+  .category-hero__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-top: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 32px);
+    padding-bottom: clamp(28px, 4vw, 48px);
+  }
+
+  .category-hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-brand-300, #62bb74);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin: 16px 0 12px;
+  }
+
+  .category-hero__eyebrow::before {
+    content: '';
+    width: 32px;
+    height: 2px;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+
+  .category-hero__title {
+    color: var(--color-on-dark, #f3f7f4);
+    font-family: var(--font-heading);
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    max-width: 18ch;
+    margin: 0 0 12px;
+    text-wrap: balance;
+  }
+
+  .category-hero__desc {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+    max-width: 60ch;
+    margin: 0 0 20px;
+    line-height: 1.55;
+  }
+
+  /* Category selector */
+  .category-hero__nav {
+    margin-top: 4px;
+  }
+
+  .category-hero__nav-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+
+  .category-hero__nav-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-hero__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.75);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    scroll-snap-align: start;
+    transition: background-color 0.2s var(--ease-out),
+                border-color 0.2s var(--ease-out),
+                color 0.2s var(--ease-out),
+                transform 0.15s var(--ease-out);
+    flex-shrink: 0;
+  }
+
+  .category-hero__pill:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--color-on-dark, #f3f7f4);
+    transform: translateY(-1px);
+  }
+
+  .category-hero__pill--active {
+    background-color: var(--color-brand, #308f40);
+    border-color: var(--color-brand, #308f40);
+    color: var(--color-on-brand, #fff);
+  }
+
+  .category-hero__pill--active:hover {
+    background-color: var(--color-brand-600, #226f31);
+    border-color: var(--color-brand-600, #226f31);
+    transform: none;
+  }
+
+  .category-hero__pill-name {
+    line-height: 1;
+  }
+
+  .category-hero__pill-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .category-hero__pill--active .category-hero__pill-count {
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+
+  @media (max-width: 639px) {
+    .category-hero {
+      min-height: calc(260px + var(--topbar-height, 40px) + var(--header-height, 80px));
+    }
+
+    .category-hero__title {
+      font-size: clamp(1.5rem, 6vw, 2rem);
+    }
+
+    .category-hero__desc {
+      font-size: 0.9rem;
+    }
+  }
+</style>

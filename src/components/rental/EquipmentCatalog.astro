@@ -12,7 +12,6 @@ export interface Props {
   columns?: 2 | 3 | 4;
   background?: 'light' | 'dark';
   title?: string;
-  subtitle?: string;
 }
 
 const {
@@ -20,7 +19,6 @@ const {
   columns = 3,
   background = 'light',
   title,
-  subtitle,
 } = Astro.props;
 
 // Schema ItemList
@@ -34,14 +32,13 @@ const itemListJsonLd = itemListSchema({
 });
 ---
 
-<section class:list={['equipment-catalog', `equipment-catalog--${background}`]}>
+<section class:list={['equipment-catalog', `equipment-catalog--${background}`]} id="equipos-disponibles">
   <Container>
-    {(title || subtitle) && (
+<!--     {title && (
       <header class="equipment-catalog__header">
-        {title && <h2 class="equipment-catalog__title">{title}</h2>}
-        {subtitle && <p class="equipment-catalog__subtitle">{subtitle}</p>}
+        <h2 class="equipment-catalog__title">{title}</h2>
       </header>
-    )}
+    )} -->
     <div class:list={['equipment-catalog__grid', `equipment-catalog__grid--cols-${columns}`]}>
       {items.map((item) => <EquipmentCard item={item} />)}
     </div>
@@ -52,7 +49,7 @@ const itemListJsonLd = itemListSchema({
 
 <style>
   .equipment-catalog {
-    padding-block: clamp(48px, 6vw, 80px);
+    padding-block: clamp(32px, 4vw, 56px);
   }
 
   .equipment-catalog--light {
@@ -65,30 +62,22 @@ const itemListJsonLd = itemListSchema({
   }
 
   .equipment-catalog__header {
-    text-align: center;
-    margin-bottom: clamp(28px, 4vw, 48px);
+    margin-bottom: clamp(20px, 3vw, 32px);
   }
 
   .equipment-catalog__title {
     font-family: var(--font-heading);
     font-weight: 800;
-    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-size: clamp(1.375rem, 2.5vw, 1.75rem);
     letter-spacing: -0.02em;
-    margin: 0 0 12px;
+    margin: 0;
     line-height: 1.15;
     color: var(--theme-heading);
   }
 
-  .equipment-catalog__subtitle {
-    margin: 0;
-    color: var(--theme-text-muted);
-    font-size: 1.05rem;
-    line-height: 1.5;
-  }
-
   .equipment-catalog__grid {
     display: grid;
-    gap: clamp(20px, 2.5vw, 28px);
+    gap: clamp(16px, 2vw, 24px);
   }
 
   .equipment-catalog__grid--cols-2 {

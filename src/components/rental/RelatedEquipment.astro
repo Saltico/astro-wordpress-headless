@@ -1,6 +1,6 @@
 ---
 // src/components/rental/RelatedEquipment.astro
-// Grilla de sub-rutas hermanas.
+// Grilla de sub-rutas hermanas con imágenes.
 
 import Container from '@/components/ui/Container.astro';
 import Icon from '@/components/ui/Icon.astro';
@@ -10,6 +10,7 @@ export interface RelatedItem {
   shortDesc: string;
   href: string;
   badge?: string;
+  image?: string;
 }
 
 export interface Props {
@@ -18,26 +19,38 @@ export interface Props {
   title?: string;
 }
 
-const { items, background = 'dark', title = 'Equipos relacionados' } = Astro.props;
+const { items, background = 'dark', title = 'También te puede interesar' } = Astro.props;
 ---
 
 <section class:list={['related-equipment', `related-equipment--${background}`]}>
   <Container>
     <header class="related-equipment__header">
+      <p class="related-equipment__eyebrow">Equipos complementarios</p>
       <h2 class="related-equipment__title">{title}</h2>
     </header>
     <div class="related-equipment__grid">
       {items.map((item) => (
         <a href={item.href} class="related-card">
-          <div class="related-card__header">
-            {item.badge && <span class="related-card__badge">{item.badge}</span>}
+          {item.image && (
+            <div class="related-card__image-wrapper">
+              <img
+                src={item.image}
+                alt={item.name}
+                class="related-card__image"
+                loading="lazy"
+              />
+              {item.badge && <span class="related-card__badge">{item.badge}</span>}
+            </div>
+          )}
+          <div class="related-card__body">
+            {!item.image && item.badge && <span class="related-card__badge related-card__badge--inline">{item.badge}</span>}
             <h3 class="related-card__title">{item.name}</h3>
+            <p class="related-card__desc">{item.shortDesc}</p>
+            <span class="related-card__cta">
+              Cotizar este equipo
+              <Icon name="arrow-right" size={16} />
+            </span>
           </div>
-          <p class="related-card__desc">{item.shortDesc}</p>
-          <span class="related-card__cta">
-            Ver detalle
-            <Icon name="arrow-right" size={16} />
-          </span>
         </a>
       ))}
     </div>
@@ -60,7 +73,27 @@ const { items, background = 'dark', title = 'Equipos relacionados' } = Astro.pro
   }
 
   .related-equipment__header {
-    margin-bottom: clamp(24px, 3vw, 36px);
+    margin-bottom: clamp(28px, 4vw, 40px);
+  }
+
+  .related-equipment__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--theme-eyebrow);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .related-equipment__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
   }
 
   .related-equipment__title {
@@ -69,56 +102,86 @@ const { items, background = 'dark', title = 'Equipos relacionados' } = Astro.pro
     font-size: clamp(1.5rem, 2.5vw, 2rem);
     letter-spacing: -0.02em;
     margin: 0;
+    line-height: 1.15;
   }
 
   .related-equipment__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: clamp(16px, 2vw, 24px);
   }
 
   .related-card {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 24px;
     background-color: var(--theme-bg-elevated);
     border: 1px solid var(--theme-border);
-    border-radius: 12px;
+    border-radius: 14px;
     text-decoration: none;
     color: inherit;
-    transition: border-color 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+    overflow: hidden;
+    transition: border-color 0.25s var(--ease-out), transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
   }
 
   .related-card:hover {
     border-color: var(--color-brand, #308f40);
-    background-color: var(--theme-bg-alt);
-    transform: translateY(-2px);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
   }
 
-  .related-card__header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
+  .related-card__image-wrapper {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background-color: var(--color-graphite, #0d1611);
+  }
+
+  .related-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s var(--ease-out);
+  }
+
+  .related-card:hover .related-card__image {
+    transform: scale(1.05);
   }
 
   .related-card__badge {
-    display: inline-block;
-    padding: 4px 10px;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 5px 12px;
     background-color: var(--color-brand, #308f40);
-    color: var(--color-on-dark);
-    font-size: 0.75rem;
+    color: var(--color-on-brand, #fff);
+    font-family: var(--font-heading);
     font-weight: 700;
+    font-size: 0.75rem;
     border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+
+  .related-card__badge--inline {
+    position: static;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+
+  .related-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 22px 22px;
+    flex: 1;
   }
 
   .related-card__title {
     font-family: var(--font-heading);
     font-weight: 800;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     margin: 0;
     line-height: 1.2;
+    letter-spacing: -0.01em;
   }
 
   .related-card__desc {
@@ -132,9 +195,22 @@ const { items, background = 'dark', title = 'Equipos relacionados' } = Astro.pro
   .related-card__cta {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    color: var(--color-brand, #1a9c4a);
+    gap: 8px;
+    color: var(--color-brand, #308f40);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.875rem;
+    margin-top: 4px;
+    transition: gap 0.2s var(--ease-out);
+  }
+
+  .related-card:hover .related-card__cta {
+    gap: 12px;
+  }
+
+  @media (max-width: 639px) {
+    .related-equipment__grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

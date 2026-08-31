@@ -1,0 +1,453 @@
+---
+// src/components/ui/CookieBanner.astro
+// Banner de cookies no intrusivo (bottom bar) con panel de preferencias.
+// Se muestra solo si no hay preferencia guardada.
+// Cumple Consent Mode v2, Ley 19.628 y WCAG 2.1 AA.
+---
+
+<div class="cookie-banner" data-cookie-banner role="dialog" aria-label="Configuración de cookies" hidden>
+  <div class="cookie-banner__content">
+    <p class="cookie-banner__text">
+      Usamos cookies para mejorar tu experiencia y analizar el tráfico.
+      Puedes aceptar todas, rechazar las no esenciales o configurar tus preferencias.
+      <a href="/cookies" class="cookie-banner__link">Más información</a>
+    </p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="cookie-banner__btn cookie-banner__btn--secondary" data-consent="necessary">
+        Solo necesarias
+      </button>
+      <button type="button" class="cookie-banner__btn cookie-banner__btn--primary" data-consent="all">
+        Aceptar todo
+      </button>
+      <button type="button" class="cookie-banner__btn cookie-banner__btn--ghost" data-consent="configure">
+        Configurar
+      </button>
+    </div>
+  </div>
+
+  <!-- Panel de preferencias (oculto por defecto) -->
+  <div class="cookie-preferences" data-cookie-preferences hidden>
+    <h3 class="cookie-preferences__title">Configuración de cookies</h3>
+    <div class="cookie-preferences__categories">
+      <label class="cookie-preferences__category">
+        <input type="checkbox" checked disabled />
+        <span class="cookie-preferences__label">Necesarias</span>
+        <span class="cookie-preferences__desc">Esenciales para el funcionamiento del sitio.</span>
+      </label>
+      <label class="cookie-preferences__category">
+        <input type="checkbox" data-category="analytics" />
+        <span class="cookie-preferences__label">Analíticas</span>
+        <span class="cookie-preferences__desc">Nos ayudan a entender cómo usas el sitio (GA4).</span>
+      </label>
+      <label class="cookie-preferences__category">
+        <input type="checkbox" data-category="marketing" />
+        <span class="cookie-preferences__label">Marketing</span>
+        <span class="cookie-preferences__desc">Permiten mostrarte anuncios personalizados (Google Ads).</span>
+      </label>
+    </div>
+    <div class="cookie-preferences__actions">
+      <button type="button" class="cookie-banner__btn cookie-banner__btn--primary" data-save-preferences>
+        Guardar preferencias
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Live region for screen readers -->
+<div aria-live="polite" class="sr-only" data-consent-status></div>
+
+<script>
+  const COOKIE_NAME = 'ip_consent';
+  const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 12 meses en segundos
+
+  interface ConsentPreferences {
+    analytics: boolean;
+    marketing: boolean;
+    timestamp: number;
+  }
+
+  /** Aplica las preferencias de consentimiento y las persiste. */
+  function applyConsent(analytics: boolean, marketing: boolean): void {
+    // 1. Actualizar Consent Mode v2
+    window.gtag?.('consent', 'update', {
+      analytics_storage: analytics ? 'granted' : 'denied',
+      ad_storage: marketing ? 'granted' : 'denied',
+      ad_user_data: marketing ? 'granted' : 'denied',
+      ad_personalization: marketing ? 'granted' : 'denied',
+    });
+
+    // 2. Push evento de auditoría al dataLayer
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'consent_update',
+      analytics,
+      marketing,
+    });
+
+    // 3. Persistir en cookie propia
+    const prefs: ConsentPreferences = { analytics, marketing, timestamp: Date.now() };
+    setCookie(COOKIE_NAME, JSON.stringify(prefs), COOKIE_MAX_AGE);
+
+    // 4. Backup en localStorage
+    try {
+      localStorage.setItem(COOKIE_NAME, JSON.stringify(prefs));
+    } catch {
+      // Ignorar errores de storage
+    }
+
+    // 5. Ocultar banner y anunciar al screen reader
+    hideBanner();
+    announceStatus('Preferencias de cookies guardadas.');
+  }
+
+  /** Lee las preferencias guardadas (cookie > localStorage). */
+  function readConsent(): ConsentPreferences | null {
+    // Intentar cookie primero
+    const cookie = getCookie(COOKIE_NAME);
+    if (cookie) {
+      try {
+        return JSON.parse(cookie);
+      } catch {
+        // Corrupta, ignorar
+      }
+    }
+    // Fallback a localStorage
+    try {
+      const ls = localStorage.getItem(COOKIE_NAME);
+      if (ls) return JSON.parse(ls);
+    } catch {
+      // Ignorar
+    }
+    return null;
+  }
+
+  /** Muestra el banner si no hay preferencia guardada. */
+  function initBanner(): void {
+    const prefs = readConsent();
+    if (!prefs) {
+      showBanner();
+    } else {
+      // Aplicar preferencias existentes (por si el usuario recarga)
+      applyConsent(prefs.analytics, prefs.marketing);
+    }
+  }
+
+  function showBanner(): void {
+    const banner = document.querySelector<HTMLDivElement>('[data-cookie-banner]');
+    if (banner) {
+      banner.hidden = false;
+      // Focus management: mover foco al primer botón para accesibilidad
+      const firstBtn = banner.querySelector<HTMLButtonElement>('.cookie-banner__btn');
+      firstBtn?.focus();
+    }
+  }
+
+  function hideBanner(): void {
+    const banner = document.querySelector<HTMLDivElement>('[data-cookie-banner]');
+    if (banner) {
+      banner.hidden = true;
+    }
+  }
+
+  function togglePreferencesPanel(): void {
+    const panel = document.querySelector<HTMLDivElement>('[data-cookie-preferences]');
+    if (panel) {
+      const isHidden = panel.hidden;
+      panel.hidden = !isHidden;
+      if (!isHidden) {
+        // Si se oculta, anunciar
+        announceStatus('Panel de preferencias cerrado.');
+      } else {
+        announceStatus('Panel de preferencias abierto.');
+        // Focus en el primer checkbox configurable
+        const firstCheckbox = panel.querySelector<HTMLInputElement>('input[data-category]');
+        firstCheckbox?.focus();
+      }
+    }
+  }
+
+  function announceStatus(message: string): void {
+    const statusEl = document.querySelector<HTMLDivElement>('[data-consent-status]');
+    if (statusEl) {
+      statusEl.textContent = message;
+    }
+  }
+
+  // Helpers de cookies
+  function setCookie(name: string, value: string, maxAge: number): void {
+    document.cookie = `${name}=${encodeURIComponent(value)};max-age=${maxAge};path=/;SameSite=Lax`;
+  }
+
+  function getCookie(name: string): string | null {
+    const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]*)`));
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  // Event listeners
+  document.addEventListener('DOMContentLoaded', () => {
+    initBanner();
+
+    // Botones del banner
+    document.querySelector('[data-consent="all"]')?.addEventListener('click', () => {
+      applyConsent(true, true);
+    });
+
+    document.querySelector('[data-consent="necessary"]')?.addEventListener('click', () => {
+      applyConsent(false, false);
+    });
+
+    document.querySelector('[data-consent="configure"]')?.addEventListener('click', () => {
+      togglePreferencesPanel();
+    });
+
+    document.querySelector('[data-save-preferences]')?.addEventListener('click', () => {
+      const analytics = (document.querySelector('[data-category="analytics"]') as HTMLInputElement)?.checked ?? false;
+      const marketing = (document.querySelector('[data-category="marketing"]') as HTMLInputElement)?.checked ?? false;
+      applyConsent(analytics, marketing);
+    });
+
+    // Cerrar panel con Escape
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        const panel = document.querySelector<HTMLDivElement>('[data-cookie-preferences]');
+        if (panel && !panel.hidden) {
+          panel.hidden = true;
+          announceStatus('Panel de preferencias cerrado.');
+          // Devolver foco al botón Configurar
+          const configureBtn = document.querySelector<HTMLButtonElement>('[data-consent="configure"]');
+          configureBtn?.focus();
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  /* Screen reader only utility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Bottom bar no intrusivo */
+  .cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background-color: var(--theme-bg-elevated);
+    border-top: 1px solid var(--theme-border);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+    padding: var(--space-4) var(--space-5);
+    animation: cookie-banner-slide-up 0.3s var(--ease-out);
+  }
+
+  .cookie-banner[hidden] {
+    display: none;
+  }
+
+  .cookie-banner__content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .cookie-banner__content {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .cookie-banner__text {
+    margin: 0;
+    font-size: var(--text-small);
+    color: var(--theme-text);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .cookie-banner__link {
+    color: var(--color-brand);
+    text-decoration: underline;
+  }
+
+  .cookie-banner__link:hover {
+    color: var(--color-brand-600);
+  }
+
+  .cookie-banner__link:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  .cookie-banner__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  @media (min-width: 768px) {
+    .cookie-banner__actions {
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: nowrap;
+    }
+  }
+
+  .cookie-banner__btn {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-small);
+    font-weight: 600;
+    border-radius: var(--radius-pill);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color 0.15s var(--ease-out), border-color 0.15s var(--ease-out);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    white-space: nowrap;
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .cookie-banner__btn {
+      width: auto;
+    }
+  }
+
+  .cookie-banner__btn:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  .cookie-banner__btn--primary {
+    background-color: var(--color-brand);
+    color: var(--color-on-brand);
+  }
+
+  .cookie-banner__btn--primary:hover {
+    background-color: var(--color-brand-600);
+  }
+
+  .cookie-banner__btn--secondary {
+    background-color: transparent;
+    color: var(--theme-text);
+    border-color: var(--theme-border);
+  }
+
+  .cookie-banner__btn--secondary:hover {
+    background-color: var(--theme-bg-alt);
+  }
+
+  .cookie-banner__btn--ghost {
+    background-color: transparent;
+    color: var(--theme-text-muted);
+  }
+
+  .cookie-banner__btn--ghost:hover {
+    color: var(--theme-text);
+  }
+
+  /* Panel de preferencias */
+  .cookie-preferences {
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--theme-border);
+  }
+
+  .cookie-preferences[hidden] {
+    display: none;
+  }
+
+  .cookie-preferences__title {
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-body);
+    font-weight: 700;
+    color: var(--theme-text);
+  }
+
+  .cookie-preferences__categories {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .cookie-preferences__categories {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+  }
+
+  .cookie-preferences__category {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    cursor: pointer;
+  }
+
+  @media (min-width: 768px) {
+    .cookie-preferences__category {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: var(--space-2);
+      flex: 1;
+      min-width: 200px;
+    }
+  }
+
+  .cookie-preferences__category input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    cursor: pointer;
+    accent-color: var(--color-brand);
+  }
+
+  .cookie-preferences__category input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+
+  .cookie-preferences__label {
+    font-weight: 600;
+    font-size: var(--text-small);
+    color: var(--theme-text);
+  }
+
+  .cookie-preferences__desc {
+    font-size: var(--text-small);
+    color: var(--theme-text-muted);
+    margin: 0;
+  }
+
+  .cookie-preferences__actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  @keyframes cookie-banner-slide-up {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+</style>

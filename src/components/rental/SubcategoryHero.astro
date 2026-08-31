@@ -1,0 +1,292 @@
+---
+// src/components/rental/SubcategoryHero.astro
+// Hero compacto para páginas de subcategoría de arriendo.
+// Contiene: imagen de fondo, breadcrumbs, texto SEO transaccional,
+// contador de equipos y selector de subcategorías.
+
+import Container from '@/components/ui/Container.astro';
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+export interface SubcategoryOption {
+  name: string;
+  slug: string;
+  href: string;
+  catalogCount: number;
+}
+
+export interface Props {
+  heroImage: string;
+  heroImageAlt: string;
+  breadcrumbs: Array<{ label: string; url: string }>;
+  category: string;
+  title: string;
+  description: string;
+  equipmentCount: number;
+  subcategories: SubcategoryOption[];
+  currentSubcategorySlug: string;
+}
+
+const {
+  heroImage,
+  heroImageAlt,
+  breadcrumbs,
+  category,
+  title,
+  description,
+  equipmentCount,
+  subcategories,
+  currentSubcategorySlug,
+} = Astro.props;
+---
+
+<section class="subcategory-hero">
+  <img
+    src={heroImage}
+    alt={heroImageAlt}
+    class="subcategory-hero__bg"
+    loading="eager"
+    fetchpriority="high"
+  />
+  <div class="subcategory-hero__overlay"></div>
+  <div class="subcategory-hero__content">
+    <Container>
+      <Breadcrumbs items={breadcrumbs} variant="hero" />
+
+      <p class="subcategory-hero__category">{category}</p>
+      <h1 class="subcategory-hero__title">{title}</h1>
+      <p class="subcategory-hero__desc">{description}</p>
+
+      {subcategories.length > 1 && (
+        <nav class="subcategory-hero__nav" aria-label="Navegación de subcategorías">
+          <div class="subcategory-hero__nav-scroll">
+            {subcategories.map((sub) => {
+              const isCurrent = sub.slug === currentSubcategorySlug;
+              return (
+                <a
+                  href={sub.href}
+                  class:list={['subcategory-hero__pill', isCurrent && 'subcategory-hero__pill--active']}
+                  aria-current={isCurrent ? 'page' : undefined}
+                >
+                  <span class="subcategory-hero__pill-name">{sub.name}</span>
+                  <span class="subcategory-hero__pill-count">{sub.catalogCount}</span>
+                </a>
+              );
+            })}
+          </div>
+        </nav>
+      )}
+    </Container>
+  </div>
+</section>
+
+<style>
+  .subcategory-hero {
+    position: relative;
+    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
+    min-height: calc(340px + var(--topbar-height, 40px) + var(--header-height, 80px));
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .subcategory-hero__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .subcategory-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(13, 22, 17, 0.55) 0%,
+      rgba(13, 22, 17, 0.82) 50%,
+      rgba(13, 22, 17, 0.97) 100%
+    );
+  }
+
+  .subcategory-hero__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-top: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 32px);
+    padding-bottom: clamp(28px, 4vw, 48px);
+  }
+
+  .subcategory-hero__category {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--color-brand-300, #62bb74);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin: 16px 0 12px;
+  }
+
+  .subcategory-hero__category::before {
+    content: '';
+    width: 32px;
+    height: 2px;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+
+  .subcategory-hero__title {
+    color: var(--color-on-dark, #f3f7f4);
+    font-family: var(--font-heading);
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    max-width: 18ch;
+    margin: 0 0 12px;
+    text-wrap: balance;
+  }
+
+  .subcategory-hero__desc {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+    max-width: 60ch;
+    margin: 0 0 20px;
+    line-height: 1.55;
+  }
+
+  .subcategory-hero__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .subcategory-hero__count {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.85);
+    white-space: nowrap;
+  }
+
+  .subcategory-hero__count strong {
+    color: var(--color-on-dark, #f3f7f4);
+    font-weight: 800;
+    font-size: 0.95rem;
+  }
+
+  .subcategory-hero__count :global(svg) {
+    color: var(--color-brand-300, #62bb74);
+  }
+
+  /* Subcategory selector */
+  .subcategory-hero__nav {
+    margin-top: 4px;
+  }
+
+  .subcategory-hero__nav-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+
+  .subcategory-hero__nav-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .subcategory-hero__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.75);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    scroll-snap-align: start;
+    transition: background-color 0.2s var(--ease-out),
+                border-color 0.2s var(--ease-out),
+                color 0.2s var(--ease-out),
+                transform 0.15s var(--ease-out);
+    flex-shrink: 0;
+  }
+
+  .subcategory-hero__pill:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--color-on-dark, #f3f7f4);
+    transform: translateY(-1px);
+  }
+
+  .subcategory-hero__pill--active {
+    background-color: var(--color-brand, #308f40);
+    border-color: var(--color-brand, #308f40);
+    color: var(--color-on-brand, #fff);
+  }
+
+  .subcategory-hero__pill--active:hover {
+    background-color: var(--color-brand-600, #226f31);
+    border-color: var(--color-brand-600, #226f31);
+    transform: none;
+  }
+
+  .subcategory-hero__pill-name {
+    line-height: 1;
+  }
+
+  .subcategory-hero__pill-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .subcategory-hero__pill--active .subcategory-hero__pill-count {
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+
+  @media (max-width: 639px) {
+    .subcategory-hero {
+      min-height: calc(280px + var(--topbar-height, 40px) + var(--header-height, 80px));
+    }
+
+    .subcategory-hero__title {
+      font-size: clamp(1.5rem, 6vw, 2rem);
+    }
+
+    .subcategory-hero__desc {
+      font-size: 0.9rem;
+    }
+  }
+</style>

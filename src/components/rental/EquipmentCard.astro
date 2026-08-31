@@ -48,7 +48,7 @@ const { item, showAddToQuote = true } = Astro.props;
     flex-direction: column;
     background-color: var(--theme-bg-elevated);
     border: 1px solid var(--theme-border);
-    border-radius: 16px;
+    border-radius: 14px;
     overflow: hidden;
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   }
@@ -61,7 +61,7 @@ const { item, showAddToQuote = true } = Astro.props;
 
   .equipment-card__image-wrapper {
     position: relative;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 10;
     overflow: hidden;
     background-color: var(--color-graphite, #0d1611);
   }
@@ -79,14 +79,14 @@ const { item, showAddToQuote = true } = Astro.props;
 
   .equipment-card__badge {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    padding: 6px 12px;
+    top: 10px;
+    left: 10px;
+    padding: 5px 10px;
     background-color: var(--color-brand, #308f40);
     color: var(--color-on-dark);
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     border-radius: 999px;
     letter-spacing: 0.02em;
   }
@@ -94,15 +94,15 @@ const { item, showAddToQuote = true } = Astro.props;
   .equipment-card__body {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 20px 22px 22px;
+    gap: 8px;
+    padding: 14px 16px 16px;
     flex: 1;
   }
 
   .equipment-card__title {
     font-family: var(--font-heading);
     font-weight: 800;
-    font-size: 1.25rem;
+    font-size: 1.05rem;
     letter-spacing: -0.01em;
     line-height: 1.2;
     margin: 0;
@@ -111,15 +111,15 @@ const { item, showAddToQuote = true } = Astro.props;
 
   .equipment-card__meta {
     margin: 0;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     color: var(--color-brand, #1a9c4a);
     font-weight: 600;
   }
 
   .equipment-card__desc {
     margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.5;
+    font-size: 0.85rem;
+    line-height: 1.45;
     color: var(--theme-text-muted);
   }
 
@@ -129,16 +129,16 @@ const { item, showAddToQuote = true } = Astro.props;
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
     flex: 1;
   }
 
   .equipment-card__feature {
     display: flex;
     align-items: flex-start;
-    gap: 8px;
-    font-size: 0.875rem;
-    line-height: 1.4;
+    gap: 6px;
+    font-size: 0.8rem;
+    line-height: 1.35;
     color: var(--theme-text-muted);
   }
 

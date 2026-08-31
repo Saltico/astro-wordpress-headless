@@ -6,10 +6,9 @@ export const prerender = true;
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
-import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
 import Icon from '@/components/ui/Icon.astro';
 import CTABand from '@/components/ui/CTABand.astro';
-import PageHero from '@/components/ui/PageHero.astro';
+import CategoryHero from '@/components/rental/CategoryHero.astro';
 import { RENTAL_CATEGORIES } from '@/data/rental';
 import { serviceSchema, breadcrumbSchema, combineSchemas } from '@/lib/seo';
 import edificio from '@/assets/imgs/edificio.jpg';
@@ -22,6 +21,16 @@ export function getStaticPaths() {
 }
 
 const { category } = Astro.props;
+
+const subcatalogSubtitle = `${category.subcategories.length} tipos de equipo · ${category.subcategories.reduce((acc, s) => acc + s.catalog.length, 0)} modelos en total`;
+
+// Pills de navegación entre categorías hermanas
+const categoryOptions = RENTAL_CATEGORIES.map((cat) => ({
+  name: cat.name,
+  slug: cat.slug,
+  href: `/arriendo/${cat.slug}`,
+  subcategoryCount: cat.subcategories.length,
+}));
 
 const breadcrumbs = [
   { label: 'Inicio', url: '/' },
@@ -44,38 +53,51 @@ const jsonLd = combineSchemas(
   breadcrumbs={breadcrumbs}
   jsonLd={jsonLd}
 >
-  <PageHero
-    image={category.heroImage}
-    imageAlt={`Arriendo de equipos de ${category.name.toLowerCase()} para minería, construcción e industria en Chile — IP Proyectos Industriales`}
-    eyebrow={`Arriendo · ${category.name}`}
+  <CategoryHero
+    heroImage={category.heroImage}
+    heroImageAlt={`Arriendo de equipos de ${category.name.toLowerCase()} para minería, construcción e industria en Chile — IP Proyectos Industriales`}
     title={category.name}
-    subtitle={category.description}
-    minHeight="sm"
-  >
-    <Breadcrumbs slot="breadcrumbs" items={breadcrumbs} variant="hero" />
-  </PageHero>
+    description={category.description}
+    categories={categoryOptions}
+    currentCategorySlug={category.slug}
+    breadcrumbs={breadcrumbs}
+  />
 
-  <section class="cat-list">
+  <section class="subcatalog">
     <Container>
-      <div class="cat-list__items">
-        {category.subcategories.map((sub, index) => (
-          <article class="cat-list__item">
-            <div class="cat-list__number">0{index + 1}</div>
-            <div class="cat-list__content">
-              <h2 class="cat-list__title">{sub.name}</h2>
-              <p class="cat-list__desc">{sub.shortDesc}</p>
-              <div class="cat-list__meta">
-                {sub.specs.slice(0, 2).map((s) => (
-                  <span class="cat-list__spec"><strong>{s.label}:</strong> {s.value}</span>
-                ))}
-                <span class="cat-list__count">{sub.catalog.length} modelos disponibles</span>
-              </div>
-              <a href={`/arriendo/${category.slug}/${sub.slug}`} class="cat-list__link">
-                Ver {sub.name.toLowerCase()}
-                <Icon name="arrow-right" size={18} />
-              </a>
+      <header class="subcatalog__header">
+        <h2 class="subcatalog__title">{category.name} disponibles</h2>
+        <p class="subcatalog__subtitle">{subcatalogSubtitle}</p>
+      </header>
+      <div class="subcatalog__grid">
+        {category.subcategories.map((sub) => (
+          <a href={`/arriendo/${category.slug}/${sub.slug}`} class="subcard">
+            <div class="subcard__image-wrapper">
+              <img
+                src={sub.catalog[0].image}
+                alt={sub.catalog[0].name}
+                class="subcard__image"
+                loading="lazy"
+              />
+              <span class="subcard__badge">{sub.catalog.length} {sub.catalog.length === 1 ? 'modelo' : 'modelos'}</span>
             </div>
-          </article>
+            <div class="subcard__body">
+              <h3 class="subcard__title">{sub.name}</h3>
+              <p class="subcard__desc">{sub.shortDesc}</p>
+              <ul class="subcard__features">
+                {sub.specs.slice(0, 3).map((s) => (
+                  <li class="subcard__feature">
+                    <Icon name="check" size={14} />
+                    <span><strong>{s.label}:</strong> {s.value}</span>
+                  </li>
+                ))}
+              </ul>
+              <span class="subcard__cta">
+                Ver {sub.name.toLowerCase()}
+                <Icon name="arrow-right" size={16} />
+              </span>
+            </div>
+          </a>
         ))}
       </div>
     </Container>
@@ -98,110 +120,167 @@ const jsonLd = combineSchemas(
 </BaseLayout>
 
 <style>
-  .cat-list {
+  .subcatalog {
     background-color: var(--theme-bg);
-    padding-block: clamp(40px, 6vw, 80px);
+    padding-block: clamp(32px, 4vw, 56px);
   }
 
-  .cat-list__items {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+  .subcatalog__header {
+    margin-bottom: clamp(20px, 3vw, 32px);
   }
 
-  .cat-list__item {
+  .subcatalog__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.375rem, 2.5vw, 1.75rem);
+    letter-spacing: -0.02em;
+    margin: 0 0 8px;
+    line-height: 1.15;
+    color: var(--theme-heading);
+  }
+
+  .subcatalog__subtitle {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--theme-text-muted);
+  }
+
+  .subcatalog__grid {
     display: grid;
-    gap: 20px;
-    padding-block: clamp(30px, 4vw, 50px);
-    border-bottom: 1px solid var(--theme-border);
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(16px, 2vw, 24px);
   }
 
-  .cat-list__item:last-child {
-    border-bottom: none;
-  }
-
-  @media (min-width: 768px) {
-    .cat-list__item {
-      grid-template-columns: 200px 1fr;
-      gap: 40px;
-      align-items: start;
+  @media (max-width: 1023px) {
+    .subcatalog__grid {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  .cat-list__number {
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--theme-eyebrow);
+  @media (max-width: 639px) {
+    .subcatalog__grid {
+      grid-template-columns: 1fr;
+    }
   }
 
-  .cat-list__content {
+  .subcard {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    background-color: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
+    border-radius: 14px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   }
 
-  .cat-list__title {
+  .subcard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+    border-color: var(--color-brand, #308f40);
+  }
+
+  .subcard__image-wrapper {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background-color: var(--color-graphite, #0d1611);
+  }
+
+  .subcard__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .subcard:hover .subcard__image {
+    transform: scale(1.05);
+  }
+
+  .subcard__badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 5px 10px;
+    background-color: var(--color-brand, #308f40);
+    color: var(--color-on-dark);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.75rem;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+
+  .subcard__body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 16px 16px;
+    flex: 1;
+  }
+
+  .subcard__title {
     font-family: var(--font-heading);
     font-weight: 800;
-    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
-    letter-spacing: -0.02em;
-    color: var(--theme-text);
-    margin: 0;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
     line-height: 1.2;
-  }
-
-  .cat-list__desc {
-    color: var(--theme-text-muted);
-    font-size: 1rem;
-    line-height: 1.6;
     margin: 0;
-    max-width: 65ch;
+    color: var(--theme-text);
   }
 
-  .cat-list__meta {
+  .subcard__desc {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: var(--theme-text-muted);
+  }
+
+  .subcard__features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px 16px;
-    align-items: center;
-    margin-top: 4px;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
   }
 
-  .cat-list__spec {
-    font-size: 0.875rem;
-    color: var(--theme-text-subtle);
-    padding: 4px 10px;
-    background: var(--theme-bg-elevated);
-    border-radius: 6px;
+  .subcard__feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--theme-text-muted);
   }
 
-  .cat-list__spec strong {
+  .subcard__feature :global(svg) {
+    flex-shrink: 0;
+    color: var(--color-brand, #1a9c4a);
+    margin-top: 2px;
+  }
+
+  .subcard__feature strong {
     color: var(--theme-eyebrow);
     font-weight: 700;
   }
 
-  .cat-list__count {
-    font-size: 0.8rem;
-    color: var(--theme-text-muted);
-    font-style: italic;
-  }
-
-  .cat-list__link {
+  .subcard__cta {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     color: var(--theme-eyebrow);
-    text-decoration: none;
-    margin-top: 8px;
+    margin-top: 4px;
     transition: gap 0.2s ease;
   }
 
-  .cat-list__link:hover {
+  .subcard:hover .subcard__cta {
     gap: 12px;
   }
 </style>

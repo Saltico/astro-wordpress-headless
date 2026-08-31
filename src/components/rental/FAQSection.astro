@@ -1,6 +1,6 @@
 ---
 // src/components/rental/FAQSection.astro
-// Acordeón de preguntas frecuentes con schema FAQPage.
+// Acordeón de preguntas frecuentes con schema FAQPage y animaciones.
 
 import Container from '@/components/ui/Container.astro';
 import Icon from '@/components/ui/Icon.astro';
@@ -24,23 +24,98 @@ const jsonLd = faqPageSchema(items);
 <section class:list={['faq-section', `faq-section--${background}`]}>
   <Container>
     <header class="faq-section__header">
+      <p class="faq-section__eyebrow">Resolvemos tus dudas</p>
       <h2 class="faq-section__title">{title}</h2>
     </header>
     <ul class="faq-section__list">
-      {items.map((item) => (
-        <li class="faq-item">
+      {items.map((item, index) => (
+        <li class="faq-item" data-faq-index={index}>
           <details class="faq-item__details">
             <summary class="faq-item__question">
               <span>{item.question}</span>
-              <Icon name="chevron-down" size={18} class="faq-item__icon" />
+              <span class="faq-item__icon-wrap">
+                <Icon name="chevron-down" size={18} class="faq-item__icon" />
+              </span>
             </summary>
-            <p class="faq-item__answer">{item.answer}</p>
+            <div class="faq-item__answer-wrapper">
+              <div class="faq-item__answer-inner">
+                <p class="faq-item__answer">{item.answer}</p>
+              </div>
+            </div>
           </details>
         </li>
       ))}
     </ul>
   </Container>
 </section>
+
+<script>
+  // Entrance animation with IntersectionObserver
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!prefersReducedMotion) {
+    const faqItems = document.querySelectorAll<HTMLElement>('.faq-item');
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const el = entry.target as HTMLElement;
+            const index = parseInt(el.dataset.faqIndex || '0', 10);
+            el.style.transitionDelay = `${index * 80}ms`;
+            el.classList.add('faq-item--visible');
+            observer.unobserve(el);
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    faqItems.forEach((item) => observer.observe(item));
+  } else {
+    // If reduced motion, show all immediately
+    document.querySelectorAll('.faq-item').forEach((item) => {
+      item.classList.add('faq-item--visible');
+    });
+  }
+
+  // Smooth accordion animation using click handler
+  // The CSS grid trick handles the animation, but we need to manage
+  // the open/close timing for the details element
+  document.addEventListener('click', (e) => {
+    const summary = (e.target as HTMLElement)?.closest('.faq-item__question');
+    if (!summary) return;
+    
+    const details = summary.closest('details');
+    if (!details) return;
+
+    // If currently open, we need to animate close then remove [open]
+    if (details.hasAttribute('open')) {
+      e.preventDefault();
+      details.classList.add('faq-item__details--closing');
+      
+      const onAnimationEnd = () => {
+        details.removeAttribute('open');
+        details.classList.remove('faq-item__details--closing');
+        details.removeEventListener('transitionend', onAnimationEnd);
+      };
+      
+      // Listen for the wrapper transition to end
+      const wrapper = details.querySelector('.faq-item__answer-wrapper');
+      if (wrapper) {
+        wrapper.addEventListener('transitionend', onAnimationEnd, { once: true });
+      }
+      
+      // Fallback timeout in case transitionend doesn't fire
+      setTimeout(() => {
+        if (details.classList.contains('faq-item__details--closing')) {
+          details.removeAttribute('open');
+          details.classList.remove('faq-item__details--closing');
+        }
+      }, 400);
+    }
+  });
+</script>
 
 <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
@@ -59,8 +134,28 @@ const jsonLd = faqPageSchema(items);
   }
 
   .faq-section__header {
-    margin-bottom: clamp(24px, 3vw, 36px);
+    margin-bottom: clamp(28px, 4vw, 40px);
     text-align: center;
+  }
+
+  .faq-section__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--theme-eyebrow);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .faq-section__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
   }
 
   .faq-section__title {
@@ -69,6 +164,7 @@ const jsonLd = faqPageSchema(items);
     font-size: clamp(1.5rem, 2.5vw, 2rem);
     letter-spacing: -0.02em;
     margin: 0;
+    line-height: 1.15;
   }
 
   .faq-section__list {
@@ -81,16 +177,37 @@ const jsonLd = faqPageSchema(items);
     max-width: 800px;
   }
 
+  /* Entrance animation */
+  .faq-item {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
+  }
+
+  .faq-item--visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-item {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
   .faq-item__details {
     background-color: var(--theme-bg-elevated);
     border: 1px solid var(--theme-border);
     border-radius: 12px;
-    padding: 20px 24px;
-    transition: border-color 0.2s ease;
+    padding: 0;
+    transition: border-color 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
   }
 
   .faq-item__details[open] {
     border-color: var(--color-brand, #308f40);
+    box-shadow: 0 4px 16px rgba(48, 143, 64, 0.08);
   }
 
   .faq-item__question {
@@ -103,24 +220,77 @@ const jsonLd = faqPageSchema(items);
     font-weight: 700;
     font-size: 1.05rem;
     list-style: none;
+    padding: 20px 24px;
+    user-select: none;
   }
 
   .faq-item__question::-webkit-details-marker {
     display: none;
   }
 
-  .faq-item__icon {
+  .faq-item__icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--theme-bg);
+    border: 1px solid var(--theme-border);
     flex-shrink: 0;
-    transition: transform 0.2s ease;
+    transition: background-color 0.25s var(--ease-out), border-color 0.25s var(--ease-out), transform 0.3s var(--ease-out);
   }
 
-  .faq-item__details[open] .faq-item__icon {
+  .faq-item__details[open] .faq-item__icon-wrap {
+    background-color: var(--color-brand, #308f40);
+    border-color: var(--color-brand, #308f40);
     transform: rotate(180deg);
   }
 
+  .faq-item__details[open] .faq-item__icon-wrap :global(svg) {
+    color: var(--color-on-brand, #fff);
+  }
+
+  .faq-item__icon {
+    flex-shrink: 0;
+    transition: color 0.25s var(--ease-out);
+  }
+
+  /* Smooth accordion animation using CSS grid */
+  .faq-item__answer-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s var(--ease-out);
+  }
+
+  .faq-item__details[open] .faq-item__answer-wrapper {
+    grid-template-rows: 1fr;
+  }
+
+  .faq-item__details--closing .faq-item__answer-wrapper {
+    grid-template-rows: 0fr;
+  }
+
+  .faq-item__answer-inner {
+    overflow: hidden;
+    min-height: 0;
+  }
+
   .faq-item__answer {
-    margin: 16px 0 0;
+    margin: 0;
+    padding: 0 24px 20px;
     line-height: 1.6;
     color: var(--theme-text-muted);
+    font-size: 0.95rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-item__answer-wrapper {
+      transition: none;
+    }
+    
+    .faq-item__icon-wrap {
+      transition: none;
+    }
   }
 </style>

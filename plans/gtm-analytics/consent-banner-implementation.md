@@ -3,7 +3,7 @@ title: Implementación de Banner de Cookies Propio (Bottom Bar)
 feature: consent-banner
 effort: Medium
 dependencies: [gtm-core, consent-management]
-status: Planned
+status: Completed
 last_updated: 2026-08-25
 ---
 
@@ -23,10 +23,10 @@ Implementar un banner de cookies **no bloqueante** (bottom bar) que:
 | Componente | Estado |
 |------------|--------|
 | Consent Mode v2 default (denied) | ✅ Implementado en `BaseLayout.astro:144-158` |
-| Banner de cookies | ❌ No existe |
-| Página `/cookies` | ⚠️ Placeholder sin contenido legal |
-| Lógica `applyConsent()` | ❌ No implementada |
-| Persistencia de preferencias | ❌ No existe |
+| Banner de cookies | ✅ Implementado en `src/components/ui/CookieBanner.astro` |
+| Página `/cookies` | ✅ Contenido legal completo en `src/pages/cookies.astro` |
+| Lógica `applyConsent()` | ✅ Implementada con Consent Mode v2 update |
+| Persistencia de preferencias | ✅ Cookie `ip_consent` (12 meses) + localStorage backup |
 
 ## Arquitectura
 
