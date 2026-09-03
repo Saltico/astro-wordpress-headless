@@ -171,6 +171,20 @@ const clientLogos = [
     duration={1500}
   />
 
+  <!-- §5: CATEGORY SHOWCASE -->
+  <CategoryShowcase />
+
+  
+  <!-- §4: CLIENT LOGOS -->
+  <LogoCarousel
+  logos={clientLogos}
+  eyebrow="Confían en nosotros"
+  title="Empresas que confían en nuestra flota"
+  speed="normal"
+  backgroundVariant="dark"
+  pauseOnHover={true}
+  />
+  
   <!-- §3: SERVICIOS (con imágenes) -->
   <section class="services-section">
     <div class="services-section__container">
@@ -204,20 +218,6 @@ const clientLogos = [
       </div>
     </div>
   </section>
-
-  <!-- §4: CLIENT LOGOS -->
-  <LogoCarousel
-    logos={clientLogos}
-    eyebrow="Confían en nosotros"
-    title="Empresas que confían en nuestra flota"
-    speed="normal"
-    backgroundVariant="dark"
-    pauseOnHover={true}
-  />
-
-  <!-- §5: CATEGORY SHOWCASE -->
-  <CategoryShowcase />
-
   <!-- §6: CTA BAND -->
   <CTABand
     eyebrow="Cotiza tu equipo ahora"

@@ -1,7 +1,7 @@
 ---
 // src/components/rental/EquipmentSearch.astro
 // Search bar client-side para encontrar equipos por nombre, categoría o subcategoría.
-// Inspirado en "Encuentra tu máquina" de SK Rental.
+// Resultados en tree view con líneas conectoras (matching navbar submenu glassmorphic).
 
 import Icon from '@/components/ui/Icon.astro';
 import { RENTAL_CATEGORIES } from '@/data/rental';
@@ -13,51 +13,59 @@ export interface Props {
 
 const { placeholder = 'Grúa 100 toneladas...', class: className } = Astro.props;
 
-// Build flat search index at build time
+// Build hierarchical search index at build time
 interface SearchItem {
   name: string;
   category: string;
+  categorySlug: string;
   subcategory: string;
+  subcategorySlug: string;
   url: string;
   capacity?: string;
+  level: 'category' | 'subcategory' | 'equipment';
 }
 
 const searchIndex: SearchItem[] = [];
 
-// Add categories
 RENTAL_CATEGORIES.forEach((category) => {
   searchIndex.push({
     name: category.name,
     category: category.name,
+    categorySlug: category.slug,
     subcategory: '',
+    subcategorySlug: '',
     url: `/arriendo/${category.slug}`,
     capacity: '',
+    level: 'category',
   });
 
-  // Add subcategories
   category.subcategories.forEach((sub) => {
     searchIndex.push({
       name: sub.name,
       category: category.name,
+      categorySlug: category.slug,
       subcategory: sub.name,
+      subcategorySlug: sub.slug,
       url: `/arriendo/${category.slug}/${sub.slug}`,
       capacity: '',
+      level: 'subcategory',
     });
 
-    // Add equipment
     sub.catalog.forEach((equipment) => {
       searchIndex.push({
         name: equipment.name,
         category: category.name,
+        categorySlug: category.slug,
         subcategory: sub.name,
+        subcategorySlug: sub.slug,
         url: `/arriendo/${category.slug}/${sub.slug}`,
         capacity: equipment.capacity,
+        level: 'equipment',
       });
     });
   });
 });
 
-// Serialize for client-side use
 const searchIndexJson = JSON.stringify(searchIndex);
 ---
 
@@ -132,70 +140,308 @@ const searchIndexJson = JSON.stringify(searchIndex);
     color: var(--color-ink-500, #6b7072);
   }
 
+  /* ── Results dropdown — glassmorphic dark (matches navbar submenu) ── */
   .equipment-search__results {
     position: absolute;
     top: calc(100% + 8px);
     left: 0;
     right: 0;
-    max-height: 360px;
+    max-height: 440px;
     overflow-y: auto;
-    background-color: var(--theme-bg-elevated);
-    border: 1px solid var(--theme-border);
+    background-color: rgba(13, 22, 17, 0.92);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-md, 0.75rem);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    z-index: 50;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    z-index: 100;
+    padding: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+  }
+
+  .equipment-search__results:not([hidden]) {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
   }
 
   .equipment-search__results[hidden] {
     display: none;
   }
 
-  .equipment-search__result-item {
+  /* Scrollbar */
+  .equipment-search__results::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .equipment-search__results::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .equipment-search__results::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-xs, 0.25rem);
+  }
+
+  .equipment-search__results::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  /* ── Category group (tree root) ── */
+  :global(.equipment-search__group) {
+    margin-bottom: 6px;
+  }
+
+  :global(.equipment-search__group):last-child {
+    margin-bottom: 0;
+  }
+
+  /* ── Category header — parent label with brand accent ── */
+  :global(.equipment-search__group-header) {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 12px 14px;
-    text-decoration: none;
-    color: var(--theme-text);
-    font-family: var(--font-body);
+    gap: 8px;
+    padding: 6px 12px;
+    font-family: var(--font-heading);
+    font-size: var(--text-small);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brand-300, #62bb74);
+    cursor: default;
+    user-select: none;
+    background-color: rgba(48, 143, 64, 0.08);
+    border-radius: var(--radius-sm, 0.5rem);
+    margin-bottom: 2px;
+  }
+
+  :global(.equipment-search__group-header)::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background-color: var(--color-brand, #308f40);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── Children container — vertical tree line ── */
+  .equipment-search__children {
+    position: relative;
+    padding-left: 20px;
+    margin-left: 17px;
+    margin-top: 2px;
+  }
+
+  /* Vertical connector line */
+  .equipment-search__children::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 12px;
+    width: 1px;
+    background-color: rgba(98, 187, 116, 0.25);
+  }
+
+  /* ── Subcategory sub-dropdown (visual container) ── */
+  :global(.equipment-search__subcategory-group) {
+    position: relative;
+    margin-bottom: 4px;
+    padding: 4px 0;
+    background-color: rgba(48, 143, 64, 0.04);
+    border-left: 2px solid rgba(98, 187, 116, 0.35);
+    border-radius: var(--radius-sm, 0.5rem);
+  }
+
+  :global(.equipment-search__subcategory-group):last-child {
+    margin-bottom: 0;
+  }
+
+  /* ── Equipment list inside subcategory ── */
+  :global(.equipment-search__equipment-list) {
+    margin-top: 2px;
+    padding-left: 8px;
+  }
+
+  /* ── Expand indicator (count badge + chevron) ── */
+  :global(.equipment-search__expand-indicator) {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background-color: rgba(98, 187, 116, 0.12);
     transition: background-color 0.15s ease;
   }
 
-  .equipment-search__result-item:hover,
-  .equipment-search__result-item:focus {
-    background-color: var(--theme-bg-alt);
+  :global(.equipment-search__expand-count) {
+    font-family: var(--font-heading);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--color-brand-300, #62bb74);
+    line-height: 1;
+  }
+
+  /* ── Desktop: hide equipment list, show on hover ── */
+  @media (hover: hover) and (pointer: fine) {
+    :global(.equipment-search__equipment-list) {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.25s ease, opacity 0.2s ease, margin-top 0.2s ease;
+      margin-top: 0;
+    }
+
+    :global(.equipment-search__subcategory-group):hover :global(.equipment-search__equipment-list),
+    :global(.equipment-search__subcategory-group).is-expanded :global(.equipment-search__equipment-list) {
+      max-height: 500px;
+      opacity: 1;
+      margin-top: 2px;
+    }
+
+    :global(.equipment-search__subcategory-group):hover :global(.equipment-search__expand-indicator) {
+      background-color: rgba(98, 187, 116, 0.2);
+    }
+
+    /* Rotate chevron on hover */
+    :global(.equipment-search__subcategory-group):hover :global(.equipment-search__expand-indicator) svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  /* ── Mobile/Tablet: always show equipment list ── */
+  @media (hover: none), (pointer: coarse) {
+    :global(.equipment-search__equipment-list) {
+      max-height: 500px;
+      opacity: 1;
+    }
+
+    /* Hide the expand indicator on touch devices — always expanded */
+    :global(.equipment-search__expand-indicator) svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  /* ── Category root link (first child, no tree line needed) ── */
+  :global(.equipment-search__result-item--category) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    text-decoration: none;
+    color: var(--color-on-dark, #f3f7f4);
+    font-family: var(--font-heading);
+    font-size: var(--text-small);
+    font-weight: 600;
+    border-radius: var(--radius-sm, 0.5rem);
+    transition: background-color 0.15s ease;
+    margin-bottom: 2px;
+  }
+
+  :global(.equipment-search__result-item--category):hover,
+  :global(.equipment-search__result-item--category):focus {
+    background-color: rgba(255, 255, 255, 0.06);
     outline: none;
   }
 
-  .equipment-search__result-item[aria-selected="true"] {
-    background-color: var(--theme-bg-alt);
+  :global(.equipment-search__result-item--category)[aria-selected="true"] {
+    background-color: rgba(48, 143, 64, 0.12);
   }
 
-  .equipment-search__result-content {
+  /* ── Tree item (subcategory / equipment) ── */
+  :global(.equipment-search__result-item) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 12px;
+    text-decoration: none;
+    color: var(--color-on-dark, #f3f7f4);
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 500;
+    border-radius: var(--radius-sm, 0.5rem);
+    transition: background-color 0.15s ease, color 0.15s ease;
+    position: relative;
+  }
+
+  :global(.equipment-search__result-item):hover,
+  :global(.equipment-search__result-item):focus {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--color-on-dark, #f3f7f4);
+    outline: none;
+  }
+
+  :global(.equipment-search__result-item)[aria-selected="true"] {
+    background-color: rgba(48, 143, 64, 0.15);
+    color: var(--color-on-dark, #f3f7f4);
+  }
+
+  /* Horizontal branch connector from vertical line to item */
+  :global(.equipment-search__result-item--subcategory)::before,
+  :global(.equipment-search__result-item--equipment)::before {
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    width: 16px;
+    height: 1px;
+    background-color: rgba(98, 187, 116, 0.25);
+  }
+
+  /* Subcategory — slightly muted vs category */
+  :global(.equipment-search__result-item--subcategory) {
+    color: rgba(243, 247, 244, 0.88);
+  }
+
+  /* Equipment — more muted, slightly smaller */
+  :global(.equipment-search__result-item--equipment) {
+    color: rgba(243, 247, 244, 0.75);
+    font-size: 0.84rem;
+  }
+
+  :global(.equipment-search__result-item--equipment):hover,
+  :global(.equipment-search__result-item--equipment):focus {
+    color: var(--color-on-dark, #f3f7f4);
+  }
+
+  /* ── Content area ── */
+  :global(.equipment-search__result-content) {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 1px;
     flex: 1;
+    min-width: 0;
   }
 
-  .equipment-search__result-name {
+  :global(.equipment-search__result-name) {
     font-family: var(--font-heading);
     font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--theme-text);
+    font-size: inherit;
+    color: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .equipment-search__result-meta {
+  :global(.equipment-search__result-meta) {
     display: flex;
-    gap: 8px;
-    font-family: var(--font-body);
-    font-size: 0.8rem;
-    color: var(--theme-text-muted);
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--color-on-dark-muted, #9bab9f);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .equipment-search__result-badge {
-    display: inline-block;
+  /* ── Capacity badge ── */
+  :global(.equipment-search__result-badge) {
+    display: inline-flex;
+    align-items: center;
     padding: 2px 8px;
     background-color: var(--color-brand, #308f40);
     color: var(--color-on-brand, #ffffff);
@@ -203,26 +449,69 @@ const searchIndexJson = JSON.stringify(searchIndex);
     font-size: 0.7rem;
     font-weight: 600;
     border-radius: 999px;
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
   }
 
-  .equipment-search__empty {
-    padding: 20px 14px;
+  /* ── Level icons ── */
+  :global(.equipment-search__level-icon) {
+    width: 11px !important;
+    height: 11px !important;
+    flex-shrink: 0;
+    opacity: 0.55;
+  }
+
+  :global(.equipment-search__level-icon--subcategory) {
+    color: var(--color-brand-300, #62bb74);
+  }
+
+  :global(.equipment-search__level-icon--equipment) {
+    color: var(--color-on-dark-muted, #9bab9f);
+  }
+
+  /* ── Category root icon ── */
+  :global(.equipment-search__category-icon) {
+    width: 13px !important;
+    height: 13px !important;
+    flex-shrink: 0;
+    color: var(--color-brand-300, #62bb74);
+    opacity: 0.7;
+  }
+
+  /* ── Chevron for expandable items ── */
+  :global(.equipment-search__chevron) {
+    width: 10px !important;
+    height: 10px !important;
+    color: rgba(255, 255, 255, 0.25);
+    flex-shrink: 0;
+    transition: color 0.15s ease;
+  }
+
+  :global(.equipment-search__result-item):hover :global(.equipment-search__chevron) {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* ── Empty state ── */
+  :global(.equipment-search__empty) {
+    padding: 24px 16px;
     text-align: center;
-    color: var(--theme-text-muted);
+    color: var(--color-on-dark-muted, #9bab9f);
     font-family: var(--font-body);
-    font-size: 0.9rem;
+    font-size: var(--text-small);
   }
 
-  .equipment-search__empty-link {
+  :global(.equipment-search__empty-link) {
     display: inline-block;
-    margin-top: 8px;
+    margin-top: 10px;
     color: var(--color-brand-300, #62bb74);
     font-family: var(--font-heading);
     font-weight: 600;
     text-decoration: none;
+    transition: color 0.15s ease;
   }
 
-  .equipment-search__empty-link:hover {
+  :global(.equipment-search__empty-link):hover {
+    color: var(--color-brand-300, #62bb74);
     text-decoration: underline;
   }
 </style>
@@ -236,9 +525,8 @@ const searchIndexJson = JSON.stringify(searchIndex);
     if (!input || !resultsContainer) return;
 
     let selectedIndex = -1;
-    let currentResults = [];
+    let currentItems = [];
 
-    // Normalize string for search (remove diacritics)
     function normalize(str) {
       return str
         .toLowerCase()
@@ -246,126 +534,330 @@ const searchIndexJson = JSON.stringify(searchIndex);
         .replace(/[\u0300-\u036f]/g, '');
     }
 
-    // Hierarchical search: returns only the most specific level of match
-    // Priority: equipment name > subcategory > category
-    function search(query) {
-      const normalizedQuery = normalize(query);
-      
-      // Level 1: Search in equipment names (most specific)
-      const equipmentMatches = searchIndex.filter((item) => {
-        return item.name && normalize(item.name).includes(normalizedQuery);
-      });
-      
-      if (equipmentMatches.length > 0) {
-        return equipmentMatches;
-      }
-      
-      // Level 2: Search in subcategory names
-      const subcategoryMatches = searchIndex.filter((item) => {
-        return item.subcategory && normalize(item.subcategory).includes(normalizedQuery);
-      });
-      
-      if (subcategoryMatches.length > 0) {
-        return subcategoryMatches;
-      }
-      
-      // Level 3: Search in category names (least specific)
-      return searchIndex.filter((item) => {
-        return item.category && normalize(item.category).includes(normalizedQuery);
-      });
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
     }
 
-    // Render results
-    function renderResults(results) {
-      // Tracking: búsqueda realizada
-      const query = input.value.trim();
-      const searchType = results.length > 0
-        ? (results[0].subcategory ? 'equipment' : results[0].category ? 'category' : 'unknown')
-        : 'no_results';
+    /**
+     * Hierarchical search: returns a tree of category groups.
+     * Each group: { name, url, children: [{ name, url, equipment: [...] }] }
+     */
+    function search(query) {
+      const nq = normalize(query);
+
+      const matchedCategorySlugs = new Set();
+      const matchedSubKeys = new Set();
+      const matchedEquipmentItems = [];
+
+      searchIndex.forEach((item) => {
+        if (!item.name || !normalize(item.name).includes(nq)) return;
+
+        if (item.level === 'category') {
+          matchedCategorySlugs.add(item.categorySlug);
+        } else if (item.level === 'subcategory') {
+          matchedCategorySlugs.add(item.categorySlug);
+          matchedSubKeys.add(item.categorySlug + '/' + item.subcategorySlug);
+        } else if (item.level === 'equipment') {
+          matchedCategorySlugs.add(item.categorySlug);
+          matchedEquipmentItems.push(item);
+        }
+      });
+
+      // Category-level match: expand to show all subcategories
+      if (matchedCategorySlugs.size > 0 && matchedSubKeys.size === 0 && matchedEquipmentItems.length === 0) {
+        searchIndex.forEach((item) => {
+          if (item.level === 'subcategory' && matchedCategorySlugs.has(item.categorySlug)) {
+            matchedSubKeys.add(item.categorySlug + '/' + item.subcategorySlug);
+          }
+        });
+      }
+
+      // Subcategory-level match: expand to show all equipment within that subcategory
+      matchedSubKeys.forEach((subKey) => {
+        searchIndex.forEach((item) => {
+          if (item.level === 'equipment') {
+            const itemSubKey = item.categorySlug + '/' + item.subcategorySlug;
+            if (itemSubKey === subKey) {
+              // Check if already in matchedEquipmentItems to avoid duplicates
+              const alreadyMatched = matchedEquipmentItems.some(
+                (eq) => eq.categorySlug === item.categorySlug &&
+                        eq.subcategorySlug === item.subcategorySlug &&
+                        eq.name === item.name
+              );
+              if (!alreadyMatched) {
+                matchedEquipmentItems.push(item);
+              }
+            }
+          }
+        });
+      });
+
+      // Build tree: category → subcategories → equipment
+      const categoryMap = new Map();
+
+      searchIndex.forEach((item) => {
+        if (item.level === 'category' && matchedCategorySlugs.has(item.categorySlug)) {
+          if (!categoryMap.has(item.categorySlug)) {
+            categoryMap.set(item.categorySlug, {
+              category: item,
+              subcategoryMap: new Map(),
+            });
+          }
+        }
+      });
+
+      searchIndex.forEach((item) => {
+        if (item.level === 'subcategory') {
+          const key = item.categorySlug + '/' + item.subcategorySlug;
+          const catGroup = categoryMap.get(item.categorySlug);
+          if (catGroup && matchedSubKeys.has(key)) {
+            if (!catGroup.subcategoryMap.has(item.subcategorySlug)) {
+              catGroup.subcategoryMap.set(item.subcategorySlug, {
+                subcategory: item,
+                equipment: [],
+              });
+            }
+          }
+        }
+      });
+
+      matchedEquipmentItems.forEach((item) => {
+        const catGroup = categoryMap.get(item.categorySlug);
+        if (!catGroup) return;
+        const subGroup = catGroup.subcategoryMap.get(item.subcategorySlug);
+        if (subGroup) {
+          if (!subGroup.equipment.some((e) => e.name === item.name)) {
+            subGroup.equipment.push(item);
+          }
+        } else if (matchedSubKeys.size === 0 || !matchedSubKeys.has(item.categorySlug + '/' + item.subcategorySlug)) {
+          // Equipment matched but subcategory didn't explicitly — create bucket
+          if (!catGroup.subcategoryMap.has(item.subcategorySlug)) {
+            catGroup.subcategoryMap.set(item.subcategorySlug, {
+              subcategory: {
+                name: item.subcategory,
+                categorySlug: item.categorySlug,
+                subcategorySlug: item.subcategorySlug,
+                url: item.url,
+                category: item.category,
+              },
+              equipment: [item],
+            });
+          }
+        }
+      });
+
+      // Convert to renderable tree
+      const treeGroups = [];
+      categoryMap.forEach((catGroup) => {
+        const children = [];
+        catGroup.subcategoryMap.forEach((subGroup) => {
+          children.push({
+            name: subGroup.subcategory.name,
+            url: subGroup.subcategory.url,
+            equipment: subGroup.equipment.map((eq) => ({
+              name: eq.name,
+              url: eq.url,
+              capacity: eq.capacity,
+              subcategory: eq.subcategory,
+            })),
+          });
+        });
+
+        treeGroups.push({
+          name: catGroup.category.name,
+          url: catGroup.category.url,
+          children,
+        });
+      });
+
+      return treeGroups;
+    }
+
+    // SVG icons — inline styles REQUIRED because Astro scoped CSS
+    // does not apply to elements created dynamically via innerHTML.
+    const ICONS = {
+      category: '<svg style="width:13px;height:13px;flex-shrink:0;color:#62bb74;opacity:0.7" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="1.5" width="3.5" height="3.5"/><rect x="7" y="1.5" width="3.5" height="3.5"/><rect x="7" y="7" width="3.5" height="3.5"/><rect x="1.5" y="7" width="3.5" height="3.5"/></svg>',
+      subcategory: '<svg style="width:11px;height:11px;flex-shrink:0;color:#62bb74;opacity:0.6" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 9.5a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2.5a1 1 0 0 1 1-1h2.5l1 1.5h4.5a1 1 0 0 1 1 1z"/></svg>',
+      equipment: '<svg style="width:11px;height:11px;flex-shrink:0;color:#9bab9f;opacity:0.5" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.35 3.15a.5.5 0 0 0 0 .7l.8.8a.5.5 0 0 0 .7 0l1.885-1.885a3 3 0 0 1-3.97 3.97l-3.455 3.455a1.06 1.06 0 0 1-1.5-1.5l3.455-3.455a3 3 0 0 1 3.97-3.97L7.35 3.15z"/></svg>',
+      chevron: '<svg style="width:10px;height:10px;flex-shrink:0;color:rgba(255,255,255,0.25)" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 9 3-3-3-3"/></svg>',
+      // Chevron-down for expandable subcategories (with equipment count badge)
+      chevronDown: '<svg style="width:10px;height:10px;flex-shrink:0;color:rgba(255,255,255,0.35);transition:transform 0.2s ease" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>',
+    };
+
+    function renderItemHtml(url, name, level, indexRef, extra) {
+      var cls = 'equipment-search__result-item equipment-search__result-item--' + level;
+      var icon = level === 'subcategory' ? ICONS.subcategory : ICONS.equipment;
+      var badge = extra && extra.capacity
+        ? '<span class="equipment-search__result-badge">' + escapeHtml(extra.capacity) + '</span>'
+        : '';
+      var meta = extra && extra.subcategory && level === 'equipment'
+        ? '<div class="equipment-search__result-meta"><span>' + escapeHtml(extra.subcategory) + '</span></div>'
+        : '';
+      // Expandable indicator for subcategories with equipment
+      var expandIndicator = '';
+      if (level === 'subcategory' && extra && extra.equipmentCount) {
+        expandIndicator = '<span class="equipment-search__expand-indicator">'
+          + '<span class="equipment-search__expand-count">' + extra.equipmentCount + '</span>'
+          + ICONS.chevronDown
+          + '</span>';
+      }
+
+      var idx = indexRef.value++;
+      return '<a href="' + url + '" class="' + cls + '" role="option" aria-selected="false" data-index="' + idx + '">'
+        + icon
+        + '<div class="equipment-search__result-content">'
+        + '<div class="equipment-search__result-name">' + escapeHtml(name) + '</div>'
+        + meta
+        + '</div>'
+        + badge
+        + expandIndicator
+        + (level !== 'subcategory' ? ICONS.chevron : '')
+        + '</a>';
+    }
+
+    function renderResults(treeGroups) {
+      var query = input.value.trim();
+
+      // Count total items for tracking
+      var itemCount = 0;
+      treeGroups.forEach(function (g) {
+        itemCount++; // category itself
+        g.children.forEach(function (sub) {
+          itemCount++; // subcategory
+          itemCount += sub.equipment.length;
+        });
+      });
+
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
         event: 'equipment_search',
         search_query: query,
-        results_count: results.length,
-        search_type: searchType,
+        results_count: itemCount,
+        search_type: itemCount > 0 ? 'hierarchical' : 'no_results',
       });
 
-      if (results.length === 0) {
-        resultsContainer.innerHTML = `
-          <div class="equipment-search__empty">
-            No se encontraron equipos.
-            <a href="/arriendo" class="equipment-search__empty-link">Ver catálogo completo →</a>
-          </div>
-        `;
-      } else {
-        resultsContainer.innerHTML = results
-          .slice(0, 8)
-          .map((item, index) => `
-            <a
-              href="${item.url}"
-              class="equipment-search__result-item"
-              role="option"
-              aria-selected="${index === selectedIndex}"
-              data-index="${index}"
-            >
-              <div class="equipment-search__result-content">
-                <div class="equipment-search__result-name">${item.name}</div>
-                <div class="equipment-search__result-meta">
-                  <span>${item.category}</span>
-                  ${item.subcategory ? `<span>› ${item.subcategory}</span>` : ''}
-                </div>
-              </div>
-              ${item.capacity ? `<span class="equipment-search__result-badge">${item.capacity}</span>` : ''}
-            </a>
-          `)
-          .join('');
+      if (treeGroups.length === 0) {
+        resultsContainer.innerHTML = '<div class="equipment-search__empty">'
+          + 'No se encontraron resultados para &quot;' + escapeHtml(query) + '&quot;.'
+          + '<a href="/arriendo" class="equipment-search__empty-link">Ver catálogo completo →</a>'
+          + '</div>';
+        resultsContainer.hidden = false;
+        input.setAttribute('aria-expanded', 'true');
+        currentItems = [];
+        selectedIndex = -1;
+        return;
       }
+
+      var html = '';
+      var indexRef = { value: 0 };
+
+      treeGroups.forEach(function (group) {
+        // Category group container
+        html += '<div class="equipment-search__group">';
+
+        // Category header label
+        html += '<div class="equipment-search__group-header">' + escapeHtml(group.name) + '</div>';
+
+        // Category root link
+        html += '<a href="' + group.url + '" class="equipment-search__result-item equipment-search__result-item--category" role="option" aria-selected="false" data-index="' + indexRef.value + '">'
+          + ICONS.category
+          + '<div class="equipment-search__result-content">'
+          + '<div class="equipment-search__result-name">' + escapeHtml(group.name) + '</div>'
+          + '</div>'
+          + ICONS.chevron
+          + '</a>';
+        indexRef.value++;
+
+        // Children container with vertical tree line
+        if (group.children.length > 0) {
+          html += '<div class="equipment-search__children">';
+
+          group.children.forEach(function (sub) {
+            // Subcategory group container (visual sub-dropdown)
+            html += '<div class="equipment-search__subcategory-group">';
+            
+            // Subcategory item — pass equipment count for expand indicator
+            html += renderItemHtml(sub.url, sub.name, 'subcategory', indexRef, {
+              equipmentCount: sub.equipment.length > 0 ? sub.equipment.length : null,
+            });
+
+            // Equipment items nested under subcategory
+            if (sub.equipment.length > 0) {
+              html += '<div class="equipment-search__equipment-list">';
+              sub.equipment.forEach(function (eq) {
+                html += renderItemHtml(eq.url, eq.name, 'equipment', indexRef, {
+                  capacity: eq.capacity,
+                  subcategory: eq.subcategory,
+                });
+              });
+              html += '</div>';
+            }
+            
+            html += '</div>'; // close .equipment-search__subcategory-group
+          });
+
+          html += '</div>'; // close .equipment-search__children
+        }
+
+        html += '</div>'; // close .equipment-search__group
+      });
+
+      resultsContainer.innerHTML = html;
       resultsContainer.hidden = false;
       input.setAttribute('aria-expanded', 'true');
+
+      // Collect all clickable items for keyboard nav
+      currentItems = [];
+      var allLinks = resultsContainer.querySelectorAll('.equipment-search__result-item');
+      allLinks.forEach(function (link) {
+        currentItems.push(link);
+      });
+      selectedIndex = -1;
     }
 
-    // Hide results
     function hideResults() {
       resultsContainer.hidden = true;
       input.setAttribute('aria-expanded', 'false');
       selectedIndex = -1;
+      currentItems = [];
     }
 
-    // Update selected item
     function updateSelection() {
-      const items = resultsContainer.querySelectorAll('.equipment-search__result-item');
-      items.forEach((item, index) => {
+      currentItems.forEach(function (item, index) {
         item.setAttribute('aria-selected', index === selectedIndex ? 'true' : 'false');
       });
+      if (selectedIndex >= 0 && currentItems[selectedIndex]) {
+        currentItems[selectedIndex].scrollIntoView({ block: 'nearest' });
+      }
     }
 
-    // Debounce
-    let debounceTimer;
+    var debounceTimer;
     function debounce(fn, delay) {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(fn, delay);
     }
 
-    // Event listeners
-    input.addEventListener('input', (e) => {
-      const query = e.target.value.trim();
+    input.addEventListener('input', function (e) {
+      var query = e.target.value.trim();
       if (query.length < 2) {
         hideResults();
         return;
       }
-      debounce(() => {
-        currentResults = search(query);
-        selectedIndex = -1;
-        renderResults(currentResults);
-      }, 200);
+      debounce(function () {
+        var results = search(query);
+        renderResults(results);
+      }, 150);
     });
 
-    input.addEventListener('keydown', (e) => {
+    input.addEventListener('keydown', function (e) {
       if (resultsContainer.hidden) return;
+      var totalItems = currentItems.length;
 
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        selectedIndex = Math.min(selectedIndex + 1, currentResults.length - 1);
+        selectedIndex = Math.min(selectedIndex + 1, totalItems - 1);
         updateSelection();
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
@@ -373,31 +865,30 @@ const searchIndexJson = JSON.stringify(searchIndex);
         updateSelection();
       } else if (e.key === 'Enter' && selectedIndex >= 0) {
         e.preventDefault();
-        const selectedItem = resultsContainer.querySelector(`[data-index="${selectedIndex}"]`);
-        if (selectedItem) {
-          selectedItem.click();
+        if (currentItems[selectedIndex]) {
+          currentItems[selectedIndex].click();
         }
       } else if (e.key === 'Escape') {
         hideResults();
+        input.blur();
       }
     });
 
-    // Close on outside click
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', function (e) {
       if (!e.target.closest('.equipment-search')) {
         hideResults();
       }
-      // Tracking: selección de resultado de búsqueda
-      const resultItem = e.target.closest('.equipment-search__result-item');
+      var resultItem = e.target.closest('.equipment-search__result-item');
       if (resultItem) {
-        const query = input.value.trim();
-        const resultName = resultItem.querySelector('.equipment-search__result-name')?.textContent ?? '';
-        const resultUrl = resultItem.getAttribute('href') ?? '';
+        var query = input.value.trim();
+        var resultName = resultItem.querySelector('.equipment-search__result-name');
+        var name = resultName ? resultName.textContent : '';
+        var url = resultItem.getAttribute('href') || '';
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
           event: 'equipment_search_select',
-          result_name: resultName,
-          result_url: resultUrl,
+          result_name: name,
+          result_url: url,
           result_type: 'equipment',
           search_query: query,
         });
