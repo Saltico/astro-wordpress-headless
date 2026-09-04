@@ -160,23 +160,23 @@ const hasInitialValue = initialValue?.confirmed && initialValue?.formattedAddres
     const SCRIPT_ID = 'google-maps-places-script';
     const COMPANY_STORAGE_KEY = 'ip_quote_company_v1';
 
-    const container = document.querySelector<HTMLElement>('[data-address-autocomplete]');
+    const container = document.querySelector('[data-address-autocomplete]');
     if (!container) return;
 
-    const input = container.querySelector<HTMLInputElement>('[data-address-input]');
-    const clearBtn = container.querySelector<HTMLButtonElement>('[data-address-clear]');
-    const confirmedEl = container.querySelector<HTMLElement>('[data-address-confirmed]');
-    const fallbackEl = container.querySelector<HTMLElement>('[data-address-fallback]');
-    const fallbackMsg = container.querySelector<HTMLElement>('[data-fallback-message]');
-    const statusEl = container.querySelector<HTMLElement>('[data-address-status]');
-    const errorEl = container.querySelector<HTMLElement>('[data-address-error]');
+    const input = container.querySelector('[data-address-input]');
+    const clearBtn = container.querySelector('[data-address-clear]');
+    const confirmedEl = container.querySelector('[data-address-confirmed]');
+    const fallbackEl = container.querySelector('[data-address-fallback]');
+    const fallbackMsg = container.querySelector('[data-fallback-message]');
+    const statusEl = container.querySelector('[data-address-status]');
+    const errorEl = container.querySelector('[data-address-error]');
 
     // Campos de fallback manual.
-    const manualAddress = container.querySelector<HTMLInputElement>('[data-manual-address]');
-    const manualCommune = container.querySelector<HTMLInputElement>('[data-manual-commune]');
-    const manualRegion = container.querySelector<HTMLInputElement>('[data-manual-region]');
-    const manualReference = container.querySelector<HTMLInputElement>('[data-manual-reference]');
-    const manualSubmit = container.querySelector<HTMLButtonElement>('[data-manual-submit]');
+    const manualAddress = container.querySelector('[data-manual-address]');
+    const manualCommune = container.querySelector('[data-manual-commune]');
+    const manualRegion = container.querySelector('[data-manual-region]');
+    const manualReference = container.querySelector('[data-manual-reference]');
+    const manualSubmit = container.querySelector('[data-manual-submit]');
 
     let autocomplete = null;
     let selectedPlace = null;
@@ -184,7 +184,7 @@ const hasInitialValue = initialValue?.confirmed && initialValue?.formattedAddres
 
     // ─── Restaurar desde localStorage ──────────────────────
 
-    function restoreFromStorage(): void {
+    function restoreFromStorage() {
       try {
         const raw = window.localStorage.getItem(COMPANY_STORAGE_KEY);
         if (!raw) return;
@@ -227,39 +227,34 @@ const hasInitialValue = initialValue?.confirmed && initialValue?.formattedAddres
 
     // ─── Helpers ─────────────────────────────────────────────
 
-    function setStatus(msg: string): void {
+    function setStatus(msg) {
       if (statusEl) statusEl.textContent = msg;
     }
 
-    function showError(msg: string): void {
+    function showError(msg) {
       if (errorEl) {
         errorEl.textContent = msg;
         errorEl.hidden = false;
       }
     }
 
-    function hideError(): void {
+    function hideError() {
       if (errorEl) {
         errorEl.textContent = '';
         errorEl.hidden = true;
       }
     }
 
-    function updateClearButton(): void {
+    function updateClearButton() {
       if (!clearBtn) return;
       clearBtn.hidden = !input?.value && !selectedPlace;
     }
 
-    function emitEvent(name: string, detail?: unknown): void {
+    function emitEvent(name, detail) {
       container.dispatchEvent(new CustomEvent(name, { bubbles: true, detail }));
     }
 
-    function showConfirmed(data: {
-      formattedAddress: string;
-      commune?: string;
-      region?: string;
-      source: 'google' | 'manual';
-    }): void {
+    function showConfirmed(data) {
       if (!confirmedEl) return;
 
       const isManual = data.source === 'manual';
@@ -281,20 +276,20 @@ const hasInitialValue = initialValue?.confirmed && initialValue?.formattedAddres
       confirmedEl.hidden = false;
     }
 
-    function hideConfirmed(): void {
+    function hideConfirmed() {
       if (confirmedEl) confirmedEl.hidden = true;
     }
 
-    function showFallback(message?: string): void {
+    function showFallback(message) {
       if (fallbackMsg && message) fallbackMsg.textContent = message;
       if (fallbackEl) fallbackEl.hidden = false;
     }
 
-    function hideFallback(): void {
+    function hideFallback() {
       if (fallbackEl) fallbackEl.hidden = true;
     }
 
-    function escapeHtml(s: string): string {
+    function escapeHtml(s) {
       const div = document.createElement('div');
       div.textContent = s;
       return div.innerHTML;
@@ -302,21 +297,18 @@ const hasInitialValue = initialValue?.confirmed && initialValue?.formattedAddres
 
     // ─── Extracción de componentes de dirección ────────────
 
-    function extractComponent(
-      components: google.maps.GeocoderAddressComponent[],
-      type: string
-    ): string | undefined {
+    function extractComponent(components, type) {
       const comp = components.find((c) => c.types.includes(type));
       return comp?.long_name;
     }
 
     // ─── Google Maps ───────────────────────────────────────
 
-    function loadGoogleMapsScript(): Promise<void> {
+    function loadGoogleMapsScript() {
       return new Promise((resolve, reject) => {
         if (document.getElementById(SCRIPT_ID)) {
           // Ya existe el script, esperar a que cargue.
-          const existingScript = document.getElementById(SCRIPT_ID) as HTMLScriptElement;
+          const existingScript = document.getElementById(SCRIPT_ID);
           if (window.google?.maps?.places) {
             resolve();
             return;
@@ -342,7 +334,7 @@ const hasInitialValue = initialValue?.confirmed && initialValue?.formattedAddres
       });
     }
 
-    function initAutocomplete(): void {
+    function initAutocomplete() {
       if (!input || !window.google?.maps?.places) return;
 
       try {
@@ -416,7 +408,7 @@ const hasInitialValue = initialValue?.confirmed && initialValue?.formattedAddres
 
     // ─── Clear ─────────────────────────────────────────────
 
-    function clearSelection(): void {
+    function clearSelection() {
       if (input) input.value = '';
       selectedPlace = null;
       userTyped = false;
@@ -429,7 +421,7 @@ const hasInitialValue = initialValue?.confirmed && initialValue?.formattedAddres
 
     // ─── Fallback manual ───────────────────────────────────
 
-    function handleManualSubmit(): void {
+    function handleManualSubmit() {
       const address = manualAddress?.value.trim() ?? '';
       const commune = manualCommune?.value.trim() ?? '';
       const region = manualRegion?.value.trim() ?? '';

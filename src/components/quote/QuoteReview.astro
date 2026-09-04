@@ -132,7 +132,7 @@ import Button from '@/components/ui/Button.astro';
   import { buildWhatsAppUrl, buildWhatsAppTalkUrl, computeCartTotals, formatPeriodLabel } from '@/lib/quoteMessage';
   import { formatRut, normalizePhone } from '@/types/quoteCompany';
   import { showConfirmModal } from '@/lib/confirmModal';
-  import { trackQuoteCartView, trackQuoteSendWhatsApp, trackQuoteEmailSuccess, trackQuoteEmailError } from '@/lib/analytics';
+  import { trackQuoteCartView, trackQuoteSendWhatsApp, trackQuoteSendEmail, trackQuoteEmailSuccess, trackQuoteEmailError } from '@/lib/analytics';
   import type { QuoteCartItem } from '@/types/quote';
 
   function escapeHtml(s: string): string {

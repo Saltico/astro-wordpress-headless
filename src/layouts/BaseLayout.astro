@@ -22,7 +22,6 @@ import CookieBanner from '@/components/ui/CookieBanner.astro';
 import ThemeToggle from '@/components/ui/ThemeToggle.astro';
 import { organizationSchema, websiteSchema, getSiteUrl } from '@/lib/seo';
 import { siteBrand, siteContact, topbarData, navigationData, footerData } from '@/data/site';
-import { initAnalytics } from '@/lib/analytics';
 import logoImg from '@/assets/logos/logo_ipproyectosindustriales.png';
 
 // GTM ID desde variable de entorno. Si no existe, no se carga tracking.
@@ -234,14 +233,18 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
         document.body.appendChild(layer);
 
         window.addEventListener('quote-cart:toast', (event) => {
-          const e = event as CustomEvent<{ kind: 'info' | 'warning' | 'error'; message: string }>;
+          const detail = event instanceof CustomEvent && event.detail && typeof event.detail === 'object'
+            ? event.detail
+            : {};
+          const message = typeof detail.message === 'string' ? detail.message : '';
+          const kind = detail.kind === 'warning' || detail.kind === 'error' ? detail.kind : 'info';
           const toast = document.createElement('div');
-          toast.textContent = e.detail.message;
+          toast.textContent = message;
           toast.setAttribute('role', 'status');
           const bg =
-            e.detail.kind === 'warning'
+            kind === 'warning'
               ? 'var(--color-warning, #b7791f)'
-              : e.detail.kind === 'error'
+              : kind === 'error'
                 ? 'var(--color-danger, #c0392b)'
                 : 'var(--color-brand, #308f40)';
           toast.style.cssText = `padding:0.75rem 1rem;background-color:${bg};color:#fff;font-weight:700;border-radius:var(--radius-toast);box-shadow:var(--shadow-md);opacity:0;transition:opacity 0.2s ease;pointer-events:auto;max-width:320px;font-size:var(--text-small);`;
@@ -334,10 +337,7 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
 
     <CookieBanner />
 
-    <script>
-      // Inicializar analytics: escucha eventos del DOM y los envía al dataLayer de GTM
-      initAnalytics();
-    </script>
+    <script src="../scripts/initAnalytics.ts"></script>
   </body>
 </html>
 
