@@ -1,0 +1,199 @@
+---
+// src/components/rental/EquipmentDescription.astro
+// Acordeón de descripción del equipo
+
+import Container from '@/components/ui/Container.astro';
+import Icon from '@/components/ui/Icon.astro';
+
+export interface Props {
+  description: string;
+  background?: 'light' | 'dark';
+}
+
+const { description, background = 'dark' } = Astro.props;
+---
+
+{description && (
+  <section class:list={['equipment-description', `equipment-description--${background}`]}>
+    <Container>
+      <details class="equipment-description__details">
+        <summary class="equipment-description__header">
+          <span class="equipment-description__title">Descripción</span>
+          <span class="equipment-description__icon-wrap">
+            <Icon name="chevron-down" size={18} class="equipment-description__icon" />
+          </span>
+        </summary>
+        <div class="equipment-description__content-wrapper">
+          <div class="equipment-description__content">
+            <div class="equipment-description__text">
+              {description.split('\n\n').map((paragraph) => (
+                <p>{paragraph}</p>
+              ))}
+            </div>
+            <p class="equipment-description__disclaimer">
+              La información contenida en este documento está sujeta a cambios sin previo aviso. IP Proyectos Industriales no se hace responsable de errores técnicos o editoriales u omisiones en el contenido. El producto real puede variar respecto a la imagen mostrada. Las características de los modelos pueden variar sin previo aviso.
+            </p>
+          </div>
+        </div>
+      </details>
+    </Container>
+  </section>
+)}
+
+<style>
+  .equipment-description {
+    padding-block: clamp(16px, 2vw, 24px);
+  }
+
+  .equipment-description--dark {
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+  }
+
+  .equipment-description--light {
+    background-color: var(--theme-bg-alt);
+    color: var(--theme-text);
+  }
+
+  .equipment-description__details {
+    background-color: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .equipment-description__details[open] {
+    border-color: var(--color-brand, #308f40);
+    box-shadow: 0 4px 16px rgba(48, 143, 64, 0.08);
+  }
+
+  .equipment-description__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.15rem;
+    list-style: none;
+    padding: 20px 24px;
+    user-select: none;
+  }
+
+  .equipment-description__header::-webkit-details-marker {
+    display: none;
+  }
+
+  .equipment-description__title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .equipment-description__title::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background-color: var(--color-brand, #308f40);
+    border-radius: 2px;
+  }
+
+  .equipment-description__icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--theme-bg);
+    border: 1px solid var(--theme-border);
+    flex-shrink: 0;
+    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.3s ease;
+  }
+
+  .equipment-description__details[open] .equipment-description__icon-wrap {
+    background-color: var(--color-brand, #308f40);
+    border-color: var(--color-brand, #308f40);
+    transform: rotate(180deg);
+  }
+
+  .equipment-description__details[open] .equipment-description__icon-wrap :global(svg) {
+    color: var(--color-on-brand, #fff);
+  }
+
+  .equipment-description__icon {
+    flex-shrink: 0;
+    transition: color 0.25s ease;
+  }
+
+  /* Smooth accordion animation using CSS grid */
+  .equipment-description__content-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
+  }
+
+  .equipment-description__details[open] .equipment-description__content-wrapper {
+    grid-template-rows: 1fr;
+  }
+
+  .equipment-description__content {
+    overflow: hidden;
+    min-height: 0;
+    padding: 0 24px 24px;
+  }
+
+  .equipment-description__text {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .equipment-description__text p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--theme-text);
+  }
+
+  .equipment-description__disclaimer {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--theme-border);
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: var(--theme-text-muted);
+    font-style: italic;
+  }
+
+  @media (max-width: 639px) {
+    .equipment-description__header {
+      padding: 16px 20px;
+      font-size: 1.05rem;
+    }
+
+    .equipment-description__content {
+      padding: 0 16px 20px;
+    }
+
+    .equipment-description__text p {
+      font-size: 0.9rem;
+    }
+
+    .equipment-description__disclaimer {
+      font-size: 0.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .equipment-description__content-wrapper {
+      transition: none;
+    }
+    
+    .equipment-description__icon-wrap {
+      transition: none;
+    }
+  }
+</style>

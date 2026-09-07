@@ -1,0 +1,527 @@
+---
+// src/components/rental/EquipmentDetailHero.astro
+// Hero de página de detalle: imagen principal + datos + CTA + descarga PDF
+
+import Container from '@/components/ui/Container.astro';
+import Icon from '@/components/ui/Icon.astro';
+import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
+import QuoteAddButton from '@/components/quote/QuoteAddButton.astro';
+import type { Equipment } from '@/data/rental';
+import heroBg from '@/assets/imgs/hero/arriendo/arriendo.avif';
+
+export interface Props {
+  equipment: Equipment;
+  breadcrumbs: Array<{ label: string; url: string }>;
+  subcategoryName: string;
+}
+
+const { equipment, breadcrumbs, subcategoryName } = Astro.props;
+
+// Galería: repetir imagen principal 3 veces (placeholder hasta tener imágenes reales)
+const gallery = equipment.gallery && equipment.gallery.length > 0
+  ? equipment.gallery
+  : [equipment.image, equipment.image, equipment.image];
+
+const mainImage = gallery[0];
+---
+
+<section class="equipment-detail-hero">
+  <!-- Fondo difuminado para el breadcrumb -->
+  <img
+    src={heroBg.src}
+    alt=""
+    class="equipment-detail-hero__bg"
+    aria-hidden="true"
+  />
+  <div class="equipment-detail-hero__bg-overlay"></div>
+  
+  <Container>
+    <!-- Breadcrumbs -->
+    <Breadcrumbs items={breadcrumbs} variant="hero" />
+
+    <div class="equipment-detail-hero__grid">
+      <!-- Galería de imágenes: thumbnails izquierda + imagen principal derecha -->
+      <div class="equipment-detail-hero__gallery">
+        <!-- Thumbnails a la izquierda -->
+        <div class="equipment-detail-hero__thumbnails">
+          {gallery.map((img, index) => (
+            <button
+              type="button"
+              class:list={['equipment-detail-hero__thumbnail', index === 0 && 'equipment-detail-hero__thumbnail--active']}
+              data-thumbnail-index={index}
+            >
+              <img src={img} alt={`${equipment.name} - vista ${index + 1}`} />
+            </button>
+          ))}
+        </div>
+        
+        <!-- Imagen principal a la derecha -->
+        <div class="equipment-detail-hero__main-image-wrapper" data-lightbox-trigger>
+          <img
+            src={mainImage}
+            alt={equipment.name}
+            class="equipment-detail-hero__main-image"
+            data-main-image
+          />
+          <span class="equipment-detail-hero__image-badge">Imagen referencial</span>
+        </div>
+      </div>
+
+      <!-- Datos del equipo (derecha) -->
+      <div class="equipment-detail-hero__info">
+        {equipment.brand && (
+          <span class="equipment-detail-hero__brand">{equipment.brand}</span>
+        )}
+        <h1 class="equipment-detail-hero__title">{equipment.name}</h1>
+        
+        <div class="equipment-detail-hero__meta">
+          {equipment.capacity && (
+            <div class="equipment-detail-hero__meta-item">
+              <Icon name="weight" size={18} />
+              <span>Capacidad: <strong>{equipment.capacity}</strong></span>
+            </div>
+          )}
+          {equipment.height && (
+            <div class="equipment-detail-hero__meta-item">
+              <Icon name="height" size={18} />
+              <span>Altura: <strong>{equipment.height}</strong></span>
+            </div>
+          )}
+        </div>
+
+        <ul class="equipment-detail-hero__features">
+          {equipment.features.map((feature) => (
+            <li class="equipment-detail-hero__feature">
+              <Icon name="check" size={16} />
+              <span>{feature}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div class="equipment-detail-hero__actions">
+          <QuoteAddButton item={equipment} sourceUrl={Astro.url.pathname} size="lg" />
+          
+          {equipment.techSheetUrl && (
+            <button
+              type="button"
+              class="equipment-detail-hero__btn equipment-detail-hero__btn--ghost"
+              disabled
+              title="Ficha técnica disponible próximamente"
+            >
+              <Icon name="file-text" size={16} />
+              Ficha técnica PDF
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<!-- Lightbox modal -->
+<div class="equipment-detail-lightbox" data-lightbox-modal hidden>
+  <div class="equipment-detail-lightbox__backdrop" data-lightbox-close></div>
+  <div class="equipment-detail-lightbox__content">
+    <button type="button" class="equipment-detail-lightbox__close" data-lightbox-close>
+      <Icon name="close" size={24} />
+    </button>
+    <img src="" alt="" class="equipment-detail-lightbox__image" data-lightbox-image />
+  </div>
+</div>
+
+<script>
+  // Galería: cambiar imagen principal al hacer click en thumbnails
+  document.addEventListener('DOMContentLoaded', () => {
+    const thumbnails = document.querySelectorAll<HTMLButtonElement>('[data-thumbnail-index]');
+    const mainImage = document.querySelector<HTMLImageElement>('[data-main-image]');
+    const modal = document.querySelector<HTMLElement>('[data-lightbox-modal]');
+    const modalImage = modal?.querySelector<HTMLImageElement>('[data-lightbox-image]');
+    const lightboxTrigger = document.querySelector<HTMLElement>('[data-lightbox-trigger]');
+    const closeButtons = document.querySelectorAll<HTMLElement>('[data-lightbox-close]');
+
+    if (!mainImage || !modal || !modalImage) return;
+
+    // Cambiar imagen principal al hacer click en thumbnail
+    thumbnails.forEach((thumbnail) => {
+      thumbnail.addEventListener('click', () => {
+        const thumbnailImg = thumbnail.querySelector('img');
+        if (!thumbnailImg) return;
+
+        // Actualizar imagen principal
+        mainImage.src = thumbnailImg.src;
+        mainImage.alt = thumbnailImg.alt;
+
+        // Actualizar estado activo
+        thumbnails.forEach(t => t.classList.remove('equipment-detail-hero__thumbnail--active'));
+        thumbnail.classList.add('equipment-detail-hero__thumbnail--active');
+      });
+    });
+
+    // Lightbox: solo al hacer click en la imagen principal
+    function openLightbox() {
+      modalImage.src = mainImage.src;
+      modalImage.alt = mainImage.alt;
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      modal.hidden = true;
+      document.body.style.overflow = '';
+    }
+
+    lightboxTrigger?.addEventListener('click', openLightbox);
+
+    closeButtons.forEach((btn) => {
+      btn.addEventListener('click', closeLightbox);
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.hidden) {
+        closeLightbox();
+      }
+    });
+  });
+</script>
+
+<style>
+  /* Hacer el navbar semi-transparente con fondo oscuro en esta página */
+  :global(body[data-page-type="equipment_detail"]) .header {
+    background-color: rgba(13, 22, 17, 0.85) !important;
+    backdrop-filter: blur(8px);
+  }
+
+  :global(body[data-page-type="equipment_detail"]) .header.is-scrolled {
+    background-color: rgba(13, 22, 17, 0.95) !important;
+  }
+
+  :global(body[data-page-type="equipment_detail"]) .header__brand,
+  :global(body[data-page-type="equipment_detail"]) .nav__link,
+  :global(body[data-page-type="equipment_detail"]) .nav__sublink {
+    color: #fff !important;
+  }
+
+  :global(body[data-page-type="equipment_detail"]) .nav__hamburger {
+    background-color: #fff !important;
+  }
+
+  .equipment-detail-hero {
+    position: relative;
+    padding-block: clamp(24px, 3vw, 40px);
+    /* background-color: var(--theme-bg); */
+    color: var(--theme-text);
+    overflow: hidden;
+  }
+
+  /* Fondo difuminado que se extiende desde el top de la ventana */
+  .equipment-detail-hero__bg {
+    position: fixed;
+    top: 0;
+    left: -10px;
+    width: calc(100% + 20px);
+    height: 300px;
+    object-fit: cover;
+    filter: blur(6px) brightness(0.5);
+    z-index: -1;
+    opacity: 0.8;
+    mask-image: linear-gradient(to bottom, black 0%, black 40%, rgba(0, 0, 0, 0.3) 70%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 50%, rgba(0, 0, 0, 0.3) 85%, transparent 100%);
+  }
+
+  .equipment-detail-hero__bg-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 300px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.15) 40%, rgba(0, 0, 0, 0.05) 70%, transparent 100%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .equipment-detail-hero :global(.app-container) {
+    position: relative;
+    z-index: 1;
+  }
+
+  .equipment-detail-hero__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 5vw, 64px);
+    align-items: start;
+  }
+
+  @media (max-width: 1023px) {
+    .equipment-detail-hero__grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+
+  /* Galería: thumbnails izquierda + imagen principal derecha */
+  .equipment-detail-hero__gallery {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  @media (max-width: 639px) {
+    .equipment-detail-hero__gallery {
+      flex-direction: column-reverse;
+    }
+  }
+
+  /* Thumbnails a la izquierda */
+  .equipment-detail-hero__thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 639px) {
+    .equipment-detail-hero__thumbnails {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+
+  .equipment-detail-hero__thumbnail {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+    padding: 0;
+    background: none;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 639px) {
+    .equipment-detail-hero__thumbnail {
+      width: 60px;
+      height: 60px;
+    }
+  }
+
+  .equipment-detail-hero__thumbnail:hover {
+    border-color: var(--color-brand, #308f40);
+    opacity: 0.9;
+  }
+
+  .equipment-detail-hero__thumbnail--active {
+    border-color: var(--color-brand, #308f40);
+    opacity: 1;
+  }
+
+  .equipment-detail-hero__thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Imagen principal a la derecha */
+  .equipment-detail-hero__main-image-wrapper {
+    position: relative;
+    flex: 1;
+    aspect-ratio: 4 / 3;
+    background-color: var(--color-graphite, #0d1611);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .equipment-detail-hero__main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .equipment-detail-hero__main-image-wrapper:hover .equipment-detail-hero__main-image {
+    transform: scale(1.05);
+  }
+
+  .equipment-detail-hero__image-badge {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    padding: 6px 12px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: var(--color-on-dark, #fff);
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 6px;
+    backdrop-filter: blur(8px);
+  }
+
+  /* Info */
+  .equipment-detail-hero__info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .equipment-detail-hero__brand {
+    display: inline-block;
+    padding: 6px 14px;
+    background-color: var(--color-brand, #308f40);
+    color: var(--color-on-brand, #fff);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .equipment-detail-hero__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  .equipment-detail-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .equipment-detail-hero__meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    color: var(--theme-text-muted);
+  }
+
+  .equipment-detail-hero__meta-item :global(svg) {
+    color: var(--color-brand, #308f40);
+    flex-shrink: 0;
+  }
+
+  .equipment-detail-hero__meta-item strong {
+    color: var(--theme-text);
+    font-weight: 700;
+  }
+
+  .equipment-detail-hero__features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .equipment-detail-hero__feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .equipment-detail-hero__feature :global(svg) {
+    flex-shrink: 0;
+    color: var(--color-brand, #308f40);
+    margin-top: 2px;
+  }
+
+  .equipment-detail-hero__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .equipment-detail-hero__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-radius: 999px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .equipment-detail-hero__btn--ghost {
+    background: transparent;
+    color: var(--theme-text);
+    border-color: var(--theme-border);
+  }
+
+  .equipment-detail-hero__btn--ghost:hover:not(:disabled) {
+    border-color: var(--color-brand, #308f40);
+    color: var(--color-brand, #308f40);
+  }
+
+  .equipment-detail-hero__btn--ghost:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Lightbox */
+  .equipment-detail-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .equipment-detail-lightbox[hidden] {
+    display: none;
+  }
+
+  .equipment-detail-lightbox__backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(8px);
+  }
+
+  .equipment-detail-lightbox__content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    z-index: 1;
+  }
+
+  .equipment-detail-lightbox__image {
+    max-width: 100%;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .equipment-detail-lightbox__close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 8px;
+    transition: transform 0.2s ease;
+  }
+
+  .equipment-detail-lightbox__close:hover {
+    transform: scale(1.1);
+  }
+</style>

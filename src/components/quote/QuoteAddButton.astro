@@ -10,14 +10,15 @@ import type { Equipment } from '@/data/rental';
 export interface Props {
   item: Equipment;
   sourceUrl: string;
+  size?: 'md' | 'lg';
 }
 
-const { item, sourceUrl } = Astro.props;
+const { item, sourceUrl, size = 'md' } = Astro.props;
 ---
 
 <button
   type="button"
-  class="quote-add-btn"
+  class:list={['quote-add-btn', `quote-add-btn--${size}`]}
   data-quote-add
   data-equipment-slug={item.slug}
   data-name={item.name}
@@ -193,5 +194,16 @@ const { item, sourceUrl } = Astro.props;
   .quote-add-btn__icon[hidden],
   .quote-add-btn__label[hidden] {
     display: none !important;
+  }
+
+  /* Tamaño large */
+  .quote-add-btn--lg {
+    padding: 16px 28px;
+    font-size: 1rem;
+  }
+
+  .quote-add-btn--lg .quote-add-btn__icon :global(svg) {
+    width: 18px;
+    height: 18px;
   }
 </style>

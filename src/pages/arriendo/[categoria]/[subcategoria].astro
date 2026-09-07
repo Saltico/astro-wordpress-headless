@@ -277,6 +277,8 @@ const faqItems = FAQ_MAP[subcategory.slug] ?? defaultFaqItems;
     columns={catalogColumns}
     background="dark"
     title={`Modelos disponibles de ${subcategory.name.toLowerCase()}`}
+    categorySlug={category.slug}
+    subcategorySlug={subcategory.slug}
   />
 
   <Fragment slot="related">

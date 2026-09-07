@@ -49,6 +49,13 @@ import mezcladoraElectrica400lEmaresaHv400 from '@/assets/imgs/rental/equipos-es
 import canastillaAlzaHombreMetalicoOrmet2MF from '@/assets/imgs/rental/equipos-especiales/canastillo-alza-hombre/canastillo-alza-hombre-metalico/canastillo-alza-hombre-metalico.avif';
 import canastillaAlzaHombreFibraOrmet2VE from '@/assets/imgs/rental/equipos-especiales/canastillo-alza-hombre/canastillo-alza-hombre-fibra/canastillo-alza-hombre-fibra.avif';
 
+export interface EquipmentSpec {
+  /** Nombre del atributo (ej: "Capacidad máxima", "Motor") */
+  attribute: string;
+  /** Valor del atributo (ej: "60 t", "Cummins QSB 5.9") */
+  value: string;
+}
+
 export interface Equipment {
   /** Slug único del modelo, kebab-case, lowercase */
   slug: string;
@@ -66,6 +73,24 @@ export interface Equipment {
   image: string;
   /** Mensaje WhatsApp pre-armado específico del equipo */
   whatsappMessage: string;
+  
+  // ─── Campos para página de detalle (opcionales) ───
+  /** Marca del equipo (ej: "Grove", "Volvo") */
+  brand?: string;
+  /** Descripción larga del equipo para página de detalle */
+  description?: string;
+  /** Especificaciones técnicas completas (tabla Atributo/Propiedades) */
+  specs?: EquipmentSpec[];
+  /** URL de ficha técnica PDF (placeholder en v1) */
+  techSheetUrl?: string;
+  /** Galería de imágenes adicionales */
+  gallery?: string[];
+  /** Slugs de equipos relacionados */
+  relatedSlugs?: string[];
+  /** Title tag personalizado para SEO */
+  seoTitle?: string;
+  /** Meta description personalizado para SEO */
+  seoDescription?: string;
 }
 
 export interface RentalSubcategory {
@@ -200,13 +225,27 @@ const IZAJE_GRUAS_60: RentalSubcategory = {
     {
       slug: 'grua-grove-rt-765-e',
       name: 'Grove RT 765 E',
+      brand: 'Grove',
       capacity: '60 t',
       height: '43 m',
       shortDesc: 'Grúa compacta para montaje industrial y apoyo a obras civiles, capacidad de 60 toneladas con plumín telescópico y 4 ejes direccionales.',
+      description: 'La Grove RT 765 E es una grúa rough terrain de 60 toneladas diseñada para montaje industrial y apoyo a obras civiles. Su diseño compacto con 4 ejes direccionales le permite operar en espacios reducidos, mientras que su plumín telescópico de 15 m extiende su alcance para tareas de izaje más complejas. Equipada con motor Tier 4 Final, ofrece bajo consumo de combustible y cumplimiento de normativas ambientales. Ideal para faenas de minería, construcción e industria donde la maniobrabilidad y la capacidad de izaje son críticas.',
       features: ['Motor Tier 4 Final', 'Plumín de 15 m', '4 ejes direccionales'],
+      specs: [
+        { attribute: 'Capacidad máxima', value: '60 t' },
+        { attribute: 'Pluma principal', value: '11.6 – 43 m' },
+        { attribute: 'Plumín telescópico', value: '7.6 – 15 m' },
+        { attribute: 'Motor', value: 'Cummins QSB 5.9 Tier 4' },
+        { attribute: 'Potencia', value: '209 kW / 280 HP' },
+        { attribute: 'Peso operativo', value: '43.6 t' },
+        { attribute: 'Ejes', value: '4 ejes direccionales' },
+        { attribute: 'Velocidad máxima', value: '40 km/h' },
+      ],
       image: GRUA_GROVE_60T,
-      whatsappMessage:
-        'Hola IP, quisiera cotizar arriendo de Grúa Grove RT 765 E (60 t).',
+      gallery: [GRUA_GROVE_60T, GRUA_GROVE_60T, GRUA_GROVE_60T],
+      techSheetUrl: '/docs/fichas/grua-grove-rt-765-e.pdf',
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Grove RT 765 E (60 t).',
+      relatedSlugs: ['grua-terex-rt-780-e', 'grua-grove-gmk-4100'],
     },
 /*     {
       slug: 'grua-tadano-gr-600xl',
@@ -261,12 +300,27 @@ const IZAJE_GRUAS_80: RentalSubcategory = {
     {
       slug: 'grua-terex-rt-780-e',
       name: 'Grúa Terex RT 780 E',
+      brand: 'Terex',
       capacity: '80 t',
       height: '47 m',
       shortDesc: 'Grúa Rough Terrain especialmente diseñada para trabajos dentro de faenas mineras y terrenos irregulares, capacidad de 80 toneladas con plumín de 18 m y 4 ejes direccionales.',
+      description: 'La Terex RT 780 E es una grúa Rough Terrain de 80 toneladas especialmente diseñada para trabajos dentro de faenas mineras y terrenos irregulares. Su configuración 4x4 y tracción integral le permiten operar en condiciones adversas, mientras que su plumín de 18 m extiende su alcance para tareas de izaje pesado. Equipada con sistema de control avanzado y cabina climatizada, ofrece comodidad y precisión en operaciones críticas. Ideal para minería, construcción de infraestructura y montajes industriales en terrenos difíciles.',
       features: ['Tracción 4x4', 'Excelente estabilidad', 'Ideal para terrenos difíciles'],
+      specs: [
+        { attribute: 'Capacidad máxima', value: '80 t' },
+        { attribute: 'Pluma principal', value: '13.1 – 47 m' },
+        { attribute: 'Plumín', value: '18 m' },
+        { attribute: 'Motor', value: 'Diésel turboalimentado' },
+        { attribute: 'Potencia', value: '298 kW / 400 HP' },
+        { attribute: 'Peso operativo', value: '54 t' },
+        { attribute: 'Tracción', value: '4x4' },
+        { attribute: 'Ejes', value: '4 ejes direccionales' },
+      ],
       image: GRUA_TEREX_80T,
+      gallery: [GRUA_TEREX_80T, GRUA_TEREX_80T, GRUA_TEREX_80T],
+      techSheetUrl: '/docs/fichas/grua-terex-rt-780-e.pdf',
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Terex RT 780 E (80 t).',
+      relatedSlugs: ['grua-grove-rt-765-e', 'grua-grove-gmk-4100'],
     },
 /*     {
       slug: 'grua-tadano-gr-800xl',
@@ -321,12 +375,27 @@ const IZAJE_GRUAS_100: RentalSubcategory = {
     {
       slug: 'grua-grove-gmk-4100',
       name: 'Grove GMK 4100',
+      brand: 'Grove',
       capacity: '100 t',
       height: '60 m',
       shortDesc: 'Grúa todo terreno versátil para montajes estructurales, mantenimiento industrial y construcción. Capacidad de 100 toneladas con plumín telescópico de 17 m.',
+      description: 'La Grove GMK 4100 es una grúa todo terreno de 100 toneladas diseñada para montajes estructurales, mantenimiento industrial y proyectos de construcción de gran envergadura. Su sistema de pluma telescópica con plumín de 17 m proporciona un alcance excepcional, mientras que su diseño de 5 ejes garantiza estabilidad en cargas pesadas. Equipada con sistema de control MEGS y cabina ergonómica, ofrece precisión y comodidad en operaciones prolongadas. Ideal para minería, energía e infraestructura pesada.',
       features: ['Bajo tiempo de instalación', 'Rápido traslado', 'Gran maniobrabilidad'],
+      specs: [
+        { attribute: 'Capacidad máxima', value: '100 t' },
+        { attribute: 'Pluma principal', value: '13.8 – 60 m' },
+        { attribute: 'Plumín telescópico', value: '10.7 – 17 m' },
+        { attribute: 'Motor', value: 'Mercedes-Benz OM 460 LA' },
+        { attribute: 'Potencia', value: '390 kW / 530 HP' },
+        { attribute: 'Peso operativo', value: '72 t' },
+        { attribute: 'Ejes', value: '5 ejes' },
+        { attribute: 'Velocidad máxima', value: '75 km/h' },
+      ],
       image: GRUA_GROVE_100T,
+      gallery: [GRUA_GROVE_100T, GRUA_GROVE_100T, GRUA_GROVE_100T],
+      techSheetUrl: '/docs/fichas/grua-grove-gmk-4100.pdf',
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Grove GMK 4100 (100 t).',
+      relatedSlugs: ['grua-grove-gmk-5250l', 'grua-grove-rt-765-e'],
     },/* 
     {
       slug: 'grua-liebherr-ltm-1100',
@@ -381,12 +450,27 @@ const IZAJE_GRUAS_250: RentalSubcategory = {
     {
       slug: 'grua-grove-gmk-5250l',
       name: 'Grove GMK 5250L',
+      brand: 'Grove',
       capacity: '250 t',
       height: '120 m',
       shortDesc: 'Grúa todo terreno de alta capacidad diseñada para montajes industriales, minería, energía e infraestructura pesada. Capacidad de 250 toneladas con plumín telescópico de 33 m.',
-      features: ['deal para izajes críticos', 'Alta capacidad en espacios reducidos', 'Pluma telescópica de gran alcance'],
+      description: 'La Grove GMK 5250L es una grúa todo terreno de 250 toneladas de alta capacidad, diseñada para los proyectos más exigentes de montajes industriales, minería, energía e infraestructura pesada. Su pluma telescópica de 120 m con plumín de 33 m proporciona un alcance excepcional para izajes críticos. Equipada con sistema de control MEGS y 6 ejes direccionales, ofrece precisión y estabilidad en cargas de alto tonelaje. Ideal para montaje de aerogeneradores, equipos de proceso y estructuras de gran envergadura.',
+      features: ['Ideal para izajes críticos', 'Alta capacidad en espacios reducidos', 'Pluma telescópica de gran alcance'],
+      specs: [
+        { attribute: 'Capacidad máxima', value: '250 t' },
+        { attribute: 'Pluma principal', value: '17.4 – 120 m' },
+        { attribute: 'Plumín telescópico', value: '11.8 – 33 m' },
+        { attribute: 'Motor', value: 'Mercedes-Benz OM 471' },
+        { attribute: 'Potencia', value: '550 kW / 748 HP' },
+        { attribute: 'Peso operativo', value: '108 t' },
+        { attribute: 'Ejes', value: '6 ejes direccionales' },
+        { attribute: 'Velocidad máxima', value: '70 km/h' },
+      ],
       image: GRUA_GROVE_250T,
+      gallery: [GRUA_GROVE_250T, GRUA_GROVE_250T, GRUA_GROVE_250T],
+      techSheetUrl: '/docs/fichas/grua-grove-gmk-5250l.pdf',
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Grove GMK 5250L (250 t).',
+      relatedSlugs: ['grua-grove-gmk-4100', 'grua-grove-rt-765-e'],
     },
    /*  {
       slug: 'grua-liebherr-ltm-1250',
@@ -441,12 +525,26 @@ const IZAJE_CAMIONES_PLUMA: RentalSubcategory = {
     {
       slug: 'camion-pluma-5-toneladas',
       name: 'Camión Pluma Freightliner M2 106',
+      brand: 'Freightliner',
       capacity: '4,7 t',
       height: '18 m',
       shortDesc: 'Camión pluma ideal para transporte e instalación de materiales livianos y medianos. Capacidad de 4,7 toneladas ideal para faenas urbanas e industriales.',
+      description: 'El Camión Pluma Freightliner M2 106 con capacidad de 4,7 toneladas es la solución ideal para transporte e instalación de materiales livianos y medianos en faenas urbanas e industriales. Equipado con brazo articulado Effer 255 6S, ofrece excelente maniobrabilidad y precisión en el posicionamiento de cargas. Su diseño compacto le permite operar en espacios reducidos, mientras que su cabina ergonómica garantiza comodidad para el operador. Perfecto para proyectos de construcción, mantenimiento industrial y logística de materiales.',
       features: ['Brazo articulado', 'Effer 255 6S', 'Gran movilidad'],
+      specs: [
+        { attribute: 'Capacidad de carga', value: '4,7 t' },
+        { attribute: 'Alcance máximo', value: '18 m' },
+        { attribute: 'Motor', value: 'Cummins ISB 6.7L' },
+        { attribute: 'Potencia', value: '260 HP' },
+        { attribute: 'Transmisión', value: 'Automática Allison' },
+        { attribute: 'Brazo', value: 'Effer 255 6S articulado' },
+        { attribute: 'Peso bruto vehicular', value: '12 t' },
+      ],
       image: CAMION_PLUMA_5T,
+      gallery: [CAMION_PLUMA_5T, CAMION_PLUMA_5T, CAMION_PLUMA_5T],
+      techSheetUrl: '/docs/fichas/camion-pluma-5-toneladas.pdf',
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma 4,7 t.',
+      relatedSlugs: ['camion-pluma-6-toneladas', 'camion-pluma-7-toneladas'],
     },
     {
       slug: 'camion-pluma-6-toneladas',
@@ -695,12 +793,26 @@ const MT_RETROEXCAVADORAS: RentalSubcategory = {
     {
       slug: 'retroexcavadora-john-deere-320d',
       name: 'Retroexcavadora John Deere 320D',
+      brand: 'John Deere',
       capacity: '1 m³',
       height: '4,3 m',
       shortDesc: 'Retroexcavadora John Deere 320D con capacidad de 1 m³ para faenas urbanas y construcción.',
+      description: 'La Retroexcavadora John Deere 320D es un equipo versátil diseñado para faenas urbanas y de construcción. Con capacidad de balde de 1 m³ y profundidad de excavación de 4,3 m, es ideal para zanjas, fundaciones y movimiento de tierra en espacios confinados. Su motor diésel de bajo consumo y sistema hidráulico de alta eficiencia garantizan productividad y ahorro de combustible. Cabina climatizada con controles ergonómicos para máxima comodidad del operador.',
       features: ['Balde cargador frontal de 1,0 m³', 'Profundidad máxima de excavación de 4,3 m', 'Capacidad de levante del cargador de hasta 3.540 kg'],
+      specs: [
+        { attribute: 'Capacidad balde retro', value: '1,0 m³' },
+        { attribute: 'Capacidad balde cargador', value: '1,0 m³' },
+        { attribute: 'Profundidad excavación', value: '4,3 m' },
+        { attribute: 'Motor', value: 'John Deere PowerTech 4.5L' },
+        { attribute: 'Potencia', value: '97 HP / 72 kW' },
+        { attribute: 'Peso operativo', value: '8.680 kg' },
+        { attribute: 'Capacidad levante', value: '3.540 kg' },
+      ],
       image: RETROEXCAVADORA_JOHN_DEERE_320D,
+      gallery: [RETROEXCAVADORA_JOHN_DEERE_320D, RETROEXCAVADORA_JOHN_DEERE_320D],
+      techSheetUrl: '/docs/fichas/retroexcavadora-john-deere-320d.pdf',
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Retroexcavadora John Deere 320D.',
+      relatedSlugs: ['minicargador-volvo-mc-90b', 'camion-tolva-12-m3'],
     },
 /*     {
       slug: 'retroexcavadora-komatsu-pc200',
@@ -1580,4 +1692,22 @@ export function getAllSubcategories(): Array<{
   return RENTAL_CATEGORIES.flatMap((category) =>
     category.subcategories.map((subcategory) => ({ category, subcategory }))
   );
+}
+
+/**
+ * Busca un equipo por su slug en todo el catálogo.
+ * Devuelve el equipo junto con su categoría y subcategoría, o undefined si no existe.
+ */
+export function findEquipmentBySlug(slug: string): {
+  category: RentalCategory;
+  subcategory: RentalSubcategory;
+  equipment: Equipment;
+} | undefined {
+  for (const category of RENTAL_CATEGORIES) {
+    for (const subcategory of category.subcategories) {
+      const equipment = subcategory.catalog.find((e) => e.slug === slug);
+      if (equipment) return { category, subcategory, equipment };
+    }
+  }
+  return undefined;
 }

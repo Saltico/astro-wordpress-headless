@@ -12,6 +12,8 @@ export interface Props {
   columns?: 2 | 3 | 4;
   background?: 'light' | 'dark';
   title?: string;
+  categorySlug?: string;
+  subcategorySlug?: string;
 }
 
 const {
@@ -19,7 +21,12 @@ const {
   columns = 3,
   background = 'light',
   title,
+  categorySlug,
+  subcategorySlug,
 } = Astro.props;
+
+// Determinar si mostramos el botón "Ver detalle"
+const showDetailLink = Boolean(categorySlug && subcategorySlug);
 
 // Schema ItemList
 const itemListJsonLd = itemListSchema({
@@ -40,7 +47,13 @@ const itemListJsonLd = itemListSchema({
       </header>
     )} -->
     <div class:list={['equipment-catalog__grid', `equipment-catalog__grid--cols-${columns}`]}>
-      {items.map((item) => <EquipmentCard item={item} />)}
+      {items.map((item) => (
+        <EquipmentCard
+          item={item}
+          showDetailLink={showDetailLink}
+          detailHref={categorySlug && subcategorySlug ? `/arriendo/${categorySlug}/${subcategorySlug}/${item.slug}` : undefined}
+        />
+      ))}
     </div>
   </Container>
 </section>

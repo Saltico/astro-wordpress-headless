@@ -1,0 +1,58 @@
+---
+title: Equipment Detail Page - Component Architecture
+---
+flowchart LR
+    subgraph DataLayer["Capa de Datos"]
+        rentalTS["rental.ts<br/>Equipment interface<br/>RentalSubcategory<br/>RentalCategory"]
+        findHelper["findEquipmentBySlug()<br/>helper function"]
+    end
+
+    subgraph Pages["Páginas (Rutas)"]
+        subcatPage["[subcategoria].astro<br/>Grilla de equipos"]
+        detailPage["[equipo].astro<br/>Página de detalle"]
+    end
+
+    subgraph Components["Componentes"]
+        eqCard["EquipmentCard.astro<br/>Card con 2 botones"]
+        eqCatalog["EquipmentCatalog.astro<br/>Grilla de cards"]
+        quoteBtn["QuoteAddButton.astro<br/>Agregar al cotizador"]
+        detailHero["EquipmentDetailHero.astro<br/>Hero de detalle"]
+        specsAccordion["EquipmentSpecsAccordion.astro<br/>Tabla de specs"]
+        descAccordion["EquipmentDescription.astro<br/>Descripción"]
+        relatedEq["RelatedEquipment.astro<br/>Equipos relacionados"]
+        ctaBand["CTABand.astro<br/>CTA cotización"]
+    end
+
+    subgraph Layouts["Layouts"]
+        baseLayout["BaseLayout.astro"]
+        rentalLayout["RentalLayout.astro"]
+    end
+
+    %% Data flow
+    rentalTS --> findHelper
+    rentalTS --> subcatPage
+    findHelper --> detailPage
+
+    %% Subcategory page flow
+    subcatPage --> rentalLayout
+    subcatPage --> eqCatalog
+    eqCatalog --> eqCard
+    eqCard --> quoteBtn
+
+    %% Detail page flow
+    detailPage --> baseLayout
+    detailPage --> detailHero
+    detailPage --> specsAccordion
+    detailPage --> descAccordion
+    detailPage --> relatedEq
+    detailPage --> ctaBand
+    detailHero --> quoteBtn
+
+    %% Navigation
+    eqCard -->|"Ver detalle"| detailPage
+    relatedEq -->|"Card click"| detailPage
+
+    style DataLayer fill:#1a3a2a,stroke:#308f40,color:#f3f7f4
+    style Pages fill:#15201a,stroke:#62bb74,color:#f3f7f4
+    style Components fill:#1e2a23,stroke:#308f40,color:#f3f7f4
+    style Layouts fill:#0d1611,stroke:#9bab9f,color:#f3f7f4

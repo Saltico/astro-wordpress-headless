@@ -1,0 +1,123 @@
+---
+// src/pages/arriendo/[categoria]/[subcategoria]/[equipo].astro
+// Página de detalle de equipo individual
+
+export const prerender = true;
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import CTABand from '@/components/ui/CTABand.astro';
+import EquipmentDetailHero from '@/components/rental/EquipmentDetailHero.astro';
+import EquipmentSpecsAccordion from '@/components/rental/EquipmentSpecsAccordion.astro';
+import EquipmentDescription from '@/components/rental/EquipmentDescription.astro';
+import RelatedEquipment from '@/components/rental/RelatedEquipment.astro';
+import { RENTAL_CATEGORIES, findEquipmentBySlug } from '@/data/rental';
+import { productSchemaExtended, breadcrumbSchema, combineSchemas } from '@/lib/seo';
+import edificio from '@/assets/imgs/edificio.jpg';
+
+export function getStaticPaths() {
+  return RENTAL_CATEGORIES.flatMap((category) =>
+    category.subcategories.flatMap((subcategory) =>
+      subcategory.catalog.map((equipment) => ({
+        params: {
+          categoria: category.slug,
+          subcategoria: subcategory.slug,
+          equipo: equipment.slug,
+        },
+        props: { category, subcategory, equipment },
+      }))
+    )
+  );
+}
+
+const { category, subcategory, equipment } = Astro.props;
+
+const breadcrumbs = [
+  { label: 'Inicio', url: '/' },
+  { label: 'Arriendo de Equipos', url: '/arriendo' },
+  { label: category.name, url: `/arriendo/${category.slug}` },
+  { label: subcategory.name, url: `/arriendo/${category.slug}/${subcategory.slug}` },
+  { label: equipment.name, url: Astro.url.pathname },
+];
+
+// Schema.org Product
+const mainProductSchema = productSchemaExtended({
+  name: `${equipment.brand ?? ''} ${equipment.name}`.trim(),
+  description: equipment.seoDescription ?? equipment.description ?? equipment.shortDesc,
+  url: Astro.url.pathname,
+  image: equipment.image,
+  brand: equipment.brand ?? 'IP Proyectos Industriales',
+  offers: {
+    availability: 'InStock',
+    priceCurrency: 'CLP',
+    priceRange: 'Consultar',
+  },
+});
+
+const jsonLd = combineSchemas(mainProductSchema, breadcrumbSchema(breadcrumbs));
+
+// Equipos relacionados
+const relatedItems = (equipment.relatedSlugs ?? [])
+  .map((slug: string) => {
+    const found = findEquipmentBySlug(slug);
+    if (!found) return null;
+    return {
+      name: found.equipment.name,
+      shortDesc: found.equipment.shortDesc,
+      href: `/arriendo/${found.category.slug}/${found.subcategory.slug}/${found.equipment.slug}`,
+      badge: found.equipment.capacity,
+      image: found.equipment.image,
+    };
+  })
+  .filter(Boolean) as Array<{ name: string; shortDesc: string; href: string; badge?: string; image?: string }>;
+---
+
+<BaseLayout
+  title={equipment.seoTitle ?? `Arriendo de ${equipment.brand ? equipment.brand + ' ' : ''}${equipment.name} | IP Proyectos`}
+  description={equipment.seoDescription ?? equipment.description ?? equipment.shortDesc}
+  breadcrumbs={breadcrumbs}
+  jsonLd={jsonLd}
+  pageType="equipment_detail"
+  pageCategory="arriendo"
+  pageSubcategory={category.slug}
+  siteSection="rental"
+>
+  <EquipmentDetailHero
+    equipment={equipment}
+    breadcrumbs={breadcrumbs}
+    subcategoryName={subcategory.name}
+  />
+
+  <EquipmentSpecsAccordion
+    specs={equipment.specs ?? []}
+    background="dark"
+  />
+
+  <EquipmentDescription
+    description={equipment.description ?? ''}
+    background="dark"
+  />
+
+  {relatedItems.length > 0 && (
+    <RelatedEquipment
+      items={relatedItems}
+      title="Equipos relacionados"
+      background="dark"
+    />
+  )}
+
+  <CTABand
+    eyebrow="¿Necesitas este equipo para tu faena?"
+    title={`Cotiza tu arriendo de ${equipment.name}`}
+    subtitle="Operador certificado, mantenimiento y seguros incluidos. Disponibilidad inmediata en zona norte y centro de Chile."
+    backgroundImage={edificio.src}
+    backgroundAlt="Edificio corporativo de IP Proyectos Industriales en Chile"
+    backgroundWidth={edificio.width}
+    backgroundHeight={edificio.height}
+    buttons={[
+      { label: 'Ir al cotizador', href: '/cotizador', variant: 'primary', icon: 'arrow-right', ariaLabel: 'Ir al cotizador en línea' },
+      { label: 'Hablar por WhatsApp', href: `https://wa.me/56956594144?text=${encodeURIComponent(equipment.whatsappMessage)}`, variant: 'outline', external: true, icon: 'whatsapp' },
+    ]}
+    contentAlign="center"
+    minHeight="md"
+  />
+</BaseLayout>

@@ -1,0 +1,235 @@
+---
+// src/components/rental/EquipmentSpecsAccordion.astro
+// Acordeón de especificaciones técnicas con tabla Atributo/Propiedades
+
+import Container from '@/components/ui/Container.astro';
+import Icon from '@/components/ui/Icon.astro';
+import type { EquipmentSpec } from '@/data/rental';
+
+export interface Props {
+  specs: EquipmentSpec[];
+  background?: 'light' | 'dark';
+}
+
+const { specs, background = 'dark' } = Astro.props;
+---
+
+{specs.length > 0 && (
+  <section class:list={['equipment-specs', `equipment-specs--${background}`]}>
+    <Container>
+      <details class="equipment-specs__details">
+        <summary class="equipment-specs__header">
+          <span class="equipment-specs__title">Especificaciones técnicas</span>
+          <span class="equipment-specs__icon-wrap">
+            <Icon name="chevron-down" size={18} class="equipment-specs__icon" />
+          </span>
+        </summary>
+        <div class="equipment-specs__content-wrapper">
+          <div class="equipment-specs__content">
+            <table class="equipment-specs__table">
+              <thead>
+                <tr>
+                  <th>Atributo</th>
+                  <th>Propiedades</th>
+                </tr>
+              </thead>
+              <tbody>
+                {specs.map((spec) => (
+                  <tr>
+                    <td>{spec.attribute}</td>
+                    <td>{spec.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    </Container>
+  </section>
+)}
+
+<style>
+  .equipment-specs {
+    padding-block: clamp(16px, 2vw, 24px);
+  }
+
+  .equipment-specs--dark {
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+  }
+
+  .equipment-specs--light {
+    background-color: var(--theme-bg-alt);
+    color: var(--theme-text);
+  }
+
+  .equipment-specs__details {
+    background-color: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .equipment-specs__details[open] {
+    border-color: var(--color-brand, #308f40);
+    box-shadow: 0 4px 16px rgba(48, 143, 64, 0.08);
+  }
+
+  .equipment-specs__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.15rem;
+    list-style: none;
+    padding: 20px 24px;
+    user-select: none;
+  }
+
+  .equipment-specs__header::-webkit-details-marker {
+    display: none;
+  }
+
+  .equipment-specs__title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .equipment-specs__title::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background-color: var(--color-brand, #308f40);
+    border-radius: 2px;
+  }
+
+  .equipment-specs__icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--theme-bg);
+    border: 1px solid var(--theme-border);
+    flex-shrink: 0;
+    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.3s ease;
+  }
+
+  .equipment-specs__details[open] .equipment-specs__icon-wrap {
+    background-color: var(--color-brand, #308f40);
+    border-color: var(--color-brand, #308f40);
+    transform: rotate(180deg);
+  }
+
+  .equipment-specs__details[open] .equipment-specs__icon-wrap :global(svg) {
+    color: var(--color-on-brand, #fff);
+  }
+
+  .equipment-specs__icon {
+    flex-shrink: 0;
+    transition: color 0.25s ease;
+  }
+
+  /* Smooth accordion animation using CSS grid */
+  .equipment-specs__content-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
+  }
+
+  .equipment-specs__details[open] .equipment-specs__content-wrapper {
+    grid-template-rows: 1fr;
+  }
+
+  .equipment-specs__content {
+    overflow: hidden;
+    min-height: 0;
+    padding: 0 24px 24px;
+  }
+
+  .equipment-specs__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  .equipment-specs__table thead {
+    background-color: var(--theme-bg);
+    border-bottom: 2px solid var(--color-brand, #308f40);
+  }
+
+  .equipment-specs__table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--theme-text-muted);
+  }
+
+  .equipment-specs__table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--theme-border);
+  }
+
+  .equipment-specs__table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .equipment-specs__table tbody tr:hover {
+    background-color: var(--theme-bg);
+  }
+
+  .equipment-specs__table td:first-child {
+    font-weight: 600;
+    color: var(--theme-text);
+    width: 40%;
+  }
+
+  .equipment-specs__table td:last-child {
+    color: var(--theme-text-muted);
+  }
+
+  @media (max-width: 639px) {
+    .equipment-specs__header {
+      padding: 16px 20px;
+      font-size: 1.05rem;
+    }
+
+    .equipment-specs__content {
+      padding: 0 16px 20px;
+    }
+
+    .equipment-specs__table {
+      font-size: 0.85rem;
+    }
+
+    .equipment-specs__table th,
+    .equipment-specs__table td {
+      padding: 10px 12px;
+    }
+
+    .equipment-specs__table td:first-child {
+      width: 45%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .equipment-specs__content-wrapper {
+      transition: none;
+    }
+    
+    .equipment-specs__icon-wrap {
+      transition: none;
+    }
+  }
+</style>

@@ -9,9 +9,14 @@ import type { Equipment } from '@/data/rental';
 export interface Props {
   item: Equipment;
   showAddToQuote?: boolean;
+  showDetailLink?: boolean;
+  detailHref?: string;
 }
 
-const { item, showAddToQuote = true } = Astro.props;
+const { item, showAddToQuote = true, showDetailLink = false, detailHref } = Astro.props;
+
+// Construir URL de detalle si no se provee
+const href = detailHref ?? `#${item.slug}`;
 ---
 
 <article class="equipment-card" id={item.slug}>
@@ -36,9 +41,17 @@ const { item, showAddToQuote = true } = Astro.props;
         </li>
       ))}
     </ul>
-    {showAddToQuote && (
-      <QuoteAddButton item={item} sourceUrl={Astro.url.pathname} />
-    )}
+    <div class="equipment-card__actions">
+      {showAddToQuote && (
+        <QuoteAddButton item={item} sourceUrl={Astro.url.pathname} />
+      )}
+      {showDetailLink && (
+        <a href={href} class="equipment-card__btn equipment-card__btn--ghost">
+          Ver detalle
+          <Icon name="arrow-right" size={16} />
+        </a>
+      )}
+    </div>
   </div>
 </article>
 
@@ -146,5 +159,60 @@ const { item, showAddToQuote = true } = Astro.props;
     flex-shrink: 0;
     color: var(--color-brand, #1a9c4a);
     margin-top: 2px;
+  }
+
+  .equipment-card__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .equipment-card__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 20px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 999px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all 0.18s var(--ease-out);
+    text-decoration: none;
+    width: 100%;
+    line-height: 1;
+  }
+
+  .equipment-card__btn--ghost {
+    background: transparent;
+    color: var(--color-brand, #308f40);
+    border-color: var(--color-brand, #308f40);
+  }
+
+  .equipment-card__btn--ghost:hover {
+    background: var(--color-brand, #308f40);
+    color: var(--color-on-brand, #fff);
+  }
+
+  .equipment-card__btn--ghost :global(svg) {
+    flex-shrink: 0;
+  }
+
+  /* Desktop y tablet: botones en la misma línea con el mismo ancho */
+  @media (min-width: 640px) {
+    .equipment-card__actions {
+      flex-direction: row;
+      gap: 12px;
+    }
+
+    .equipment-card__btn,
+    .equipment-card__actions :global(.quote-add-btn) {
+      flex: 1 1 0%;
+      width: auto;
+      min-width: 0;
+    }
   }
 </style>

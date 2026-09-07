@@ -1,0 +1,58 @@
+---
+title: Equipment Detail Page - Implementation Flow
+---
+flowchart TD
+    subgraph Phase1["Fase 1: Extensión del Modelo de Datos"]
+        A1[Extender interface Equipment] --> A2[Agregar brand, description, specs, techSheetUrl, gallery, relatedSlugs]
+        A2 --> A3[Crear interface EquipmentSpec]
+        A3 --> A4[Implementar findEquipmentBySlug helper]
+        A4 --> A5[Poblar datos de 1 equipo de prueba<br/>Grove RT 765 E]
+    end
+
+    subgraph Phase2["Fase 2: Modificación de EquipmentCard"]
+        B1[Agregar prop showDetailLink y detailHref] --> B2[Agregar botón Ver detalle<br/>variante ghost/outline]
+        B2 --> B3[Crear estilos .equipment-card__actions<br/>con flex gap y 2 botones]
+        B3 --> B4[Actualizar EquipmentCatalog<br/>para pasar categorySlug/subcategorySlug]
+        B4 --> B5[Verificar que QuoteAddButton<br/>sigue funcionando]
+    end
+
+    subgraph Phase3["Fase 3: Página de Detalle"]
+        C1[Crear ruta<br/>arriendo/categoria/subcategoria/equipo.astro] --> C2[Implementar getStaticPaths<br/>para todos los equipos]
+        C2 --> C3[Crear EquipmentDetailHero.astro<br/>imagen + datos + CTA + PDF]
+        C3 --> C4[Crear EquipmentSpecsAccordion.astro<br/>tabla Atributo/Propiedades]
+        C4 --> C5[Crear EquipmentDescription.astro<br/>texto descriptivo]
+        C5 --> C6[Integrar RelatedEquipment.astro<br/>equipos relacionados]
+    end
+
+    subgraph Phase4["Fase 4: Integración y Layout"]
+        D1[Usar BaseLayout directamente] --> D2[Configurar slots:<br/>hero, specs, description, related]
+        D2 --> D3[Agregar CTABand de cotización]
+        D3 --> D4[Implementar breadcrumbs<br/>con 5 niveles]
+    end
+
+    subgraph Phase5["Fase 5: SEO y Schema"]
+        E1[Generar Product schema<br/>por equipo] --> E2[Generar BreadcrumbList schema]
+        E2 --> E3[Configurar meta tags<br/>title, description, og:image]
+        E3 --> E4[Validar con Google Rich Results Test]
+    end
+
+    subgraph Phase6["Fase 6: Testing"]
+        F1[npm run build verde] --> F2[Verificar visual<br/>EquipmentCard con 2 botones]
+        F2 --> F3[Verificar navegación<br/>Ver detalle → página correcta]
+        F3 --> F4[Verificar responsive<br/>mobile/tablet/desktop]
+        F4 --> F5[Verificar funcionalidad<br/>Agregar al cotizador desde detalle]
+        F5 --> F6[Lighthouse SEO ≥ 90]
+    end
+
+    Phase1 --> Phase2
+    Phase2 --> Phase3
+    Phase3 --> Phase4
+    Phase4 --> Phase5
+    Phase5 --> Phase6
+
+    style Phase1 fill:#1a3a2a,stroke:#308f40,color:#f3f7f4
+    style Phase2 fill:#1a3a2a,stroke:#308f40,color:#f3f7f4
+    style Phase3 fill:#1a3a2a,stroke:#308f40,color:#f3f7f4
+    style Phase4 fill:#1a3a2a,stroke:#308f40,color:#f3f7f4
+    style Phase5 fill:#1a3a2a,stroke:#308f40,color:#f3f7f4
+    style Phase6 fill:#1a3a2a,stroke:#308f40,color:#f3f7f4
