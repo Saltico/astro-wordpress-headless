@@ -1,0 +1,104 @@
+---
+// src/components/rental/SearchHero.astro
+// Sección de búsqueda centrada: eyebrow + h1 + subtitle + EquipmentSearch.
+// Fondo graphite-2, sin imagen. Reutiliza el componente EquipmentSearch.
+
+import EquipmentSearch from '@/components/rental/EquipmentSearch.astro';
+
+export interface Props {
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
+  searchPlaceholder?: string;
+}
+
+const {
+  eyebrow = 'Encuentra tu equipo',
+  title = 'Arriendo de equipos y maquinaria para construcción y minería',
+  subtitle = 'Grúas de hasta 400 toneladas, movimiento de tierra, transporte y equipos especiales. Disponibilidad 24/7 en Atacama, Coquimbo y Antofagasta.',
+  searchPlaceholder = 'Grúa 100 toneladas...',
+} = Astro.props;
+---
+
+<section class="search-hero">
+  <div class="search-hero__container">
+    {eyebrow && <p class="search-hero__eyebrow">{eyebrow}</p>}
+    <h1 class="search-hero__title">{title}</h1>
+    {subtitle && <p class="search-hero__subtitle">{subtitle}</p>}
+    <div class="search-hero__search">
+      <EquipmentSearch placeholder={searchPlaceholder} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .search-hero {
+    padding-block: clamp(32px, 5vw, 56px);
+    background-color: var(--color-graphite-2, #15201a);
+  }
+
+  .search-hero__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    max-width: var(--container-max-width, 1536px);
+    margin-inline: auto;
+    padding-inline: var(--container-padding, 20px);
+    text-align: center;
+  }
+
+  .search-hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-brand-300, #62bb74);
+    margin: 0;
+  }
+
+  .search-hero__eyebrow::before {
+    content: '';
+    width: 42px;
+    height: 2px;
+    background: currentColor;
+  }
+
+  .search-hero__title {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--color-on-dark, #fff);
+    margin: 0;
+    text-wrap: balance;
+    max-width: 32ch;
+  }
+
+  .search-hero__subtitle {
+    font-size: clamp(0.9rem, 1.2vw, 1.05rem);
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.78);
+    margin: 0;
+    max-width: 80ch;
+  }
+
+  .search-hero__search {
+    width: 100%;
+    max-width: 900px;
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Sobrescribir max-width del EquipmentSearch para que sea más ancho */
+  .search-hero__search :global(.equipment-search) {
+    max-width: 100%;
+    width: 100%;
+  }
+</style>

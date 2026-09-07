@@ -1,9 +1,10 @@
 ---
 // src/components/rental/CategoryShowcase.astro
-// Grid visual de categorías de rental con imágenes y pills de subcategorías.
-// Pieza central del homepage rental-first.
+// Grid visual de categorías de rental con card de Promociones destacada.
+// Estructura: header centrado → banner Promociones full-width → grid 2×2 de categorías.
 
 import { RENTAL_CATEGORIES } from '@/data/rental';
+import { promotionCard } from '@/data/promotions';
 import Icon from '@/components/ui/Icon.astro';
 
 export interface Props {
@@ -29,6 +30,39 @@ const {
       {subtitle && <p class="category-showcase__subtitle">{subtitle}</p>}
     </div>
 
+    {/* Card de Promociones — full-width, layout split horizontal */}
+    <article class="promo-card">
+      <div class="promo-card__image-wrapper">
+        <img
+          src={promotionCard.image}
+          alt={promotionCard.imageAlt}
+          class="promo-card__image"
+          loading="lazy"
+          decoding="async"
+        />
+        <span class="promo-card__badge" aria-hidden="true">PROMO</span>
+      </div>
+      <div class="promo-card__content">
+        <h3 class="promo-card__title">{promotionCard.title}</h3>
+        <p class="promo-card__desc">{promotionCard.description}</p>
+        <div class="promo-card__pills">
+          {promotionCard.categories.map((cat) => (
+            <a
+              href={`/arriendo/${cat.slug}`}
+              class="promo-card__pill"
+            >
+              {cat.name}
+            </a>
+          ))}
+        </div>
+        <a href={promotionCard.ctaHref} class="promo-card__link">
+          {promotionCard.ctaLabel}
+          <Icon name="arrow-right" size={18} />
+        </a>
+      </div>
+    </article>
+
+    {/* Grid 2×2 de categorías de rental */}
     <div class="category-showcase__grid">
       {RENTAL_CATEGORIES.map((category) => (
         <article class="category-card">
@@ -74,7 +108,8 @@ const {
 
 <style>
   .category-showcase {
-    padding-block: clamp(56px, 8vw, 100px);
+    padding-block-start: clamp(32px, 5vw, 56px);
+    padding-block-end: clamp(56px, 8vw, 100px);
     background-color: var(--theme-bg);
   }
 
@@ -87,6 +122,8 @@ const {
   .category-showcase__header {
     margin-bottom: 40px;
     text-align: center;
+    display: flex;
+    justify-content: space-between;
   }
 
   .category-showcase__eyebrow {
@@ -126,6 +163,147 @@ const {
     color: var(--theme-text-muted);
   }
 
+  /* ─────────────────────────────────────────────────────────────
+     PROMO CARD — full-width, layout split horizontal
+     ───────────────────────────────────────────────────────────── */
+  .promo-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background-color: var(--theme-bg-elevated);
+    border: 2px solid var(--color-brand, #308f40);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .promo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  }
+
+  .promo-card__image-wrapper {
+    position: relative;
+    aspect-ratio: 16 / 7;
+    overflow: hidden;
+    background-color: var(--color-graphite, #0d1611);
+  }
+
+  .promo-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .promo-card:hover .promo-card__image {
+    transform: scale(1.05);
+  }
+
+  .promo-card__badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 4px 12px;
+    background-color: var(--color-brand, #308f40);
+    color: var(--color-on-dark, #fff);
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+
+  .promo-card__content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 16px 16px;
+    justify-content: center;
+  }
+
+  .promo-card__title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    margin: 0;
+    color: var(--theme-text);
+  }
+
+  .promo-card__desc {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.45;
+    color: var(--theme-text-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .promo-card__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 2px;
+  }
+
+  .promo-card__pill {
+    display: inline-block;
+    padding: 4px 10px;
+    background-color: var(--theme-bg);
+    border: 1px solid var(--theme-border);
+    border-radius: 999px;
+    color: var(--theme-text-subtle);
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .promo-card__pill:hover,
+  .promo-card__pill:focus {
+    background-color: var(--color-brand, #308f40);
+    border-color: var(--color-brand, #308f40);
+    color: var(--color-on-dark);
+  }
+
+  .promo-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--color-brand, #308f40);
+    text-decoration: none;
+    margin-top: 4px;
+    transition: gap 0.2s ease;
+  }
+
+  .promo-card__link:hover {
+    gap: 10px;
+  }
+
+  @media (max-width: 768px) {
+    .promo-card {
+      grid-template-columns: 1fr;
+    }
+
+    .promo-card__image-wrapper {
+      aspect-ratio: 16 / 7;
+    }
+
+    .promo-card__content {
+      padding: 14px 16px 16px;
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     CATEGORY CARDS — grid 2×2
+     ───────────────────────────────────────────────────────────── */
   .category-showcase__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -156,7 +334,7 @@ const {
 
   .category-card__image-wrapper {
     position: relative;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 16 / 7;
     overflow: hidden;
     background-color: var(--color-graphite, #0d1611);
   }
@@ -175,43 +353,47 @@ const {
   .category-card__content {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 20px 22px 22px;
+    gap: 8px;
+    padding: 14px 16px 16px;
     flex: 1;
   }
 
   .category-card__title {
     font-family: var(--font-heading);
-    font-weight: 800;
-    font-size: 1.4rem;
+    font-weight: 700;
+    font-size: 1.1rem;
     letter-spacing: -0.01em;
-    line-height: 1.2;
+    line-height: 1.25;
     margin: 0;
     color: var(--theme-text);
   }
 
   .category-card__desc {
     margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.5;
+    font-size: 0.85rem;
+    line-height: 1.45;
     color: var(--theme-text-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .category-card__pills {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 4px;
+    gap: 6px;
+    margin-top: 2px;
   }
 
   .category-card__pill {
     display: inline-block;
-    padding: 6px 14px;
+    padding: 4px 10px;
     background-color: var(--theme-bg);
     border: 1px solid var(--theme-border);
     border-radius: 999px;
     color: var(--theme-text-subtle);
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     text-decoration: none;
     transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
   }
@@ -239,17 +421,17 @@ const {
   .category-card__link {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--theme-eyebrow);
     text-decoration: none;
-    margin-top: 8px;
+    margin-top: 4px;
     transition: gap 0.2s ease;
   }
 
   .category-card__link:hover {
-    gap: 12px;
+    gap: 10px;
   }
 </style>

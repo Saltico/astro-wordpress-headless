@@ -1,0 +1,497 @@
+---
+// src/components/rental/PromoBanner.astro
+// Banner promocional full-width con crossfade entre slides.
+// Edge case: 1 slide = banner estático, sin dots ni autoplay.
+
+import type { BannerSlide } from '@/data/promotions';
+import Icon from '@/components/ui/Icon.astro';
+
+export interface Props {
+  slides: BannerSlide[];
+  /** Intervalo de autoplay en ms (default: 6000) */
+  interval?: number;
+}
+
+const { slides, interval = 6000 } = Astro.props;
+
+// Edge case: sin slides = no renderizar
+const hasSlides = slides && slides.length > 0;
+// Edge case: 1 slide = banner estático
+const isStatic = slides.length === 1;
+---
+
+{hasSlides && (
+  <section
+    class="promo-banner"
+    aria-roledescription={isStatic ? undefined : 'carousel'}
+    aria-label={isStatic ? 'Promoción destacada' : 'Banner promocional de categorías'}
+  >
+    <div class="promo-banner__track">
+      {slides.map((slide, index) => (
+        <article
+          class:list={['promo-banner__slide', { 'promo-banner__slide--active': index === 0 }]}
+          aria-roledescription={isStatic ? undefined : 'slide'}
+          aria-label={`Slide ${index + 1} de ${slides.length}`}
+          aria-hidden={index !== 0 ? 'true' : 'false'}
+        >
+          {/* Imagen (lado izquierdo, fondo completo) */}
+          <div class="promo-banner__image-wrapper">
+            <img
+              src={slide.image}
+              alt={slide.imageAlt}
+              class="promo-banner__image"
+              width="1200"
+              height="675"
+              loading={index === 0 ? 'eager' : 'lazy'}
+              fetchpriority={index === 0 ? 'high' : undefined}
+              decoding="async"
+            />
+          </div>
+
+          {/* Overlay con gradiente difuminado */}
+          <div class="promo-banner__overlay" aria-hidden="true"></div>
+
+          {/* Texto (lado derecho) */}
+          <div class="promo-banner__text">
+            <h2 class="promo-banner__title">{slide.title}</h2>
+            <p class="promo-banner__subtitle">{slide.subtitle}</p>
+            <a href={slide.ctaHref} class="promo-banner__cta">
+              {slide.ctaLabel}
+              <Icon name="arrow-right" size={16} />
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    {/* Dots: solo si hay más de 1 slide */}
+    {!isStatic && (
+      <div class="promo-banner__dots" role="tablist" aria-label="Navegación de slides">
+        {slides.map((_, index) => (
+          <button
+            class:list={['promo-banner__dot', { 'promo-banner__dot--active': index === 0 }]}
+            role="tab"
+            aria-selected={index === 0 ? 'true' : 'false'}
+            aria-label={`Ir al slide ${index + 1}`}
+            data-slide={index}
+            type="button"
+          />
+        ))}
+      </div>
+    )}
+  </section>
+)}
+
+<style>
+  /* ─────────────────────────────────────────────────────────────
+     LAYOUT PRINCIPAL
+     ───────────────────────────────────────────────────────────── */
+  .promo-banner {
+    position: relative;
+    /* Montarse debajo del header + padding para compensar */
+    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
+    /* Altura fija para la regla de oro (desktop) + espacio del navbar */
+    height: calc(clamp(180px, 24vw, 280px) + var(--topbar-height, 40px) + var(--header-height, 80px));
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--color-graphite, #0d1611);
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     TRACK (contenedor de slides)
+     ───────────────────────────────────────────────────────────── */
+  .promo-banner__track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     SLIDE (layout: imagen full-width + overlay gradiente + texto)
+     ───────────────────────────────────────────────────────────── */
+  .promo-banner__slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+    z-index: 1;
+  }
+
+  .promo-banner__slide--active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     IMAGEN (full-width como fondo)
+     ───────────────────────────────────────────────────────────── */
+  .promo-banner__image-wrapper {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .promo-banner__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     OVERLAY con gradiente difuminado (cubre toda la imagen)
+     ───────────────────────────────────────────────────────────── */
+  .promo-banner__overlay {
+    position: absolute;
+    inset: 0;
+    /* Gradiente: negro sólido cubre más del 50% derecho de la imagen */
+    background: linear-gradient(
+      90deg,
+      rgba(13, 22, 17, 0) 0%,
+      rgba(13, 22, 17, 0.1) 15%,
+      rgba(13, 22, 17, 0.4) 30%,
+      rgba(13, 22, 17, 0.75) 45%,
+      rgba(13, 22, 17, 0.95) 55%,
+      rgba(13, 22, 17, 1) 65%
+    );
+    z-index: 1;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     TEXTO (lado derecho sobre el overlay)
+     ───────────────────────────────────────────────────────────── */
+  .promo-banner__text {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 16px;
+    padding-top: clamp(60px, 8vw, 96px);
+    padding-bottom: clamp(16px, 2vw, 24px);
+    padding-inline: clamp(24px, 4vw, 64px);
+    height: 100%;
+    margin-left: auto;
+    max-width: 50%;
+    z-index: 2;
+  }
+
+  .promo-banner__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: clamp(1.4rem, 2.4vw, 2.2rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-on-dark, #fff);
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .promo-banner__subtitle {
+    font-size: clamp(0.85rem, 1.1vw, 1rem);
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.82);
+    margin: 0;
+    max-width: 40ch;
+  }
+
+  /* CTA: botón pill primary */
+  .promo-banner__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    background-color: var(--color-brand, #308f40);
+    color: var(--color-on-dark, #fff);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.875rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background-color 0.2s ease, gap 0.2s ease;
+    width: fit-content;
+  }
+
+  .promo-banner__cta:hover {
+    background-color: var(--color-brand-dark, #157a3a);
+    gap: 12px;
+  }
+
+  .promo-banner__cta:focus-visible {
+    outline: 2px solid var(--color-brand, #308f40);
+    outline-offset: 3px;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     DOTS (esquina inferior derecha)
+     ───────────────────────────────────────────────────────────── */
+  .promo-banner__dots {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+    padding: 6px 10px;
+    background: rgba(13, 22, 17, 0.5);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 999px;
+  }
+
+  .promo-banner__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .promo-banner__dot:hover {
+    background-color: rgba(255, 255, 255, 0.7);
+  }
+
+  .promo-banner__dot--active {
+    background-color: var(--color-brand, #308f40);
+    transform: scale(1.3);
+  }
+
+  .promo-banner__dot:focus-visible {
+    outline: 2px solid var(--color-brand, #308f40);
+    outline-offset: 2px;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     MOBILE: stack vertical (imagen arriba, texto abajo)
+     ───────────────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .promo-banner {
+      height: auto;
+      min-height: clamp(280px, 50vw, 400px);
+    }
+
+    .promo-banner__slide {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .promo-banner__image-wrapper {
+      position: relative;
+      aspect-ratio: 21 / 9;
+    }
+
+    .promo-banner__overlay {
+      /* Gradiente vertical en mobile: de arriba a abajo */
+      background: linear-gradient(
+        180deg,
+        rgba(13, 22, 17, 0) 0%,
+        rgba(13, 22, 17, 0.1) 15%,
+        rgba(13, 22, 17, 0.4) 30%,
+        rgba(13, 22, 17, 0.75) 45%,
+        rgba(13, 22, 17, 0.95) 55%,
+        rgba(13, 22, 17, 1) 65%
+      );
+    }
+
+    .promo-banner__text {
+      max-width: 100%;
+      margin-left: 0;
+      padding-top: 24px;
+      padding-bottom: 16px;
+      padding-inline: 20px;
+      gap: 12px;
+    }
+
+    .promo-banner__title {
+      font-size: clamp(1.2rem, 5vw, 1.6rem);
+    }
+
+    .promo-banner__subtitle {
+      font-size: 0.875rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Dots: bottom center en mobile */
+    .promo-banner__dots {
+      bottom: auto;
+      right: auto;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+     REDUCED MOTION
+     ───────────────────────────────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .promo-banner__slide {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // ─────────────────────────────────────────────────────────────
+  // PROMO BANNER: Autoplay + Dots + Keyboard + Swipe
+  // Edge case: si hay 1 solo slide, no se ejecuta este script.
+  // ─────────────────────────────────────────────────────────────
+  function initPromoBanner() {
+    const banner = document.querySelector<HTMLElement>('.promo-banner');
+    if (!banner) return;
+
+    const slides = banner.querySelectorAll<HTMLElement>('.promo-banner__slide');
+    const dots = banner.querySelectorAll<HTMLButtonElement>('.promo-banner__dot');
+
+    // Edge case: 0 o 1 slide = no hacer nada
+    if (slides.length <= 1) return;
+
+    const intervalAttr = banner.dataset.interval;
+    const interval = intervalAttr ? parseInt(intervalAttr, 10) : 6000;
+    let currentIndex = 0;
+    let autoplayTimer: ReturnType<typeof setInterval> | null = null;
+    let isPaused = false;
+
+    // ── Navegación ──
+    function goToSlide(index: number) {
+      // Desactivar slide actual
+      slides[currentIndex].classList.remove('promo-banner__slide--active');
+      slides[currentIndex].setAttribute('aria-hidden', 'true');
+      dots[currentIndex].classList.remove('promo-banner__dot--active');
+      dots[currentIndex].setAttribute('aria-selected', 'false');
+
+      // Activar nuevo slide
+      currentIndex = (index + slides.length) % slides.length;
+      slides[currentIndex].classList.add('promo-banner__slide--active');
+      slides[currentIndex].setAttribute('aria-hidden', 'false');
+      dots[currentIndex].classList.add('promo-banner__dot--active');
+      dots[currentIndex].setAttribute('aria-selected', 'true');
+    }
+
+    function nextSlide() {
+      goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      goToSlide(currentIndex - 1);
+    }
+
+    // ── Autoplay ──
+    function startAutoplay() {
+      if (isPaused) return;
+      stopAutoplay();
+      autoplayTimer = setInterval(nextSlide, interval);
+    }
+
+    function stopAutoplay() {
+      if (autoplayTimer) {
+        clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+    }
+
+    // ── Pausa en hover/focus ──
+    banner.addEventListener('mouseenter', () => {
+      isPaused = true;
+      stopAutoplay();
+    });
+
+    banner.addEventListener('mouseleave', () => {
+      isPaused = false;
+      startAutoplay();
+    });
+
+    banner.addEventListener('focusin', () => {
+      isPaused = true;
+      stopAutoplay();
+    });
+
+    banner.addEventListener('focusout', (e) => {
+      // Solo reanudar si el focus sale completamente del banner
+      if (!banner.contains(e.relatedTarget as Node)) {
+        isPaused = false;
+        startAutoplay();
+      }
+    });
+
+    // ── Dots click ──
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        goToSlide(index);
+        stopAutoplay();
+        // Reiniciar autoplay después de 10s de inactividad
+        setTimeout(startAutoplay, 10000);
+      });
+    });
+
+    // ── Keyboard navigation ──
+    banner.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+        stopAutoplay();
+        setTimeout(startAutoplay, 10000);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextSlide();
+        stopAutoplay();
+        setTimeout(startAutoplay, 10000);
+      }
+    });
+
+    // ── Touch swipe ──
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const SWIPE_THRESHOLD = 50;
+
+    banner.addEventListener('touchstart', (e: TouchEvent) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    banner.addEventListener('touchend', (e: TouchEvent) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+
+      if (Math.abs(diff) > SWIPE_THRESHOLD) {
+        if (diff > 0) {
+          nextSlide(); // Swipe izquierda = siguiente
+        } else {
+          prevSlide(); // Swipe derecha = anterior
+        }
+        stopAutoplay();
+        // Pausa de 10s después del swipe
+        setTimeout(startAutoplay, 10000);
+      }
+    }, { passive: true });
+
+    // ── Reduced motion ──
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!prefersReducedMotion.matches) {
+      startAutoplay();
+    }
+
+    prefersReducedMotion.addEventListener('change', (e) => {
+      if (e.matches) {
+        stopAutoplay();
+      } else {
+        startAutoplay();
+      }
+    });
+  }
+
+  // Inicializar cuando el DOM esté listo
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPromoBanner);
+  } else {
+    initPromoBanner();
+  }
+</script>

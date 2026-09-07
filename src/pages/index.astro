@@ -1,13 +1,15 @@
 ---
 // src/pages/index.astro
-// Homepage rental-first con hero split, stats, servicios con imágenes, catálogo y CTA.
+// Homepage rental-first renovada: Banner Promocional → SearchHero → CategoryShowcase → Logos → Stats → Servicios → CTA.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import StatsCounter from '@/components/ui/StatsCounter.astro';
 import LogoCarousel from '@/components/ui/LogoCarousel.astro';
 import CTABand from '@/components/ui/CTABand.astro';
-import EquipmentSearch from '@/components/rental/EquipmentSearch.astro';
 import CategoryShowcase from '@/components/rental/CategoryShowcase.astro';
+import PromoBanner from '@/components/rental/PromoBanner.astro';
+import SearchHero from '@/components/rental/SearchHero.astro';
+import { bannerSlides } from '@/data/promotions';
 import type { StatItem } from '@/components/ui/StatsCounter.astro';
 import { localBusinessSchema } from '@/lib/seo';
 import { siteBrand, siteContact } from '@/data/site';
@@ -120,72 +122,36 @@ const clientLogos = [
   pageCategory="home"
   siteSection="rental"
 >
-  <link slot="head" rel="preload" as="image" href={rentalHero.src} fetchpriority="high" />
+  {/* §1: BANNER PROMOCIONAL — full-width crossfade */}
+  <PromoBanner slides={bannerSlides} interval={6000} />
 
-  <!-- §1: HERO SPLIT — full-bleed image, text fades into image -->
-  <section class="d-hero">
-    <!-- Full-bleed background image -->
-    <img
-      src={rentalHero.src}
-      alt="Arriendo de maquinaria pesada para minería e industria en el norte de Chile"
-      class="d-hero__bg"
-      width={rentalHero.width}
-      height={rentalHero.height}
-      fetchpriority="high"
-      decoding="async"
-    />
-    <!-- Gradient overlay: dark left → transparent right -->
-    <div class="d-hero__overlay" aria-hidden="true"></div>
-    
-    <div class="d-hero__grid">
-      <!-- Lado izquierdo: Texto SEO (se difumina hacia la imagen) -->
-      <div class="d-hero__text">
-        <h1 class="d-hero__title">Arriendo de equipos y maquinaria para <span>construcción y minería</span></h1>
-        <p class="d-hero__subtitle">Grúas de hasta 400 toneladas, movimiento de tierra, transporte y equipos especiales. Disponibilidad 24/7 en Atacama, Coquimbo y Antofagasta.</p>
-      </div>
-      
-      <!-- Lado derecho: Panel de búsqueda -->
-      <div class="d-hero__search">
-        <div class="d-hero__search-content">
-          <p class="d-hero__search-title">Encuentra tu máquina</p>
-          <EquipmentSearch />
-          <p class="d-hero__search-cta">
-            ¿Prefieres cotizar directamente?
-            <a href="/cotizador" class="d-hero__search-link">
-              Ir al cotizador
-              <Icon name="arrow-right" size={14} />
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
+  
+  {/* §3: CATEGORY SHOWCASE — card Promociones + grid 2×2 */}
+  <CategoryShowcase />
+  
+  {/* §2: SEARCH HERO — centrado, fondo graphite-2 */}
+  <SearchHero />
+  {/* §4: CLIENT LOGOS */}
+  <LogoCarousel
+    logos={clientLogos}
+    eyebrow="Confían en nosotros"
+    title="Empresas que confían en nuestra flota"
+    speed="normal"
+    backgroundVariant="dark"
+    pauseOnHover={true}
+  />
 
-  <!-- §2: STATS COUNTER -->
-  <StatsCounter
+  {/* §5: STATS COUNTER */}
+<!--   <StatsCounter
     stats={stats}
     variant="dark"
     layout="horizontal"
     columns={4}
     animated={true}
     duration={1500}
-  />
+  /> -->
 
-  <!-- §5: CATEGORY SHOWCASE -->
-  <CategoryShowcase />
-
-  
-  <!-- §4: CLIENT LOGOS -->
-  <LogoCarousel
-  logos={clientLogos}
-  eyebrow="Confían en nosotros"
-  title="Empresas que confían en nuestra flota"
-  speed="normal"
-  backgroundVariant="dark"
-  pauseOnHover={true}
-  />
-  
-  <!-- §3: SERVICIOS (con imágenes) -->
+  {/* §6: SERVICIOS (con imágenes) */}
   <section class="services-section">
     <div class="services-section__container">
       <header class="services-section__header">
@@ -218,7 +184,8 @@ const clientLogos = [
       </div>
     </div>
   </section>
-  <!-- §6: CTA BAND -->
+
+  {/* §7: CTA BAND */}
   <CTABand
     eyebrow="Cotiza tu equipo ahora"
     title="¿Necesitas arrendar maquinaria? Cotiza en minutos"
@@ -237,193 +204,6 @@ const clientLogos = [
 </BaseLayout>
 
 <style>
-  /* ===== HERO SPLIT — full-bleed image, text fades into image ===== */
-  .d-hero {
-    position: relative;
-    min-height: calc(70svh + var(--topbar-height, 40px) + var(--header-height, 80px));
-    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
-    display: flex;
-    align-items: center;
-    overflow: visible;
-    background-color: var(--color-graphite, #0d1611);
-  }
-
-  @media (max-width: 1024px) {
-    .d-hero {
-      min-height: auto;
-      padding-block: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 40px) 60px;
-    }
-  }
-
-  /* Full-bleed background image */
-  .d-hero__bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 0;
-  }
-
-  /* Gradient overlay: dark left → transparent right (creates the diffusion) */
-  .d-hero__overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: linear-gradient(
-      90deg,
-      rgba(13, 22, 17, 1) 0%,
-      rgba(13, 22, 17, 0.97) 25%,
-      rgba(13, 22, 17, 0.85) 45%,
-      rgba(13, 22, 17, 0.5) 65%,
-      rgba(13, 22, 17, 0.15) 85%,
-      rgba(13, 22, 17, 0) 100%
-    );
-  }
-
-  @media (max-width: 1024px) {
-    .d-hero__overlay {
-      background: linear-gradient(
-        180deg,
-        rgba(13, 22, 17, 0.4) 0%,
-        rgba(13, 22, 17, 0.92) 60%,
-        rgba(13, 22, 17, 1) 100%
-      );
-    }
-  }
-
-  /* Grid container for text + search */
-  .d-hero__grid {
-    position: relative;
-    z-index: 2;
-    display: grid;
-    grid-template-columns: 1.8fr 1fr;
-    gap: 2rem;
-    max-width: var(--container-max-width, 1360px);
-    width: 100%;
-    margin-inline: auto;
-    min-height: calc(70svh + var(--topbar-height, 40px) + var(--header-height, 80px));
-    align-items: center;
-  }
-
-  @media (max-width: 1024px) {
-    .d-hero__grid {
-      grid-template-columns: 1fr;
-      min-height: auto;
-      gap: 32px;
-    }
-  }
-
-  /* Left: SEO text - always fully visible */
-  .d-hero__text {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    /* padding: 100px 0 80px clamp(20px, 3vw, 60px); */
-  }
-
-  @media (max-width: 1024px) {
-    .d-hero__text {
-      padding: 40px 20px 0;
-    }
-  }
-
-  .d-hero__title {
-    color: var(--color-on-dark);
-    font-family: var(--font-heading);
-    font-weight: 900;
-    line-height: 0.98;
-    letter-spacing: -0.03em;
-    font-size: clamp(2.2rem, 5vw, 4.5rem);
-    max-width: 18ch;
-    text-wrap: balance;
-    margin: 0 0 24px;
-  }
-
-  .d-hero__title span {
-    color: var(--color-brand-300, #62bb74);
-    font-weight: 900;
-  }
-
-  .d-hero__subtitle {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: var(--text-lead);
-    max-width: 48ch;
-    margin: 0;
-    line-height: 1.55;
-  }
-
-  /* Right: Search panel floating over image */
-  .d-hero__search {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  @media (max-width: 1024px) {
-    .d-hero__search {
-      padding: 0 20px 40px;
-    }
-  }
-
-  .d-hero__search-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    padding: 32px;
-    max-width: 520px;
-    width: 100%;
-    background: rgba(13, 22, 17, 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: var(--radius-panel);
-  }
-
-  @media (max-width: 1024px) {
-    .d-hero__search-content {
-      padding: 24px 20px;
-      max-width: 100%;
-    }
-  }
-
-  .d-hero__search-title {
-    color: var(--color-on-dark);
-    font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 1.1rem;
-    letter-spacing: 0.02em;
-    margin: 0;
-    text-align: center;
-  }
-
-  .d-hero__search-cta {
-    color: rgba(255, 255, 255, 0.82);
-    font-size: var(--text-small);
-    margin: 0;
-    text-align: center;
-    line-height: 1.5;
-  }
-
-  .d-hero__search-link {
-    margin-left: 4px;
-    display: inline-flex;
-    align-items: center;
-    color: var(--color-brand-300, #62bb74);
-    font-weight: 600;
-    text-decoration: none;
-    transition: gap 0.2s ease;
-  }
-
-  .d-hero__search-link :global(svg) {
-    vertical-align: middle;
-  }
-
-  .d-hero__search-link:hover {
-    gap: 10px;
-  }
-
   /* ===== SERVICIOS (news-card style: image + title + CTA) ===== */
   .services-section {
     padding-block: clamp(56px, 8vw, 100px);

@@ -1,0 +1,54 @@
+%%{ init: { 'theme': 'dark' } }%%
+flowchart TB
+    subgraph PHASE1["🔧 Fase 1 — Preparación (Día 1)"]
+        direction TB
+        P1["Crear src/data/promotions.ts<br/>Modelo de datos de promociones<br/><i>Esfuerzo: Bajo (1h)</i>"]
+        P2["Preparar imágenes del banner<br/>src/assets/imgs/banners/<br/><i>Esfuerzo: Bajo (1h)</i>"]
+        P3["Crear imagen card Promociones<br/>AVIF optimizado<br/><i>Esfuerzo: Bajo (0.5h)</i>"]
+
+        P1 --> P2 --> P3
+    end
+
+    subgraph PHASE2["🏗️ Fase 2 — Componentes Nuevos (Día 2-3)"]
+        direction TB
+        C1["Crear PromoBanner.astro<br/>Slider con autoplay, dots, flechas<br/><i>Esfuerzo: Alto (6h)</i>"]
+        C2["Crear SearchHero.astro<br/>Sección compacta título+buscador<br/><i>Esfuerzo: Medio (3h)</i>"]
+
+        C1 --> C2
+    end
+
+    subgraph PHASE3["✏️ Fase 3 — Modificaciones (Día 3-4)"]
+        direction TB
+        M1["Modificar CategoryShowcase.astro<br/>Card Promociones + CSS compacto<br/><i>Esfuerzo: Alto (4h)</i>"]
+        M2["Modificar servicios en index.astro<br/>CSS compacto de service-cards<br/><i>Esfuerzo: Medio (2h)</i>"]
+
+        M1 --> M2
+    end
+
+    subgraph PHASE4["🔀 Fase 4 — Integración (Día 4)"]
+        direction TB
+        I1["Reestructurar index.astro<br/>Eliminar d-hero, integrar nuevos componentes<br/><i>Esfuerzo: Medio (3h)</i>"]
+        I2["Mover estilos del hero viejo<br/>Cleanup CSS no utilizado<br/><i>Esfuerzo: Bajo (1h)</i>"]
+        I3["Actualizar preloads<br/>Imagen banner → fetchpriority high<br/><i>Esfuerzo: Bajo (0.5h)</i>"]
+
+        I1 --> I2 --> I3
+    end
+
+    subgraph PHASE5["✅ Fase 5 — Testing (Día 5)"]
+        direction TB
+        T1["Testing responsive<br/>Desktop 1440px, 1080px<br/>Tablet 768px<br/>Mobile 375px"]
+        T2["Testing accesibilidad<br/>Keyboard nav, aria-labels<br/>prefers-reduced-motion"]
+        T3["Testing performance<br/>LCP, CLS<br/>Lighthouse audit"]
+        T4["Testing visual<br/>Verificar 'above the fold'<br/>Cards visibles sin scroll"]
+
+        T1 --> T2 --> T3 --> T4
+    end
+
+    PHASE1 --> PHASE2 --> PHASE3 --> PHASE4 --> PHASE5
+
+    subgraph DEPS["📋 Dependencias Críticas"]
+        direction LR
+        D1["promotions.ts debe existir<br/>antes de PromoBanner<br/>y CategoryShowcase"]
+        D2["SearchHero reutiliza<br/>EquipmentSearch<br/>(sin cambios)"]
+        D3["Imágenes del banner<br/>deben estar listas<br/>antes de PromoBanner"]
+    end
