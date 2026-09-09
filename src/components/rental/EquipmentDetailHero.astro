@@ -32,6 +32,9 @@ const mainImage = gallery[0];
     alt=""
     class="equipment-detail-hero__bg"
     aria-hidden="true"
+    loading="eager"
+    fetchpriority="high"
+    decoding="async"
   />
   <div class="equipment-detail-hero__bg-overlay"></div>
   
@@ -208,19 +211,22 @@ const mainImage = gallery[0];
 
   .equipment-detail-hero {
     position: relative;
-    padding-block: clamp(24px, 3vw, 40px);
-    /* background-color: var(--theme-bg); */
+    margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
+    padding-top: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + clamp(24px, 3vw, 40px));
+    padding-bottom: clamp(24px, 3vw, 40px);
+    min-height: calc(400px + var(--topbar-height, 40px) + var(--header-height, 80px));
     color: var(--theme-text);
     overflow: hidden;
+    /* background-color: var(--color-graphite, #0d1611); */
   }
 
-  /* Fondo difuminado que se extiende desde el top de la ventana */
+  /* Fondo difuminado confinado a la sección */
   .equipment-detail-hero__bg {
-    position: fixed;
+    position: absolute;
     top: 0;
-    left: -10px;
-    width: calc(100% + 20px);
-    height: 300px;
+    left: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     filter: blur(6px) brightness(0.5);
     z-index: -1;
@@ -230,11 +236,11 @@ const mainImage = gallery[0];
   }
 
   .equipment-detail-hero__bg-overlay {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 300px;
+    height: 100%;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.15) 40%, rgba(0, 0, 0, 0.05) 70%, transparent 100%);
     z-index: 0;
     pointer-events: none;

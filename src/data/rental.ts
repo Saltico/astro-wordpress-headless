@@ -586,6 +586,29 @@ const IZAJE_CAMIONES_PLUMA: RentalSubcategory = {
       image: CAMION_PLUMA_15T,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma 15 t.',
     },
+  
+    {
+      slug: 'camion-pluma-renault-c440',
+      name: 'Camión Pluma Renault C440',
+      brand: 'Renault',
+      capacity: 'Consultar',
+      shortDesc: 'Camión Pluma Renault C440, incorporado desde inventario interno. Año(s): 2023, 2024. Unidades registradas: 2.',
+      features: ['Marca: Renault', 'Modelo: C440', 'Año(s) inventario: 2023, 2024'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: CAMION_PLUMA_5T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma Renault C440.',
+    },
+    {
+      slug: 'camion-pluma-renault-k480',
+      name: 'Camión Pluma Renault K480',
+      brand: 'Renault',
+      capacity: 'Consultar',
+      shortDesc: 'Camión Pluma Renault K480, incorporado desde inventario interno. Año(s): 2019. Unidades registradas: 1.',
+      features: ['Marca: Renault', 'Modelo: K480', 'Año(s) inventario: 2019'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: CAMION_PLUMA_5T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma Renault K480.',
+    },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de camiones pluma.',
   relatedCrossCategory: [
@@ -649,8 +672,244 @@ const IZAJE_ALZA_HOMBRE: RentalSubcategory = {
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Plataforma Telescópica 40 m.',
     }, */
+    {
+      slug: 'plataforma-alza-hombre-genie-z80-60',
+      name: 'Plataforma / Alza-hombre Genie Z80 60',
+      brand: 'Genie',
+      capacity: 'Consultar',
+      shortDesc: 'Plataforma / Alza-hombre Genie Z80 60, incorporado desde inventario interno. Año(s): 2020. Unidades registradas: 1.',
+      features: ['Marca: Genie', 'Modelo: Z80 60', 'Año(s) inventario: 2020'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: ALZA_HOMBRE_20M,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Plataforma / Alza-hombre Genie Z80 60.',
+    },
+    {
+      slug: 'plataforma-alza-hombre-genie-z80-60-4x4',
+      name: 'Plataforma / Alza-hombre Genie Z80 60 4X4',
+      brand: 'Genie',
+      capacity: 'Consultar',
+      shortDesc: 'Plataforma / Alza-hombre Genie Z80 60 4X4, incorporado desde inventario interno. Año(s): 2020. Unidades registradas: 1.',
+      features: ['Marca: Genie', 'Modelo: Z80 60 4X4', 'Año(s) inventario: 2020'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: ALZA_HOMBRE_20M,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Plataforma / Alza-hombre Genie Z80 60 4X4.',
+    },
+    {
+      slug: 'plataforma-alza-hombre-genie-zx13570',
+      name: 'Plataforma / Alza-hombre Genie ZX13570',
+      brand: 'Genie',
+      capacity: 'Consultar',
+      shortDesc: 'Plataforma / Alza-hombre Genie ZX13570, incorporado desde inventario interno. Año(s): 2025. Unidades registradas: 1.',
+      features: ['Marca: Genie', 'Modelo: ZX13570', 'Año(s) inventario: 2025'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: ALZA_HOMBRE_20M,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Plataforma / Alza-hombre Genie ZX13570.',
+    },
+    {
+      slug: 'plataforma-alza-hombre-haulotte-ha41px',
+      name: 'Plataforma / Alza-hombre Haulotte HA41PX',
+      brand: 'Haulotte',
+      capacity: 'Consultar',
+      shortDesc: 'Plataforma / Alza-hombre Haulotte HA41PX, incorporado desde inventario interno. Año(s): 2014. Unidades registradas: 2.',
+      features: ['Marca: Haulotte', 'Modelo: HA41PX', 'Año(s) inventario: 2014'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: ALZA_HOMBRE_20M,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Plataforma / Alza-hombre Haulotte HA41PX.',
+    },
+    {
+      slug: 'plataforma-alza-hombre-manitou-mango12',
+      name: 'Plataforma / Alza-hombre Manitou MANGO12',
+      brand: 'Manitou',
+      capacity: 'Consultar',
+      shortDesc: 'Plataforma / Alza-hombre Manitou MANGO12, incorporado desde inventario interno. Año(s): 2021. Unidades registradas: 1.',
+      features: ['Marca: Manitou', 'Modelo: MANGO12', 'Año(s) inventario: 2021'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: ALZA_HOMBRE_20M,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Plataforma / Alza-hombre Manitou MANGO12.',
+    },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de alza-hombre.',
+};
+
+const IZAJE_GRUAS_160: RentalSubcategory = {
+  slug: 'gruas-160-toneladas',
+  name: 'Grúas de 160 toneladas',
+  shortDesc: 'Grúas de 160 toneladas para izaje pesado.',
+  description:
+    'Grúas de 160 toneladas para izaje pesado. Equipos incorporados desde el inventario vigente. Las capacidades y configuraciones específicas deben confirmarse al momento de cotizar.',
+  features: [
+    'Equipos disponibles según inventario vigente.',
+    'Configuración y capacidad sujetas al modelo disponible.',
+    'Mantenimiento preventivo según programa operacional.',
+    'Disponibilidad sujeta a programación de faena.',
+  ],
+  specs: [
+    { label: 'Capacidad', value: 'Según modelo' },
+    { label: 'Disponibilidad', value: 'Consultar' },
+  ],
+  // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia de esta subcategoría.
+  heroImage: IZAJE_HERO,
+  seoTitle: 'Arriendo de Grúas de 160 toneladas en Chile',
+  seoDescription:
+    'Arriendo de grúas de 160 toneladas en Chile. Consulta disponibilidad, configuración y condiciones de arriendo.',
+  catalog: [
+    {
+      slug: 'grua-demag-ac160-5',
+      name: 'Grúa Demag AC160 5',
+      brand: 'Demag',
+      capacity: 'Consultar',
+      shortDesc: 'Grúa Demag AC160 5, incorporado desde inventario interno. Año(s): 2020, 2023. Unidades registradas: 2.',
+      features: ['Marca: Demag', 'Modelo: AC160 5', 'Año(s) inventario: 2020, 2023'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GRUA_GROVE_250T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Demag AC160 5.',
+    },
+  ],
+  whatsappMessage: 'Hola IP, quisiera cotizar arriendo de grúas de 160 toneladas.',
+};
+
+const IZAJE_GRUAS_400: RentalSubcategory = {
+  slug: 'gruas-400-toneladas',
+  name: 'Grúas de 400 toneladas',
+  shortDesc: 'Grúas de 400 toneladas para maniobras de gran tonelaje.',
+  description:
+    'Grúas de 400 toneladas para maniobras de gran tonelaje. Equipos incorporados desde el inventario vigente. Las capacidades y configuraciones específicas deben confirmarse al momento de cotizar.',
+  features: [
+    'Equipos disponibles según inventario vigente.',
+    'Configuración y capacidad sujetas al modelo disponible.',
+    'Mantenimiento preventivo según programa operacional.',
+    'Disponibilidad sujeta a programación de faena.',
+  ],
+  specs: [
+    { label: 'Capacidad', value: 'Según modelo' },
+    { label: 'Disponibilidad', value: 'Consultar' },
+  ],
+  // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia de esta subcategoría.
+  heroImage: IZAJE_HERO,
+  seoTitle: 'Arriendo de Grúas de 400 toneladas en Chile',
+  seoDescription:
+    'Arriendo de grúas de 400 toneladas en Chile. Consulta disponibilidad, configuración y condiciones de arriendo.',
+  catalog: [
+    {
+      slug: 'grua-grove-gmk6400',
+      name: 'Grúa Grove GMK6400',
+      brand: 'Grove',
+      capacity: 'Consultar',
+      shortDesc: 'Grúa Grove GMK6400, incorporado desde inventario interno. Año(s): 2021. Unidades registradas: 1.',
+      features: ['Marca: Grove', 'Modelo: GMK6400', 'Año(s) inventario: 2021'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GRUA_GROVE_250T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Grove GMK6400.',
+    },
+  ],
+  whatsappMessage: 'Hola IP, quisiera cotizar arriendo de grúas de 400 toneladas.',
+};
+
+const IZAJE_GRUAS_ALTO_TONELAJE: RentalSubcategory = {
+  slug: 'gruas-alto-tonelaje',
+  name: 'Grúas de alto tonelaje',
+  shortDesc: 'Grúas de alto tonelaje disponibles para proyectos industriales y mineros.',
+  description:
+    'Grúas de alto tonelaje disponibles para proyectos industriales y mineros. Equipos incorporados desde el inventario vigente. Las capacidades y configuraciones específicas deben confirmarse al momento de cotizar.',
+  features: [
+    'Equipos disponibles según inventario vigente.',
+    'Configuración y capacidad sujetas al modelo disponible.',
+    'Mantenimiento preventivo según programa operacional.',
+    'Disponibilidad sujeta a programación de faena.',
+  ],
+  specs: [
+    { label: 'Capacidad', value: 'Según modelo' },
+    { label: 'Disponibilidad', value: 'Consultar' },
+  ],
+  // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia de esta subcategoría.
+  heroImage: IZAJE_HERO,
+  seoTitle: 'Arriendo de Grúas de alto tonelaje en Chile',
+  seoDescription:
+    'Arriendo de grúas de alto tonelaje en Chile. Consulta disponibilidad, configuración y condiciones de arriendo.',
+  catalog: [
+    {
+      slug: 'grua-grove-gmk-5250xl-1',
+      name: 'Grúa Grove GMK 5250XL-1',
+      brand: 'Grove',
+      capacity: 'Consultar',
+      shortDesc: 'Grúa Grove GMK 5250XL-1, incorporado desde inventario interno. Año(s): 2025. Unidades registradas: 1.',
+      features: ['Marca: Grove', 'Modelo: GMK 5250XL-1', 'Año(s) inventario: 2025'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GRUA_GROVE_250T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Grove GMK 5250XL-1.',
+    },
+    {
+      slug: 'grua-tadano-gr1000xl',
+      name: 'Grúa Tadano GR1000XL',
+      brand: 'Tadano',
+      capacity: 'Consultar',
+      shortDesc: 'Grúa Tadano GR1000XL, incorporado desde inventario interno. Año(s): 2024. Unidades registradas: 1.',
+      features: ['Marca: Tadano', 'Modelo: GR1000XL', 'Año(s) inventario: 2024'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GRUA_GROVE_250T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Tadano GR1000XL.',
+    },
+    {
+      slug: 'grua-tadano-gr1200xl',
+      name: 'Grúa Tadano GR1200XL',
+      brand: 'Tadano',
+      capacity: 'Consultar',
+      shortDesc: 'Grúa Tadano GR1200XL, incorporado desde inventario interno. Año(s): 2025. Unidades registradas: 1.',
+      features: ['Marca: Tadano', 'Modelo: GR1200XL', 'Año(s) inventario: 2025'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GRUA_GROVE_250T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Tadano GR1200XL.',
+    },
+    {
+      slug: 'grua-tadano-gr1300xl',
+      name: 'Grúa Tadano GR1300XL',
+      brand: 'Tadano',
+      capacity: 'Consultar',
+      shortDesc: 'Grúa Tadano GR1300XL, incorporado desde inventario interno. Año(s): 2023. Unidades registradas: 1.',
+      features: ['Marca: Tadano', 'Modelo: GR1300XL', 'Año(s) inventario: 2023'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GRUA_GROVE_250T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Tadano GR1300XL.',
+    },
+  ],
+  whatsappMessage: 'Hola IP, quisiera cotizar arriendo de grúas de alto tonelaje.',
+};
+
+const IZAJE_MANIPULADORES_TELESCOPICOS: RentalSubcategory = {
+  slug: 'manipuladores-telescopicos',
+  name: 'Manipuladores telescópicos',
+  shortDesc: 'Manipuladores telescópicos para carga, montaje y apoyo de faena.',
+  description:
+    'Manipuladores telescópicos para carga, montaje y apoyo de faena. Equipos incorporados desde el inventario vigente. Las capacidades y configuraciones específicas deben confirmarse al momento de cotizar.',
+  features: [
+    'Equipos disponibles según inventario vigente.',
+    'Configuración y capacidad sujetas al modelo disponible.',
+    'Mantenimiento preventivo según programa operacional.',
+    'Disponibilidad sujeta a programación de faena.',
+  ],
+  specs: [
+    { label: 'Capacidad', value: 'Según modelo' },
+    { label: 'Disponibilidad', value: 'Consultar' },
+  ],
+  // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia de esta subcategoría.
+  heroImage: IZAJE_HERO,
+  seoTitle: 'Arriendo de Manipuladores telescópicos en Chile',
+  seoDescription:
+    'Arriendo de manipuladores telescópicos en Chile. Consulta disponibilidad, configuración y condiciones de arriendo.',
+  catalog: [
+    {
+      slug: 'manipulador-telescopico-dieci-icarus-45-17-gd-4x4',
+      name: 'Manipulador Telescópico Dieci ICARUS 45 17 GD 4X4',
+      brand: 'Dieci',
+      capacity: 'Consultar',
+      shortDesc: 'Manipulador Telescópico Dieci ICARUS 45 17 GD 4X4, incorporado desde inventario interno. Año(s): 2025. Unidades registradas: 1.',
+      features: ['Marca: Dieci', 'Modelo: ICARUS 45 17 GD 4X4', 'Año(s) inventario: 2025'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: ALZA_HOMBRE_20M,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Manipulador Telescópico Dieci ICARUS 45 17 GD 4X4.',
+    },
+  ],
+  whatsappMessage: 'Hola IP, quisiera cotizar arriendo de manipuladores telescópicos.',
 };
 
 const IZAJE_GRUAS_HORQUILLA: RentalSubcategory = {
@@ -698,6 +957,50 @@ const IZAJE_GRUAS_HORQUILLA: RentalSubcategory = {
       features: ['Alta estabilidad', 'Excelente potencia', 'Bajo costo operativo'],
       image: GRUA_HORQUILLA_7T,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Horquilla de 7 t.',
+    },
+    {
+      slug: 'grua-horquilla-hancha-grua-horq-cpcd70-xrw28b',
+      name: 'Grúa Horquilla Hancha GRUA HORQ CPCD70-XRW28B',
+      brand: 'Hancha',
+      capacity: 'Consultar',
+      shortDesc: 'Grúa Horquilla Hancha GRUA HORQ CPCD70-XRW28B, incorporado desde inventario interno. Año(s): 2022. Unidades registradas: 1.',
+      features: ['Marca: Hancha', 'Modelo: GRUA HORQ CPCD70-XRW28B', 'Año(s) inventario: 2022'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GRUA_HORQUILLA_3T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Horquilla Hancha GRUA HORQ CPCD70-XRW28B.',
+    },
+    {
+      slug: 'grua-horquilla-komatsu-fd50at-10fv',
+      name: 'Grúa Horquilla Komatsu FD50AT 10FV',
+      brand: 'Komatsu',
+      capacity: 'Consultar',
+      shortDesc: 'Grúa Horquilla Komatsu FD50AT 10FV, incorporado desde inventario interno. Año(s): 2021. Unidades registradas: 1.',
+      features: ['Marca: Komatsu', 'Modelo: FD50AT 10FV', 'Año(s) inventario: 2021'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GRUA_HORQUILLA_3T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Horquilla Komatsu FD50AT 10FV.',
+    },
+    {
+      slug: 'grua-horquilla-konecranes-f16-600c',
+      name: 'Grúa Horquilla Konecranes F16-600C',
+      brand: 'Konecranes',
+      capacity: 'Consultar',
+      shortDesc: 'Grúa Horquilla Konecranes F16-600C, incorporado desde inventario interno. Año(s): 2021, 2024. Unidades registradas: 2.',
+      features: ['Marca: Konecranes', 'Modelo: F16-600C', 'Año(s) inventario: 2021, 2024'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GRUA_HORQUILLA_3T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Horquilla Konecranes F16-600C.',
+    },
+    {
+      slug: 'grua-horquilla-zoomlion-fb25',
+      name: 'Grúa Horquilla Zoomlion FB25',
+      brand: 'Zoomlion',
+      capacity: 'Consultar',
+      shortDesc: 'Grúa Horquilla Zoomlion FB25, incorporado desde inventario interno. Año(s): 2025. Unidades registradas: 1.',
+      features: ['Marca: Zoomlion', 'Modelo: FB25', 'Año(s) inventario: 2025'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GRUA_HORQUILLA_3T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Grúa Horquilla Zoomlion FB25.',
     },
 /*     {
       slug: 'grua-horquilla-diesel-10t',
@@ -823,6 +1126,28 @@ const MT_RETROEXCAVADORAS: RentalSubcategory = {
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Retroexcavadora Komatsu PC200.',
     }, */
+    {
+      slug: 'retroexcavadora-john-deere-310p',
+      name: 'Retroexcavadora John Deere 310P',
+      brand: 'John Deere',
+      capacity: 'Consultar',
+      shortDesc: 'Retroexcavadora John Deere 310P, incorporado desde inventario interno. Año(s): 2025. Unidades registradas: 1.',
+      features: ['Marca: John Deere', 'Modelo: 310P', 'Año(s) inventario: 2025'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: RETROEXCAVADORA_JOHN_DEERE_320D,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Retroexcavadora John Deere 310P.',
+    },
+    {
+      slug: 'retroexcavadora-john-deere-310sl',
+      name: 'Retroexcavadora John Deere 310SL',
+      brand: 'John Deere',
+      capacity: 'Consultar',
+      shortDesc: 'Retroexcavadora John Deere 310SL, incorporado desde inventario interno. Año(s): 2023. Unidades registradas: 1.',
+      features: ['Marca: John Deere', 'Modelo: 310SL', 'Año(s) inventario: 2023'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: RETROEXCAVADORA_JOHN_DEERE_320D,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Retroexcavadora John Deere 310SL.',
+    },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de retroexcavadoras.',
   relatedCrossCategory: [
@@ -875,6 +1200,17 @@ const MT_MINICARGADORES: RentalSubcategory = {
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Minicargador Caterpillar 226D.',
     }, */
+    {
+      slug: 'minicargador-john-deere-324g',
+      name: 'Minicargador John Deere 324G',
+      brand: 'John Deere',
+      capacity: 'Consultar',
+      shortDesc: 'Minicargador John Deere 324G, incorporado desde inventario interno. Año(s): 2023, 2024. Unidades registradas: 2.',
+      features: ['Marca: John Deere', 'Modelo: 324G', 'Año(s) inventario: 2023, 2024'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: MINICARGADOR_VOLVO_MC_90B,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Minicargador John Deere 324G.',
+    },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de minicargadores.',
 };
@@ -936,6 +1272,50 @@ const TR_TRACTO_CAMIONES: RentalSubcategory = {
       image: TRACTO_CAMION_RENAULT_T_460,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Tracto Camión Renault T-460.',
     },
+    {
+      slug: 'tracto-camion-man-tgs-26480',
+      name: 'Tracto Camión MAN TGS 26480',
+      brand: 'MAN',
+      capacity: 'Consultar',
+      shortDesc: 'Tracto Camión MAN TGS 26480, incorporado desde inventario interno. Año(s): 2025. Unidades registradas: 1.',
+      features: ['Marca: MAN', 'Modelo: TGS 26480', 'Año(s) inventario: 2025'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRACTO_CAMION_RENAULT_PREMIUM_LANDER_460,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Tracto Camión MAN TGS 26480.',
+    },
+    {
+      slug: 'tracto-camion-man-tgx-26-480-bls-6x4',
+      name: 'Tracto Camión MAN TGX 26.480 BLS 6X4',
+      brand: 'MAN',
+      capacity: 'Consultar',
+      shortDesc: 'Tracto Camión MAN TGX 26.480 BLS 6X4, incorporado desde inventario interno. Año(s): 2023. Unidades registradas: 1.',
+      features: ['Marca: MAN', 'Modelo: TGX 26.480 BLS 6X4', 'Año(s) inventario: 2023'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRACTO_CAMION_RENAULT_PREMIUM_LANDER_460,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Tracto Camión MAN TGX 26.480 BLS 6X4.',
+    },
+    {
+      slug: 'tracto-camion-mercedes-benz-new-actros-2658-ls-stream',
+      name: 'Tracto Camión Mercedes Benz NEW ACTROS 2658 LS STREAM',
+      brand: 'Mercedes Benz',
+      capacity: 'Consultar',
+      shortDesc: 'Tracto Camión Mercedes Benz NEW ACTROS 2658 LS STREAM, incorporado desde inventario interno. Año(s): 2021. Unidades registradas: 1.',
+      features: ['Marca: Mercedes Benz', 'Modelo: NEW ACTROS 2658 LS STREAM', 'Año(s) inventario: 2021'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRACTO_CAMION_RENAULT_PREMIUM_LANDER_460,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Tracto Camión Mercedes Benz NEW ACTROS 2658 LS STREAM.',
+    },
+    {
+      slug: 'tracto-camion-renault-k520',
+      name: 'Tracto Camión Renault K520',
+      brand: 'Renault',
+      capacity: 'Consultar',
+      shortDesc: 'Tracto Camión Renault K520, incorporado desde inventario interno. Año(s): 2025. Unidades registradas: 1.',
+      features: ['Marca: Renault', 'Modelo: K520', 'Año(s) inventario: 2025'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRACTO_CAMION_RENAULT_PREMIUM_LANDER_460,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Tracto Camión Renault K520.',
+    },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de tracto camiones.',
 };
@@ -985,6 +1365,39 @@ const TR_CAMA_BAJA: RentalSubcategory = {
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Cama-baja 80 t.',
     }, */
+    {
+      slug: 'cama-baja-eager-beaver-50gsl-pt',
+      name: 'Cama Baja Eager Beaver 50GSL PT',
+      brand: 'Eager Beaver',
+      capacity: 'Consultar',
+      shortDesc: 'Cama Baja Eager Beaver 50GSL PT, incorporado desde inventario interno. Año(s): 2019. Unidades registradas: 1.',
+      features: ['Marca: Eager Beaver', 'Modelo: 50GSL PT', 'Año(s) inventario: 2019'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: CAMA_BAJA_EAGER_BEAVER_70T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Cama Baja Eager Beaver 50GSL PT.',
+    },
+    {
+      slug: 'cama-baja-eager-beaver-60gsl',
+      name: 'Cama Baja Eager Beaver 60GSL',
+      brand: 'Eager Beaver',
+      capacity: 'Consultar',
+      shortDesc: 'Cama Baja Eager Beaver 60GSL, incorporado desde inventario interno. Año(s): 2014. Unidades registradas: 1.',
+      features: ['Marca: Eager Beaver', 'Modelo: 60GSL', 'Año(s) inventario: 2019'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: CAMA_BAJA_EAGER_BEAVER_70T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Cama Baja Eager Beaver 50GSL.',
+    },
+    {
+      slug: 'cama-baja-goren-sr-dolly-32t',
+      name: 'Cama Baja Goren SR DOLLY 32T',
+      brand: 'Goren',
+      capacity: 'Consultar',
+      shortDesc: 'Cama Baja Goren SR DOLLY 32T, incorporado desde inventario interno. Año(s): 2021. Unidades registradas: 1.',
+      features: ['Marca: Goren', 'Modelo: SR DOLLY 32T', 'Año(s) inventario: 2021'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: CAMA_BAJA_EAGER_BEAVER_70T,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Cama Baja Goren SR DOLLY 32T.',
+    },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de cama-baja Eager Beaver.',
   relatedCrossCategory: [
@@ -1100,6 +1513,61 @@ const EE_TORRES_ILUMINACION: RentalSubcategory = {
       image: TORRE_ILUMINACION_9M_TEREX,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Torre de Iluminación Terex RL4 9 m.',
     },
+    {
+      slug: 'torre-de-iluminacion-led-generac-vtevo',
+      name: 'Torre de Iluminación Led Generac VTEVO',
+      brand: 'Led Generac',
+      capacity: 'Consultar',
+      shortDesc: 'Torre de Iluminación Led Generac VTEVO, incorporado desde inventario interno. Año(s): 2022. Unidades registradas: 4.',
+      features: ['Marca: Led Generac', 'Modelo: VTEVO', 'Año(s) inventario: 2022'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TORRE_ILUMINACION_9M_WACKER_NEUSON,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Torre de Iluminación Led Generac VTEVO.',
+    },
+    {
+      slug: 'torre-de-iluminacion-luxtower-lux-m11',
+      name: 'Torre de Iluminación Luxtower LUX M11',
+      brand: 'Luxtower',
+      capacity: 'Consultar',
+      shortDesc: 'Torre de Iluminación Luxtower LUX M11, incorporado desde inventario interno. Año(s): 2023. Unidades registradas: 9.',
+      features: ['Marca: Luxtower', 'Modelo: LUX M11', 'Año(s) inventario: 2023'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TORRE_ILUMINACION_9M_WACKER_NEUSON,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Torre de Iluminación Luxtower LUX M11.',
+    },
+    {
+      slug: 'torre-de-iluminacion-trime-x-city-led-4x300',
+      name: 'Torre de Iluminación Trime X-CITY LED 4X300',
+      brand: 'Trime',
+      capacity: 'Consultar',
+      shortDesc: 'Torre de Iluminación Trime X-CITY LED 4X300, incorporado desde inventario interno. Año(s): 2023. Unidades registradas: 1.',
+      features: ['Marca: Trime', 'Modelo: X-CITY LED 4X300', 'Año(s) inventario: 2023'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TORRE_ILUMINACION_9M_WACKER_NEUSON,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Torre de Iluminación Trime X-CITY LED 4X300.',
+    },
+    {
+      slug: 'torre-de-iluminacion-vielco-vielco',
+      name: 'Torre de Iluminación Vielco VIELCO',
+      brand: 'Vielco',
+      capacity: 'Consultar',
+      shortDesc: 'Torre de Iluminación Vielco VIELCO, incorporado desde inventario interno. Año(s): 2020. Unidades registradas: 2.',
+      features: ['Marca: Vielco', 'Modelo: VIELCO', 'Año(s) inventario: 2020'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TORRE_ILUMINACION_9M_WACKER_NEUSON,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Torre de Iluminación Vielco VIELCO.',
+    },
+    {
+      slug: 'torre-de-iluminacion-wacker-neuson-lrn6l',
+      name: 'Torre de Iluminación Wacker Neuson LRN6L',
+      brand: 'Wacker Neuson',
+      capacity: 'Consultar',
+      shortDesc: 'Torre de Iluminación Wacker Neuson LRN6L, incorporado desde inventario interno. Año(s): 2010. Unidades registradas: 1.',
+      features: ['Marca: Wacker Neuson', 'Modelo: LRN6L', 'Año(s) inventario: 2010'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TORRE_ILUMINACION_9M_WACKER_NEUSON,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Torre de Iluminación Wacker Neuson LRN6L.',
+    },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de torres de iluminación.',
   relatedCrossCategory: [
@@ -1195,7 +1663,18 @@ const EE_COMPRESORES_AIRE: RentalSubcategory = {
       features: ['Alta capacidad', 'Presión 14 bar', 'Remolcable'],
       image: HERO,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Compresor de Aire 900 CFM.',
-    }, */
+    }, */ 
+    {
+      slug: 'compresor-de-aire-airman-pds390s',
+      name: 'Compresor de Aire Airman PDS390S',
+      brand: 'Airman',
+      capacity: 'Consultar',
+      shortDesc: 'Compresor de Aire Airman PDS390S, incorporado desde inventario interno. Año(s): 2013. Unidades registradas: 1.',
+      features: ['Marca: Airman', 'Modelo: PDS390S', 'Año(s) inventario: 2013'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: COMPRESOR_AIRE_AIRMAN_PDS390S_4B1,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Compresor de Aire Airman PDS390S.',
+    },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de compresores de aire.',
 };
@@ -1263,6 +1742,83 @@ const EE_GENERADORES_ELECTRICOS: RentalSubcategory = {
       features: ['Motor bencinero de bajo consumo', 'Regulación automática de voltaje para una alimentación estable', 'Ideal para iluminación, herramientas eléctricas, oficinas de obra y equipos de baja demanda'],
       image: GENERADOR_ELECTRICO_7KVA_PROMAC,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Generador Eléctrico Promac 7kVA.',
+    },
+    {
+      slug: 'generador-electrico-caterpillar-de75',
+      name: 'Generador Eléctrico Caterpillar DE75',
+      brand: 'Caterpillar',
+      capacity: 'Consultar',
+      shortDesc: 'Generador Eléctrico Caterpillar DE75, incorporado desde inventario interno. Año(s): 2023. Unidades registradas: 1.',
+      features: ['Marca: Caterpillar', 'Modelo: DE75', 'Año(s) inventario: 2023'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GENERADOR_ELECTRICO_6KVA_EUROP_ARD_HDY,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Generador Eléctrico Caterpillar DE75.',
+    },
+    {
+      slug: 'generador-electrico-jcb-g165qs-165-kva',
+      name: 'Generador Eléctrico JCB G165QS (165 KVA)',
+      brand: 'JCB',
+      capacity: '165 kVA',
+      shortDesc: 'Generador Eléctrico JCB G165QS (165 KVA), incorporado desde inventario interno. Año(s): 2021. Unidades registradas: 1.',
+      features: ['Marca: JCB', 'Modelo: G165QS (165 KVA)', 'Año(s) inventario: 2021'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GENERADOR_ELECTRICO_6KVA_EUROP_ARD_HDY,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Generador Eléctrico JCB G165QS (165 KVA).',
+    },
+    {
+      slug: 'generador-electrico-jcb-g220qs-220-kva',
+      name: 'Generador Eléctrico JCB G220QS (220 KVA)',
+      brand: 'JCB',
+      capacity: '220 kVA',
+      shortDesc: 'Generador Eléctrico JCB G220QS (220 KVA), incorporado desde inventario interno. Año(s): 2021. Unidades registradas: 1.',
+      features: ['Marca: JCB', 'Modelo: G220QS (220 KVA)', 'Año(s) inventario: 2021'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GENERADOR_ELECTRICO_6KVA_EUROP_ARD_HDY,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Generador Eléctrico JCB G220QS (220 KVA).',
+    },
+    {
+      slug: 'generador-electrico-jcb-g45qs-45-kva',
+      name: 'Generador Eléctrico JCB G45QS (45 KVA)',
+      brand: 'JCB',
+      capacity: '45 kVA',
+      shortDesc: 'Generador Eléctrico JCB G45QS (45 KVA), incorporado desde inventario interno. Año(s): 2023. Unidades registradas: 2.',
+      features: ['Marca: JCB', 'Modelo: G45QS (45 KVA)', 'Año(s) inventario: 2023'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GENERADOR_ELECTRICO_6KVA_EUROP_ARD_HDY,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Generador Eléctrico JCB G45QS (45 KVA).',
+    },
+    {
+      slug: 'generador-electrico-jcb-g90qs-90-kva',
+      name: 'Generador Eléctrico JCB G90QS (90 KVA)',
+      brand: 'JCB',
+      capacity: '90 kVA',
+      shortDesc: 'Generador Eléctrico JCB G90QS (90 KVA), incorporado desde inventario interno. Año(s): 2021. Unidades registradas: 1.',
+      features: ['Marca: JCB', 'Modelo: G90QS (90 KVA)', 'Año(s) inventario: 2021'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GENERADOR_ELECTRICO_6KVA_EUROP_ARD_HDY,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Generador Eléctrico JCB G90QS (90 KVA).',
+    },
+    {
+      slug: 'generador-electrico-pramac-p9000-9-kva',
+      name: 'Generador Eléctrico Pramac P9000 (9 KVA)',
+      brand: 'Pramac',
+      capacity: '9 kVA',
+      shortDesc: 'Generador Eléctrico Pramac P9000 (9 KVA), incorporado desde inventario interno. Año(s): 2020. Unidades registradas: 1.',
+      features: ['Marca: Pramac', 'Modelo: P9000 (9 KVA)', 'Año(s) inventario: 2020'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GENERADOR_ELECTRICO_6KVA_EUROP_ARD_HDY,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Generador Eléctrico Pramac P9000 (9 KVA).',
+    },
+    {
+      slug: 'generador-electrico-senci-sc7000-10-kw',
+      name: 'Generador Eléctrico Senci SC7000 (10.0 KW)',
+      brand: 'Senci',
+      capacity: 'Consultar',
+      shortDesc: 'Generador Eléctrico Senci SC7000 (10.0 KW), incorporado desde inventario interno. Año(s): 2023. Unidades registradas: 2.',
+      features: ['Marca: Senci', 'Modelo: SC7000 (10.0 KW)', 'Año(s) inventario: 2023'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: GENERADOR_ELECTRICO_6KVA_EUROP_ARD_HDY,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Generador Eléctrico Senci SC7000 (10.0 KW).',
     },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de generadores eléctricos.',
@@ -1586,6 +2142,239 @@ const EE_CANASTILLOS_ALZA_HOMBRE: RentalSubcategory = {
 };
 
 // ─────────────────────────────────────────────────────────────
+// 4. EQUIPOS ESPECIALES
+// ─────────────────────────────────────────────────────────────
+
+const CAMIONETAS_PESADAS: RentalSubcategory = {
+  slug: 'camionetas-pesadas',
+  name: 'Camioneta pesada',
+  shortDesc: 'Camionetas pesadas para operación y apoyo en faena.',
+  description:
+    'Camionetas pesadas para operación y apoyo en faena. Equipos incorporados desde el inventario vigente. Las capacidades y configuraciones específicas deben confirmarse al momento de cotizar.',
+  features: [
+    'Equipos disponibles según inventario vigente.',
+    'Configuración y capacidad sujetas al modelo disponible.',
+    'Mantenimiento preventivo según programa operacional.',
+    'Disponibilidad sujeta a programación de faena.',
+  ],
+  specs: [
+    { label: 'Capacidad', value: 'Según modelo' },
+    { label: 'Disponibilidad', value: 'Consultar' },
+  ],
+  // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia de esta subcategoría.
+  heroImage: TRANSPORTE_HERO,
+  seoTitle: 'Arriendo de Camioneta pesada en Chile',
+  seoDescription:
+    'Arriendo de camioneta pesada en Chile. Consulta disponibilidad, configuración y condiciones de arriendo.',
+  catalog: [
+    {
+      slug: 'camioneta-chevrolet-silverado-dcab-4x4-3-0-aut',
+      name: 'Camioneta Chevrolet SILVERADO DCAB 4X4 3.0 AUT',
+      brand: 'Chevrolet',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Chevrolet SILVERADO DCAB 4X4 3.0 AUT, incorporado desde inventario interno. Año(s): 2023. Unidades registradas: 1.',
+      features: ['Marca: Chevrolet', 'Modelo: SILVERADO DCAB 4X4 3.0 AUT', 'Año(s) inventario: 2023'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Chevrolet SILVERADO DCAB 4X4 3.0 AUT.',
+    },
+    
+    {
+      slug: 'camioneta-chevrolet-dmax-4wd-2-5',
+      name: 'Camioneta Chevrolet DMAX 4WD 2.5',
+      brand: 'Chevrolet',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Chevrolet DMAX 4WD 2.5, incorporado desde inventario interno. Año(s): 2022. Unidades registradas: 5.',
+      features: ['Marca: Chevrolet', 'Modelo: DMAX 4WD 2.5', 'Año(s) inventario: 2022'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Chevrolet DMAX 4WD 2.5.',
+    },
+    {
+      slug: 'camioneta-ford-ranger-4x4-2-2',
+      name: 'Camioneta Ford RANGER 4X4 2.2',
+      brand: 'Ford',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Ford RANGER 4X4 2.2, incorporado desde inventario interno. Año(s): 2022. Unidades registradas: 1.',
+      features: ['Marca: Ford', 'Modelo: RANGER 4X4 2.2', 'Año(s) inventario: 2022'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Ford RANGER 4X4 2.2.',
+    },
+    {
+      slug: 'camioneta-ford-ranger-dcab-xlt-4x4-3-2',
+      name: 'Camioneta Ford RANGER DCAB XLT 4X4 3.2',
+      brand: 'Ford',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Ford RANGER DCAB XLT 4X4 3.2, incorporado desde inventario interno. Año(s): 2021. Unidades registradas: 1.',
+      features: ['Marca: Ford', 'Modelo: RANGER DCAB XLT 4X4 3.2', 'Año(s) inventario: 2021'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Ford RANGER DCAB XLT 4X4 3.2.',
+    },
+    {
+      slug: 'camioneta-ford-ranger-xls-4x4-3-2',
+      name: 'Camioneta Ford RANGER XLS 4X4 3.2',
+      brand: 'Ford',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Ford RANGER XLS 4X4 3.2, incorporado desde inventario interno. Año(s): 2020, 2021. Unidades registradas: 3.',
+      features: ['Marca: Ford', 'Modelo: RANGER XLS 4X4 3.2', 'Año(s) inventario: 2020, 2021'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Ford RANGER XLS 4X4 3.2.',
+    },
+    {
+      slug: 'camioneta-ford-ranger-xls-dcab-4x4-3-2',
+      name: 'Camioneta Ford RANGER XLS DCAB 4X4 3.2',
+      brand: 'Ford',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Ford RANGER XLS DCAB 4X4 3.2, incorporado desde inventario interno. Año(s): 2021. Unidades registradas: 1.',
+      features: ['Marca: Ford', 'Modelo: RANGER XLS DCAB 4X4 3.2', 'Año(s) inventario: 2021'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Ford RANGER XLS DCAB 4X4 3.2.',
+    },
+    {
+      slug: 'camioneta-nissan-navara-d-cab-mt-4x4-2-3',
+      name: 'Camioneta Nissan NAVARA D CAB MT 4X4 2.3',
+      brand: 'Nissan',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Nissan NAVARA D CAB MT 4X4 2.3, incorporado desde inventario interno. Año(s): 2021. Unidades registradas: 5.',
+      features: ['Marca: Nissan', 'Modelo: NAVARA D CAB MT 4X4 2.3', 'Año(s) inventario: 2021'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Nissan NAVARA D CAB MT 4X4 2.3.',
+    },
+    {
+      slug: 'camioneta-nissan-navara-dcab-xe-4x4-2-3-aut',
+      name: 'Camioneta Nissan NAVARA DCAB XE 4X4 2.3 AUT',
+      brand: 'Nissan',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Nissan NAVARA DCAB XE 4X4 2.3 AUT, incorporado desde inventario interno. Año(s): 2024. Unidades registradas: 4.',
+      features: ['Marca: Nissan', 'Modelo: NAVARA DCAB XE 4X4 2.3 AUT', 'Año(s) inventario: 2024'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Nissan NAVARA DCAB XE 4X4 2.3 AUT.',
+    },
+    {
+      slug: 'camioneta-nissan-np300-navara-3-2',
+      name: 'Camioneta Nissan NP300 NAVARA 3.2',
+      brand: 'Nissan',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Nissan NP300 NAVARA 3.2, incorporado desde inventario interno. Año(s): 2021. Unidades registradas: 1.',
+      features: ['Marca: Nissan', 'Modelo: NP300 NAVARA 3.2', 'Año(s) inventario: 2021'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Nissan NP300 NAVARA 3.2.',
+    },
+    {
+      slug: 'camioneta-ram-rampage-ds-laramie-4x4',
+      name: 'Camioneta RAM RAMPAGE DS LARAMIE 4X4',
+      brand: 'RAM',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta RAM RAMPAGE DS LARAMIE 4X4, incorporado desde inventario interno. Año(s): 2025. Unidades registradas: 1.',
+      features: ['Marca: RAM', 'Modelo: RAMPAGE DS LARAMIE 4X4', 'Año(s) inventario: 2025'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta RAM RAMPAGE DS LARAMIE 4X4.',
+    },
+    {
+      slug: 'camioneta-toyota-hilux-2-4-tm-4x4',
+      name: 'Camioneta Toyota HILUX 2.4 TM 4X4',
+      brand: 'Toyota',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Toyota HILUX 2.4 TM 4X4, incorporado desde inventario interno. Año(s): 2023. Unidades registradas: 5.',
+      features: ['Marca: Toyota', 'Modelo: HILUX 2.4 TM 4X4', 'Año(s) inventario: 2023'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Toyota HILUX 2.4 TM 4X4.',
+    },
+    {
+      slug: 'camioneta-toyota-hilux-cs-4x4-2-4',
+      name: 'Camioneta Toyota HILUX CS 4X4 2.4',
+      brand: 'Toyota',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Toyota HILUX CS 4X4 2.4, incorporado desde inventario interno. Año(s): 2022. Unidades registradas: 1.',
+      features: ['Marca: Toyota', 'Modelo: HILUX CS 4X4 2.4', 'Año(s) inventario: 2022'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Toyota HILUX CS 4X4 2.4.',
+    },
+    {
+      slug: 'camioneta-toyota-hilux-dc-4x4-2-8-aut',
+      name: 'Camioneta Toyota HILUX DC 4X4 2.8 AUT',
+      brand: 'Toyota',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Toyota HILUX DC 4X4 2.8 AUT, incorporado desde inventario interno. Año(s): 2024. Unidades registradas: 1.',
+      features: ['Marca: Toyota', 'Modelo: HILUX DC 4X4 2.8 AUT', 'Año(s) inventario: 2024'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Toyota HILUX DC 4X4 2.8 AUT.',
+    },
+    {
+      slug: 'camioneta-volkswagen-amarok-comfortline-4x4',
+      name: 'Camioneta Volkswagen AMAROK COMFORTLINE 4X4',
+      brand: 'Volkswagen',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Volkswagen AMAROK COMFORTLINE 4X4, incorporado desde inventario interno. Año(s): 2023. Unidades registradas: 4.',
+      features: ['Marca: Volkswagen', 'Modelo: AMAROK COMFORTLINE 4X4', 'Año(s) inventario: 2023'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Volkswagen AMAROK COMFORTLINE 4X4.',
+    },
+  ],
+  whatsappMessage: 'Hola IP, quisiera cotizar arriendo de camioneta pesada.',
+};
+
+const CAMIONETAS_LIVIANAS: RentalSubcategory = {
+  slug: 'camionetas-livianas',
+  name: 'Camioneta Liviana',
+  shortDesc: 'Camionetas livianas 4x4 para operación y apoyo en faena.',
+  description:
+    'Camionetas livianas 4x4 para operación y apoyo en faena. Equipos incorporados desde el inventario vigente. Las capacidades y configuraciones específicas deben confirmarse al momento de cotizar.',
+  features: [
+    'Equipos disponibles según inventario vigente.',
+    'Configuración y capacidad sujetas al modelo disponible.',
+    'Mantenimiento preventivo según programa operacional.',
+    'Disponibilidad sujeta a programación de faena.',
+  ],
+  specs: [
+    { label: 'Capacidad', value: 'Según modelo' },
+    { label: 'Disponibilidad', value: 'Consultar' },
+  ],
+  // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia de esta subcategoría.
+  heroImage: TRANSPORTE_HERO,
+  seoTitle: 'Arriendo de Camioneta Liviana en Chile',
+  seoDescription:
+    'Arriendo de camioneta liviana en Chile. Consulta disponibilidad, configuración y condiciones de arriendo.',
+  catalog: [
+    {
+      slug: 'camioneta-chevrolet-colorado-dcab-4p-4x4',
+      name: 'Camioneta Chevrolet COLORADO DCAB 4P 4X4',
+      brand: 'Chevrolet',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Chevrolet COLORADO DCAB 4P 4X4, incorporado desde inventario interno. Año(s): 2025. Unidades registradas: 10.',
+      features: ['Marca: Chevrolet', 'Modelo: COLORADO DCAB 4P 4X4', 'Año(s) inventario: 2025'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Chevrolet COLORADO DCAB 4P 4X4.',
+    },
+    {
+      slug: 'camioneta-ford-ranger-ltd-4x4-3-0-aut',
+      name: 'Camioneta Ford RANGER LTD 4X4 3.0 AUT',
+      brand: 'Ford',
+      capacity: 'Consultar',
+      shortDesc: 'Camioneta Ford RANGER LTD 4X4 3.0 AUT, incorporado desde inventario interno. Año(s): 2025. Unidades registradas: 1.',
+      features: ['Marca: Ford', 'Modelo: RANGER LTD 4X4 3.0 AUT', 'Año(s) inventario: 2025'],
+      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
+      image: TRANSPORTE_HERO,
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Ford RANGER LTD 4X4 3.0 AUT.',
+    },
+  ],
+  whatsappMessage: 'Hola IP, quisiera cotizar arriendo de camioneta liviana.',
+};
+
+// ─────────────────────────────────────────────────────────────
 // CATEGORÍAS
 // ─────────────────────────────────────────────────────────────
 
@@ -1605,6 +2394,8 @@ export const RENTAL_CATEGORIES: RentalCategory[] = [
       IZAJE_GRUAS_80,
       IZAJE_GRUAS_100,
       IZAJE_GRUAS_250,
+      IZAJE_GRUAS_400,
+      IZAJE_GRUAS_ALTO_TONELAJE,
       IZAJE_CAMIONES_PLUMA,
       IZAJE_ALZA_HOMBRE,
       IZAJE_GRUAS_HORQUILLA,
@@ -1657,6 +2448,19 @@ export const RENTAL_CATEGORIES: RentalCategory[] = [
       EE_MEZCLADORAS_ELECTRICAS,
       EE_CANASTILLOS_ALZA_HOMBRE,
     ],
+  },
+    {
+    slug: 'camionetas',
+    name: 'Camionetas',
+    shortDesc: 'Camionetas pesadas y livianas para operación y apoyo en faena.',
+    description:
+      'Arriendo de camionetas para operación, supervisión y apoyo logístico en proyectos industriales, mineros y de construcción. Catálogo construido a partir del inventario vigente.',
+    // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia de la categoría Camionetas.
+    heroImage: TRANSPORTE_HERO,
+    seoTitle: 'Arriendo de Camionetas en Chile',
+    seoDescription:
+      'Arriendo de camionetas pesadas y livianas para faenas y proyectos en Chile. Consulta disponibilidad y condiciones de arriendo.',
+    subcategories: [CAMIONETAS_PESADAS, CAMIONETAS_LIVIANAS],
   },
 ];
 
