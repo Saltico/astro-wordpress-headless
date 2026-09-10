@@ -48,6 +48,7 @@ import vibropison21kn from '@/assets/imgs/rental/equipos-especiales/vibropison/v
 import mezcladoraElectrica400lEmaresaHv400 from '@/assets/imgs/rental/equipos-especiales/mezcladora-electrica/mezcladora-electrica-400l/mezcladora-electrica-400l.avif';
 import canastillaAlzaHombreMetalicoOrmet2MF from '@/assets/imgs/rental/equipos-especiales/canastillo-alza-hombre/canastillo-alza-hombre-metalico/canastillo-alza-hombre-metalico.avif';
 import canastillaAlzaHombreFibraOrmet2VE from '@/assets/imgs/rental/equipos-especiales/canastillo-alza-hombre/canastillo-alza-hombre-fibra/canastillo-alza-hombre-fibra.avif';
+import camionetaChevroletSilver from '@/assets/imgs/rental/camionetas/camioneta-pesada/camioneta-chevrolet-silverado-dcab-4x4/camioneta-chevrolet-silverado-dcab-4x4.avif'
 
 export interface EquipmentSpec {
   /** Nombre del atributo (ej: "Capacidad máxima", "Motor") */
@@ -191,6 +192,7 @@ const VIBROPISON_21KN = vibropison21kn.src;
 const MEZCLADORA_ELECTRICA_400L_EMARESA_HV_400 = mezcladoraElectrica400lEmaresaHv400.src;
 const CANASTILLO_ALZA_HOMBRE_METALICO_ORMET_2MF = canastillaAlzaHombreMetalicoOrmet2MF.src;
 const CANASTILLO_ALZA_HOMBRE_FIBRA_ORMET_2VE = canastillaAlzaHombreFibraOrmet2VE.src;
+const CAMIONETA_CHEVROLET_SILVER = camionetaChevroletSilver.src;
 
 // ─────────────────────────────────────────────────────────────
 // 1. IZAJE
@@ -2162,7 +2164,7 @@ const CAMIONETAS_PESADAS: RentalSubcategory = {
     { label: 'Disponibilidad', value: 'Consultar' },
   ],
   // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia de esta subcategoría.
-  heroImage: TRANSPORTE_HERO,
+  heroImage: CAMIONETA_CHEVROLET_SILVER,
   seoTitle: 'Arriendo de Camioneta pesada en Chile',
   seoDescription:
     'Arriendo de camioneta pesada en Chile. Consulta disponibilidad, configuración y condiciones de arriendo.',
@@ -2175,7 +2177,7 @@ const CAMIONETAS_PESADAS: RentalSubcategory = {
       shortDesc: 'Camioneta Chevrolet SILVERADO DCAB 4X4 3.0 AUT, incorporado desde inventario interno. Año(s): 2023. Unidades registradas: 1.',
       features: ['Marca: Chevrolet', 'Modelo: SILVERADO DCAB 4X4 3.0 AUT', 'Año(s) inventario: 2023'],
       // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
-      image: TRANSPORTE_HERO,
+      image: CAMIONETA_CHEVROLET_SILVER,
       whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Chevrolet SILVERADO DCAB 4X4 3.0 AUT.',
     },
     
@@ -2343,7 +2345,7 @@ const CAMIONETAS_LIVIANAS: RentalSubcategory = {
     { label: 'Disponibilidad', value: 'Consultar' },
   ],
   // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia de esta subcategoría.
-  heroImage: TRANSPORTE_HERO,
+  heroImage: CAMIONETA_CHEVROLET_SILVER,
   seoTitle: 'Arriendo de Camioneta Liviana en Chile',
   seoDescription:
     'Arriendo de camioneta liviana en Chile. Consulta disponibilidad, configuración y condiciones de arriendo.',
@@ -2456,7 +2458,7 @@ export const RENTAL_CATEGORIES: RentalCategory[] = [
     description:
       'Arriendo de camionetas para operación, supervisión y apoyo logístico en proyectos industriales, mineros y de construcción. Catálogo construido a partir del inventario vigente.',
     // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia de la categoría Camionetas.
-    heroImage: TRANSPORTE_HERO,
+    heroImage: CAMIONETA_CHEVROLET_SILVER,
     seoTitle: 'Arriendo de Camionetas en Chile',
     seoDescription:
       'Arriendo de camionetas pesadas y livianas para faenas y proyectos en Chile. Consulta disponibilidad y condiciones de arriendo.',
