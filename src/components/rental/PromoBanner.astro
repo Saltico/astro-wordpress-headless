@@ -34,7 +34,7 @@ const isStatic = slides.length === 1;
           aria-label={`Slide ${index + 1} de ${slides.length}`}
           aria-hidden={index !== 0 ? 'true' : 'false'}
         >
-          {/* Imagen (lado izquierdo, fondo completo) */}
+          {/* Imagen de fondo completa */}
           <div class="promo-banner__image-wrapper">
             <img
               src={slide.image}
@@ -48,17 +48,19 @@ const isStatic = slides.length === 1;
             />
           </div>
 
-          {/* Overlay con gradiente difuminado */}
+          {/* Overlay con gradiente difuminado desde la izquierda */}
           <div class="promo-banner__overlay" aria-hidden="true"></div>
 
-          {/* Texto (lado derecho) */}
-          <div class="promo-banner__text">
-            <h2 class="promo-banner__title">{slide.title}</h2>
-            <p class="promo-banner__subtitle">{slide.subtitle}</p>
-            <a href={slide.ctaHref} class="promo-banner__cta">
-              {slide.ctaLabel}
-              <Icon name="arrow-right" size={16} />
-            </a>
+          {/* Contenido (lado izquierdo sobre el overlay) */}
+          <div class="promo-banner__content">
+            <div class="promo-banner__text">
+              <h2 class="promo-banner__title">{slide.title}</h2>
+              <p class="promo-banner__subtitle">{slide.subtitle}</p>
+              <a href={slide.ctaHref} class="promo-banner__cta">
+                {slide.ctaLabel}
+                <Icon name="arrow-right" size={18} />
+              </a>
+            </div>
           </div>
         </article>
       ))}
@@ -84,22 +86,20 @@ const isStatic = slides.length === 1;
 
 <style>
   /* ─────────────────────────────────────────────────────────────
-     LAYOUT PRINCIPAL
-     ───────────────────────────────────────────────────────────── */
+      LAYOUT PRINCIPAL
+      ───────────────────────────────────────────────────────────── */
   .promo-banner {
     position: relative;
-    /* Montarse debajo del header + padding para compensar */
     margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
-    /* Altura fija para la regla de oro (desktop) + espacio del navbar */
-    height: calc(clamp(180px, 24vw, 280px) + var(--topbar-height, 40px) + var(--header-height, 80px));
+    height: calc(clamp(320px, 40vw, 350px) + var(--topbar-height, 40px) + var(--header-height, 80px));
     width: 100%;
     overflow: hidden;
     background-color: var(--color-graphite, #0d1611);
   }
 
   /* ─────────────────────────────────────────────────────────────
-     TRACK (contenedor de slides)
-     ───────────────────────────────────────────────────────────── */
+      TRACK (contenedor de slides)
+      ───────────────────────────────────────────────────────────── */
   .promo-banner__track {
     position: relative;
     width: 100%;
@@ -107,14 +107,14 @@ const isStatic = slides.length === 1;
   }
 
   /* ─────────────────────────────────────────────────────────────
-     SLIDE (layout: imagen full-width + overlay gradiente + texto)
-     ───────────────────────────────────────────────────────────── */
+      SLIDE
+      ───────────────────────────────────────────────────────────── */
   .promo-banner__slide {
     position: absolute;
     inset: 0;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.6s ease, visibility 0.6s ease;
+    transition: opacity 0.7s var(--ease-out, ease), visibility 0.7s var(--ease-out, ease);
     z-index: 1;
   }
 
@@ -125,8 +125,8 @@ const isStatic = slides.length === 1;
   }
 
   /* ─────────────────────────────────────────────────────────────
-     IMAGEN (full-width como fondo)
-     ───────────────────────────────────────────────────────────── */
+      IMAGEN (fondo completo)
+      ───────────────────────────────────────────────────────────── */
   .promo-banner__image-wrapper {
     position: absolute;
     inset: 0;
@@ -143,81 +143,107 @@ const isStatic = slides.length === 1;
   }
 
   /* ─────────────────────────────────────────────────────────────
-     OVERLAY con gradiente difuminado (cubre toda la imagen)
-     ───────────────────────────────────────────────────────────── */
+      OVERLAY — gradiente desde la IZQUIERDA (sólido → transparente)
+      ───────────────────────────────────────────────────────────── */
   .promo-banner__overlay {
     position: absolute;
     inset: 0;
-    /* Gradiente: negro sólido cubre más del 50% derecho de la imagen */
-    background: linear-gradient(
-      90deg,
-      rgba(13, 22, 17, 0) 0%,
-      rgba(13, 22, 17, 0.1) 15%,
-      rgba(13, 22, 17, 0.4) 30%,
-      rgba(13, 22, 17, 0.75) 45%,
-      rgba(13, 22, 17, 0.95) 55%,
-      rgba(13, 22, 17, 1) 65%
-    );
+    background:
+      linear-gradient(
+        90deg,
+        rgba(13, 22, 17, 1) 0%,
+        rgba(13, 22, 17, 0.97) 18%,
+        rgba(13, 22, 17, 0.88) 30%,
+        rgba(13, 22, 17, 0.62) 44%,
+        rgba(13, 22, 17, 0.28) 58%,
+        rgba(13, 22, 17, 0.08) 72%,
+        rgba(13, 22, 17, 0) 85%
+      );
     z-index: 1;
   }
 
   /* ─────────────────────────────────────────────────────────────
-     TEXTO (lado derecho sobre el overlay)
-     ───────────────────────────────────────────────────────────── */
-  .promo-banner__text {
+      CONTENT WRAPPER — centra el texto con max-width
+      ───────────────────────────────────────────────────────────── */
+  .promo-banner__content {
     position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: var(--container-max-width, 1536px);
+    margin-inline: auto;
+    z-index: 2;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+      TEXTO (lado izquierdo sobre el overlay)
+      ───────────────────────────────────────────────────────────── */
+  .promo-banner__text {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 16px;
-    padding-top: clamp(60px, 8vw, 96px);
-    padding-bottom: clamp(16px, 2vw, 24px);
+    gap: 20px;
+    padding-top: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 16px);
+    padding-bottom: clamp(24px, 3vw, 40px);
     padding-inline: clamp(24px, 4vw, 64px);
     height: 100%;
-    margin-left: auto;
-    max-width: 50%;
-    z-index: 2;
+    max-width: 52%;
   }
 
   .promo-banner__title {
     font-family: var(--font-heading);
-    font-weight: 800;
-    font-size: clamp(1.4rem, 2.4vw, 2.2rem);
-    line-height: 1.15;
-    letter-spacing: -0.02em;
-    color: var(--color-on-dark, #fff);
+    font-weight: 900;
+    font-size: clamp(1.85rem, 3.6vw, 3.1rem);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    color: var(--color-on-dark, #f3f7f4);
     margin: 0;
     text-wrap: balance;
   }
 
   .promo-banner__subtitle {
-    font-size: clamp(0.85rem, 1.1vw, 1rem);
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.82);
+    font-family: var(--font-body);
+    font-size: clamp(0.95rem, 1.2vw, 1.125rem);
+    font-weight: 400;
+    line-height: 1.55;
+    color: var(--color-on-dark-muted, #9bab9f);
     margin: 0;
-    max-width: 40ch;
+    max-width: 44ch;
   }
 
-  /* CTA: botón pill primary */
+  /* CTA: botón pill primary con presencia transaccional */
   .promo-banner__cta {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 22px;
+    gap: 10px;
+    margin-top: 4px;
+    padding: 14px 30px;
     background-color: var(--color-brand, #308f40);
-    color: var(--color-on-dark, #fff);
+    color: #fff;
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 0.875rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.01em;
     border-radius: 999px;
     text-decoration: none;
-    transition: background-color 0.2s ease, gap 0.2s ease;
+    box-shadow: 0 4px 16px rgba(48, 143, 64, 0.3);
+    transition:
+      background-color 0.2s ease,
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      gap 0.2s ease;
     width: fit-content;
   }
 
   .promo-banner__cta:hover {
-    background-color: var(--color-brand-dark, #157a3a);
-    gap: 12px;
+    background-color: var(--color-brand-600, #226f31);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(48, 143, 64, 0.4);
+    gap: 14px;
+  }
+
+  .promo-banner__cta:active {
+    transform: translateY(0) scale(0.99);
+    box-shadow: 0 2px 8px rgba(48, 143, 64, 0.25);
   }
 
   .promo-banner__cta:focus-visible {
@@ -226,40 +252,42 @@ const isStatic = slides.length === 1;
   }
 
   /* ─────────────────────────────────────────────────────────────
-     DOTS (esquina inferior derecha)
-     ───────────────────────────────────────────────────────────── */
+      DOTS (esquina inferior derecha del área de contenido)
+      ───────────────────────────────────────────────────────────── */
   .promo-banner__dots {
     position: absolute;
-    bottom: 16px;
-    right: 16px;
+    bottom: 20px;
+    left: clamp(24px, 4vw, 64px);
     display: flex;
-    gap: 8px;
+    gap: 10px;
+    align-items: center;
     z-index: 10;
-    padding: 6px 10px;
+    padding: 8px 14px;
     background: rgba(13, 22, 17, 0.5);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   .promo-banner__dot {
     width: 8px;
     height: 8px;
-    border-radius: 50%;
+    border-radius: 999px;
     border: none;
-    background-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.35);
     cursor: pointer;
     padding: 0;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    transition: background-color 0.3s ease;
   }
 
   .promo-banner__dot:hover {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(255, 255, 255, 0.65);
   }
 
   .promo-banner__dot--active {
     background-color: var(--color-brand, #308f40);
-    transform: scale(1.3);
+    width: 24px;
   }
 
   .promo-banner__dot:focus-visible {
@@ -268,12 +296,30 @@ const isStatic = slides.length === 1;
   }
 
   /* ─────────────────────────────────────────────────────────────
-     MOBILE: stack vertical (imagen arriba, texto abajo)
-     ───────────────────────────────────────────────────────────── */
-  @media (max-width: 768px) {
+      TABLET (768–1023px)
+      ───────────────────────────────────────────────────────────── */
+  @media (max-width: 1023px) {
+    .promo-banner {
+      height: calc(clamp(280px, 38vw, 400px) + var(--topbar-height, 40px) + var(--header-height, 80px));
+    }
+
+    .promo-banner__text {
+      max-width: 58%;
+      gap: 16px;
+    }
+
+    .promo-banner__title {
+      font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+      MOBILE (< 768px) — imagen como fondo, texto superpuesto
+      ───────────────────────────────────────────────────────────── */
+  @media (max-width: 767px) {
     .promo-banner {
       height: auto;
-      min-height: clamp(280px, 50vw, 400px);
+      min-height: clamp(420px, 72vh, 560px);
     }
 
     .promo-banner__slide {
@@ -281,60 +327,78 @@ const isStatic = slides.length === 1;
       flex-direction: column;
     }
 
+    /* La imagen sigue siendo fondo absoluto */
     .promo-banner__image-wrapper {
-      position: relative;
-      aspect-ratio: 21 / 9;
+      position: absolute;
+      inset: 0;
     }
 
+    .promo-banner__image {
+      object-position: center 30%;
+    }
+
+    /* Overlay: ligero arriba para mostrar imagen, oscuro solo abajo donde va el texto */
     .promo-banner__overlay {
-      /* Gradiente vertical en mobile: de arriba a abajo */
-      background: linear-gradient(
-        180deg,
-        rgba(13, 22, 17, 0) 0%,
-        rgba(13, 22, 17, 0.1) 15%,
-        rgba(13, 22, 17, 0.4) 30%,
-        rgba(13, 22, 17, 0.75) 45%,
-        rgba(13, 22, 17, 0.95) 55%,
-        rgba(13, 22, 17, 1) 65%
-      );
+      background:
+        linear-gradient(
+          180deg,
+          rgba(13, 22, 17, 0.15) 0%,
+          rgba(13, 22, 17, 0.05) 30%,
+          rgba(13, 22, 17, 0.1) 50%,
+          rgba(13, 22, 17, 0.55) 72%,
+          rgba(13, 22, 17, 0.88) 100%
+        );
+    }
+
+    .promo-banner__content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-height: clamp(420px, 72vh, 560px);
     }
 
     .promo-banner__text {
       max-width: 100%;
-      margin-left: 0;
-      padding-top: 24px;
-      padding-bottom: 16px;
-      padding-inline: 20px;
-      gap: 12px;
+      padding-top: calc(var(--topbar-height, 40px) + var(--header-height, 80px) + 32px);
+      padding-bottom: clamp(60px, 10vw, 80px);
+      padding-inline: clamp(20px, 5vw, 32px);
+      gap: 14px;
+      justify-content: flex-end;
     }
 
     .promo-banner__title {
-      font-size: clamp(1.2rem, 5vw, 1.6rem);
+      font-size: clamp(1.65rem, 6.5vw, 2.2rem);
+      line-height: 1.1;
     }
 
     .promo-banner__subtitle {
-      font-size: 0.875rem;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      font-size: clamp(0.9rem, 3.2vw, 1rem);
+      line-height: 1.5;
+    }
+
+    .promo-banner__cta {
+      padding: 13px 26px;
+      font-size: 0.9rem;
     }
 
     /* Dots: bottom center en mobile */
     .promo-banner__dots {
-      bottom: auto;
-      right: auto;
-      top: 12px;
+      bottom: 16px;
       left: 50%;
       transform: translateX(-50%);
     }
   }
 
   /* ─────────────────────────────────────────────────────────────
-     REDUCED MOTION
-     ───────────────────────────────────────────────────────────── */
+      REDUCED MOTION
+      ───────────────────────────────────────────────────────────── */
   @media (prefers-reduced-motion: reduce) {
     .promo-banner__slide {
+      transition: none;
+    }
+
+    .promo-banner__cta {
       transition: none;
     }
   }

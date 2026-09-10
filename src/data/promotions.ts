@@ -93,15 +93,15 @@ export const bannerSlides: BannerSlide[] = [
 // ─────────────────────────────────────────────────────────────
 
 export const promotionCard: PromotionCard = {
-  title: 'Promociones',
-  description: 'Ofertas especiales en equipos seleccionados. Cotiza hoy y aprovecha condiciones preferenciales.',
+  title: 'Condiciones especiales en equipos seleccionados',
+  description: 'Aprovecha tarifas preferenciales en grúas, movimiento de tierra y transporte. Disponibilidad inmediata en el norte de Chile.',
   image: arriendoHero.src,
-  imageAlt: 'Equipos en promoción para arriendo',
+  imageAlt: 'Equipos pesados en promoción para arriendo en minería',
   categories: [
     { name: 'Izaje', slug: 'izaje' },
     { name: 'Mov. Tierra', slug: 'movimiento-de-tierra' },
     { name: 'Transporte', slug: 'transporte' },
   ],
   ctaHref: '/arriendo',
-  ctaLabel: 'Ver promociones',
+  ctaLabel: 'Ver equipos en promoción',
 };

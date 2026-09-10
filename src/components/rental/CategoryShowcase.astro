@@ -30,18 +30,22 @@ const {
       {subtitle && <p class="category-showcase__subtitle">{subtitle}</p>}
     </div>
 
-    {/* Card de Promociones — strip horizontal delgada */}
-    <article class="promo-card">
-      <div class="promo-card__image-wrapper">
+    {/* Card de Promociones — banner visual con imagen de fondo + overlay */}
+    <article class="promo-card" aria-label="Promociones de arriendo de equipos">
+      <div class="promo-card__bg">
         <img
           src={promotionCard.image}
-          alt={promotionCard.imageAlt}
-          class="promo-card__image"
+          alt=""
+          aria-hidden="true"
           loading="lazy"
           decoding="async"
+          width="1200"
+          height="400"
         />
-        <span class="promo-card__badge" aria-hidden="true">PROMO</span>
       </div>
+      <div class="promo-card__overlay" aria-hidden="true"></div>
+      <div class="promo-card__pattern" aria-hidden="true"></div>
+      <span class="promo-card__badge" aria-hidden="true">PROMO</span>
       <div class="promo-card__content">
         <div class="promo-card__text">
           <h3 class="promo-card__title">{promotionCard.title}</h3>
@@ -64,46 +68,65 @@ const {
       </div>
     </article>
 
-    {/* Grid 2×2 de categorías de rental */}
+    {/* Grid de categorías de rental — cards con panel deslizante */}
     <div class="category-showcase__grid">
-      {RENTAL_CATEGORIES.map((category) => (
-        <article class="category-card">
-          <div class="category-card__image-wrapper">
-            <img
-              src={category.heroImage}
-              alt={category.name}
-              class="category-card__image"
-              loading="lazy"
-            />
-          </div>
-          <div class="category-card__content">
-            <h3 class="category-card__title">{category.name}</h3>
-            <p class="category-card__desc">{category.shortDesc}</p>
-            <div class="category-card__pills">
-              {category.subcategories.slice(0, 4).map((sub) => (
-                <a
-                  href={`/arriendo/${category.slug}/${sub.slug}`}
-                  class="category-card__pill"
-                >
-                  {sub.name}
-                </a>
-              ))}
-              {category.subcategories.length > 4 && (
-                <a
-                  href={`/arriendo/${category.slug}`}
-                  class="category-card__pill category-card__pill--more"
-                >
-                  +{category.subcategories.length - 4}
-                </a>
-              )}
+      {RENTAL_CATEGORIES.map((category) => {
+        const hasOverflow = category.subcategories.length > 6;
+        return (
+          <article class="category-card" tabindex="0" aria-label={`${category.name}: ${category.subcategories.length} subcategorías`}>
+            {/* Imagen de fondo full-bleed */}
+            <div class="category-card__bg">
+              <img
+                src={category.heroImage}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
-            <a href={`/arriendo/${category.slug}`} class="category-card__link">
-              Ver categoría
-              <Icon name="arrow-right" size={18} />
-            </a>
-          </div>
-        </article>
-      ))}
+
+            {/* Panel deslizante desde abajo */}
+            <div class="category-card__panel">
+              {/* Indicador visual: punta/chevron en el borde superior */}
+              <div class="category-card__handle" aria-hidden="true">
+                <svg width="20" height="10" viewBox="0 0 20 10" fill="none">
+                  <path d="M10 0L20 10H0L10 0Z" fill="currentColor"/>
+                </svg>
+              </div>
+
+              {/* Pills de subcategorías — ocultos en reposo, aparecen en hover */}
+              <div class="category-card__pills">
+                {category.subcategories.map((sub) => (
+                  <a
+                    href={`/arriendo/${category.slug}/${sub.slug}`}
+                    class="category-card__pill"
+                  >
+                    {sub.name}
+                  </a>
+                ))}
+                {hasOverflow && (
+                  <a
+                    href={`/arriendo/${category.slug}`}
+                    class="category-card__pill category-card__pill--all"
+                  >
+                    Ver todas
+                  </a>
+                )}
+              </div>
+
+              {/* Bloque inferior fijo: título + desc + CTA */}
+              <div class="category-card__footer">
+                <h3 class="category-card__title">{category.name}</h3>
+                <p class="category-card__desc">{category.shortDesc}</p>
+                <a href={`/arriendo/${category.slug}`} class="category-card__link">
+                  Ver categoría
+                  <Icon name="arrow-right" size={16} />
+                </a>
+              </div>
+            </div>
+          </article>
+        );
+      })}
     </div>
   </div>
 </section>
@@ -113,6 +136,16 @@ const {
     padding-block-start: clamp(32px, 5vw, 56px);
     padding-block-end: clamp(56px, 8vw, 100px);
     background-color: var(--theme-bg);
+    /* Subtle depth gradient — dark: graphite tonal; light: warm neutral */
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(48, 143, 64, 0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(48, 143, 64, 0.03) 0%, transparent 50%);
+  }
+
+  [data-theme="light"] .category-showcase {
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(48, 143, 64, 0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(48, 143, 64, 0.03) 0%, transparent 50%);
   }
 
   .category-showcase__container {
@@ -166,63 +199,113 @@ const {
   }
 
   /* ─────────────────────────────────────────────────────────────
-     PROMO CARD — strip horizontal delgada y extendida
+     PROMO CARD — Banner visual con imagen de fondo + overlay
+     Diseño: imagen de fondo con gradiente oscuro, contenido sobre
+     la imagen con alto contraste. Compatible dark/light mode.
+     Sin parallax JS (costo de rendimiento), solo CSS estático.
      ───────────────────────────────────────────────────────────── */
   .promo-card {
+    position: relative;
     display: flex;
     align-items: stretch;
-    background-color: var(--theme-bg-elevated);
-    border: 2px solid var(--color-brand, #308f40);
-    border-radius: 14px;
+    border-radius: 16px;
     overflow: hidden;
-    margin-bottom: 24px;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    margin-bottom: 32px;
+    min-height: 220px;
+    transition: transform 0.3s var(--ease-out, ease), border-color 0.3s var(--ease-out, ease);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  [data-theme="light"] .promo-card {
+    border-color: var(--color-line, #e2e4e5);
   }
 
   .promo-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+    border-color: var(--color-brand, #308f40);
   }
 
-  .promo-card__image-wrapper {
-    position: relative;
-    flex-shrink: 0;
-    width: clamp(120px, 18vw, 200px);
-    overflow: hidden;
-    background-color: var(--color-graphite, #0d1611);
+  /* Imagen de fondo de la promo card */
+  .promo-card__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
   }
 
-  .promo-card__image {
+  .promo-card__bg img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
+    transition: transform 0.6s var(--ease-out, ease);
   }
 
-  .promo-card:hover .promo-card__image {
-    transform: scale(1.05);
+  .promo-card:hover .promo-card__bg img {
+    transform: scale(1.03);
   }
 
+  /* Overlay gradiente para legibilidad del contenido */
+  .promo-card__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    /* Gradiente de izquierda a derecha: oscuro donde está el texto, más claro a la derecha */
+    background: linear-gradient(
+      100deg,
+      rgba(13, 22, 17, 0.92) 0%,
+      rgba(13, 22, 17, 0.82) 35%,
+      rgba(13, 22, 17, 0.55) 65%,
+      rgba(13, 22, 17, 0.35) 100%
+    );
+  }
+
+  /* Patrón sutil de diagonales industriales — solo visible en hover */
+  .promo-card__pattern {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out, ease);
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 20px,
+      rgba(48, 143, 64, 0.06) 20px,
+      rgba(48, 143, 64, 0.06) 21px
+    );
+    pointer-events: none;
+  }
+
+  .promo-card:hover .promo-card__pattern {
+    opacity: 1;
+  }
+
+  /* Badge PROMO */
   .promo-card__badge {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    padding: 3px 10px;
+    top: 16px;
+    left: 16px;
+    z-index: 3;
+    padding: 5px 14px;
     background-color: var(--color-brand, #308f40);
-    color: var(--color-on-dark, #fff);
+    color: var(--color-on-brand, #fff);
     font-family: var(--font-heading);
     font-weight: 800;
     font-size: 0.7rem;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     border-radius: 999px;
     text-transform: uppercase;
+    /* Sutil glow para que destaque sobre la imagen */
+    box-shadow: 0 2px 8px rgba(48, 143, 64, 0.35);
   }
 
+  /* Contenido de la promo card */
   .promo-card__content {
+    position: relative;
+    z-index: 3;
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 14px 20px;
+    gap: 20px;
+    padding: 28px 32px;
     flex: 1;
     min-width: 0;
   }
@@ -234,21 +317,21 @@ const {
 
   .promo-card__title {
     font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 1rem;
+    font-weight: 800;
+    font-size: clamp(1.15rem, 2vw, 1.4rem);
     letter-spacing: -0.01em;
-    line-height: 1.25;
-    margin: 0 0 4px;
-    color: var(--theme-text);
+    line-height: 1.2;
+    margin: 0 0 6px;
+    color: var(--color-on-dark, #f3f7f4);
   }
 
   .promo-card__desc {
     margin: 0;
-    font-size: 0.8rem;
-    line-height: 1.4;
-    color: var(--theme-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: rgba(243, 247, 244, 0.82);
     display: -webkit-box;
-    -webkit-line-clamp: 1;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -256,53 +339,67 @@ const {
   .promo-card__pills {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
     flex-shrink: 0;
   }
 
   .promo-card__pill {
     display: inline-block;
-    padding: 4px 10px;
-    background-color: var(--theme-bg);
-    border: 1px solid var(--theme-border);
+    padding: 6px 14px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 999px;
-    color: var(--theme-text-subtle);
-    font-size: 0.75rem;
+    color: var(--color-on-dark, #f3f7f4);
+    font-size: 0.78rem;
     font-weight: 600;
     text-decoration: none;
     white-space: nowrap;
-    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
   }
 
   .promo-card__pill:hover,
   .promo-card__pill:focus {
     background-color: var(--color-brand, #308f40);
     border-color: var(--color-brand, #308f40);
-    color: var(--color-on-dark);
+    color: var(--color-on-brand, #fff);
+    transform: translateY(-1px);
   }
 
   .promo-card__link {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    padding: 10px 22px;
+    background-color: var(--color-brand, #308f40);
+    border-radius: 999px;
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 0.8rem;
-    color: var(--color-brand, #308f40);
+    font-size: 0.82rem;
+    color: var(--color-on-brand, #fff);
     text-decoration: none;
     flex-shrink: 0;
     white-space: nowrap;
-    transition: gap 0.2s ease;
+    transition: background 0.2s ease, gap 0.2s ease, transform 0.2s ease;
   }
 
   .promo-card__link:hover {
-    gap: 9px;
+    background-color: var(--color-brand-600, #226f31);
+    gap: 10px;
+    transform: translateY(-1px);
+  }
+
+  .promo-card__link:focus-visible {
+    outline: 2px solid var(--color-on-dark, #f3f7f4);
+    outline-offset: 2px;
   }
 
   @media (max-width: 900px) {
     .promo-card__content {
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
+      padding: 24px;
     }
 
     .promo-card__text {
@@ -316,28 +413,46 @@ const {
 
   @media (max-width: 600px) {
     .promo-card {
-      flex-direction: column;
+      min-height: 280px;
     }
 
-    .promo-card__image-wrapper {
-      width: 100%;
-      aspect-ratio: 16 / 5;
+    /* En móvil, el gradiente se adapta: más oscuro abajo donde está el texto */
+    .promo-card__overlay {
+      background: linear-gradient(
+        180deg,
+        rgba(13, 22, 17, 0.3) 0%,
+        rgba(13, 22, 17, 0.6) 40%,
+        rgba(13, 22, 17, 0.92) 75%,
+        rgba(13, 22, 17, 0.96) 100%
+      );
     }
 
     .promo-card__content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
       flex-direction: column;
       align-items: flex-start;
-      gap: 8px;
-      padding: 12px 16px 14px;
+      gap: 10px;
+      padding: 20px;
+      z-index: 3;
     }
 
     .promo-card__text {
       flex-basis: auto;
     }
+
+    .promo-card__badge {
+      top: 12px;
+      left: 12px;
+    }
   }
 
   /* ─────────────────────────────────────────────────────────────
-     CATEGORY CARDS — grid 2×2 compacto
+     CATEGORY CARDS — imagen de fondo + panel deslizante
+     Estado inicial: franja inferior compacta con título, desc, CTA.
+     Hover: panel sube cubriendo toda la card con fondo difuminado.
      ───────────────────────────────────────────────────────────── */
   .category-showcase__grid {
     display: grid;
@@ -352,114 +467,207 @@ const {
   }
 
   .category-card {
-    display: flex;
-    flex-direction: column;
-    background-color: var(--theme-bg-elevated);
-    border: 1px solid var(--theme-border);
+    position: relative;
+    min-height: 340px;
     border-radius: 14px;
     overflow: hidden;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    cursor: pointer;
+    transition: border-color 0.3s var(--ease-out, ease);
+    border: 1px solid var(--theme-border);
   }
 
-  .category-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  .category-card:hover,
+  .category-card:focus-within {
     border-color: var(--color-brand, #308f40);
   }
 
-  .category-card__image-wrapper {
-    position: relative;
-    aspect-ratio: 16 / 5;
-    overflow: hidden;
+  .category-card:focus-visible {
+    outline: 2px solid var(--color-brand, #308f40);
+    outline-offset: 2px;
+  }
+
+  /* Imagen de fondo full-bleed */
+  .category-card__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
     background-color: var(--color-graphite, #0d1611);
   }
 
-  .category-card__image {
+  .category-card__bg img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
+    transition: transform 0.5s var(--ease-out, ease);
   }
 
-  .category-card:hover .category-card__image {
+  .category-card:hover .category-card__bg img,
+  .category-card:focus-within .category-card__bg img {
     transform: scale(1.05);
   }
 
-  .category-card__content {
+  /* Panel deslizante — ocupa la card completa pero el contenido
+     se ancla abajo. En reposo solo se ve la franja inferior. */
+  .category-card__panel {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px;
+    /* Estado colapsado: fondo oscuro solo en la franja inferior */
+    background: linear-gradient(
+      to top,
+      rgba(13, 22, 17, 0.92) 0%,
+      rgba(13, 22, 17, 0.88) 30%,
+      rgba(13, 22, 17, 0.4) 55%,
+      transparent 100%
+    );
+    transition: background 0.4s var(--ease-out, ease);
+  }
+
+  .category-card:hover .category-card__panel,
+  .category-card:focus-within .category-card__panel {
+    /* Estado expandido: fondo difuminado cubre toda la card */
+    background: rgba(13, 22, 17, 0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  [data-theme="light"] .category-card__panel {
+    background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.94) 0%,
+      rgba(255, 255, 255, 0.9) 30%,
+      rgba(255, 255, 255, 0.5) 55%,
+      transparent 100%
+    );
+  }
+
+  [data-theme="light"] .category-card:hover .category-card__panel,
+  [data-theme="light"] .category-card:focus-within .category-card__panel {
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Handle / punta indicadora */
+  .category-card__handle {
+    position: absolute;
+    top: 42%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--color-on-dark, #f3f7f4);
+    opacity: 0.7;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  [data-theme="light"] .category-card__handle {
+    color: var(--color-ink, #242627);
+  }
+
+  .category-card:hover .category-card__handle,
+  .category-card:focus-within .category-card__handle {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px);
+  }
+
+  /* Pills — ocultos en estado colapsado, visibles en hover */
+  .category-card__pills {
+    display: flex;
+    flex-wrap: wrap;
     gap: 6px;
-    padding: 12px 14px 14px;
-    flex: 1;
+    margin-bottom: 12px;
+    opacity: 0;
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path 0.4s var(--ease-out, ease), opacity 0.3s ease;
+  }
+
+  .category-card:hover .category-card__pills,
+  .category-card:focus-within .category-card__pills {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    overflow-y: auto;
+  }
+
+  /* Footer fijo: título + desc + CTA siempre al fondo */
+  .category-card__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
   .category-card__title {
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.1rem;
     letter-spacing: -0.01em;
-    line-height: 1.25;
+    line-height: 1.2;
     margin: 0;
-    color: var(--theme-text);
+    color: var(--color-on-dark, #f3f7f4);
+  }
+
+  [data-theme="light"] .category-card__title {
+    color: var(--color-ink, #242627);
   }
 
   .category-card__desc {
-    margin: 0;
+    margin: 0 0 8px;
     font-size: 0.8rem;
     line-height: 1.4;
-    color: var(--theme-text-muted);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    color: rgba(243, 247, 244, 0.78);
   }
 
-  .category-card__pills {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 5px;
-    margin-top: 4px;
+  [data-theme="light"] .category-card__desc {
+    color: var(--color-ink-500, #6b7072);
   }
 
   .category-card__pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 4px 8px;
-    background-color: var(--theme-bg);
-    border: 1px solid var(--theme-border);
-    border-radius: 999px;
-    color: var(--theme-text-subtle);
+    padding: 5px 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-sm, 0.5rem);
+    color: var(--color-on-dark, #f3f7f4);
     font-size: 0.72rem;
     font-weight: 500;
     text-decoration: none;
-    text-align: center;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+
+  [data-theme="light"] .category-card__pill {
+    background-color: rgba(0, 0, 0, 0.04);
+    border-color: var(--color-line, #e2e4e5);
+    color: var(--color-ink, #242627);
   }
 
   .category-card__pill:hover,
   .category-card__pill:focus {
     background-color: var(--color-brand, #308f40);
     border-color: var(--color-brand, #308f40);
-    color: var(--color-on-dark);
+    color: var(--color-on-brand, #fff);
   }
 
-  .category-card__pill--more {
+  .category-card__pill--all {
     background-color: var(--color-brand, #308f40);
     border-color: var(--color-brand, #308f40);
-    color: var(--color-on-dark);
-    font-weight: 700;
+    color: var(--color-on-brand, #fff);
+    font-weight: 600;
   }
 
-  .category-card__pill--more:hover,
-  .category-card__pill--more:focus {
-    background-color: var(--color-brand-dark, #157a3a);
-    border-color: var(--color-brand-dark, #157a3a);
+  .category-card__pill--all:hover,
+  .category-card__pill--all:focus {
+    background-color: var(--color-brand-600, #226f31);
+    border-color: var(--color-brand-600, #226f31);
   }
 
+  /* CTA link */
   .category-card__link {
     display: inline-flex;
     align-items: center;
@@ -467,13 +675,31 @@ const {
     font-family: var(--font-heading);
     font-weight: 700;
     font-size: 0.8rem;
-    color: var(--theme-eyebrow);
+    color: var(--color-brand-300, #62bb74);
     text-decoration: none;
-    margin-top: 4px;
-    transition: gap 0.2s ease;
+    transition: gap 0.2s ease, color 0.2s ease;
+  }
+
+  [data-theme="light"] .category-card__link {
+    color: var(--color-brand, #308f40);
   }
 
   .category-card__link:hover {
     gap: 9px;
+    color: var(--color-on-dark, #f3f7f4);
+  }
+
+  [data-theme="light"] .category-card__link:hover {
+    color: var(--color-brand-600, #226f31);
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .category-card__panel,
+    .category-card__pills,
+    .category-card__handle,
+    .category-card__bg img {
+      transition: none;
+    }
   }
 </style>

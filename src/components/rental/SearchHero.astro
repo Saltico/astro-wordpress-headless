@@ -4,7 +4,7 @@
 // Fondo con video de arriendos + overlay oscuro para legibilidad.
 
 import EquipmentSearch from '@/components/rental/EquipmentSearch.astro';
-import arriendosVideo from '@/assets/videos/arriendos.mp4';
+import arriendosVideo from '@/assets/videos/servicios.mp4';
 
 export interface Props {
   eyebrow?: string;
@@ -28,7 +28,7 @@ const {
     muted
     loop
     playsinline
-    preload="none"
+    preload="true"
     aria-hidden="true"
   />
   <div class="search-hero__overlay"></div>
@@ -47,7 +47,6 @@ const {
     position: relative;
     padding-block: clamp(40px, 6vw, 72px);
     background-color: var(--color-graphite-2, #15201a);
-    overflow: hidden;
   }
 
   .search-hero__video {

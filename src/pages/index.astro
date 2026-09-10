@@ -207,7 +207,17 @@ const clientLogos = [
   /* ===== SERVICIOS (news-card style: image + title + CTA) ===== */
   .services-section {
     padding-block: clamp(56px, 8vw, 100px);
-    background-color: var(--theme-bg);
+    background-color: var(--theme-bg-alt);
+    /* Subtle gradient for depth — adapts to dark/light via theme tokens */
+    background-image:
+      radial-gradient(ellipse 70% 50% at 20% 100%, rgba(48, 143, 64, 0.03) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 90% 0%, rgba(48, 143, 64, 0.04) 0%, transparent 50%);
+  }
+
+  [data-theme="light"] .services-section {
+    background-image:
+      radial-gradient(ellipse 70% 50% at 20% 100%, rgba(48, 143, 64, 0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 90% 0%, rgba(48, 143, 64, 0.03) 0%, transparent 50%);
   }
 
   .services-section__container {
