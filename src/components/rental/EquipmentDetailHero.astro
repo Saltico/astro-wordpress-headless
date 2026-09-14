@@ -105,15 +105,15 @@ const mainImage = gallery[0];
           <QuoteAddButton item={equipment} sourceUrl={Astro.url.pathname} size="lg" />
           
           {equipment.techSheetUrl && (
-            <button
-              type="button"
+            <a
+              href={equipment.techSheetUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               class="equipment-detail-hero__btn equipment-detail-hero__btn--ghost"
-              disabled
-              title="Ficha técnica disponible próximamente"
             >
               <Icon name="file-text" size={16} />
               Ficha técnica PDF
-            </button>
+            </a>
           )}
         </div>
       </div>
@@ -391,6 +391,7 @@ const mainImage = gallery[0];
     line-height: 1.15;
     letter-spacing: -0.02em;
     margin: 0;
+    color: #fff;
   }
 
   .equipment-detail-hero__meta {
@@ -404,7 +405,7 @@ const mainImage = gallery[0];
     align-items: center;
     gap: 8px;
     font-size: 0.95rem;
-    color: var(--theme-text-muted);
+    color: rgba(255, 255, 255, 0.85);
   }
 
   .equipment-detail-hero__meta-item :global(svg) {
@@ -413,7 +414,7 @@ const mainImage = gallery[0];
   }
 
   .equipment-detail-hero__meta-item strong {
-    color: var(--theme-text);
+    color: #fff;
     font-weight: 700;
   }
 
@@ -432,6 +433,7 @@ const mainImage = gallery[0];
     gap: 10px;
     font-size: 0.95rem;
     line-height: 1.5;
+    color: rgba(255, 255, 255, 0.9);
   }
 
   .equipment-detail-hero__feature :global(svg) {
