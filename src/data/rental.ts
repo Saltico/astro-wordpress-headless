@@ -24,6 +24,8 @@ import camionPluma6t from '@/assets/imgs/rental/izaje/camion-pluma/camion-pluma-
 import camionPluma7t from '@/assets/imgs/rental/izaje/camion-pluma/camion-pluma-7-toneladas/camion-pluma-7-toneladas.avif';
 import camionPluma8t from '@/assets/imgs/rental/izaje/camion-pluma/camion-pluma-8-toneladas/camion-pluma-8-toneladas.avif';
 import camionPluma15t from '@/assets/imgs/rental/izaje/camion-pluma/camion-pluma-15-toneladas/camion-pluma-15-toneladas.avif';
+import camionPlumaRenaultC440 from '@/assets/imgs/rental/izaje/camion-pluma/camion-pluma-renault-c440/camion-pluma-renault-c440.avif';
+import camionPlumaRenaultK480 from '@/assets/imgs/rental/izaje/camion-pluma/camion-pluma-renault-k480/camion-pluma-renault-k480.avif';
 import alzaHombre20m from '@/assets/imgs/rental/izaje/alza-hombre/alza-hombre-20-metros/alza-hombre-20-metros.avif';
 import gruaHorquilla3t from '@/assets/imgs/rental/izaje/grua-horquilla/grua-horquilla-3-toneladas/grua-horquilla-3-toneladas.avif';
 import gruaHorquilla7t from '@/assets/imgs/rental/izaje/grua-horquilla/grua-horquilla-7-toneladas/grua-horquilla-7-toneladas.avif';
@@ -55,6 +57,7 @@ import mezcladoraElectrica400lEmaresaHv400 from '@/assets/imgs/rental/equipos-es
 import canastillaAlzaHombreMetalicoOrmet2MF from '@/assets/imgs/rental/equipos-especiales/canastillo-alza-hombre/canastillo-alza-hombre-metalico/canastillo-alza-hombre-metalico.avif';
 import canastillaAlzaHombreFibraOrmet2VE from '@/assets/imgs/rental/equipos-especiales/canastillo-alza-hombre/canastillo-alza-hombre-fibra/canastillo-alza-hombre-fibra.avif';
 import camionetaChevroletSilver from '@/assets/imgs/rental/camionetas/camioneta-pesada/camioneta-chevrolet-silverado-dcab-4x4/camioneta-chevrolet-silverado-dcab-4x4.avif'
+import camionetaChevroletColorado from '@/assets/imgs/rental/camionetas/camioneta-liviana/camioneta-chevrolet-colorado-dcab-4p-4x4/camioneta-chevrolet-colorado-dcab-4p-4x4.avif'
 
 export interface EquipmentSpec {
   /** Nombre del atributo (ej: "Capacidad máxima", "Motor") */
@@ -174,6 +177,8 @@ const CAMION_PLUMA_6T = camionPluma6t.src;
 const CAMION_PLUMA_7T = camionPluma7t.src;
 const CAMION_PLUMA_8T = camionPluma8t.src;
 const CAMION_PLUMA_15T = camionPluma15t.src;
+const CAMION_PLUMA_RENAULT_C440 = camionPlumaRenaultC440.src;
+const CAMION_PLUMA_RENAULT_K480 = camionPlumaRenaultK480.src;
 const ALZA_HOMBRE_20M = alzaHombre20m.src;
 const GRUA_HORQUILLA_3T = gruaHorquilla3t.src;
 const GRUA_HORQUILLA_7T = gruaHorquilla7t.src;
@@ -205,6 +210,7 @@ const MEZCLADORA_ELECTRICA_400L_EMARESA_HV_400 = mezcladoraElectrica400lEmaresaH
 const CANASTILLO_ALZA_HOMBRE_METALICO_ORMET_2MF = canastillaAlzaHombreMetalicoOrmet2MF.src;
 const CANASTILLO_ALZA_HOMBRE_FIBRA_ORMET_2VE = canastillaAlzaHombreFibraOrmet2VE.src;
 const CAMIONETA_CHEVROLET_SILVER = camionetaChevroletSilver.src;
+const CAMIONETA_CHEVROLET_COLORADO = camionetaChevroletColorado.src;
 
 // ─────────────────────────────────────────────────────────────
 // 1. IZAJE
@@ -849,25 +855,81 @@ const IZAJE_CAMIONES_PLUMA: RentalSubcategory = {
   
     {
       slug: 'camion-pluma-renault-c440',
-      name: 'Camión Pluma Renault C440',
+      name: 'Camión Pluma Renault C440 8x4',
       brand: 'Renault',
-      capacity: 'Consultar',
-      shortDesc: 'Camión Pluma Renault C440, incorporado desde inventario interno. Año(s): 2023, 2024. Unidades registradas: 2.',
-      features: ['Marca: Renault', 'Modelo: C440', 'Año(s) inventario: 2023, 2024'],
-      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
-      image: CAMION_PLUMA_5T,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma Renault C440.',
+      capacity: '22,3 t',
+      shortDesc: 'Camión pluma Renault C 440 8x4 con motor DTI 13 de 440 HP, transmisión Optidriver de 12 velocidades y freno de motor Optibrake+ de 382 kW. Chasis reforzado y configuración 8x4 para máxima estabilidad en minería y construcción.',
+      description: 'El Renault C 440 8x4 es un camión pluma de alto rendimiento diseñado para enfrentar los desafíos más exigentes en construcción y minería. Equipado con un motor DTI 13 de 6 cilindros y 440 HP que entrega un torque máximo de 2.250 Nm, ofrece potencia y eficiencia en las condiciones más demandantes. Su transmisión automatizada Optidriver de 12 velocidades garantiza cambios suaves y precisos, adaptándose a diversos terrenos y condiciones de operación. La configuración de tracción 8x4 con chasis reforzado y suspensión robusta proporciona estabilidad y durabilidad en operaciones pesadas. El freno de motor Optibrake+ de 382 kW mejora significativamente el control y la seguridad en descensos pronunciados, reduciendo el desgaste de los frenos de servicio. La cabina ergonómica ofrece confort al operador durante jornadas prolongadas, mientras que su capacidad de carga útil de 22.315 kg lo convierte en una solución integral para transporte e izaje de materiales en faenas mineras, construcción e industria.',
+      features: [
+        'Motor DTI 13 de 440 HP con torque de 2.250 Nm.',
+        'Transmisión automatizada Optidriver de 12 velocidades.',
+        'Tracción 8x4 con chasis reforzado para trabajo pesado.',
+        'Freno de motor Optibrake+ de 382 kW para mayor seguridad.',
+        'Capacidad de carga útil de 22.315 kg.',
+        'Cabina ergonómica con climatización.',
+      ],
+      specs: [
+        { attribute: 'Capacidad de carga útil', value: '22.315 kg' },
+        { attribute: 'Peso bruto vehicular', value: '32.000 kg' },
+        { attribute: 'Motor', value: 'Renault DTI 13, 6 cil. turbo diésel' },
+        { attribute: 'Potencia', value: '440 HP (324 kW)' },
+        { attribute: 'Torque máximo', value: '2.250 Nm' },
+        { attribute: 'Transmisión', value: 'Optidriver automatizada, 12 velocidades' },
+        { attribute: 'Tracción', value: '8x4' },
+        { attribute: 'Freno de motor', value: 'Optibrake+ de 382 kW' },
+        { attribute: 'Suspensión', value: 'Reforzada para trabajo pesado' },
+        { attribute: 'Cabina', value: 'Ergonómica con climatización' },
+        { attribute: 'Año', value: '2023, 2024' },
+        { attribute: 'Unidades disponibles', value: '2' },
+      ],
+      image: CAMION_PLUMA_RENAULT_C440,
+      gallery: [CAMION_PLUMA_RENAULT_C440, CAMION_PLUMA_RENAULT_C440, CAMION_PLUMA_RENAULT_C440],
+      techSheetUrl: 'https://fimaj.cl/wp-content/uploads/2025/04/FICHA-TECNICA-CAMIONES-RENAULT-8X4.pdf',
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma Renault C440 8x4 (440 HP).',
+      relatedSlugs: ['camion-pluma-15-toneladas', 'camion-pluma-8-toneladas', 'camion-pluma-renault-k480'],
+      seoTitle: 'Arriendo de Camión Pluma Renault C440 8x4 de 440 HP en Chile',
+      seoDescription: 'Arriende camión pluma Renault C 440 8x4 con motor DTI 13 de 440 HP, transmisión Optidriver 12 vel. y capacidad de 22,3 t. Operador certificado. Cotice online.',
     },
     {
       slug: 'camion-pluma-renault-k480',
-      name: 'Camión Pluma Renault K480',
+      name: 'Camión Pluma Renault K480 8x4',
       brand: 'Renault',
       capacity: 'Consultar',
-      shortDesc: 'Camión Pluma Renault K480, incorporado desde inventario interno. Año(s): 2019. Unidades registradas: 1.',
-      features: ['Marca: Renault', 'Modelo: K480', 'Año(s) inventario: 2019'],
-      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
-      image: CAMION_PLUMA_5T,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma Renault K480.',
+      shortDesc: 'Camión pluma Renault K480 8x4 con motor DTI 13 de 480 HP, diseñado para operaciones extremas en minería y construcción. Cabina ergonómica con sellado reforzado contra polvo, suspensión de cabina y el mejor ángulo de ataque del mercado.',
+      description: 'El Renault K480 8x4 es el camión pluma insignia para faenas de alta exigencia en Chile, diseñado para operaciones extremas en construcción y minería. Equipado con un potente motor DTI 13 de 12,8 litros y 6 cilindros en línea que entrega 480 HP, ofrece rendimiento superior en las condiciones más demandantes. Su transmisión automatizada Optidriver de 12 velocidades garantiza cambios suaves y precisos, adaptándose a diversos terrenos y condiciones de operación. La configuración de tracción 8x4 con suspensión trasera para alto tonelaje y el mejor ángulo de ataque del mercado garantizan estabilidad y durabilidad en operaciones pesadas. La cabina ergonómica incorpora sellado reforzado contra polvo y suspensión que aísla las vibraciones de caminos no pavimentados, permitiendo jornadas de hasta 12 horas de operación continua con máximo confort. El sistema de telemetría SalfaLink permite monitorear en tiempo real ubicación, consumo y alertas desde la central de operaciones, mientras que el control de tracción automático actúa en superficies de tierra compactada, ripio y accesos de alto desnivel, evitando el patinaje de los ejes motrices.',
+      features: [
+        'Motor DTI 13 de 12,8 L y 480 HP con alto torque a bajo régimen.',
+        'Transmisión automatizada Optidriver de 12 velocidades.',
+        'Tracción 8x4 con suspensión trasera para alto tonelaje.',
+        'Cabina ergonómica con sellado reforzado contra polvo.',
+        'Suspensión de cabina que aísla vibraciones en jornadas prolongadas.',
+        'Control de tracción automático para terrenos difíciles.',
+        'Sistema de telemetría SalfaLink para monitoreo en tiempo real.',
+        'Mejor ángulo de ataque del mercado para faenas extremas.',
+      ],
+      specs: [
+        { attribute: 'Motor', value: 'Renault DTI 13, 6 cil. en línea, turbo diésel' },
+        { attribute: 'Cilindrada', value: '12,8 L (12.800 cc)' },
+        { attribute: 'Potencia', value: '480 HP (353 kW)' },
+        { attribute: 'Torque máximo', value: '~2.250 Nm' },
+        { attribute: 'Transmisión', value: 'Optidriver automatizada, 12 velocidades' },
+        { attribute: 'Tracción', value: '8x4' },
+        { attribute: 'Norma de emisión', value: 'Euro 6' },
+        { attribute: 'Cabina', value: 'Ergonómica con sellado reforzado contra polvo' },
+        { attribute: 'Suspensión de cabina', value: 'Aislada de vibraciones para jornadas prolongadas' },
+        { attribute: 'Suspensión trasera', value: 'Reforzada para alto tonelaje' },
+        { attribute: 'Control de tracción', value: 'Automático para terrenos difíciles' },
+        { attribute: 'Telemetría', value: 'SalfaLink (monitoreo en tiempo real)' },
+        { attribute: 'Año', value: '2019' },
+        { attribute: 'Unidades disponibles', value: '1' },
+      ],
+      image: CAMION_PLUMA_RENAULT_K480,
+      gallery: [CAMION_PLUMA_RENAULT_K480, CAMION_PLUMA_RENAULT_K480, CAMION_PLUMA_RENAULT_K480],
+      techSheetUrl: 'https://salfacamiones.cl/wp-content/uploads/2024/09/011-CR-K480-8X4-E5.pdf',
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camión Pluma Renault K480 8x4 (480 HP).',
+      relatedSlugs: ['camion-pluma-15-toneladas', 'camion-pluma-renault-c440'],
+      seoTitle: 'Arriendo de Camión Pluma Renault K480 8x4 de 480 HP en Chile',
+      seoDescription: 'Arriende camión pluma Renault K480 8x4 con motor DTI 13 de 480 HP, transmisión Optidriver 12 vel. y cabina ergonómica reforzada. Operador certificado. Cotice online.',
     },
   ],
   whatsappMessage: 'Hola IP, quisiera cotizar arriendo de camiones pluma.',
@@ -2608,14 +2670,44 @@ const CAMIONETAS_LIVIANAS: RentalSubcategory = {
   catalog: [
     {
       slug: 'camioneta-chevrolet-colorado-dcab-4p-4x4',
-      name: 'Camioneta Chevrolet COLORADO DCAB 4P 4X4',
+      name: 'Camioneta Chevrolet Colorado DCab 4P 4x4',
       brand: 'Chevrolet',
-      capacity: 'Consultar',
-      shortDesc: 'Camioneta Chevrolet COLORADO DCAB 4P 4X4, incorporado desde inventario interno. Año(s): 2025. Unidades registradas: 10.',
-      features: ['Marca: Chevrolet', 'Modelo: COLORADO DCAB 4P 4X4', 'Año(s) inventario: 2025'],
-      // IMAGEN TEMPORAL REUTILIZADA: reemplazar cuando exista imagen propia del equipo.
-      image: TRANSPORTE_HERO,
-      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Chevrolet COLORADO DCAB 4P 4X4.',
+      capacity: '1.100 kg',
+      shortDesc: 'Camioneta pickup mediana Chevrolet Colorado con motor TurboMax™ 2.8L diésel de 204 HP y 510 Nm de torque. Tracción 4x4, transmisión automática de 8 velocidades y capacidad de carga de 1.100 kg. Ideal para apoyo en faena, transporte de personal y carga ligera.',
+      description: 'La Chevrolet Colorado DCab 4P 4x4 es una camioneta pickup mediana diseñada para ofrecer el equilibrio perfecto entre capacidad todoterreno, confort y tecnología. Equipada con el motor TurboMax™ 2.8L diésel de 4 cilindros en línea que entrega 204 HP a 3.400 RPM y un torque máximo de 510 Nm a 2.000 RPM, combinado con transmisión automática mejorada de 8 velocidades para cambios suaves y eficientes. La tracción 4x4 con control de tracción automático garantiza rendimiento superior en terrenos difíciles, caminos de faena y condiciones adversas. La cabina doble (DCab) con 4 puertas ofrece espacio para hasta 5 ocupantes con confort, mientras que la pantalla digital de 11 pulgadas con Google integrado proporciona conectividad y control total. Capacidad de carga útil de 1.100 kg y capacidad de remolque de hasta 3.500 kg, convirtiéndola en la solución ideal para apoyo en faena, transporte de personal y carga ligera en proyectos de minería, construcción e industria. Sistema de seguridad completo con 6 airbags, cámara de visión trasera y tecnología de asistencia al conductor.',
+      features: [
+        'Motor TurboMax™ 2.8L diésel de 204 HP y 510 Nm de torque.',
+        'Transmisión automática mejorada de 8 velocidades.',
+        'Tracción 4x4 con control de tracción automático.',
+        'Cabina doble (DCab) 4 puertas para 5 ocupantes.',
+        'Pantalla digital de 11 pulgadas con Google integrado.',
+        'Capacidad de carga útil de 1.100 kg y remolque de hasta 3.500 kg.',
+        '6 airbags y sistema de seguridad avanzado.',
+        'Cámara de visión trasera y tecnología de asistencia al conductor.',
+      ],
+      specs: [
+        { attribute: 'Motor', value: 'TurboMax™ 2.8L diésel, 4 cil. en línea, turbo' },
+        { attribute: 'Potencia', value: '204 HP @ 3.400 RPM' },
+        { attribute: 'Torque máximo', value: '510 Nm @ 2.000 RPM' },
+        { attribute: 'Transmisión', value: 'Automática de 8 velocidades' },
+        { attribute: 'Tracción', value: '4x4 con control de tracción automático' },
+        { attribute: 'Capacidad de carga útil', value: '1.100 kg' },
+        { attribute: 'Capacidad de remolque', value: 'Hasta 3.500 kg' },
+        { attribute: 'Cabina', value: 'Doble (DCab) 4 puertas, 5 ocupantes' },
+        { attribute: 'Pantalla', value: 'Digital de 11 pulgadas con Google integrado' },
+        { attribute: 'Seguridad', value: '6 airbags, cámara trasera, asistencia al conductor' },
+        { attribute: 'Llantas', value: '265/60 R18' },
+        { attribute: 'Consumo combinado', value: '~10 km/L' },
+        { attribute: 'Año', value: '2025' },
+        { attribute: 'Unidades disponibles', value: '10' },
+      ],
+      image: CAMIONETA_CHEVROLET_COLORADO,
+      gallery: [CAMIONETA_CHEVROLET_COLORADO, CAMIONETA_CHEVROLET_COLORADO, CAMIONETA_CHEVROLET_COLORADO],
+      techSheetUrl: 'https://www.chevrolet.cl/content/dam/chevrolet/south-america/chile/espanol/index/visid/pickups/2026-colorado/pdf/chevrolet-colorado-ficha-tecnica-chile.pdf',
+      whatsappMessage: 'Hola IP, quisiera cotizar arriendo de Camioneta Chevrolet Colorado DCab 4P 4x4 (204 HP).',
+      relatedSlugs: ['camioneta-ford-ranger-ltd-4x4-3-0-aut', 'camioneta-chevrolet-silverado-dcab-4x4-3-0-aut'],
+      seoTitle: 'Arriendo de Camioneta Chevrolet Colorado 4x4 de 204 HP en Chile',
+      seoDescription: 'Arriende camioneta Chevrolet Colorado DCab 4x4 con motor TurboMax™ 2.8L diésel de 204 HP, transmisión automática 8 vel. y capacidad de 1.100 kg. Ideal para faena. Cotice online.',
     },
     {
       slug: 'camioneta-ford-ranger-ltd-4x4-3-0-aut',
