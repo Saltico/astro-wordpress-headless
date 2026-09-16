@@ -1,61 +1,157 @@
 ---
 // src/pages/servicios/index.astro
-// Página index de servicios - Replica estructura del sitio de referencia
+// Índice de servicios — IP Proyectos Industriales.
+// Estructura: hero, proceso EPC, servicios con relevancia propia,
+// proyectos realizados, clientes que confían y CTA final.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
-import Breadcrumbs from '@/components/seo/Breadcrumbs.astro';
-import StatsCounter from '@/components/ui/StatsCounter.astro';
-import CTABand from '@/components/ui/CTABand.astro';
 import HeroVideo from '@/components/ui/HeroVideo.astro';
+import Eyebrow from '@/components/ui/Eyebrow.astro';
 import Icon from '@/components/ui/Icon.astro';
-import type { StatItem } from '@/components/ui/StatsCounter.astro';
+import CTABand from '@/components/ui/CTABand.astro';
+import LogoCarousel from '@/components/ui/LogoCarousel.astro';
+
+import servIngenieria from '@/assets/imgs/serv-ingenieria.jpg';
+import servConstruccion from '@/assets/imgs/serv-construccion.jpg';
+import servMontajes from '@/assets/imgs/serv-montajes.jpg';
+import portuaria from '@/assets/imgs/portuaria.jpg';
+import faenaIzaje from '@/assets/imgs/faena-izaje.jpg';
+import montajesImg from '@/assets/imgs/montajes.jpg';
 import edificioImg from '@/assets/imgs/edificio.jpg';
+import type { IconName } from '@/lib/icons';
 
 const title = 'Servicios | Ingeniería, construcción, montajes e infraestructura portuaria — IP Proyectos Industriales';
-const description = 'Reunimos ingeniería, construcción, montajes e infraestructura portuaria bajo un mismo equipo, con estándares de la gran minería.';
+const description = 'Ingeniería de detalle, construcción industrial, montajes electromecánicos e infraestructura portuaria para la gran minería del norte de Chile. Un solo equipo, de la idea a la puesta en marcha.';
 
 const breadcrumbs = [
   { label: 'Empresa', url: '/' },
   { label: 'Servicios', url: '/servicios' },
 ];
 
-const stats: StatItem[] = [
-  { value: 25, prefix: '+', label: 'Años de experiencia', prefixPosition: 'before' },
-  { value: 5, label: 'Líneas de servicio' },
-  { value: 100, prefix: '+', label: 'Equipos propios', prefixPosition: 'before' },
-  { value: 2, label: 'Sucursales en III y IV región' },
+// ─── Proyecto: de la idea a la operación (línea EPC real) ────────────────
+const processSteps: Array<{ icon: IconName; label: string; detail: string }> = [
+  { icon: 'blueprint', label: 'Diseño e ingeniería de detalle', detail: 'Del estudio preliminar a los planos ejecutivos, con constructibilidad evaluada desde el inicio.' },
+  { icon: 'cart', label: 'Gestión de compras y contratos', detail: 'Aprovisionamiento de materiales y equipos, con control de costos y plazos.' },
+  { icon: 'building', label: 'Construcción e industrialización', detail: 'Obras civiles, estructuras metálicas y piping fabricados bajo estándar minero.' },
+  { icon: 'wrench', label: 'Montaje electromecánico', detail: 'Izaje, termofusión HDPE y montaje en faena con altos estándares de seguridad.' },
+  { icon: 'check-circle', label: 'Puesta en marcha', detail: 'Comisionado, pruebas y entrega de instalaciones operativas al cliente.' },
 ];
 
-const services = [
+// ─── Servicios con capacidades reales (de cada subpágina) ────────────────
+const services: Array<{
+  slug: string;
+  category: string;
+  title: string;
+  lead: string;
+  capabilities: string[];
+  image: string;
+  imageAlt: string;
+}> = [
   {
-    number: '01',
+    slug: '/servicios/ingenieria',
     category: 'Ingeniería',
     title: 'Ingeniería con foco en constructibilidad',
-    description: 'Diseño e ingeniería de detalle para proyectos mineros e industriales, con gestión integral de compras, contratos y puesta en marcha.',
-    link: '/servicios/ingenieria',
+    lead: 'Nos encargamos de toda la implementación de tus proyectos: desde el diseño preliminar y la ingeniería de detalle, hasta la fabricación, gestión de compras, construcción y puesta en marcha de las instalaciones.',
+    capabilities: [
+      'Diseño preliminar e ingeniería de detalle',
+      'Gestión integral de compras y contratos',
+      'Constructibilidad evaluada desde el diseño',
+      'Construcción y puesta en marcha llave en mano',
+    ],
+    image: servIngenieria.src,
+    imageAlt: 'Ingenieros revisando planos de detalle para un proyecto minero',
   },
   {
-    number: '02',
+    slug: '/servicios/construccion',
     category: 'Construcción',
     title: 'Obras civiles e industriales',
-    description: 'Construcción industrial con control de calidad en cada etapa: contratos EPC, prefabricados y pinturas especiales.',
-    link: '/servicios/construccion',
+    lead: 'La construcción expresa el carácter multidisciplinario de IP. Desarrollamos la solución a la medida de cada requerimiento, con control de calidad en cada etapa y estándares de la gran minería.',
+    capabilities: [
+      'Obras civiles y pilotes de hormigón',
+      'Fabricación de estructuras metálicas',
+      'Piping y piezas especiales',
+      'Granallado ecológico y pinturas especiales (Poliurea)',
+    ],
+    image: servConstruccion.src,
+    imageAlt: 'Obras civiles e industriales en una faena minera del norte de Chile',
   },
   {
-    number: '03',
+    slug: '/servicios/montajes',
     category: 'Montajes',
     title: 'Montajes mineros e industriales',
-    description: 'Montaje electromecánico y estructural en faena, con foco en seguridad. Pipelines, termofusión HDPE y pantallas eólicas.',
-    link: '/servicios/montajes',
+    lead: 'La experiencia en montajes industriales y mineros nos permite ejecutar obras de gran complejidad y envergadura, con altos estándares de seguridad, control de calidad y mejora continua.',
+    capabilities: [
+      'Montaje electromecánico de equipos',
+      'Montaje de piping industrial',
+      'Termofusión e instalación en HDPE',
+      'Montaje de estructuras metálicas en faena',
+    ],
+    image: servMontajes.src,
+    imageAlt: 'Técnicos realizando montaje electromecánico en una planta industrial',
   },
   {
-    number: '04',
+    slug: '/servicios/infraestructura-portuaria',
     category: 'Infraestructura portuaria',
-    title: 'Infraestructura para puertos y terminales',
-    description: 'Obras marítimas que integran ingeniería, construcción y montaje: muelles, defensas marítimas e impermeabilización de piscinas y tranques.',
-    link: '/servicios/infraestructura-portuaria',
+    title: 'Obras marítimas para puertos y terminales',
+    lead: 'Nuestra línea portuaria se dirige a la mantención y reparación de obras marítimas terrestres. Nuestro principal cliente ha sido CAP Minería y los puertos industriales de sus tres valles productivos.',
+    capabilities: [
+      'Construcción y mantención de muelles',
+      'Montaje de mangas telescópicas',
+      'Construcción y montaje de cortinas eólicas',
+      'Impermeabilización de piscinas y tranques',
+    ],
+    image: portuaria.src,
+    imageAlt: 'Infraestructura portuaria industrial con muelles en la costa de Chile',
   },
+];
+
+// ─── Proyectos realizados (verificables desde el sitio oficial y blog) ────
+const projects: Array<{
+  tag: string;
+  title: string;
+  detail: string;
+  image: string;
+  imageAlt: string;
+  href: string;
+  external?: boolean;
+  featured?: boolean;
+}> = [
+  {
+    tag: 'Infraestructura portuaria · CAP Minería',
+    title: 'Obras marítimas en los tres valles productivos',
+    detail: 'Mantención y reparación de obras portuarias, construcción de muelles, montaje de mangas telescópicas y cortinas eólicas para los puertos industriales de nuestro principal cliente minero.',
+    image: portuaria.src,
+    imageAlt: 'Obras marítimas portuarias para la minería del hierro',
+    href: '/servicios/infraestructura-portuaria',
+    featured: true,
+  },
+  {
+    tag: 'Izaje de alto tonelaje',
+    title: 'Nueva operación de izaje en Huachalalume',
+    detail: 'Ejecución de izajes complejos con planificación técnica, operadores certificados y equipos verificados, en una de las faenas emblemáticas de la región de Coquimbo.',
+    image: faenaIzaje.src,
+    imageAlt: 'Operación de izaje de estructuras en faena minera',
+    href: '/noticias/nueva-operacion-de-izaje-en-huachalalume',
+  },
+  {
+    tag: 'Montajes industriales',
+    title: 'Termofusión HDPE y piping en planta',
+    detail: 'Instalación de pipelines, termofusión en HDPE y montaje electromecánico de estructuras, integrando ingeniería y ejecución en faena bajo estándares de seguridad mineros.',
+    image: montajesImg.src,
+    imageAlt: 'Montaje de piping industrial y termofusión HDPE en planta',
+    href: '/servicios/montajes',
+  },
+];
+
+// ─── Clientes que confían (logos reales del sitio oficial) ───────────────
+const clientLogos = [
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/barrick.jpg', alt: 'Barrick' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/cmpchile_logo.jpeg', alt: 'CMP' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/aura.png', alt: 'Aura Minerals' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/cummnins.jpg', alt: 'Cummins' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2025/08/famesa.jpg', alt: 'Famesa' },
+  { src: 'https://ipproyectosindustriales.cl/wp-content/uploads/2024/12/aguasvalle.jpg', alt: 'Aguas del Valle' },
 ];
 ---
 
@@ -71,41 +167,114 @@ const services = [
     title="Soluciones integrales para cada etapa de tu proyecto"
     titleHighlight="cada etapa de tu proyecto"
     subtitle="Reunimos ingeniería, construcción, montajes e infraestructura portuaria bajo un mismo equipo, con estándares de la gran minería."
-    ctaPrimary={{ label: 'Conocer más', href: '#servicios-list' }}
+    ctaPrimary={{ label: 'Ver servicios', href: '#servicios' }}
     ctaSecondary={{ label: 'Contactar', href: '/contacto' }}
     minHeight="lg"
     layout="split"
   />
 
-  <!-- Stats -->
-  <StatsCounter
-    stats={stats}
-    variant="dark"
-    layout="horizontal"
-    columns={4}
-    animated={true}
-  />
-
-  <!-- Lista de servicios -->
-  <section class="services-list" id="servicios-list">
+  <!-- Proceso: de la idea a la puesta en marcha (reemplaza al contador) -->
+  <section class="svc-process" aria-labelledby="proceso-heading">
     <Container>
-      <div class="services-list__items">
-        {services.map((service) => (
-          <article class="service-item">
-            <div class="service-item__number">{service.number} — {service.category}</div>
-            <div class="service-item__content">
-              <h2 class="service-item__title">{service.title}</h2>
-              <p class="service-item__description">{service.description}</p>
-              <a href={service.link} class="service-item__link">
-                Conocer más
-                <Icon name="arrow-right" size={18} />
-              </a>
+      <div class="svc-process__intro">
+        <h2 id="proceso-heading" class="svc-process__title reveal-up">
+          Un solo equipo, de la idea a la puesta en marcha
+        </h2>
+        <p class="svc-process__lead reveal">
+          Integramos ingeniería, procurement, construcción y montaje bajo una misma
+          responsabilidad. Tú entregas el requerimiento; nosotros, el proyecto operando.
+        </p>
+      </div>
+
+      <ol class="svc-pipeline reveal-stagger">
+        {processSteps.map((step) => (
+          <li class="svc-pipeline__step">
+            <span class="svc-pipeline__dot" aria-hidden="true">
+              <Icon name={step.icon} size={22} />
+            </span>
+            <h3 class="svc-pipeline__label">{step.label}</h3>
+            <p class="svc-pipeline__detail">{step.detail}</p>
+          </li>
+        ))}
+      </ol>
+    </Container>
+  </section>
+
+  <!-- Servicios con relevancia propia -->
+  <section class="svc-detail" id="servicios" aria-label="Líneas de servicio">
+    <Container>
+      {services.map((service, i) => (
+        <article class:list={['svc-feature', { 'svc-feature--flip': i % 2 === 1 }]} data-index={i}>
+          <div class="svc-feature__media">
+            <img src={service.image} alt={service.imageAlt} loading="lazy" decoding="async" width={1200} height={900} />
+          </div>
+          <div class="svc-feature__body">
+            <Eyebrow text={service.category} />
+            <h2 class="svc-feature__title reveal-up">{service.title}</h2>
+            <p class="svc-feature__lead">{service.lead}</p>
+            <ul class="svc-feature__caps reveal-stagger">
+              {service.capabilities.map((cap) => (
+                <li class="svc-feature__cap">
+                  <Icon name="check-circle" size={18} />
+                  <span>{cap}</span>
+                </li>
+              ))}
+            </ul>
+            <a href={service.slug} class="svc-feature__link">
+              Conocer línea completa
+              <Icon name="arrow-right" size={16} />
+            </a>
+          </div>
+        </article>
+      ))}
+    </Container>
+  </section>
+
+  <!-- Proyectos realizados -->
+  <section class="svc-projects" aria-labelledby="proyectos-heading">
+    <Container>
+      <div class="svc-projects__head">
+        <Eyebrow text="Obra ejecutada" />
+        <h2 id="proyectos-heading" class="svc-projects__title reveal-up">
+          Proyectos que respaldan lo que ofrecemos
+        </h2>
+      </div>
+
+      <div class="svc-work reveal-stagger">
+        {projects.map((project) => (
+          <a
+            class:list={['svc-work__card', { 'svc-work__card--featured': project.featured }]}
+            href={project.href}
+            target={project.external ? '_blank' : undefined}
+            rel={project.external ? 'noopener noreferrer' : undefined}
+            aria-label={`${project.tag}: ${project.title}`}
+          >
+            <img class="svc-work__img" src={project.image} alt={project.imageAlt} loading="lazy" decoding="async" width={1200} height={800} />
+            <div class="svc-work__shade" aria-hidden="true"></div>
+            <div class="svc-work__content">
+              <span class="svc-work__tag">{project.tag}</span>
+              <h3 class="svc-work__title">{project.title}</h3>
+              <p class="svc-work__detail">{project.detail}</p>
+              <span class="svc-work__more">
+                Ver detalle
+                <Icon name="arrow-right" size={15} />
+              </span>
             </div>
-          </article>
+          </a>
         ))}
       </div>
     </Container>
   </section>
+
+  <!-- Clientes -->
+  <LogoCarousel
+    logos={clientLogos}
+    eyebrow="Confían en nosotros"
+    title="Empresa líderes de la minería y la industria"
+    subtitle="Profesionales y técnicos que respaldan proyectos de inversión de la gran minería en el norte de Chile."
+    backgroundVariant="muted"
+    speed="normal"
+  />
 
   <!-- CTA -->
   <CTABand
@@ -125,84 +294,418 @@ const services = [
 </BaseLayout>
 
 <style>
-  /* Services List */
-  .services-list {
+  /* ══════════════════════════════════════════════════════
+     Proceso EPC — pipeline horizontal con conector
+     ══════════════════════════════════════════════════════ */
+  .svc-process {
     background-color: var(--theme-bg);
-    padding-block: clamp(40px, 6vw, 80px);
-  }
-
-  .services-list__items {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .service-item {
-    display: grid;
-    gap: 20px;
-    padding-block: clamp(30px, 4vw, 50px);
+    padding-block: clamp(56px, 8vw, 104px);
     border-bottom: 1px solid var(--theme-border);
   }
 
-  .service-item:last-child {
-    border-bottom: none;
+  .svc-process__intro {
+    max-width: 62ch;
+    margin-bottom: clamp(36px, 5vw, 60px);
   }
 
-  @media (min-width: 768px) {
-    .service-item {
-      grid-template-columns: 200px 1fr;
-      gap: 40px;
-      align-items: start;
-    }
-  }
-
-  .service-item__number {
+  .svc-process__title {
     font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-weight: 800;
+    font-size: var(--text-h2);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--theme-heading);
+    margin: 0 0 var(--space-4);
+    text-wrap: balance;
+  }
+
+  .svc-process__lead {
+    font-size: var(--text-body);
+    line-height: 1.6;
+    color: var(--theme-text-muted);
+    margin: 0;
+  }
+
+  .svc-pipeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-8);
+    /* conector vertical en móvil */
+    position: relative;
+  }
+
+  .svc-pipeline__step {
+    position: relative;
+    padding-left: 58px;
+  }
+
+  /* línea conectora vertical (móvil) */
+  .svc-pipeline__step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 21px;
+    top: 44px;
+    bottom: calc(-1 * var(--space-8));
+    width: 2px;
+    background: linear-gradient(180deg, var(--color-brand-300), var(--theme-border));
+  }
+
+  .svc-pipeline__dot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-pill);
+    background-color: var(--theme-bg-elevated);
+    border: 1px solid var(--theme-border);
     color: var(--theme-eyebrow);
   }
 
-  .service-item__content {
+  .svc-pipeline__label {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-h5);
+    line-height: 1.25;
+    color: var(--theme-heading);
+    margin: 0 0 6px;
+  }
+
+  .svc-pipeline__detail {
+    font-size: var(--text-small);
+    line-height: 1.55;
+    color: var(--theme-text-muted);
+    margin: 0;
+    max-width: 34ch;
+  }
+
+  @media (min-width: 768px) {
+    .svc-pipeline {
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--space-5);
+    }
+    /* conector horizontal en desktop */
+    .svc-pipeline__step {
+      padding-left: 0;
+      padding-top: 62px;
+    }
+    .svc-pipeline__step:not(:last-child)::before {
+      left: 44px;
+      right: calc(-1 * var(--space-5));
+      top: 21px;
+      bottom: auto;
+      width: auto;
+      height: 2px;
+      background: linear-gradient(90deg, var(--color-brand-300), var(--theme-border));
+    }
+    .svc-pipeline__dot {
+      top: 0;
+    }
+    .svc-pipeline__detail {
+      max-width: none;
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     Servicios — filas alternadas con imagen
+     ══════════════════════════════════════════════════════ */
+  .svc-detail {
+    background-color: var(--theme-bg-alt);
+    padding-block: clamp(56px, 8vw, 96px);
+  }
+
+  .svc-feature {
+    display: grid;
+    gap: clamp(24px, 4vw, 56px);
+    align-items: center;
+    padding-block: clamp(28px, 4vw, 48px);
+  }
+
+  .svc-feature + .svc-feature {
+    border-top: 1px solid var(--theme-border);
+  }
+
+  @media (min-width: 900px) {
+    .svc-feature {
+      grid-template-columns: 1fr 1.05fr;
+      gap: clamp(40px, 5vw, 80px);
+    }
+    .svc-feature--flip .svc-feature__media {
+      order: 2;
+    }
+  }
+
+  .svc-feature__media {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    aspect-ratio: 4 / 3;
+    background-color: var(--color-graphite-3);
+  }
+
+  .svc-feature__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .svc-feature:hover .svc-feature__media img {
+    transform: scale(1.04);
+  }
+
+  .svc-feature__body {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-4);
   }
 
-  .service-item__title {
+  .svc-feature__title {
     font-family: var(--font-heading);
     font-weight: 800;
-    font-size: clamp(1.4rem, 2.5vw, 1.8rem);
+    font-size: var(--text-h3);
+    line-height: 1.15;
     letter-spacing: -0.02em;
-    color: var(--theme-text);
+    color: var(--theme-heading);
     margin: 0;
-    line-height: 1.2;
+    text-wrap: balance;
   }
 
-  .service-item__description {
+  .svc-feature__lead {
+    font-size: var(--text-body);
+    line-height: 1.65;
     color: var(--theme-text-muted);
-    font-size: 1rem;
-    line-height: 1.6;
     margin: 0;
     max-width: 60ch;
   }
 
-  .service-item__link {
+  .svc-feature__caps {
+    list-style: none;
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  @media (min-width: 520px) {
+    .svc-feature__caps {
+      grid-template-columns: 1fr 1fr;
+      column-gap: var(--space-6);
+    }
+  }
+
+  .svc-feature__cap {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.98rem;
+    line-height: 1.45;
+    color: var(--theme-text);
+  }
+
+  .svc-feature__cap :global(svg) {
+    flex-shrink: 0;
+    color: var(--theme-eyebrow);
+    margin-top: 1px;
+  }
+
+  .svc-feature__link {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    align-self: flex-start;
+    margin-top: var(--space-2);
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: var(--text-small);
     color: var(--theme-eyebrow);
     text-decoration: none;
-    margin-top: 8px;
-    transition: gap 0.2s ease;
+    transition: gap 0.2s var(--ease-out);
   }
 
-  .service-item__link:hover {
+  .svc-feature__link:hover {
+    gap: 13px;
+  }
+
+  .svc-feature__link:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 4px;
+    border-radius: var(--radius-xs);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     Proyectos realizados
+     ══════════════════════════════════════════════════════ */
+  .svc-projects {
+    background-color: var(--theme-bg);
+    padding-block: clamp(56px, 8vw, 104px);
+  }
+
+  .svc-projects__head {
+    max-width: 54ch;
+    margin-bottom: clamp(32px, 4vw, 48px);
+  }
+
+  .svc-projects__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: var(--text-h2);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--theme-heading);
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .svc-work {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 820px) {
+    .svc-work {
+      grid-template-columns: 1.4fr 1fr;
+      grid-template-rows: auto auto;
+    }
+    .svc-work__card--featured {
+      grid-row: span 2;
+    }
+  }
+
+  .svc-work__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    min-height: 260px;
+    text-decoration: none;
+    border: 1px solid var(--theme-border);
+    transition: transform 0.45s var(--ease-out), border-color 0.3s var(--ease-out);
+  }
+
+  .svc-work__card--featured {
+    min-height: 340px;
+  }
+
+  .svc-work__card:hover {
+    transform: translateY(-4px);
+    border-color: var(--color-brand);
+  }
+
+  .svc-work__card:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+  }
+
+  .svc-work__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .svc-work__card:hover .svc-work__img {
+    transform: scale(1.05);
+  }
+
+  .svc-work__shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(13, 22, 17, 0.15) 0%,
+      rgba(13, 22, 17, 0.55) 55%,
+      rgba(13, 22, 17, 0.92) 100%
+    );
+  }
+
+  .svc-work__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: clamp(20px, 3vw, 28px);
+  }
+
+  .svc-work__tag {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-brand-300);
+  }
+
+  .svc-work__title {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: var(--text-h4);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--color-on-dark);
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .svc-work__detail {
+    font-size: var(--text-small);
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.82);
+    margin: 0;
+    max-width: 48ch;
+    /* en cards no featured, el detalle se oculta para no saturar */
+    display: none;
+  }
+
+  .svc-work__card--featured .svc-work__detail {
+    display: block;
+  }
+
+  .svc-work__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 4px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-small);
+    letter-spacing: 0.04em;
+    color: var(--color-on-dark);
+    transition: gap 0.2s var(--ease-out);
+  }
+
+  .svc-work__card:hover .svc-work__more {
     gap: 12px;
+  }
+
+  @media (min-width: 820px) {
+    .svc-work__detail {
+      display: block;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .svc-feature__media img,
+    .svc-work__img {
+      transition: none;
+    }
+    .svc-feature:hover .svc-feature__media img,
+    .svc-work__card:hover .svc-work__img {
+      transform: none;
+    }
+    .svc-work__card:hover {
+      transform: none;
+    }
   }
 </style>

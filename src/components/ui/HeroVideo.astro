@@ -452,28 +452,79 @@ const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('
     margin-top: 28px;
   }
 
+  /* ───────────────────────────────────────────────────────────────────
+     Mobile: el split se comporta como el hero "full" — video a sangre
+     completa de fondo y el texto SUPERPUESTO encima (no apilado debajo),
+     que es lo que se rompía. Se anula el apilamiento por order y se
+     cubre el fondo con un scrim vertical para asegurar el contraste.
+     Especificidad: hay que re-declarar las variantes sm/md/lg porque
+     .hero-video--split a secas no gana frente a los selectores compuestos.
+     ─────────────────────────────────────────────────────────────────── */
+  /* ───────────────────────────────────────────────────────────────────
+     Mobile: overlay vía CSS GRID (no flex + absolute).
+     Ambos hijos (media y container) ocupan la misma celda "1 / 1".
+     El container se pinta ENCIMA del media por orden de fuente + z-index.
+     Media es `position:relative` para que el <video> absolute (de la rule
+     global `.hero-video video`) se posicione DENTRO de media y no escape
+     al contenedor del hero. Esto elimina toda la ambigüedad de capas
+     que tenía el enfoque anterior (isolation + z-index) y es el patrón
+     determinista estándar para overlays.
+     ─────────────────────────────────────────────────────────────────── */
   @media (max-width: 880px) {
-    .hero-video--split {
-      min-height: auto;
-      display: flex;
-      flex-direction: column;
+    .hero-video--split.hero-video--sm,
+    .hero-video--split.hero-video--md,
+    .hero-video--split.hero-video--lg {
+      min-height: clamp(460px, 82svh, 760px);
+      display: grid;
+      grid-template: 1fr / 1fr;
+      /* sin flex: el grid resuelve el apilamiento por source order */
+      align-items: stretch;
+      justify-items: stretch;
     }
 
+    /* Media como grid item normal en la celda 1/1.
+       `position: relative` hace que el <video> absolute se posicione
+       dentro de media (no escape al hero). `inset: auto` limpia los
+       top/right/bottom que traía del desktop para que se estire por grid. */
     .hero-video__media {
       position: relative;
+      grid-area: 1 / 1;
       width: 100%;
-      height: 50vh;
-      order: 1;
+      height: 100%;
+      inset: auto;
+      top: auto;
+      right: auto;
+      bottom: auto;
+      left: auto;
+      z-index: 0;
     }
 
+    .hero-video__media video {
+      opacity: 1;
+    }
+
+    /* Scrim sobre el video para legibilidad del texto blanco. */
     .hero-video__media::after {
-      background: linear-gradient(180deg, rgba(13, 22, 17, 0) 60%, rgba(13, 22, 17, 0.5) 100%);
+      background: linear-gradient(
+        180deg,
+        rgba(13, 22, 17, 0.62) 0%,
+        rgba(13, 22, 17, 0.55) 50%,
+        rgba(13, 22, 17, 0.82) 100%
+      );
     }
 
+    /* Container en la MISMA celda 1/1. Se pinta encima por DOM order
+       (viene después del media) y por z-index:2 explícito. */
     .hero-video__container-split {
-      order: 2;
+      grid-area: 1 / 1;
+      align-self: center;
+      justify-self: center;
       position: relative;
       z-index: 2;
+      width: 100%;
+      max-width: var(--container-max-width, 1360px);
+      margin-inline: auto;
+      order: initial;
     }
 
     .hero-video__content-split {

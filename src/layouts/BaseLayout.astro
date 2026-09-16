@@ -190,10 +190,16 @@ const allSchemas = [...baseSchemas, ...pageSchemas, ...videoSchemas];
               }
             });
           },
-          { threshold: 0.1 }
+          { threshold: 0.1, rootMargin: '0px 0px -60px 0px' }
         );
 
-        document.querySelectorAll('.reveal').forEach((el) => {
+        // Observar elementos reveal individuales
+        document.querySelectorAll('.reveal, .reveal-up, .reveal-scale').forEach((el) => {
+          revealObserver.observe(el);
+        });
+
+        // Observar contenedores con stagger (las cards hijas se animan en cascada)
+        document.querySelectorAll('.reveal-stagger').forEach((el) => {
           revealObserver.observe(el);
         });
       }

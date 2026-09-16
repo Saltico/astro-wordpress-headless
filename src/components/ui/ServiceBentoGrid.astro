@@ -1,7 +1,7 @@
 ---
 // src/components/ui/ServiceBentoGrid.astro
-// Grid de servicios con layout bento asimétrico.
-// Estructura basada en la referencia IP-Sitio-Web (svc-bento--feat).
+// Grid de servicios compacto con layout visual atractivo.
+// Diseño inspirado en tarjetas compactas con jerarquía visual clara.
 
 import Container from './Container.astro';
 import Eyebrow from './Eyebrow.astro';
@@ -36,48 +36,47 @@ const {
 } = Astro.props;
 ---
 
-<section class={`service-bento-section ${featuredService ? 'has-featured' : ''}`}>
+<section class="svc-compact-section" aria-labelledby="svc-compact-heading">
   <Container>
     {eyebrow && <Eyebrow text={eyebrow} />}
-    <h2 class="service-bento-section__title">{title}</h2>
+    <h2 id="svc-compact-heading" class="svc-compact-section__title reveal-up">{title}</h2>
     
-    <div class="svc-bento">
-      {services.map((service) => (
-        <article class="svc-card reveal">
-          <div class="svc-card__img">
-            <img src={service.image} alt={service.imageAlt} loading="lazy" decoding="async" />
-          </div>
-          <div class="svc-card__body">
-            <span class="svc-card__cat">{service.category}</span>
-            <h3 class="svc-card__title">{service.title}</h3>
-            <p class="svc-card__desc">{service.description}</p>
-            <a class="svc-card__link" href={service.url}>
-              {service.linkLabel || 'Conocer'}
-              <Icon name="arrow-right" size={16} />
-            </a>
-          </div>
+    <div class="svc-compact-grid reveal-stagger">
+      {services.map((service, index) => (
+        <article class="svc-compact-card" style={`--card-index: ${index}`}>
+          <a href={service.url} class="svc-compact-card__link" aria-label={`${service.category}: ${service.title}`}>
+            <div class="svc-compact-card__img">
+              <img src={service.image} alt={service.imageAlt} loading="lazy" decoding="async" />
+            </div>
+            <div class="svc-compact-card__content">
+              <span class="svc-compact-card__cat">{service.category}</span>
+              <h3 class="svc-compact-card__title">{service.title}</h3>
+              <p class="svc-compact-card__desc">{service.description}</p>
+              <span class="svc-compact-card__cta">
+                {service.linkLabel || 'Conocer más'}
+                <Icon name="arrow-right" size={14} />
+              </span>
+            </div>
+          </a>
         </article>
       ))}
       
       {featuredService && (
-        <article class="svc-card svc-card--feat reveal">
-          <div class="svc-card__img">
-            <img src={featuredService.image} alt={featuredService.imageAlt} loading="lazy" decoding="async" />
-          </div>
-          <div class="svc-card__body">
-            <span class="svc-card__cat">{featuredService.category}</span>
-            <h3 class="svc-card__title">{featuredService.title}</h3>
-            <p class="svc-card__desc">{featuredService.description}</p>
-            <a 
-              class="svc-card__link" 
-              href={featuredService.url}
-              target={featuredService.url.startsWith('http') ? '_blank' : undefined}
-              rel={featuredService.url.startsWith('http') ? 'noopener noreferrer' : undefined}
-            >
-              {featuredService.linkLabel || 'Ver flota'}
-              <Icon name="arrow-right" size={16} />
-            </a>
-          </div>
+        <article class="svc-compact-card svc-compact-card--featured">
+          <a href={featuredService.url} class="svc-compact-card__link" aria-label={`${featuredService.category}: ${featuredService.title}`} target={featuredService.url.startsWith('http') ? '_blank' : undefined} rel={featuredService.url.startsWith('http') ? 'noopener noreferrer' : undefined}>
+            <div class="svc-compact-card__img">
+              <img src={featuredService.image} alt={featuredService.imageAlt} loading="lazy" decoding="async" />
+            </div>
+            <div class="svc-compact-card__content">
+              <span class="svc-compact-card__cat">{featuredService.category}</span>
+              <h3 class="svc-compact-card__title">{featuredService.title}</h3>
+              <p class="svc-compact-card__desc">{featuredService.description}</p>
+              <span class="svc-compact-card__cta">
+                {featuredService.linkLabel || 'Ver flota'}
+                <Icon name="arrow-right" size={14} />
+              </span>
+            </div>
+          </a>
         </article>
       )}
     </div>
@@ -85,136 +84,223 @@ const {
 </section>
 
 <style>
-  .service-bento-section {
+  .svc-compact-section {
     background: var(--theme-bg-alt);
     border-block: 1px solid var(--theme-border);
-    padding-block: clamp(56px, 8vw, 100px);
+    padding-block: clamp(48px, 7vw, 88px);
   }
 
-  .service-bento-section__title {
+  .svc-compact-section__title {
     color: var(--theme-heading);
     font-family: var(--font-heading);
     font-weight: 800;
-    font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
     letter-spacing: -0.02em;
-    margin: 0 0 var(--space-6);
+    margin: 0 0 var(--space-8);
+    text-wrap: balance;
   }
 
-  .svc-bento {
+  /* Grid layout: 4 columnas en desktop, 2 en tablet, 1 en mobile */
+  .svc-compact-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(4, 1fr);
     gap: var(--space-4);
   }
 
-  /* Cuando hay featuredService, usar layout bento asimétrico */
-  .has-featured .svc-bento {
-    grid-template-columns: 1fr 1fr 1.12fr;
-  }
-
-  .svc-card--feat {
-    grid-column: 3;
-    grid-row: 1 / 3;
-  }
-
-  @media (max-width: 860px) {
-    .svc-bento {
-      grid-template-columns: 1fr 1fr;
-    }
-    .has-featured .svc-card--feat {
-      grid-column: 1 / -1;
-      grid-row: auto;
-    }
-  }
-
-  @media (max-width: 560px) {
-    .svc-bento {
-      grid-template-columns: 1fr;
-    }
-    .svc-card--feat {
-      grid-column: auto;
-    }
-  }
-
-  .svc-card {
-    display: flex;
-    flex-direction: column;
+  /* Card compacta */
+  .svc-compact-card {
+    position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
     background: var(--theme-bg-elevated);
     border: 1px solid var(--theme-border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
     transition: transform var(--motion-base) var(--ease-out),
+                box-shadow var(--motion-base) var(--ease-out),
                 border-color var(--motion-base) var(--ease-out);
   }
 
-  .svc-card:hover {
-    transform: translateY(-4px);
+  .svc-compact-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.15);
     border-color: var(--color-brand);
   }
 
-  .svc-card__img {
-    aspect-ratio: 16 / 10;
-    overflow: hidden;
+  /* Link que cubre toda la card */
+  .svc-compact-card__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
   }
 
-  .svc-card__img img {
+  /* Imagen compacta */
+  .svc-compact-card__img {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .svc-compact-card__img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.08) 100%);
+    pointer-events: none;
+  }
+
+  .svc-compact-card__img img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform var(--motion-slow) var(--ease-out);
   }
 
-  .svc-card:hover .svc-card__img img {
-    transform: scale(1.05);
+  .svc-compact-card:hover .svc-compact-card__img img {
+    transform: scale(1.04);
   }
 
-  .svc-card__body {
-    padding: var(--space-5);
+  /* Contenido */
+  .svc-compact-card__content {
+    padding: var(--space-4);
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: var(--space-1);
     flex: 1;
   }
 
-  .svc-card__cat {
+  /* Categoría */
+  .svc-compact-card__cat {
     font-family: var(--font-heading);
     font-weight: 700;
-    font-size: var(--text-small);
-    letter-spacing: 0.1em;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--theme-eyebrow);
+    margin-bottom: var(--space-1);
   }
 
-  .svc-card__title {
+  /* Título */
+  .svc-compact-card__title {
     font-family: var(--font-heading);
-    font-size: var(--text-h5);
-    line-height: 1.25;
+    font-size: 1rem;
+    line-height: 1.3;
     font-weight: 700;
     margin: 0;
-    color: var(--theme-text);
+    color: var(--theme-heading);
   }
 
-  .svc-card__desc {
+  /* Descripción */
+  .svc-compact-card__desc {
     color: var(--theme-text-muted);
-    font-size: var(--text-small);
+    font-size: 0.8125rem;
     line-height: 1.5;
     margin: 0;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
-  .svc-card__link {
+  /* CTA */
+  .svc-compact-card__cta {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-2);
-    margin-top: auto;
-    padding-top: var(--space-3);
+    gap: var(--space-1);
+    margin-top: var(--space-2);
     font-family: var(--font-heading);
-    font-weight: 700;
-    font-size: var(--text-small);
+    font-weight: 600;
+    font-size: 0.75rem;
     color: var(--theme-eyebrow);
-    text-decoration: none;
     transition: gap var(--motion-base) var(--ease-out);
   }
 
-  .svc-card__link:hover {
-    gap: var(--space-3);
+  .svc-compact-card:hover .svc-compact-card__cta {
+    gap: var(--space-2);
+  }
+
+  /* Featured card - más grande */
+  .svc-compact-card--featured {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  .svc-compact-card--featured .svc-compact-card__img {
+    aspect-ratio: 16 / 10;
+  }
+
+  .svc-compact-card--featured .svc-compact-card__content {
+    padding: var(--space-5);
+  }
+
+  .svc-compact-card--featured .svc-compact-card__title {
+    font-size: 1.25rem;
+  }
+
+  .svc-compact-card--featured .svc-compact-card__desc {
+    font-size: 0.875rem;
+    -webkit-line-clamp: 4;
+  }
+
+  /* Responsive: tablet */
+  @media (max-width: 1024px) {
+    .svc-compact-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .svc-compact-card--featured {
+      grid-column: span 2;
+      grid-row: span 1;
+    }
+
+    .svc-compact-card--featured .svc-compact-card__img {
+      aspect-ratio: 16 / 7;
+    }
+  }
+
+  /* Responsive: mobile */
+  @media (max-width: 640px) {
+    .svc-compact-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+
+    .svc-compact-card--featured {
+      grid-column: auto;
+      grid-row: auto;
+    }
+
+    .svc-compact-card--featured .svc-compact-card__img {
+      aspect-ratio: 16 / 9;
+    }
+
+    .svc-compact-card__content {
+      padding: var(--space-3);
+    }
+  }
+
+  /* Focus visible para accesibilidad */
+  .svc-compact-card__link:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: var(--radius-md);
+  }
+
+  /* Respetar prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .svc-compact-card,
+    .svc-compact-card__img img,
+    .svc-compact-card__cta {
+      transition: none;
+    }
+
+    .svc-compact-card:hover {
+      transform: none;
+    }
+
+    .svc-compact-card:hover .svc-compact-card__img img {
+      transform: none;
+    }
   }
 </style>
