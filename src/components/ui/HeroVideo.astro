@@ -4,7 +4,6 @@
 // Estructura basada en la referencia IP-Sitio-Web (d-hero).
 // Soporta layout "full" (video de fondo completo) y "split" (video a la derecha, texto a la izquierda).
 
-import Container from './Container.astro';
 import Button from './Button.astro';
 import Eyebrow from './Eyebrow.astro';
 
@@ -88,7 +87,10 @@ const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('
       
       <div class="hero-video__overlay" aria-hidden="true"></div>
       
-      <Container class="hero-video__container">
+      <!-- Div nativo (no <Container>): el root de un componente hijo no
+           hereda el scope-id del padre, así los estilos scoped de
+           position/z-index aplican siempre al wrapper de contenido. -->
+      <div class="hero-video__container">
         <div class="hero-video__content">
           {eyebrow && <Eyebrow text={eyebrow} />}
           
@@ -118,7 +120,7 @@ const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('
             </div>
           )}
         </div>
-      </Container>
+      </div>
       
       <div class="hero-video__scroll" aria-hidden="true">
         <span></span>
@@ -142,7 +144,7 @@ const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('
         </video>
       </div>
       
-      <Container class="hero-video__container-split">
+      <div class="hero-video__container-split">
         <div class="hero-video__content-split">
           {eyebrow && <Eyebrow text={eyebrow} />}
           
@@ -172,7 +174,7 @@ const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('
             </div>
           )}
         </div>
-      </Container>
+      </div>
     </>
   )}
 </section>
@@ -308,6 +310,9 @@ const resolvedPoster = poster && !poster.startsWith('/') && !poster.startsWith('
     position: relative;
     z-index: 10;
     width: 100%;
+    max-width: var(--container-max-width, 1360px);
+    margin-inline: auto;
+    padding-inline: var(--container-padding, 20px);
     display: flex;
     justify-content: center;
   }

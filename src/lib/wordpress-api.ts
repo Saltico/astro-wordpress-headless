@@ -7,6 +7,9 @@ import type { NewsArticle } from '@/data/news';
 const WP_API_BASE = import.meta.env.WP_API_URL || 'https://ipproyectosindustriales.cl/wp-json';
 const WP_POSTS_ENDPOINT = `${WP_API_BASE}/wp/v2/posts`;
 
+/** Límite duro para que un WordPress lento no cuelgue el render SSR. */
+const WP_FETCH_TIMEOUT_MS = 2500;
+
 interface FetchPostsOptions {
   perPage?: number;
   page?: number;
@@ -40,6 +43,7 @@ export async function fetchPosts(options: FetchPostsOptions = {}): Promise<NewsA
       headers: {
         'Accept': 'application/json',
       },
+      signal: AbortSignal.timeout(WP_FETCH_TIMEOUT_MS),
     });
 
     if (!response.ok) {

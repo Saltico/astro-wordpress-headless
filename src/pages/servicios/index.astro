@@ -6,7 +6,8 @@
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Container from '@/components/ui/Container.astro';
-import HeroVideo from '@/components/ui/HeroVideo.astro';
+import PageHero from '@/components/ui/PageHero.astro';
+import Button from '@/components/ui/Button.astro';
 import Eyebrow from '@/components/ui/Eyebrow.astro';
 import Icon from '@/components/ui/Icon.astro';
 import CTABand from '@/components/ui/CTABand.astro';
@@ -159,19 +160,26 @@ const clientLogos = [
   title={title}
   description={description}
   breadcrumbs={breadcrumbs}
-  immersive={true}
 >
-  <HeroVideo
-    videoSrc="/videos/arriendos.mp4"
+  <!-- §1: HERO — mismo patrón visual que /arriendo (PageHero) -->
+  <PageHero
+    image={servIngenieria.src}
+    imageAlt="Ingeniería y construcción industrial en faena minera"
+    imageWidth={servIngenieria.width}
+    imageHeight={servIngenieria.height}
     eyebrow="Nuestros servicios"
     title="Soluciones integrales para cada etapa de tu proyecto"
     titleHighlight="cada etapa de tu proyecto"
     subtitle="Reunimos ingeniería, construcción, montajes e infraestructura portuaria bajo un mismo equipo, con estándares de la gran minería."
-    ctaPrimary={{ label: 'Ver servicios', href: '#servicios' }}
-    ctaSecondary={{ label: 'Contactar', href: '/contacto' }}
-    minHeight="lg"
-    layout="split"
-  />
+    minHeight="sm"
+  >
+    <Button slot="actions" href="#servicios" variant="primary" size="lg">
+      Ver servicios
+    </Button>
+    <Button slot="actions" href="/contacto" variant="ghost" onDark size="lg">
+      Contactar
+    </Button>
+  </PageHero>
 
   <!-- Proceso: de la idea a la puesta en marcha (reemplaza al contador) -->
   <section class="svc-process" aria-labelledby="proceso-heading">

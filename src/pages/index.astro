@@ -4,7 +4,7 @@
 // Usa los componentes del design system: HeroVideo, SplitSection, ServiceBentoGrid, etc.
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import HeroVideo from '@/components/ui/HeroVideo.astro';
+import HeroSection from '@/components/ui/HeroSection.astro';
 import SplitSection from '@/components/ui/SplitSection.astro';
 import StatsCounter from '@/components/ui/StatsCounter.astro';
 import LogoCarousel from '@/components/ui/LogoCarousel.astro';
@@ -25,6 +25,7 @@ import servIzaje from '@/assets/imgs/serv-izaje.jpg';
 import faenaIzaje from '@/assets/imgs/faena-izaje.jpg';
 import montajes from '@/assets/imgs/montajes.jpg';
 import edificio from '@/assets/imgs/edificio.jpg';
+import heroImg from '@/assets/imgs/hero/arriendo/arriendo.avif';
 
 const title = 'IP Proyectos Industriales | Ingeniería, montajes y grúas de alto tonelaje para la minería';
 const description = 'IP Proyectos Industriales: ingeniería, construcción, montajes e izajes de alto tonelaje (hasta 400 t) para la gran minería en Atacama y Coquimbo. Conoce nuestra experiencia y contáctanos.';
@@ -129,21 +130,20 @@ const latestNews = await getLatestNews(3);
   jsonLd={jsonLd}
   immersive={true}
 >
-  <!-- §1: HERO CON VIDEO -->
-  <HeroVideo
-    videoSrc="/videos/servicios.mp4"
-    poster={faenaIzaje.src}
+  <!-- §1: HERO CON IMAGEN -->
+  <HeroSection
+    backgroundImage={heroImg.src}
+    backgroundAlt="Equipos de izaje y grúas de alto tonelaje en faena minera"
     eyebrow="Desde el año 2000 junto a la Gran Minería"
     title="La pasión y el valor por un trabajo bien hecho"
     titleHighlight="trabajo bien hecho"
     subtitle="Ingeniería, construcción, montajes y Rental de equipos. Todo de principio a fin, con una sola empresa."
     minHeight="lg"
-    layout="split"
+    variant="left"
     ctaPrimary={{ label: 'Contactar', href: '/contacto' }}
     ctaSecondary={{ 
       label: 'Hablemos', 
       href: `https://wa.me/${siteContact.whatsappNumber}?text=Hola%20IP%20Proyectos%20Industriales%2C%20quisiera%20conversar%20sobre%20un%20proyecto.`,
-      external: true 
     }}
   />
 

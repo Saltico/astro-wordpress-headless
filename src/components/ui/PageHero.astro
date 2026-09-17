@@ -21,6 +21,7 @@ export interface Props {
   imageHeight?: number;
   eyebrow?: string;
   title: string;
+  titleHighlight?: string;
   subtitle?: string;
   /** Tamaño del hero. Default: "md" (~50vh). */
   minHeight?: 'sm' | 'md' | 'lg';
@@ -33,6 +34,7 @@ const {
   imageHeight,
   eyebrow,
   title,
+  titleHighlight,
   subtitle,
   minHeight = 'md',
 } = Astro.props;
@@ -40,6 +42,11 @@ const {
 const minHeightClass = `page-hero--${minHeight}`;
 const hasBreadcrumbsSlot = Astro.slots.has('breadcrumbs');
 const hasActionsSlot = Astro.slots.has('actions');
+
+function renderTitle(fullTitle: string, highlight?: string): string {
+  if (!highlight) return fullTitle;
+  return fullTitle.replace(highlight, `<b>${highlight}</b>`);
+}
 ---
 
 <section class:list={['page-hero', minHeightClass]}>
@@ -61,7 +68,7 @@ const hasActionsSlot = Astro.slots.has('actions');
     )}
 
     {eyebrow && <Eyebrow text={eyebrow} />}
-    <h1 class="page-hero__title">{title}</h1>
+    <h1 class="page-hero__title" set:html={renderTitle(title, titleHighlight)}></h1>
     {subtitle && <p class="page-hero__subtitle">{subtitle}</p>}
 
     {hasActionsSlot && (
@@ -139,6 +146,12 @@ const hasActionsSlot = Astro.slots.has('actions');
     font-size: clamp(2rem, 5vw, 3.5rem);
     max-width: 20ch;
     margin: 0 0 16px;
+    text-wrap: balance;
+  }
+
+  :global(.page-hero__title b) {
+    color: var(--color-brand-300);
+    font-weight: 900;
   }
 
   .page-hero__subtitle {

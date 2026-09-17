@@ -3,7 +3,7 @@
 // Fallback a datos estáticos si la API no está disponible.
 
 import { newsArticles as staticArticles, type NewsArticle } from '@/data/news';
-import { fetchAllNews, fetchNewsBySlug, fetchRelatedNews } from './wordpress-api';
+import { fetchPosts, fetchAllNews, fetchNewsBySlug, fetchRelatedNews } from './wordpress-api';
 
 export interface NewsCard {
   slug: string;
@@ -30,25 +30,47 @@ function toCard(article: NewsArticle): NewsCard {
 }
 
 /**
- * Obtiene las últimas noticias publicadas.
- * Intenta desde la API de WordPress, fallback a datos estáticos.
+ * Caché SSR con TTL para el listado de noticias.
+ * Evita que cada request a páginas SSR (p. ej. la home) dispare llamadas
+ * remotas a WordPress: como máximo 1 llamada acotada por ventana de TTL.
  */
-export async function getLatestNews(limit = 6): Promise<NewsCard[]> {
-  try {
-    const articles = await fetchAllNews({ perPage: limit });
-    if (articles.length > 0) {
-      return articles.map(toCard);
-    }
-  } catch (error) {
-    console.warn('Error fetching from WordPress API, using static data:', error);
-  }
+const NEWS_CACHE_TTL_MS = 5 * 60 * 1000;
+const latestNewsCache = new Map<number, { at: number; cards: NewsCard[] }>();
 
-  // Fallback a datos estáticos
+function staticCards(limit: number): NewsCard[] {
   return staticArticles
     .filter((a) => a.status === 'publish')
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, limit)
     .map(toCard);
+}
+
+/**
+ * Obtiene las últimas noticias publicadas.
+ * Una única llamada a la API (sin paginación secuencial), con timeout en el
+ * cliente HTTP y fallback a datos estáticos. El resultado —venga de WP o del
+ * fallback— se cachea por TTL para no penalizar cada request SSR.
+ */
+export async function getLatestNews(limit = 6): Promise<NewsCard[]> {
+  const cached = latestNewsCache.get(limit);
+  if (cached && Date.now() - cached.at < NEWS_CACHE_TTL_MS) {
+    return cached.cards;
+  }
+
+  let cards: NewsCard[] = [];
+  try {
+    const articles = await fetchPosts({ perPage: limit });
+    cards = articles.map(toCard);
+  } catch (error) {
+    console.warn('Error fetching from WordPress API, using static data:', error);
+  }
+
+  if (cards.length === 0) {
+    cards = staticCards(limit);
+  }
+
+  latestNewsCache.set(limit, { at: Date.now(), cards });
+  return cards;
 }
 
 /**

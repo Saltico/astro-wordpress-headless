@@ -3,7 +3,6 @@
 // Hero section reutilizable con imagen de fondo, título, subtítulo y stats opcionales
 // Inspirado en el hero de Tecnisud
 
-import Container from './Container.astro';
 import Button from './Button.astro';
 import StatsCounter from './StatsCounter.astro';
 import Eyebrow from './Eyebrow.astro';
@@ -11,6 +10,7 @@ import type { StatItem } from './StatsCounter.astro';
 
 export interface Props {
   title: string;
+  titleHighlight?: string;
   subtitle?: string;
   backgroundImage?: string;
   backgroundAlt?: string;
@@ -30,6 +30,7 @@ export interface Props {
 
 const {
   title,
+  titleHighlight,
   subtitle,
   backgroundImage,
   backgroundAlt = '',
@@ -53,6 +54,11 @@ const variantClasses = {
   left: 'hero-section--left',
   centered: 'hero-section--centered',
 };
+
+function renderTitle(fullTitle: string, highlight?: string): string {
+  if (!highlight) return fullTitle;
+  return fullTitle.replace(highlight, `<b>${highlight}</b>`);
+}
 ---
 
 <section class={`hero-section ${minHeightClasses[minHeight]} ${variantClasses[variant]}`}>
@@ -69,11 +75,14 @@ const variantClasses = {
     </div>
   )}
 
-  <Container class="hero-section__container">
+  <!-- Div nativo (no <Container>): los estilos scoped con position/z-index
+       deben aplicar sí o sí al wrapper; el root de un componente hijo no
+       hereda el scope-id del padre y dejaba el texto bajo la imagen. -->
+  <div class="hero-section__container">
     <div class="hero-section__content">
       {eyebrow && <Eyebrow text={eyebrow} decorated={false} />}
       
-      <h1 class="hero-section__title">{title}</h1>
+      <h1 class="hero-section__title" set:html={renderTitle(title, titleHighlight)}></h1>
       
       {subtitle && <p class="hero-section__subtitle">{subtitle}</p>}
 
@@ -98,7 +107,7 @@ const variantClasses = {
         </div>
       )}
     </div>
-  </Container>
+  </div>
 </section>
 
 <style>
@@ -109,6 +118,7 @@ const variantClasses = {
     overflow: hidden;
     color: var(--color-on-brand);
     margin-top: calc(-1 * (var(--topbar-height, 40px) + var(--header-height, 80px)));
+    isolation: isolate; /* Crear contexto de apilamiento explícito */
   }
 
   .hero-section--sm {
@@ -175,7 +185,11 @@ const variantClasses = {
 
   .hero-section__container {
     position: relative;
-    z-index: 2;
+    z-index: 10; /* Mayor que el overlay (z-index: 1) */
+    width: 100%;
+    max-width: var(--container-max-width);
+    margin-inline: auto;
+    padding-inline: var(--container-padding);
   }
 
   .hero-section__content {
@@ -198,10 +212,19 @@ const variantClasses = {
 
   .hero-section__title {
     margin: 0 0 var(--space-5);
+    font-family: var(--font-heading);
+    font-weight: 900;
     font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 700;
-    line-height: 1.1;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
     color: var(--color-on-brand);
+    max-width: 20ch;
+    text-wrap: balance;
+  }
+
+  :global(.hero-section__title b) {
+    color: var(--color-brand-300);
+    font-weight: 900;
   }
 
   .hero-section__subtitle {
